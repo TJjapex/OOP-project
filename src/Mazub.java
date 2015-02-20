@@ -77,16 +77,17 @@ public class Mazub {
 		
 	// Acceleration - horizontal and verticla in arrays?
 	// TOTAL
-//	public double getVelocity(){
+//	public double getVx(){
 //		return this.vx;
 //	}
-//	public void setVelocity(double vx){
+//	public void setVx(double vx){
 //		this.vx = vx;
 //	}
 //	private double vinit;
 //	private double vmax;
 //	private double vx;
 //	
+	
 
 	
 	/* Jumping */
