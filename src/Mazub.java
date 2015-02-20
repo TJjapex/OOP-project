@@ -13,8 +13,11 @@ public class Mazub {
 	// All methods here must be worked out defensively
 	
 	
-	//  arrays?
-//	private int getX(){
+	// Ik denk dat we beter losse variabelen gebruiken ipv arrays, is simpeler? Voor bv positie en snelheid
+	
+	
+	//  losse variabelen?
+//  public int getX(){
 //		return this.x;
 //	}
 //	private void setX(int x){
@@ -22,7 +25,7 @@ public class Mazub {
 //	}
 //	private int x;
 //	
-//	private int getY(){
+//	public int getY(){
 //		return this.y;
 //	}
 //	private void setY(int y){
@@ -32,10 +35,10 @@ public class Mazub {
 //	
 //	
 //	
-//	private int getWidth(){
+//	public int getWidth(){
 //		
 //	}
-//	private int getHeight(){
+//	public int getHeight(){
 //		
 //	}
 //	private void setWidth(){
@@ -45,6 +48,9 @@ public class Mazub {
 //		
 //	}
 //	
+	
+	
+// of arrays?
 //	public int[] getLocation(){
 //		return location;
 //	}
