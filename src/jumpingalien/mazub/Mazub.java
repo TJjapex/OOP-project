@@ -1,3 +1,4 @@
+package jumpingalien.mazub;
 /**
  * Object-oriented Programming: Mazub
  * @author Thomas Verelst, Hans Cauwenbergh
@@ -39,7 +40,7 @@ public class Mazub {
 	}
 	
 	//set Mazub's location
-  
+	
 	private void setX(int x){
 		this.x = x;
 	}
@@ -56,21 +57,21 @@ public class Mazub {
 	//inspect Mazub's dimenion
 	
 	public int getWidth(){
-		
+		return this.width;
 	}
 	
 	public int getHeight(){
-		
+		return this.height;
 	}
 	
 	//set Mazub's dimension
 	
 	private void setWidth(){
-		
+		this.width = width;
 	}
 	
 	private void setHeight(){
-		
+		this.width = height;
 	}
 	
 	//variables of Mazub's dimension
@@ -112,8 +113,17 @@ public class Mazub {
 	//	y_new = y_curr + sy
 	//	ensure that the bottom-left pixel of Mazub stays at all times within the boundaries of the game world
 	
-	public void advanceTime(double amount){ // Double or float?
+	public void advanceTime(double amount){
 		// To do : update position, velocity
+		
+		// Update velocity
+		double newVx = Math.max( this.getVx() + this.ax * amount, this.vx_max);
+		setVx( newVx );
+		
+		// Update position
+		double sx = this.getVx() * amount + 0.5 * this.ax * Math.pow( amount , 2 );
+		this.setX( (int) Math.round( this.getX() + this.getOrientation() * sx ) );
+		
 	}
 	
 	/* Characteristics */
@@ -128,32 +138,35 @@ public class Mazub {
 	}
 	
 	public double getVy(){
-		
+		return this.vy;
 	}
-	
-	public double getAx(){
-		return this.ax;
-	}
-	
+
 	public double getAy(){
-		
+		return this.ay;
 	}
 	
-	public getOrientation(){ // Output of which type?
-		
+	public int getOrientation(){ // Output of which type? 
+		return this.orientation;
 	}
 	
 	public void setVx(double vx){
 		this.vx = vx;
 	}
 	
+	public void setVy(double vy){
+		this.vx = vx;
+	}
+	
 	private double vx_init;
-	private double vx_max;
+	private double vx_max = 3; // Getters en setters nodig?
 	private double vx;
+	private double ax = 0.9; // Getters en setters nodig?
 	
 	private double vy_init;
 	private double vy;
 	private double ay;
+	
+	private int orientation; // -1 = links, 1 = rechts? Da's handig bij formules 
 	
 	/* Jumping and falling */
 	
