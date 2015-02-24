@@ -20,8 +20,9 @@ public class Mazub {
 	// accepts an array of n images as parameter (n even, n >= 10)
 
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
-		setX(pixelLeftX + 10);
-		setY(pixelBottomY+ 10);
+		this.setPx(pixelLeftX + 10);
+		this.setPy(pixelBottomY+ 10);
+		
 		this.sprites = sprites;
 	}
 	
@@ -36,22 +37,24 @@ public class Mazub {
 	//inspect Mazub's location
 	
 	public int getX(){
-		return this.x;
+		//return this.x;
+		return (int) Math.round(this.getPx());
 	}
 	
 	public int getY(){
-		return this.y;
+		//return this.y;
+		return (int) Math.round(this.getPy());
 	}
 	
 	//set Mazub's location
 	
-	private void setX(int x){
-		this.x = x;
-	}
-	
-	private void setY(int y){
-		this.y = y;
-	}
+//	private void setX(int x){
+//		//this.x = x;
+//	}
+//	
+//	private void setY(int y){
+//		//this.y = y;
+//	}
 	
 	//variables of Mazub's location
 	
@@ -126,7 +129,7 @@ public class Mazub {
 		// To do : update position, velocity
 		
 		// Update horizontal velocity
-		double newVx = Math.max( this.getVx() + this.ax * dt, this.vx_max);
+		double newVx = Math.min( this.getVx() + this.ax * dt, this.vx_max);
 		this.setVx( newVx );
 		
 		// Update vertical velocity
@@ -135,18 +138,15 @@ public class Mazub {
 			this.setVy( newVy );
 		}
 		
-		
 		// Update  horizontal position
 		double sx = this.getVx() * dt + 0.5 * this.ax * Math.pow( dt , 2 );
 		this.setPx( this.getPx() + this.getOrientation() * sx );
-		this.setX( (int) Math.round( this.getPx() ) );
+		//this.setX( (int) Math.round( this.getPx() ) );
 		
 		// Update vertical position
-		if( this.getY() > 0 ){
-			this.setPy( Math.max( this.getPy() + this.getVy()*dt + 0.5*this.getAy()*Math.pow(dt, 2) , 0.0) );
-			this.setY( (int) Math.round( this.getPy() ) );
-		}else{
-			this.setY( 0 ); // Is normaal gezien overbodig aangezien Y >= 0;
+		this.setPy( Math.max( this.getPy() + this.getVy()*dt + 0.5*this.getAy()*Math.pow(dt, 2) , 0) );
+		//this.setY( (int) Math.round( this.getPy() ) );
+		if(this.getY() == 0 ){
 			this.setVy( 0 );
 			this.setAy( 0 );
 		}
@@ -158,6 +158,8 @@ public class Mazub {
 	// velocity, acceleration, orientation, timing 
 	// type double (not NaN, may be Double.NEGATIVE_INFINITY or Double.POSITIVE_INFINITY)
 	// rounding down to integer value (at the end!) to determine Mazub's effective position
+	
+	// Position
 	public double getPx(){
 		return this.px;
 	}
@@ -174,28 +176,13 @@ public class Mazub {
 		this.py = py;
 	}
 
+	// Velocity
 	public double getVx(){
 		return this.vx;
 	}
 	
 	public double getVy(){
 		return this.vy;
-	}
-	
-	public double getAx(){
-		return this.ax;
-	}
-	
-	public double getAy(){
-		return this.ay;
-	}
-	
-	public int getOrientation(){ // Output of which type? 
-		return this.orientation;
-	}
-	
-	public void setOrientation(int orientation){ // Output of which type? 
-		this.orientation = orientation;
 	}
 	
 	public void setVx(double vx){
@@ -206,6 +193,24 @@ public class Mazub {
 		this.vy = vy;
 	}
 	
+	// Maximum velocity
+	public void setVxMax(double vx_max){ // Slechte naam
+		this.vx_max = vx_max;
+	}
+	
+	public double getVxMax(){
+		return this.vx_max;
+	}
+	
+	// Acceleration
+	public double getAx(){
+		return this.ax;
+	}
+	
+	public double getAy(){
+		return this.ay;
+	}
+	
 	public void setAx(double ax){
 		this.ax = ax;
 	}
@@ -214,26 +219,28 @@ public class Mazub {
 		this.ay = ay;
 	}
 	
-	
-	public void setVxMax(double vx_max){
-		this.vx_max = vx_max;
+	// Orientation
+	public int getOrientation(){ // Output of which type? 
+		return this.orientation;
 	}
 	
-	public double getVxMax(){
-		return this.vx_max;
+	public void setOrientation(int orientation){ // Output of which type? 
+		this.orientation = orientation;
 	}
 	
 	private double px;
 	private double py;
 	
-	private double vx_init = 1.0;
-	private double vx_max = 3.0; // Getters en setters nodig?
 	private double vx;
-	private double ax = 0; // Getters en setters nodig?
-	
-	private double vy_init;
 	private double vy;
-	private double ay = -10.0;
+	
+	private double vx_init = 1.0;
+	private double vy_init;	
+	private double vx_max = 3.0;
+	
+	private double ax;
+	private double ay;
+	
 	
 	private int orientation; // -1 = links, 1 = rechts? Da's handig bij formules 
 	
