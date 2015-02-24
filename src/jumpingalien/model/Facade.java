@@ -1,9 +1,9 @@
-package jumpingalien.part1.facade;
+package jumpingalien.model;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.Sprite;
+import jumpingalien.model.Mazub;
 
-
-class Facade implements IFacade {
+public class Facade implements IFacade {
 	/**
 	 * Create an instance of Mazub.
 	 * 
@@ -17,7 +17,7 @@ class Facade implements IFacade {
 	 * @return
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
-		
+		return new Mazub(0, 0, null);
 	}
 
 	/**
@@ -30,7 +30,7 @@ class Facade implements IFacade {
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
 	public int[] getLocation(Mazub alien){
-		return new int[2];
+		return new int[] {alien.getX(), alien.getY()};
 	}
 
 	/**
@@ -44,8 +44,7 @@ class Facade implements IFacade {
 	 *         velocity, in units of m/s.
 	 */
 	public double[] getVelocity(Mazub alien){
-		return null;
-		
+		return new double[] {alien.getVx(), alien.getVy()};	
 	}
 
 	/**
@@ -59,8 +58,7 @@ class Facade implements IFacade {
 	 *         acceleration, in units of m/s^2.
 	 */
 	public double[] getAcceleration(Mazub alien){
-		return null;
-		
+		return new double[] {alien.getAx(), alien.getAy()};
 	}
 
 	/**
@@ -73,7 +71,7 @@ class Facade implements IFacade {
 	 *         current width and height of the given alien, in number of pixels.
 	 */
 	public int[] getSize(Mazub alien){
-		return null;
+		return new int[] {alien.getWidth(), alien.getHeight()};
 		
 	}
 
@@ -87,7 +85,7 @@ class Facade implements IFacade {
 	 *         state as defined in the assignment.
 	 */
 	public Sprite getCurrentSprite(Mazub alien){
-		return null;
+		return alien.getCurrentSprite();
 		
 	}
 
@@ -98,7 +96,7 @@ class Facade implements IFacade {
 	 *            The alien that has to start jumping.
 	 */
 	public void startJump(Mazub alien){
-		
+		alien.startJump();
 	}
 
 	/**
@@ -108,7 +106,7 @@ class Facade implements IFacade {
 	 *            The alien that has to stop jumping.
 	 */
 	public void endJump(Mazub alien){
-		
+		alien.endJump();
 	}
 
 	/**
@@ -118,7 +116,7 @@ class Facade implements IFacade {
 	 *            The alien that has to start moving left.
 	 */
 	public void startMoveLeft(Mazub alien){
-		
+		alien.startMoveLeft();
 	}
 
 	/**
@@ -128,7 +126,7 @@ class Facade implements IFacade {
 	 *            The alien that has to stop moving left.
 	 */
 	public void endMoveLeft(Mazub alien){
-		
+		alien.endMove();
 	}
 
 	/**
@@ -138,7 +136,7 @@ class Facade implements IFacade {
 	 *            The alien that has to start moving right.
 	 */
 	public void startMoveRight(Mazub alien){
-		
+		alien.startMoveRight();
 	}
 
 	/**
@@ -148,7 +146,7 @@ class Facade implements IFacade {
 	 *            The alien that has to stop moving right.
 	 */
 	public void endMoveRight(Mazub alien){
-		
+		alien.endMove();
 	}
 
 	/**
@@ -181,6 +179,6 @@ class Facade implements IFacade {
 	 *            alien's time.
 	 */
 	public void advanceTime(Mazub alien, double dt){
-		
+		alien.advanceTime(dt);
 	}
 }
