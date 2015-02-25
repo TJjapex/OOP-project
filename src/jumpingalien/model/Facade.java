@@ -17,7 +17,7 @@ public class Facade implements IFacade {
 	 * @return
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
-		return new Mazub(0, 0, null);
+		return new Mazub(0, 0, sprites);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to start moving left.
 	 */
 	public void startMoveLeft(Mazub alien){
-		alien.startMoveLeft();
+		alien.startMove(Orientation.LEFT);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to start moving right.
 	 */
 	public void startMoveRight(Mazub alien){
-		alien.startMoveRight();
+		alien.startMove(Orientation.RIGHT);
 	}
 
 	/**

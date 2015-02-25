@@ -20,8 +20,10 @@ public class Mazub {
 	// accepts an array of n images as parameter (n even, n >= 10)
 
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
-		this.setPx(pixelLeftX + 10);
-		this.setPy(pixelBottomY+ 10);
+		this.setPx(pixelLeftX);
+		this.setPy(pixelBottomY);
+		
+		this.setOrientation(Orientation.LEFT);
 		
 		this.sprites = sprites;
 	}
@@ -37,24 +39,12 @@ public class Mazub {
 	//inspect Mazub's location
 	
 	public int getX(){
-		//return this.x;
 		return (int) Math.round(this.getPx());
 	}
 	
 	public int getY(){
-		//return this.y;
 		return (int) Math.round(this.getPy());
 	}
-	
-	//set Mazub's location
-	
-//	private void setX(int x){
-//		//this.x = x;
-//	}
-//	
-//	private void setY(int y){
-//		//this.y = y;
-//	}
 	
 	//variables of Mazub's location
 	
@@ -97,21 +87,163 @@ public class Mazub {
 	// endMove:
 	// 	vx_new = 0
 	
-	public void startMoveLeft(){
-		this.setVx( this.vx_init );
-		this.setAx( 0.9 );
-		this.setOrientation(-1);
-	}
-	public void startMoveRight(){
-		this.setVx( this.vx_init );
-		this.setAx( 0.9 );
-		this.setOrientation(1);
+	public void startMove(Orientation orientation){
+		this.setOrientation(orientation);
+		this.setVx( orientation.getDirection() * this.vx_init );
+		this.setAx( orientation.getDirection() * 0.9 );
 	}
 	public void endMove() {
 		this.setVx(0);
 		this.setAx(0);
 	}
 	
+	/* Jumping and falling */
+	
+	// All methods here must be worked out defensively
+	// startJump:
+	//	vy_init = 8 m/s 	(will not change in future)
+	//	vy_new = vy_current + ay*delta_t
+	// endJump:
+	//  vy_new = 0 m/s 	(if vy_curr > 0)
+	// while (y != 0):
+	//	ay = -10 m/s^2	(will not change in future)
+	
+	public void startJump(){
+		this.setVy( 8.0 );
+		this.setAy( -10.0 );
+	}
+	
+	public void endJump() {
+		if( this.getVy() > 0 ){
+			this.setVy(0);
+		}
+	}
+	
+	/* Ducking */
+	
+	// All methods here must be worked out defensively
+	// affects Mazub's dimension (X_p,Y_p)
+	// restricts vx_max to 1 m/s (no acceleration possible)
+	
+	public void startDuck(){
+		setVxMax(1.0);
+	}
+	
+	public void endDuck(){
+		setVxMax(3.0);
+	}	
+	
+	/* Characteristics */
+	
+	// All methods here must be worked out totally
+	// velocity, acceleration, orientation, timing 
+	// type double (not NaN, may be Double.NEGATIVE_INFINITY or Double.POSITIVE_INFINITY)
+	// rounding down to integer value (at the end!) to determine Mazub's effective position
+	
+	// Position
+	public double getPx(){
+		return this.px;
+	}
+	
+	public double getPy(){
+		return this.py;
+	}
+
+	private void setPx(double px){
+		this.px = px;
+	}
+	
+	private void setPy(double py){
+		this.py = py;
+	}
+	
+	private double px;
+	private double py;
+
+	// Velocity
+	public double getVx(){
+		return this.vx;
+	}
+	
+	public double getVy(){
+		return this.vy;
+	}
+	
+	private void setVx(double vx){
+		this.vx = vx;
+	}
+	
+	private void setVy(double vy){
+		this.vy = vy;
+	}
+	
+	private double vx;
+	private double vy;
+	private double vx_init = 1.0;
+	private double vy_init;	
+	
+	// Maximum velocity
+	public double getVxMax(){
+		return this.vx_max;
+	}
+	
+	private void setVxMax(double vx_max){ // Slechte naam
+		this.vx_max = vx_max;
+	}
+	
+	private double vx_max = 3.0;
+	
+	// Acceleration
+	public double getAx(){
+		return this.ax;
+	}
+	
+	public double getAy(){
+		return this.ay;
+	}
+	
+	private void setAx(double ax){
+		this.ax = ax;
+	}
+	
+	private void setAy(double ay){
+		this.ay = ay;
+	}
+		
+	private double ax;
+	private double ay;
+	
+	// Orientation
+	public Orientation getOrientation(){ // Output of which type? 
+		return this.orientation;
+	}
+	
+	public void setOrientation(Orientation orientation){ // Output of which type? 
+		this.orientation = orientation;
+	}	
+	
+	private Orientation orientation;
+	
+	/* Character size and animation */
+	
+	// All methods here must be worked out nominally
+	// no formal documentation required
+	// class Sprite is provided
+	// multiple sprites for moving to the right/left (same amount), alternate (75ms) and repeat
+	// it must be possible to turn to other algorithms for displaying successive images of a Mazub during some period of time
+	
+	public Sprite getCurrentSprite(){
+		
+		// Dit is gewoon om een sprite te hebben om te debuggen.
+		if(this.sprites != null){
+			return this.sprites[0]; // returns Sprite of (X_p,Y_p) pixels
+		}
+		return null;		
+		
+	}
+	
+	private Sprite[] sprites;	
+
 	/* Advance time */
 	
 	// 	All methods here must be worked out defensively
@@ -140,160 +272,13 @@ public class Mazub {
 		
 		// Update  horizontal position
 		double sx = this.getVx() * dt + 0.5 * this.ax * Math.pow( dt , 2 );
-		this.setPx( this.getPx() + this.getOrientation() * sx );
-		//this.setX( (int) Math.round( this.getPx() ) );
+		this.setPx( this.getPx() + sx *100 );
 		
 		// Update vertical position
-		this.setPy( Math.max( this.getPy() + this.getVy()*dt + 0.5*this.getAy()*Math.pow(dt, 2) , 0) );
-		//this.setY( (int) Math.round( this.getPy() ) );
+		this.setPy( Math.max( this.getPy() + 100*this.getVy()*dt + 100*0.5*this.getAy()*Math.pow(dt, 2) , 0) );
 		if(this.getY() == 0 ){
 			this.setVy( 0 );
 			this.setAy( 0 );
 		}
 	}
-	
-	/* Characteristics */
-	
-	// All methods here must be worked out totally
-	// velocity, acceleration, orientation, timing 
-	// type double (not NaN, may be Double.NEGATIVE_INFINITY or Double.POSITIVE_INFINITY)
-	// rounding down to integer value (at the end!) to determine Mazub's effective position
-	
-	// Position
-	public double getPx(){
-		return this.px;
-	}
-	
-	public double getPy(){
-		return this.py;
-	}
-
-	public void setPx(double px){
-		this.px = px;
-	}
-	
-	public void setPy(double py){
-		this.py = py;
-	}
-
-	// Velocity
-	public double getVx(){
-		return this.vx;
-	}
-	
-	public double getVy(){
-		return this.vy;
-	}
-	
-	public void setVx(double vx){
-		this.vx = vx;
-	}
-	
-	public void setVy(double vy){
-		this.vy = vy;
-	}
-	
-	// Maximum velocity
-	public void setVxMax(double vx_max){ // Slechte naam
-		this.vx_max = vx_max;
-	}
-	
-	public double getVxMax(){
-		return this.vx_max;
-	}
-	
-	// Acceleration
-	public double getAx(){
-		return this.ax;
-	}
-	
-	public double getAy(){
-		return this.ay;
-	}
-	
-	public void setAx(double ax){
-		this.ax = ax;
-	}
-	
-	public void setAy(double ay){
-		this.ay = ay;
-	}
-	
-	// Orientation
-	public int getOrientation(){ // Output of which type? 
-		return this.orientation;
-	}
-	
-	public void setOrientation(int orientation){ // Output of which type? 
-		this.orientation = orientation;
-	}
-	
-	private double px;
-	private double py;
-	
-	private double vx;
-	private double vy;
-	
-	private double vx_init = 1.0;
-	private double vy_init;	
-	private double vx_max = 3.0;
-	
-	private double ax;
-	private double ay;
-	
-	
-	private int orientation; // -1 = links, 1 = rechts? Da's handig bij formules 
-	
-	/* Jumping and falling */
-	
-	// All methods here must be worked out defensively
-	// startJump:
-	//	vy_init = 8 m/s 	(will not change in future)
-	//	vy_new = vy_current + ay*delta_t
-	// endJump:
-	//  vy_new = 0 m/s 	(if vy_curr > 0)
-	// while (y != 0):
-	//	ay = -10 m/s^2	(will not change in future)
-	
-	public void startJump(){
-		this.setVy( 8.0 );
-		this.setAy( -10 );
-	}
-	
-	public void endJump() {
-		if( this.getVy() > 0 ){
-			this.setVy(0);
-		}
-	}
-	
-	/* Ducking */
-	
-	// All methods here must be worked out defensively
-	// affects Mazub's dimension (X_p,Y_p)
-	// restricts vx_max to 1 m/s (no acceleration possible)
-	
-	public void startDuck(){
-		setVxMax(1.0);
-	}
-	
-	public void endDuck(){
-		setVxMax(3.0);
-	}	
-	
-	/* Character size and animation */
-	
-	// All methods here must be worked out nominally
-	// no formal documentation required
-	// class Sprite is provided
-	// multiple sprites for moving to the right/left (same amount), alternate (75ms) and repeat
-	// it must be possible to turn to other algorithms for displaying successive images of a Mazub during some period of time
-	
-	public Sprite getCurrentSprite(){
-		return null; // returns Sprite of (X_p,Y_p) pixels
-		
-		
-	}
-	
-	private Sprite[] sprites;
-	
 }
