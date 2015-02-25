@@ -1,9 +1,9 @@
 package jumpingalien.part1;
 
-import jumpingalien.model.Facade;
 import jumpingalien.part1.internal.JumpingAlienGUIPart1;
 import jumpingalien.part1.internal.JumpingAlienGamePart1;
 import jumpingalien.part1.internal.Part1Options;
+import jumpingalien.part1.facade.IFacade;
 
 public class JumpingAlienPart1 {
 

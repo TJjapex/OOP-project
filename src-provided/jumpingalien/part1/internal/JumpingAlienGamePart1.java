@@ -60,6 +60,8 @@ public class JumpingAlienGamePart1 extends JumpingAlienGame {
 	protected void advanceTime(double dt) {
 		getFacade().advanceTime(getAlien(), dt);
 	}
+
+	@Override
 	protected IActionHandler createActionHandler() {
 		return new Part1ActionHandler(this);
 	}
