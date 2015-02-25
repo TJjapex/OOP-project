@@ -3,7 +3,7 @@ package jumpingalien.part1;
 import jumpingalien.part1.internal.JumpingAlienGUIPart1;
 import jumpingalien.part1.internal.JumpingAlienGamePart1;
 import jumpingalien.part1.internal.Part1Options;
-import jumpingalien.part1.facade.IFacade;
+import jumpingalien.model.Facade;
 
 public class JumpingAlienPart1 {
 
