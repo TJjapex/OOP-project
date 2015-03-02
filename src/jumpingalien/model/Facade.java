@@ -156,7 +156,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to start ducking.
 	 */
 	public void startDuck(Mazub alien){
-		
+		alien.startDuck();
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to stop ducking.
 	 */
 	public void endDuck(Mazub alien){
-		
+		alien.endDuck();
 	}
 
 	/**

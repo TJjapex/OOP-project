@@ -1,5 +1,6 @@
 package jumpingalien.model;
 import jumpingalien.util.Sprite;
+import jumpingalien.util.Util;
 
 /**
  * Object-oriented Programming: Mazub
@@ -8,6 +9,17 @@ import jumpingalien.util.Sprite;
  */
 
 public class Mazub {
+	
+	private static int WINDOW_WIDTH = 1024; // Mss beter niet in hoofdletters?
+	private static int WINDOW_HEIGHT = 768;
+	private static double GRAVITY = -10.0;
+	
+	private boolean ducking = false;
+	
+	// Moeten voor onderstaande vars ook setters en getters? Kdenk van wel eigenlijk :s
+	private int currentSpriteIteration = 0;
+	private double timeTillLastSprite = 0;
+	private double timeTillLastMove = 0; // Time until last movement
 	
 	/* General */
 	
@@ -25,12 +37,17 @@ public class Mazub {
 		
 		this.setOrientation(Orientation.LEFT);
 		
+		// nog check doen of een even aantal is? Nominaal, totaal of defensief?
 		this.sprites = sprites;
 	}
 	
+	
 	/* Size and positioning */
 	
-	// All methods here must be worked out defensively (using integer numbers)
+	// All methods here must be worked out defensively (using integer numbers) 
+	// Wat moeten we dan doen? :p
+	
+	
 	// Game world (X,Y) : 1024x768 pixels (origin bottom-left)
 	// each pixel = 0.01m
 	// Position of Mazub: bottom-left pixel of Mazub
@@ -92,10 +109,23 @@ public class Mazub {
 		this.setVx( orientation.getDirection() * this.vx_init );
 		this.setAx( orientation.getDirection() * 0.9 );
 	}
+	
 	public void endMove() {
 		this.setVx(0);
 		this.setAx(0);
+		
+		this.timeTillLastMove = 0;
 	}
+
+	public boolean isMoving(){
+		return !Util.fuzzyEquals(this.getVx(), 0);
+	}
+	
+	public boolean hasMovedInLastSecond(){ // Slechte naam
+		return Util.fuzzyLessThanOrEqualTo(timeTillLastMove, 1.0);
+	}
+	
+	
 	
 	/* Jumping and falling */
 	
@@ -109,14 +139,18 @@ public class Mazub {
 	//	ay = -10 m/s^2	(will not change in future)
 	
 	public void startJump(){
-		this.setVy( 8.0 );
-		this.setAy( -10.0 );
+		this.setVy( 8.0 ); // Deze waarden in constanten steken?
+		this.setAy( GRAVITY ); 
 	}
 	
 	public void endJump() {
 		if( this.getVy() > 0 ){
 			this.setVy(0);
 		}
+	}
+	
+	public boolean isJumping(){
+		return !Util.fuzzyEquals(this.getVy(), 0);
 	}
 	
 	/* Ducking */
@@ -126,12 +160,22 @@ public class Mazub {
 	// restricts vx_max to 1 m/s (no acceleration possible)
 	
 	public void startDuck(){
-		setVxMax(1.0);
+		this.setVxMax(1.0);
+		this.setDucking(true);
 	}
 	
 	public void endDuck(){
-		setVxMax(3.0);
+		this.setVxMax(3.0);
+		this.setDucking(false);
 	}	
+	
+	public boolean  isDucking(){
+		return this.ducking;
+	}
+	
+	public void setDucking(boolean ducking){
+		this.ducking = ducking;
+	}
 	
 	/* Characteristics */
 	
@@ -149,14 +193,31 @@ public class Mazub {
 		return this.py;
 	}
 
-	private void setPx(double px){
-		this.px = px;
+	private void setPx(double px) throws IllegalPxException{
+		//if(! isValidPx(px)) oeps positie in doubles moest totaal, niet defensief
+		//	throw new IllegalPxException(px);
+		this.px = Math.min(Math.max(px, 0), WINDOW_WIDTH - 1);
 	}
 	
-	private void setPy(double py){
-		this.py = py;
+	private void setPy(double py) throws IllegalPyException{
+		//if(! isValidPy(py))
+		//	throw new IllegalPyException(py);
+		this.py = Math.min(Math.max(py, 0), WINDOW_HEIGHT - 1);
 	}
 	
+	
+	
+	// ?? Uiteindelijk niet nodig omdat X en Y gewoon afgeronde px en py zijn?
+	public static boolean isValidPx(double px) {
+		return Util.fuzzyGreaterThanOrEqualTo(px, 0) && Util.fuzzyLessThanOrEqualTo(px, WINDOW_WIDTH);
+	}
+	
+	public static boolean isValidPy(double py) {
+		return Util.fuzzyGreaterThanOrEqualTo(py, 0) && Util.fuzzyLessThanOrEqualTo(py, WINDOW_HEIGHT);
+	}
+	
+	
+
 	private double px;
 	private double py;
 
@@ -170,7 +231,7 @@ public class Mazub {
 	}
 	
 	private void setVx(double vx){
-		this.vx = vx;
+		this.vx = Math.max(Math.min( vx , this.getVxMax()), -this.getVxMax());
 	}
 	
 	private void setVy(double vy){
@@ -234,11 +295,80 @@ public class Mazub {
 	
 	public Sprite getCurrentSprite(){
 		
-		// Dit is gewoon om een sprite te hebben om te debuggen.
-		if(this.sprites != null){
-			return this.sprites[0]; // returns Sprite of (X_p,Y_p) pixels
+		// Moet mooier/efficienter/korter
+		
+		//if(this.sprites != null){
+		//	return this.sprites[0]; // returns Sprite of (X_p,Y_p) pixels
+		//}
+		
+		// m bepalen
+		
+		int m = ( this.sprites.length - 8) / 2; // Als length even is geeft dit altijd een correct getal -> moeten nog check doen
+		
+		// Voor animatie
+		while(this.timeTillLastSprite > 0.075){ // Util fuzzy?
+			this.currentSpriteIteration += 1; // Setters and getters...
+			this.currentSpriteIteration %= m;
+			timeTillLastSprite -= 0.075;
 		}
-		return null;		
+		
+		
+		int index = 0;
+		
+		if(!this.isMoving()){
+			
+			if(!this.hasMovedInLastSecond()){
+				if(!this.isDucking()){
+					index = 0;
+				}else{
+					index = 1;
+				}
+			}else{
+				if(!this.isDucking()){
+					if(this.getOrientation() == Orientation.RIGHT){
+						index = 2;
+					}else{ // LEFT
+						index = 3;
+					}
+				}else{
+					if(this.getOrientation() == Orientation.RIGHT){
+						index = 6;
+					}else{ // LEFT
+						index = 7;
+					}
+				}
+			}
+			
+		}else{ // MOVIéNG
+			if(this.isJumping()){
+				if(!this.isDucking()){
+					if(this.getOrientation() == Orientation.RIGHT){
+						index = 4;
+					}else{ // LEFT
+						index = 5;
+					}
+				}
+			}
+			
+			if(this.isDucking()){
+				if(this.getOrientation() == Orientation.RIGHT){
+					index = 6;
+				}else{ // LEFT
+					index = 7;
+				}
+			}
+			if(!this.isDucking() && !this.isJumping()){
+				if(this.getOrientation() == Orientation.RIGHT){
+					index = 8 + this.currentSpriteIteration;
+				}else{ // LEFT
+					index = 8 + m + this.currentSpriteIteration;
+				}
+			}
+		}
+		
+		
+		
+		return this.sprites[index];
 		
 	}
 	
@@ -261,24 +391,28 @@ public class Mazub {
 		// To do : update position, velocity
 		
 		// Update horizontal velocity
-		double newVx = Math.min( this.getVx() + this.ax * dt, this.vx_max);
+		double newVx = this.getVx() + this.getAx() * dt;
 		this.setVx( newVx );
 		
 		// Update vertical velocity
-		if( this.getY() > 0 ){
-			double newVy = this.getVy() + this.ay * dt;
-			this.setVy( newVy );
-		}
+		//if( this.getPy() > 0 ){ // If Mazub is not on the ground, update vertical velocity ->not needed anymore
+		double newVy = this.getVy() + this.getAy() * dt;
+		this.setVy( newVy );
+		//}
 		
 		// Update  horizontal position
-		double sx = this.getVx() * dt + 0.5 * this.ax * Math.pow( dt , 2 );
+		double sx = this.getVx() * dt + 0.5 * this.getAx() * Math.pow( dt , 2 );
 		this.setPx( this.getPx() + sx *100 );
 		
 		// Update vertical position
 		this.setPy( Math.max( this.getPy() + 100*this.getVy()*dt + 100*0.5*this.getAy()*Math.pow(dt, 2) , 0) );
-		if(this.getY() == 0 ){
+		if( Util.fuzzyEquals(this.getY(), 0) ){ // If Mazub hits the ground, stop falling
 			this.setVy( 0 );
 			this.setAy( 0 );
 		}
+		
+		if(!this.isMoving())
+			this.timeTillLastMove += dt; // Needs setter
+		this.timeTillLastSprite += dt;
 	}
 }
