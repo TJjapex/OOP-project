@@ -13,6 +13,7 @@ public class Mazub {
 	private static int WINDOW_WIDTH = 1024; // Mss beter niet in hoofdletters?
 	private static int WINDOW_HEIGHT = 768;
 	private static double GRAVITY = -10.0;
+	private static double VY_INIT = 8;
 	
 	private boolean ducking = false;
 	
@@ -63,11 +64,6 @@ public class Mazub {
 		return (int) Math.round(this.getPy());
 	}
 	
-	//variables of Mazub's location
-	
-	private int x;
-	private int y;
-	
 	//inspect Mazub's dimenion
 	
 	public int getWidth(){
@@ -107,7 +103,7 @@ public class Mazub {
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
 		this.setVx( orientation.getDirection() * this.vx_init );
-		this.setAx( orientation.getDirection() * 0.9 );
+		this.setAx( orientation.getDirection() * this.ax_init );
 	}
 	
 	public void endMove() {
@@ -139,7 +135,7 @@ public class Mazub {
 	//	ay = -10 m/s^2	(will not change in future)
 	
 	public void startJump(){
-		this.setVy( 8.0 ); // Deze waarden in constanten steken?
+		this.setVy( VY_INIT );
 		this.setAy( GRAVITY ); 
 	}
 	
@@ -151,6 +147,15 @@ public class Mazub {
 	
 	public boolean isJumping(){
 		return !Util.fuzzyEquals(this.getVy(), 0);
+	}
+	
+	private void stopFall() {
+		this.setVy( 0 );
+		this.setAy( 0 );
+	}
+	
+	private boolean isOnGround() {
+		return Util.fuzzyEquals(this.getY(), 0);
 	}
 	
 	/* Ducking */
@@ -208,13 +213,13 @@ public class Mazub {
 	
 	
 	// ?? Uiteindelijk niet nodig omdat X en Y gewoon afgeronde px en py zijn?
-	public static boolean isValidPx(double px) {
-		return Util.fuzzyGreaterThanOrEqualTo(px, 0) && Util.fuzzyLessThanOrEqualTo(px, WINDOW_WIDTH);
-	}
-	
-	public static boolean isValidPy(double py) {
-		return Util.fuzzyGreaterThanOrEqualTo(py, 0) && Util.fuzzyLessThanOrEqualTo(py, WINDOW_HEIGHT);
-	}
+//	public static boolean isValidPx(double px) {
+//		return Util.fuzzyGreaterThanOrEqualTo(px, 0) && Util.fuzzyLessThanOrEqualTo(px, WINDOW_WIDTH);
+//	}
+//	
+//	public static boolean isValidPy(double py) {
+//		return Util.fuzzyGreaterThanOrEqualTo(py, 0) && Util.fuzzyLessThanOrEqualTo(py, WINDOW_HEIGHT);
+//	}
 	
 	
 
@@ -273,6 +278,7 @@ public class Mazub {
 		
 	private double ax;
 	private double ay;
+	private double ax_init = 0.9;
 	
 	// Orientation
 	public Orientation getOrientation(){ // Output of which type? 
@@ -296,13 +302,9 @@ public class Mazub {
 	public Sprite getCurrentSprite(){
 		
 		// Moet mooier/efficienter/korter
+
 		
-		//if(this.sprites != null){
-		//	return this.sprites[0]; // returns Sprite of (X_p,Y_p) pixels
-		//}
-		
-		// m bepalen
-		
+		// m bepalen -> mss beter gewoon een keer doen in constructor en dan opslaan?
 		int m = ( this.sprites.length - 8) / 2; // Als length even is geeft dit altijd een correct getal -> moeten nog check doen
 		
 		// Voor animatie
@@ -339,7 +341,7 @@ public class Mazub {
 				}
 			}
 			
-		}else{ // MOVIéNG
+		}else{ // MOVING
 			if(this.isJumping()){
 				if(!this.isDucking()){
 					if(this.getOrientation() == Orientation.RIGHT){
@@ -395,24 +397,26 @@ public class Mazub {
 		this.setVx( newVx );
 		
 		// Update vertical velocity
-		//if( this.getPy() > 0 ){ // If Mazub is not on the ground, update vertical velocity ->not needed anymore
 		double newVy = this.getVy() + this.getAy() * dt;
 		this.setVy( newVy );
-		//}
 		
 		// Update  horizontal position
 		double sx = this.getVx() * dt + 0.5 * this.getAx() * Math.pow( dt , 2 );
-		this.setPx( this.getPx() + sx *100 );
+		this.setPx( this.getPx() + 100 * sx );
 		
 		// Update vertical position
-		this.setPy( Math.max( this.getPy() + 100*this.getVy()*dt + 100*0.5*this.getAy()*Math.pow(dt, 2) , 0) );
-		if( Util.fuzzyEquals(this.getY(), 0) ){ // If Mazub hits the ground, stop falling
-			this.setVy( 0 );
-			this.setAy( 0 );
+		double sy = this.getVy() * dt + 0.5 * this.getAy() * Math.pow( dt , 2 );
+		this.setPy( this.getPy() + 100 * sy );
+		
+		// If Mazub hits the ground, stop falling
+		if( isOnGround() ){
+			stopFall();
 		}
 		
 		if(!this.isMoving())
 			this.timeTillLastMove += dt; // Needs setter
 		this.timeTillLastSprite += dt;
 	}
+
+
 }
