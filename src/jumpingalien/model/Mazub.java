@@ -30,15 +30,10 @@ public class Mazub {
 
 	private boolean ducking = false; // -> initialiseren in constructor met setter?
 
-	// Moeten voor onderstaande vars ook setters en getters? Kdenk van wel eigenlijk :s
-	// 	-> ja voor timeTillLastMove zeker, zie beneden
-	//	-> voor de andere twee denk ik dat het beter is om die variabelen gewoon in de body van de method te 
-	// 	-> definieren? we hebben die nergens anders nodig dus getters en setters lijken me een beetje
-	//	-> overbodig hiervoor
 	private int currentSpriteIteration = 0;
 	private double timeTillLastSprite = 0;
 	private double timeTillLastMove = 0; // Time until last movement
-										 // -> ook initialiseren in constructor dan met setter?
+										 // -> ook allemaal initialiseren in constructor dan met setter?
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -510,10 +505,10 @@ public class Mazub {
 												//	-> moeten nog check doen
 		
 		// Voor animatie
-		while(this.timeTillLastSprite > 0.075){ // Util fuzzy?
-			this.currentSpriteIteration += 1; // Setters and getters...
-			this.currentSpriteIteration %= m;
-			timeTillLastSprite -= 0.075;
+		while(this.getTimeTillLastSprite() > 0.075){ // Util fuzzy?
+			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() + 1);
+			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() % m);
+			this.setTimeTillLastSprite(this.getTimeTillLastSprite() - 0.075);
 		}
 		
 		
@@ -563,20 +558,56 @@ public class Mazub {
 			}
 			if(!this.isDucking() && !this.isJumping()){
 				if(this.getOrientation() == Orientation.RIGHT){
-					index = 8 + this.currentSpriteIteration;
+					index = 8 + this.getCurrentSpriteIteration();
 				}else{ // LEFT
-					index = 8 + m + this.currentSpriteIteration;
+					index = 8 + m + this.getCurrentSpriteIteration();
 				}
 			}
 		}
-		
-		
 		
 		return this.sprites[index];
 		
 	}
 	
+	/**
+	 * Return the number referring to the current sprite in an iterative process of sprites.
+	 * 
+	 * @return	An integer that represents the current sprite in an iterative process of sprites.
+	 */
+	public int getCurrentSpriteIteration(){
+		return this.currentSpriteIteration;
+	}
+	
+	/**
+	 * Set the number referring to the current sprite in an iterative process of sprites.
+	 * 
+	 * @param currentSprite
+	 * 			An integer that represents the desired sprite in an iterative process of sprites.
+	 */
+	public void setCurrentSpriteIteration(int currentSprite){
+		this.currentSpriteIteration = currentSprite;
+	}
+	
 	private Sprite[] sprites;	
+	
+	/**
+	 * Return the elapsed time since the last sprite was activated.
+	 * 
+	 * @return	A double that represents the elapsed time since the last sprite was activated.
+	 */
+	public double getTimeTillLastSprite(){
+		return this.timeTillLastSprite;
+	}
+	
+	/**
+	 * Set the elapsed time since the last sprite was activated.
+	 * 
+	 * @param time
+	 * 			A double that represents the desired elapsed time since the last sprite was activated.
+	 */
+	public void setTimeTillLastSprite(double time){
+		this.timeTillLastSprite = time;
+	}
 
 	/************************************************ ADVANCE TIME ********************************************/
 	
@@ -627,8 +658,8 @@ public class Mazub {
 		}
 		
 		if(!this.isMoving())
-			this.setTimeTillLastMove(this.getTimeTillLastMove() + dt); // Needs setter
-		this.timeTillLastSprite += dt;
+			this.setTimeTillLastMove(this.getTimeTillLastMove() + dt);
+		this.setTimeTillLastSprite(this.getTimeTillLastSprite() + dt);
 	}
 	
 	/**
