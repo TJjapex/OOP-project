@@ -1,81 +1,124 @@
 package jumpingalien.model;
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
 /**
- * Object-oriented Programming: Mazub
+ * A class of Mazubs, characters for a platform game with several properties. This class has been worked out
+ * for a project of the course Object Oriented Programming at KULeuven.
+ * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
 
 public class Mazub {
+		
+	/************************************************** GENERAL ***********************************************/
 	
-	private static int WINDOW_WIDTH = 1024; // Mss beter niet in hoofdletters?
+	// 			the class Util provides methods for comparing doubles up to a fixed epsilon
+	// 			write a test suite
+	//			class invariants?
+	
+	private static int WINDOW_WIDTH = 1024; // Mss beter niet in hoofdletters? 
+											// -> OK volgens conventie (coding rule 34 p.72)
 	private static int WINDOW_HEIGHT = 768;
-	private static double GRAVITY = -10.0;
-	private static double VY_INIT = 8;
-	
-	private boolean ducking = false;
-	
+	private static double AY = -10.0;
+	private static double VY_INIT = 8.0;
+	private static double VX_MAX_MOVING = 3.0;
+	private static double VX_MAX_DUCKING = 1.0;
+
+	private boolean ducking = false; // -> initialiseren in constructor met setter?
+
 	// Moeten voor onderstaande vars ook setters en getters? Kdenk van wel eigenlijk :s
+	// 	-> ja voor timeTillLastMove zeker, zie beneden
+	//	-> voor de andere twee denk ik dat het beter is om die variabelen gewoon in de body van de method te 
+	// 	-> definieren? we hebben die nergens anders nodig dus getters en setters lijken me een beetje
+	//	-> overbodig hiervoor
 	private int currentSpriteIteration = 0;
 	private double timeTillLastSprite = 0;
 	private double timeTillLastMove = 0; // Time until last movement
+										 // -> ook initialiseren in constructor dan met setter?
 	
-	/* General */
+	/************************************************ CONSTRUCTOR *********************************************/
 	
-	// the class Util provides methods for comparing doubles up to a fixed epsilon
-	// write a test suite
-	// connect graphical user interface (write class Facade)
-	
-	/* Constructor */
-	
-	// accepts an array of n images as parameter (n even, n >= 10)
+	// 			accepts an array of n images as parameter (n even, n >= 10)
 
+	/**
+	 * Constructor for the class Mazub.
+	 * 
+	 * @param pixelLeftX
+	 * 				The x-location of Mazub's bottom left pixel.
+	 * @param pixelBottomY
+	 * 				The y-location of Mazub's bottom left pixel.
+	 * @param sprites
+	 * 				The array of sprite images for Mazub.
+	 * @post
+	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
 		this.setPx(pixelLeftX);
 		this.setPy(pixelBottomY);
 		
-		this.setOrientation(Orientation.LEFT);
+		this.setOrientation(Orientation.LEFT); // beter RIGHT ?
 		
 		// nog check doen of een even aantal is? Nominaal, totaal of defensief?
+		//  -> misschien kunnen we dit gewoon nominaal doen door dit in de commentaar als preconditie te stellen
 		this.sprites = sprites;
 	}
 	
 	
-	/* Size and positioning */
+	/********************************************* SIZE AND POSITIONING ***************************************/
 	
-	// All methods here must be worked out defensively (using integer numbers) 
-	// Wat moeten we dan doen? :p
+	// 			All methods here must be worked out defensively (using integer numbers) 
+	// 			Wat moeten we dan doen? :p 
+	//			 -> hier moet sowieso wel iets met errors gedaan worden, ik denk enkel als één van de 
+	// 			 -> coordinaten negatief zou worden als geheel getal dat er dan een error moet gethrowd worden
 	
+	// 			Game world (X,Y) : 1024x768 pixels (origin bottom-left)
+	// 			each pixel = 0.01m
+	// 			Position of Mazub: bottom-left pixel of Mazub
+	// 			Mazub's dimension (X_p,Y_p), depends on active sprite
 	
-	// Game world (X,Y) : 1024x768 pixels (origin bottom-left)
-	// each pixel = 0.01m
-	// Position of Mazub: bottom-left pixel of Mazub
-	// Mazub's dimension (X_p,Y_p), depends on active sprite
-	
-	//inspect Mazub's location
-	
+	/**
+	 * Return the round x-location of Mazub's bottom left pixel.
+	 * 
+	 * @return 	An integer that represents the x-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
 	public int getX(){
 		return (int) Math.round(this.getPx());
 	}
 	
+	/**
+	 * Return the round y-location of Mazub's bottom left pixel.
+	 * 
+	 * @return 	An integer that represents the y-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
 	public int getY(){
 		return (int) Math.round(this.getPy());
 	}
 	
-	//inspect Mazub's dimenion
-	
+	/**
+	 * Return the width of Mazub, depending on the active sprite.
+	 * 
+	 * @return	An integer that represents the width of Mazub's active sprite.
+	 */
+	@Basic
 	public int getWidth(){
 		return this.width;
 	}
 	
+	/**
+	 * Return the height of Mazub, depending on the active sprite.
+	 * 
+	 * @return	An integer that represents the height of Mazub's active sprite.
+	 */
+	@Basic
 	public int getHeight(){
 		return this.height;
 	}
-	
-	//set Mazub's dimension
-	
+		
 	private void setWidth(){
 		this.width = width;
 	}
@@ -84,135 +127,209 @@ public class Mazub {
 		this.width = height;
 	}
 	
-	//variables of Mazub's dimension
-	
 	private int width;
 	private int height;
 	
-	/* Running */
+	/************************************************ RUNNING *************************************************/
 	
-	// All methods here must be worked out nominally
-	// vx_init = 1 m/s	(may change in future but never below 1 m/s, instance variable)
-	// ax = 0.9 m/s^2	(may change in future, class variable)
-	// vx_max = 3 m/s	(may change in future but never below vx_init, instance variable)
-	// startMove:
-	// 	vx_new = vx_curr + ax*delta_t (for vx_init < vx_curr < vx_max)
-	// endMove:
-	// 	vx_new = 0
+	// 			All methods here must be worked out nominally
+	// 			vx_init = 1 m/s	(may change in future but never below 1 m/s, instance variable)
+	// 			ax = 0.9 m/s^2	(may change in future, class variable)
+	// 			vx_max = 3 m/s	(may change in future but never below vx_init, instance variable)
+	// 			startMove:
+	// 				vx_new = vx_curr + ax*delta_t (for vx_init < vx_curr < vx_max)
+	// 			endMove:
+	// 				vx_new = 0
 	
+	/**
+	 * Make Mazub start moving. Set the initial horizontal velocity and acceleration of Mazub,
+	 * depending on his orientation.
+	 * 
+	 * @param orientation
+	 * 				The direction in which Mazub starts moving.
+	 */
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
 		this.setVx( orientation.getDirection() * this.vx_init );
 		this.setAx( orientation.getDirection() * this.ax_init );
 	}
 	
+	/**
+	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
+	 */
 	public void endMove() {
 		this.setVx(0);
 		this.setAx(0);
 		
-		this.timeTillLastMove = 0;
+		this.setTimeTillLastMove(0);
 	}
 
+	/**
+	 * Checks whether Mazub is moving.
+	 * 
+	 * @return 	A boolean that represents if Mazub is moving or not.
+	 */
 	public boolean isMoving(){
 		return !Util.fuzzyEquals(this.getVx(), 0);
 	}
 	
+	/**
+	 * Checks whether Mazub has moved in the last second.
+	 * 
+	 * @return	A boolean that represents if Mazub has moved in the last second or not.
+	 */
 	public boolean hasMovedInLastSecond(){ // Slechte naam
-		return Util.fuzzyLessThanOrEqualTo(timeTillLastMove, 1.0);
+		return Util.fuzzyLessThanOrEqualTo(this.getTimeTillLastMove(), 1.0);
 	}
 	
+	/********************************************* JUMPING AND FALLING ****************************************/
 	
+	// 			All methods here must be worked out defensively
+	// 			startJump:
+	//				vy_init = 8 m/s 	(will not change in future)
+	//				vy_new = vy_current + ay*delta_t
+	// 			endJump:
+	//  			vy_new = 0 m/s 	(if vy_curr > 0)
+	// 			while (y != 0):
+	//				ay = -10 m/s^2	(will not change in future)
 	
-	/* Jumping and falling */
-	
-	// All methods here must be worked out defensively
-	// startJump:
-	//	vy_init = 8 m/s 	(will not change in future)
-	//	vy_new = vy_current + ay*delta_t
-	// endJump:
-	//  vy_new = 0 m/s 	(if vy_curr > 0)
-	// while (y != 0):
-	//	ay = -10 m/s^2	(will not change in future)
-	
+	/**
+	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
+	 */
 	public void startJump(){
 		this.setVy( VY_INIT );
-		this.setAy( GRAVITY ); 
+		this.setAy( AY ); 
 	}
 	
+	/**
+	 * Make Mazub end jumping. Set the vertical velocity of Mazub to 0 when he's still moving upwards.
+	 */
 	public void endJump() {
 		if( this.getVy() > 0 ){
 			this.setVy(0);
 		}
 	}
 	
+	/**
+	 * Checks whether Mazub is jumping.
+	 * 
+	 * @return	A boolean that represents if Mazub is jumping or not.
+	 */
 	public boolean isJumping(){
 		return !Util.fuzzyEquals(this.getVy(), 0);
 	}
 	
+	/**
+	 * Make Mazub stop falling. Set the vertical velocity and acceleration of Mazub to 0.
+	 */
 	private void stopFall() {
 		this.setVy( 0 );
 		this.setAy( 0 );
 	}
 	
+	/**
+	 * Checks whether Mazub is on the ground.
+	 * 
+	 * @return	A boolean that represents if Mazub is on the ground or not.
+	 */
 	private boolean isOnGround() {
 		return Util.fuzzyEquals(this.getY(), 0);
 	}
 	
-	/* Ducking */
+	/*************************************************** DUCKING **********************************************/
 	
-	// All methods here must be worked out defensively
-	// affects Mazub's dimension (X_p,Y_p)
-	// restricts vx_max to 1 m/s (no acceleration possible)
+	// 				All methods here must be worked out defensively
+	// 				affects Mazub's dimension (X_p,Y_p)
+	// 				restricts vx_max to 1 m/s (no acceleration possible)
 	
+	/**
+	 * Make Mazub start ducking. Set the maximal horizontal velocity for ducking.
+	 */
 	public void startDuck(){
-		this.setVxMax(1.0);
+		this.setVxMax(VX_MAX_DUCKING);
 		this.setDucking(true);
 	}
 	
+	/**
+	 * Make Mazub end ducking. Reset the maximal horizontal velocity.
+	 */
 	public void endDuck(){
-		this.setVxMax(3.0);
+		this.setVxMax(VX_MAX_MOVING);
 		this.setDucking(false);
 	}	
 	
-	public boolean  isDucking(){
+	/**
+	 * Checks whether Mazub is ducking.
+	 * 
+	 * @return	A boolean that represents if Mazub is ducking or not.
+	 */
+	@Basic
+	public boolean isDucking(){
 		return this.ducking;
 	}
 	
+	/**
+	 * Set Mazub's status to ducking.
+	 * 
+	 * @param ducking
+	 * 			A boolean that represents if Mazub's status should be changed to ducking or not.
+	 */
 	public void setDucking(boolean ducking){
 		this.ducking = ducking;
 	}
 	
-	/* Characteristics */
+	/************************************************ CHARACTERISTICS *****************************************/
 	
-	// All methods here must be worked out totally
-	// velocity, acceleration, orientation, timing 
-	// type double (not NaN, may be Double.NEGATIVE_INFINITY or Double.POSITIVE_INFINITY)
-	// rounding down to integer value (at the end!) to determine Mazub's effective position
-	
+	// 				All methods here must be worked out totally
+	// 				velocity, acceleration, orientation, timing 
+	// 				type double (not NaN, may be Double.NEGATIVE_INFINITY or Double.POSITIVE_INFINITY)
+	// 				rounding down to integer value (at the end!) to determine Mazub's effective position
+
 	// Position
+	
+	/**
+	 * Return the x-location of Mazub's bottom left pixel.
+	 * 
+	 * @return	A double that represents the x-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic
 	public double getPx(){
 		return this.px;
 	}
 	
+	/**
+	 * Return the y-location of Mazub's bottom left pixel.
+	 * 
+	 * @return	A double that represents the y-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic
 	public double getPy(){
 		return this.py;
 	}
 
-	private void setPx(double px) throws IllegalPxException{
-		//if(! isValidPx(px)) oeps positie in doubles moest totaal, niet defensief
-		//	throw new IllegalPxException(px);
+	/**
+	 * Set the x-location of Mazub's bottom left pixel.
+	 * 
+	 * @param px
+	 * 			A double that represents the desired x-location of Mazub's bottom left pixel.
+	 */
+	private void setPx(double px) {
 		this.px = Math.min(Math.max(px, 0), WINDOW_WIDTH - 1);
 	}
 	
-	private void setPy(double py) throws IllegalPyException{
-		//if(! isValidPy(py))
-		//	throw new IllegalPyException(py);
+	/**
+	 * Set the y-location of Mazub's bottom left pixel.
+	 * 
+	 * @param py
+	 * 			A double that represents the desired y-location of Mazub's bottom left pixel. 
+	 */
+	private void setPy(double py) {
 		this.py = Math.min(Math.max(py, 0), WINDOW_HEIGHT - 1);
-	}
+	}	
 	
-	
-	
-	// ?? Uiteindelijk niet nodig omdat X en Y gewoon afgeronde px en py zijn?
+// ?? Uiteindelijk niet nodig omdat X en Y gewoon afgeronde px en py zijn?
 //	public static boolean isValidPx(double px) {
 //		return Util.fuzzyGreaterThanOrEqualTo(px, 0) && Util.fuzzyLessThanOrEqualTo(px, WINDOW_WIDTH);
 //	}
@@ -220,25 +337,52 @@ public class Mazub {
 //	public static boolean isValidPy(double py) {
 //		return Util.fuzzyGreaterThanOrEqualTo(py, 0) && Util.fuzzyLessThanOrEqualTo(py, WINDOW_HEIGHT);
 //	}
-	
-	
-
+//	
+//  -> zit nu al verwerkt in die setters? dan is deze totale uitwerking in orde volgens mij
+		
 	private double px;
 	private double py;
-
+	
 	// Velocity
+
+	/**
+	 * Return the horizontal velocity of Mazub.
+	 * 
+	 * @return	A double that represents the horizontal velocity of Mazub.
+	 */
+	@Basic
 	public double getVx(){
 		return this.vx;
 	}
 	
+	/**
+	 * Return the vertical velocity of Mazub.
+	 * 
+	 * @return	A double that represents the vertical velocity of Mazub.
+	 */
+	@Basic
 	public double getVy(){
 		return this.vy;
 	}
 	
+	/**
+	 * Set the horizontal velocity of Mazub.
+	 * 
+	 * @param vx
+	 * 			A double that represents the desired horizontal velocity of Mazub.
+	 * @post
+	 */
 	private void setVx(double vx){
 		this.vx = Math.max(Math.min( vx , this.getVxMax()), -this.getVxMax());
 	}
 	
+	/**
+	 * Set the vertical velocity of Mazub.
+	 * 
+	 * @param vy
+	 * 			A double that represents the desired vertical velocity of Mazub.
+	 * @post
+	 */
 	private void setVy(double vy){
 		this.vy = vy;
 	}
@@ -246,32 +390,70 @@ public class Mazub {
 	private double vx;
 	private double vy;
 	private double vx_init = 1.0;
-	private double vy_init;	
+//	private double vy_init;	 -> is al gedefinieerd hierboven? zie VY_INIT
 	
 	// Maximum velocity
+	
+	/**
+	 * Return the maximal horizontal velocity of Mazub.
+	 * 
+	 * @return	A double that represents the maximal horizontal velocity of Mazub.
+	 */
+	@Basic
 	public double getVxMax(){
 		return this.vx_max;
 	}
 	
-	private void setVxMax(double vx_max){ // Slechte naam
+	/**
+	 * Set the maximal horizontal velocity of Mazub.
+	 * 
+	 * @param vx_max
+	 * 			A double that represents the desired maximal horizontal velocity of Mazub.
+	 */
+	private void setVxMax(double vx_max){ // Slechte naam -> waarom?
 		this.vx_max = vx_max;
 	}
 	
-	private double vx_max = 3.0;
+	private double vx_max = VX_MAX_MOVING;
 	
 	// Acceleration
+	
+	/**
+	 * Return the horizontal acceleration of Mazub.
+	 * 
+	 * @return	A double that represents the horizontal acceleration of Mazub.
+	 */
+	@Basic
 	public double getAx(){
 		return this.ax;
 	}
 	
+	/**
+	 * Return the vertical acceleration of Mazub.
+	 * 
+	 * @return	A double that represents the vertical acceleration of Mazub.
+	 */
+	@Basic@Immutable
 	public double getAy(){
 		return this.ay;
 	}
 	
+	/**
+	 * Set the horizontal acceleration of Mazub.
+	 * 
+	 * @param ax
+	 * 			A double that represents the desired horizontal acceleration of Mazub.
+	 */
 	private void setAx(double ax){
 		this.ax = ax;
 	}
 	
+	/**
+	 * Set the vertical acceleration of Mazub.
+	 * 
+	 * @param ay
+	 * 			A double that represents the desired vertical acceleration of Mazub.
+	 */
 	private void setAy(double ay){
 		this.ay = ay;
 	}
@@ -281,31 +463,51 @@ public class Mazub {
 	private double ax_init = 0.9;
 	
 	// Orientation
-	public Orientation getOrientation(){ // Output of which type? 
+	
+	/**
+	 * Return the orientation of Mazub.
+	 * 
+	 * @return	An orientation that represents the current orientation of Mazub.
+	 */
+	@Basic
+	public Orientation getOrientation(){
 		return this.orientation;
 	}
 	
-	public void setOrientation(Orientation orientation){ // Output of which type? 
+	/**
+	 * Set the orientation of Mazub.
+	 * 
+	 * @param orientation
+	 * 			An orientation that represents the desired orientation of Mazub.
+	 */
+	public void setOrientation(Orientation orientation){
 		this.orientation = orientation;
 	}	
 	
 	private Orientation orientation;
 	
-	/* Character size and animation */
+	/******************************************* CHARACTER SIZE AND ANIMATION *********************************/
 	
-	// All methods here must be worked out nominally
-	// no formal documentation required
-	// class Sprite is provided
-	// multiple sprites for moving to the right/left (same amount), alternate (75ms) and repeat
-	// it must be possible to turn to other algorithms for displaying successive images of a Mazub during some period of time
+	// 				All methods here must be worked out nominally
+	// 				no formal documentation required
+	// 				class Sprite is provided
+	// 				multiple sprites for moving to the right/left (same amount), alternate (75ms) and repeat
+	// 				it must be possible to turn to other algorithms for displaying successive images of a Mazub
+	//					during some period of time
 	
+	/**
+	 * Return the correct sprite of Mazub, depending on his current status.
+	 * 
+	 * @return	A sprite that fits the current status of Mazub.
+	 */
 	public Sprite getCurrentSprite(){
 		
 		// Moet mooier/efficienter/korter
 
 		
 		// m bepalen -> mss beter gewoon een keer doen in constructor en dan opslaan?
-		int m = ( this.sprites.length - 8) / 2; // Als length even is geeft dit altijd een correct getal -> moeten nog check doen
+		int m = ( this.sprites.length - 8) / 2; // Als length even is geeft dit altijd een correct getal 
+												//	-> moeten nog check doen
 		
 		// Voor animatie
 		while(this.timeTillLastSprite > 0.075){ // Util fuzzy?
@@ -376,21 +578,32 @@ public class Mazub {
 	
 	private Sprite[] sprites;	
 
-	/* Advance time */
+	/************************************************ ADVANCE TIME ********************************************/
 	
-	// 	All methods here must be worked out defensively
-	//	updates position and velocity of Mazub based on the current position, velocity, acceleration
-	//	and a given time duration delta_t in seconds (0 < delta_t < 0.2)
-	//	sx = vx_curr*delta_t (no acceleration, formula may change in future but never above the value described by this formula)
-	//	sx = vx_curr*delta_t + 0.5*ax*delta_t^2 (with acceleration, formula may change in future but never above the value described by this formula)
-	//	x_new = x_curr + sx
-	//	sy = vy_curr*delta_t (no acceleration, formula may change in future but never above the value described by this formula)
-	//	sy = vy_curr*delta_t + 0.5*ay*delta_t^2 (with acceleration, formula may change in future but never above the value described by this formula)
-	//	y_new = y_curr + sy
-	//	ensure that the bottom-left pixel of Mazub stays at all times within the boundaries of the game world
+	// 				All methods here must be worked out defensively
+	//				updates position and velocity of Mazub based on the current position, velocity, acceleration
+	//				and a given time duration delta_t in seconds (0 < delta_t < 0.2)
+	//				sx = vx_curr*delta_t (no acceleration, formula may change in future but never above the
+	//					value described by this formula)
+	//				sx = vx_curr*delta_t + 0.5*ax*delta_t^2 (with acceleration, formula may change in future but
+	// 					never above the value described by this formula)
+	//				x_new = x_curr + sx
+	//				sy = vy_curr*delta_t (no acceleration, formula may change in future but never above the
+	//					value described by this formula)
+	//				sy = vy_curr*delta_t + 0.5*ay*delta_t^2 (with acceleration, formula may change in future but
+	//					never above the value described by this formula)
+	//				y_new = y_curr + sy
+	//				ensure that the bottom-left pixel of Mazub stays at all times within the boundaries of the
+	//					game world
 	
+	/**
+	 * Advance time and update Mazub's position and velocity accordingly.
+	 * 
+	 * @param dt
+	 * 			A double that represents the elapsed time.
+	 * @post
+	 */
 	public void advanceTime(double dt){
-		// To do : update position, velocity
 		
 		// Update horizontal velocity
 		double newVx = this.getVx() + this.getAx() * dt;
@@ -414,9 +627,27 @@ public class Mazub {
 		}
 		
 		if(!this.isMoving())
-			this.timeTillLastMove += dt; // Needs setter
+			this.setTimeTillLastMove(this.getTimeTillLastMove() + dt); // Needs setter
 		this.timeTillLastSprite += dt;
 	}
-
+	
+	/**
+	 * Return the elapsed time since the last move was made.
+	 * 
+	 * @return	A double that represents the elapsed time since the last move was made.
+	 */
+	public double getTimeTillLastMove(){
+		return this.timeTillLastMove;
+	}
+	
+	/**
+	 * Set the elapsed time since the last move was made.
+	 * 
+	 * @param time
+	 * 			A double that represents the desired elapsed time since the last move was made.
+	 */
+	public void setTimeTillLastMove(double time){
+		this.timeTillLastMove = time;
+	}
 
 }
