@@ -20,9 +20,10 @@ public class Mazub {
 	// 			write a test suite
 	//			class invariants?
 	
-	private static int WINDOW_WIDTH = 1024; // Mss beter niet in hoofdletters? 
-											// -> OK volgens conventie (coding rule 34 p.72)
-	private static int WINDOW_HEIGHT = 768;
+	private static int GAME_WIDTH = 1024; // Mss beter niet in hoofdletters? 
+											// -> OK volgens conventie (coding rule 34 p.72), beter GAME dan WINDOW
+											// -> want de screen size is ook nog aan te passen in de GUI
+	private static int GAME_HEIGHT = 768;
 	private static double AY = -10.0;
 	private static double VY_INIT = 8.0;
 	private static double VX_MAX_MOVING = 3.0;
@@ -38,21 +39,35 @@ public class Mazub {
 	/************************************************ CONSTRUCTOR *********************************************/
 	
 	// 			accepts an array of n images as parameter (n even, n >= 10)
+	//			TOTAAL, NOMINAAL OF DEFENSIEF???
+	//				 voorlopig als totaal behandeld in postcondities
 
 	/**
 	 * Constructor for the class Mazub.
 	 * 
-	 * @param pixelLeftX
+	 * @param 	pixelLeftX
 	 * 				The x-location of Mazub's bottom left pixel.
-	 * @param pixelBottomY
+	 * @param 	pixelBottomY
 	 * 				The y-location of Mazub's bottom left pixel.
-	 * @param sprites
+	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
-	 * @post
+	 * @post	If the given pixelLeftX is within the boundaries of the game world, the initial Px is equal to
+	 * 			the given value of pixelLeftX.
+	 * 			| if (0 <= pixelLeftX < GAME_WIDTH)
+	 * 			|	new.getPx() == pixelLeftX
+	 * 			| else
+	 * 			| 	new.getPx() == 0
+	 * @post	If the given pixelBottomY is within the boundaries of the game world, the initial Py is equal to
+	 * 			the given value of pixelBottomY.
+	 * 			| if (0 <= pixelLeftX < GAME_HEIGHT)
+	 * 			|	new.getPy() == pixelBottomY
+	 * 			| else
+	 * 			| 	new.getPy() == 0
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
 		this.setPx(pixelLeftX);
 		this.setPy(pixelBottomY);
+		// als het een ongeldige positie is, gewoon op (0,0) initialiseren?
 		
 		this.setOrientation(Orientation.LEFT); // beter RIGHT ?
 		
@@ -142,6 +157,8 @@ public class Mazub {
 	 * 
 	 * @param orientation
 	 * 				The direction in which Mazub starts moving.
+	 * @pre
+	 * @post
 	 */
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
@@ -151,6 +168,12 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
+	 * 
+	 * @post	The horizontal velocity and acceleration of Mazub is equal to zero. Also the time since the
+	 * 			last move was made is reset to 0.
+	 * 			| new.getVx() == 0
+	 * 			| new.getAx() == 0
+	 * 			| new.getTimeTillLastMove() == 0
 	 */
 	public void endMove() {
 		this.setVx(0);
@@ -190,6 +213,11 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
+	 * 
+	 * @post	The vertical velocity and acceleration of Mazub is equal to respectively VY_INIT and AY.
+	 * 			| new.getVy() == VY_INIT
+	 * 			| new.getAy() == AY
+	 * @throws
 	 */
 	public void startJump(){
 		this.setVy( VY_INIT );
@@ -198,6 +226,11 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub end jumping. Set the vertical velocity of Mazub to 0 when he's still moving upwards.
+	 * 
+	 * @post	If the vertical velocity of Mazub was greater than 0, it is now set to 0.
+	 * 			| if (this.getVy() > 0)
+	 * 			|	new.getVy() == 0
+	 * @throws 
 	 */
 	public void endJump() {
 		if( this.getVy() > 0 ){
@@ -216,6 +249,11 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub stop falling. Set the vertical velocity and acceleration of Mazub to 0.
+	 * 
+	 * @post	The vertical velocity and acceleration of Mazub is equal to 0.
+	 * 			| new.getVy() == 0
+	 * 			| new.getAy() == 0
+	 * @throws
 	 */
 	private void stopFall() {
 		this.setVy( 0 );
@@ -239,6 +277,12 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub start ducking. Set the maximal horizontal velocity for ducking.
+	 * 
+	 * @post	The maximal horizontal velocity of Mazub is equal to VX_MAX_DUCKING and the ducking status of
+	 * 			Mazub is true.
+	 * 			| new.getVxMax() == VX_MAX_DUCKING
+	 * 			| new.isDucking() == true
+	 * @throws
 	 */
 	public void startDuck(){
 		this.setVxMax(VX_MAX_DUCKING);
@@ -247,6 +291,12 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub end ducking. Reset the maximal horizontal velocity.
+	 * 
+	 * @post	The maximal horizontal velocity of Mazub is equal to VX_MAX_MOVING and the ducking status of
+	 * 			Mazub is false.
+	 * 			| new.getVxMax() == VX_MAX_MOVING
+	 * 			| new.isDucking() == false
+	 * @throws
 	 */
 	public void endDuck(){
 		this.setVxMax(VX_MAX_MOVING);
@@ -268,6 +318,8 @@ public class Mazub {
 	 * 
 	 * @param ducking
 	 * 			A boolean that represents if Mazub's status should be changed to ducking or not.
+	 * @post	The ducking status of Mazub is equal to the given boolean value of ducking.
+	 * 			| new.isDucking() == ducking
 	 */
 	public void setDucking(boolean ducking){
 		this.ducking = ducking;
@@ -311,7 +363,7 @@ public class Mazub {
 	 * 			A double that represents the desired x-location of Mazub's bottom left pixel.
 	 */
 	private void setPx(double px) {
-		this.px = Math.min(Math.max(px, 0), WINDOW_WIDTH - 1);
+		this.px = Math.min(Math.max(px, 0), GAME_WIDTH - 1);
 	}
 	
 	/**
@@ -321,7 +373,7 @@ public class Mazub {
 	 * 			A double that represents the desired y-location of Mazub's bottom left pixel. 
 	 */
 	private void setPy(double py) {
-		this.py = Math.min(Math.max(py, 0), WINDOW_HEIGHT - 1);
+		this.py = Math.min(Math.max(py, 0), GAME_HEIGHT - 1);
 	}	
 	
 // ?? Uiteindelijk niet nodig omdat X en Y gewoon afgeronde px en py zijn?
