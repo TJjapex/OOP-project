@@ -1,8 +1,7 @@
 package jumpingalien.model;
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
+
+import be.kuleuven.cs.som.annotate.*;
+import jumpingalien.util.*;
 
 /**
  * A class of Mazubs, characters for a platform game with several properties. This class has been worked out
@@ -19,6 +18,7 @@ public class Mazub {
 	// 			the class Util provides methods for comparing doubles up to a fixed epsilon
 	// 			write a test suite
 	//			class invariants?
+	//			annotations!
 	
 	private static int GAME_WIDTH = 1024; // Mss beter niet in hoofdletters? 
 											// -> OK volgens conventie (coding rule 34 p.72), beter GAME dan WINDOW
@@ -54,13 +54,13 @@ public class Mazub {
 	 * @post	If the given pixelLeftX is within the boundaries of the game world, the initial positionX is
 	 * 			equal to the given value of pixelLeftX.
 	 * 			| if (0 <= pixelLeftX < GAME_WIDTH)
-	 * 			|	new.getPositionX() == pixelLeftX
+	 * 			|	then new.getPositionX() == pixelLeftX
 	 * 			| else
 	 * 			| 	new.getPositionX() == 0
 	 * @post	If the given pixelBottomY is within the boundaries of the game world, the initial positionY is
 	 * 			equal to the given value of pixelBottomY.
 	 * 			| if (0 <= pixelLeftX < GAME_HEIGHT)
-	 * 			|	new.getPositionY() == pixelBottomY
+	 * 			|	then new.getPositionY() == pixelBottomY
 	 * 			| else
 	 * 			| 	new.getPositionY() == 0
 	 */
@@ -230,7 +230,7 @@ public class Mazub {
 	 * 
 	 * @post	If the vertical velocity of Mazub was greater than 0, it is now set to 0.
 	 * 			| if (this.getVelocityY() > 0)
-	 * 			|	new.getVelocityY() == 0
+	 * 			|	then new.getVelocityY() == 0
 	 * @throws 
 	 */
 	public void endJump() {
@@ -362,7 +362,15 @@ public class Mazub {
 	 * 
 	 * @param px
 	 * 			A double that represents the desired x-location of Mazub's bottom left pixel.
-	 * @post	If the given px is within the boundaries of the game world, positionX is equal to px.
+	 * @post	If the given px is within the boundaries of the game world, positionX is equal to px. 
+	 * 			If the given px is negative, positionX is equal to 0. Otherwise, if the given px is
+	 * 			greater than GAME_WIDTH - 1, positionX is equal to GAME_WIDTH - 1.
+	 * 			| if ( (px >= 0) && (px <= GAME_WIDTH-1) )
+	 * 			|	then new.getPositionX() == px
+	 * 			| else if (px < 0)
+	 * 			|	then new.getPositionX() == 0
+	 * 			| else if (px > GAME_WIDTH-1)
+	 * 			| 	then new.getPositionX() == GAME_WIDTH-1
 	 */
 	private void setPositionX(double px) {
 		this.positionX = Math.min(Math.max(px, 0), GAME_WIDTH - 1);
@@ -373,6 +381,15 @@ public class Mazub {
 	 * 
 	 * @param py
 	 * 			A double that represents the desired y-location of Mazub's bottom left pixel. 
+	 * @post	If the given py is within the boundaries of the game world, positionY is equal to py. 
+	 * 			If the given py is negative, positionY is equal to 0. Otherwise, if the given py is
+	 * 			greater than GAME_HEIGHT - 1, positionY is equal to GAME_HEIGHT - 1.
+	 * 			| if ( (py >= 0) && (px <= GAME_HEIGHT-1) )
+	 * 			|	then new.getPositionY() == py
+	 * 			| else if (py < 0)
+	 * 			|	then new.getPositionY() == 0
+	 * 			| else if (py > GAME_HEIGHT-1)
+	 * 			| 	then new.getPositionY() == GAME_HEIGHT-1
 	 */
 	private void setPositionY(double py) {
 		this.positionY = Math.min(Math.max(py, 0), GAME_HEIGHT - 1);
@@ -419,7 +436,13 @@ public class Mazub {
 	 * 
 	 * @param vx
 	 * 			A double that represents the desired horizontal velocity of Mazub.
-	 * @post
+	 * @post	If the absolute value of the given vx is smaller than the maximal horizontal velocity,
+	 * 			velocityX is equal to vx. Else, velocityX is equal to the maximal horizontal velocity
+	 * 			provided with the sign of vx.
+	 * 			| if (Math.abs(vx) < this.getVelocityXMax())
+	 * 			|	then new.getVelocityX() == vx
+	 * 			| else
+	 * 			|	new.getVelocityX() == Math.signum(vx)*this.getVelocityXMax()
 	 */
 	private void setVelocityX(double vx){
 		this.velocityX = Math.max(Math.min( vx , this.getVelocityXMax()), -this.getVelocityXMax());
@@ -430,7 +453,8 @@ public class Mazub {
 	 * 
 	 * @param vy
 	 * 			A double that represents the desired vertical velocity of Mazub.
-	 * @post
+	 * @post	The vertical velocity is equal to vy.
+	 * 			| new.getVelocityY() == vy
 	 */
 	private void setVelocityY(double vy){
 		this.velocityY = vy;
@@ -441,7 +465,7 @@ public class Mazub {
 	private double velocityXInit = 1.0;
 //	private double vy_init;	 -> is al gedefinieerd hierboven? zie VY_INIT
 	
-	// Maximum velocity
+	// Maximal velocity
 	
 	/**
 	 * Return the maximal horizontal velocity of Mazub.
@@ -459,7 +483,7 @@ public class Mazub {
 	 * @param vx_max
 	 * 			A double that represents the desired maximal horizontal velocity of Mazub.
 	 */
-	private void setVelocityXMax(double vx_max){ // Slechte naam -> waarom?
+	private void setVelocityXMax(double vx_max){ // ik zou precies alleen maar waarden boven velocityXInit aanvaarden?
 		this.velocityXMax = vx_max;
 	}
 	
@@ -492,6 +516,8 @@ public class Mazub {
 	 * 
 	 * @param ax
 	 * 			A double that represents the desired horizontal acceleration of Mazub.
+	 * @post	The horizontal acceleration is equal to ax.
+	 * 			| new.getAccelerationX() == ax
 	 */
 	private void setAccelerationX(double ax){
 		this.accelerationX = ax;
@@ -502,6 +528,8 @@ public class Mazub {
 	 * 
 	 * @param ay
 	 * 			A double that represents the desired vertical acceleration of Mazub.
+	 * @post	The vertical acceleration is equal to ay.
+	 * 			| new.getAccelerationY() == ay
 	 */
 	private void setAccelerationY(double ay){
 		this.accelerationY = ay;
@@ -528,6 +556,8 @@ public class Mazub {
 	 * 
 	 * @param orientation
 	 * 			An orientation that represents the desired orientation of Mazub.
+	 * @post	The orientation of Mazub is equal to the given orientation.
+	 * 			| new.getOrientation() == orientation
 	 */
 	public void setOrientation(Orientation orientation){
 		this.orientation = orientation;
