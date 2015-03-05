@@ -2,6 +2,9 @@ package jumpingalien.model;
 
 public class Time {
 	
+	/**
+	 * 
+	 */
 	public Time(){
 		this.setSinceLastMove(0);
 		this.setSinceLastSprite(0);
@@ -9,14 +12,31 @@ public class Time {
 	
 	// Last move
 	
+	/**
+	 * Return the elapsed time since the last move was made.
+	 * 
+	 * @return	A double that represents the elapsed time since the last move was made.
+	 */
 	public double getSinceLastMove() {
 		return this.sinceLastMove;
 	}
 
+	/**
+	 * Set the elapsed time since the last move was made.
+	 * 
+	 * @param time
+	 * 			A double that represents the desired elapsed time since the last move was made.
+	 */
 	public void setSinceLastMove(double sinceLastMove) {
 		this.sinceLastMove = sinceLastMove;
 	}
 	
+	/**
+	 * Increases the elapsed time since the last move was activated.
+	 * 
+	 * @param dt
+	 * 		A double that represents the elapsed time that should be added.
+	 */
 	public void sinceLastMoveIncrease(double dt){
 		setSinceLastMove( getSinceLastMove() + dt);
 	}
@@ -25,14 +45,31 @@ public class Time {
 	
 	// Last sprite
 	
+	/**
+	 * Return the elapsed time since the last sprite was activated.
+	 * 
+	 * @return	A double that represents the elapsed time since the last sprite was activated.
+	 */
 	public double getSinceLastSprite() {
-		return sinceLastSprite;
+		return this.sinceLastSprite;
 	}
 	
+	/**
+	 * Set the elapsed time since the last sprite was activated.
+	 * 
+	 * @param time
+	 * 			A double that represents the desired elapsed time since the last sprite was activated.
+	 */
 	public void setSinceLastSprite(double sinceLastSprite) {
 		this.sinceLastSprite = sinceLastSprite;
 	}
 	
+	/**
+	 * Increases the elapsed time since the last sprite was activated.
+	 * 
+	 * @param dt
+	 * 		A double that represents the elapsed time that should be added.
+	 */
 	public void setSinceLastSpriteIncrease(double dt){
 		setSinceLastSprite(getSinceLastSprite() + dt);
 	}

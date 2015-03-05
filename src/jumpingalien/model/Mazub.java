@@ -31,12 +31,9 @@ public class Mazub {
 	private static double VELOCITY_X_MAX_MOVING = 3.0;
 	private static double VELOCITY_X_MAX_DUCKING = 1.0;
 	
-	private Time time;
+	private Time time = new Time(); // initialiseren in constructor?
 
 	private int currentSpriteIteration = 0;
-//	private double timeSinceLastSprite = 0;
-//	private double timeSinceLastMove = 0; // Time until last movement
-										 // -> ook allemaal initialiseren in constructor dan met setter?
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -196,13 +193,11 @@ public class Mazub {
 	 * 			last move was made is reset to 0.
 	 * 			| new.getVelocityX() == 0
 	 * 			| new.getAccelerationX() == 0
-	 * 			| new.getTimeSinceLastMove() == 0
+	 * 			| (new time).getSinceLastMove() == 0
 	 */
 	public void endMove() {
 		this.setVelocityX(0);
 		this.setAccelerationX(0);
-		
-//		this.setTimeSinceLastMove(0);
 		time.setSinceLastMove(0);
 	}
 
@@ -221,7 +216,6 @@ public class Mazub {
 	 * @return	A boolean that represents if Mazub has moved in the last second or not.
 	 */
 	public boolean hasMovedInLastSecond(){
-		// return Util.fuzzyLessThanOrEqualTo(this.getTimeSinceLastMove(), 1.0);
 		return Util.fuzzyLessThanOrEqualTo(time.getSinceLastMove(), 1.0);
 	}
 	
@@ -613,16 +607,10 @@ public class Mazub {
 		
 		// Voor animatie
 		
-		//bij de while geeft hij een nullPointerException?
-		// blijkbaar is time.getSinceLastSprite() Null maar hoe kan dit? Wordt geinitialiseerd op 0 in
-		// de constructor
-		
-		//while(this.getTimeSinceLastSprite() > 0.075){ // Util fuzzy?
 		while(time.getSinceLastSprite() > 0.075){
 			System.out.println("Check");
 			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() + 1);
 			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() % m);
-			//	this.setTimeSinceLastSprite(this.getTimeSinceLastSprite() - 0.075);
 			time.setSinceLastSprite(time.getSinceLastSprite() - 0.075);
 		}
 		
@@ -704,25 +692,6 @@ public class Mazub {
 	
 	private Sprite[] sprites;	
 	
-	/**
-	 * Return the elapsed time since the last sprite was activated.
-	 * 
-	 * @return	A double that represents the elapsed time since the last sprite was activated.
-	 */
-//	public double getTimeSinceLastSprite(){
-//		return this.timeSinceLastSprite;
-//	}
-	
-	/**
-	 * Set the elapsed time since the last sprite was activated.
-	 * 
-	 * @param time
-	 * 			A double that represents the desired elapsed time since the last sprite was activated.
-	 */
-//	public void setTimeSinceLastSprite(double time){
-//		this.timeSinceLastSprite = time;
-//	}
-
 	/************************************************ ADVANCE TIME ********************************************/
 	
 	// 				All methods here must be worked out defensively
@@ -783,9 +752,7 @@ public class Mazub {
 		}
 		
 		if(!this.isMoving())
-			//this.setTimeSinceLastMove(this.getTimeSinceLastMove() + dt);
 			time.setSinceLastMove(time.getSinceLastMove() + dt);
-		//this.setTimeSinceLastSprite(this.getTimeSinceLastSprite() + dt);
 		time.setSinceLastSprite(time.getSinceLastSprite() + dt);
 	}
 	
