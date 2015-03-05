@@ -19,17 +19,16 @@ public class Mazub {
 	// 			write a test suite
 	//			class invariants?
 	//			annotations!
+	//			isJumping: volgens positie (wat met plateaus?) of snelheid?
 	
-	private static int GAME_WIDTH = 1024; // Mss beter niet in hoofdletters? 
-											// -> OK volgens conventie (coding rule 34 p.72), beter GAME dan WINDOW
-											// -> want de screen size is ook nog aan te passen in de GUI
+	private static int GAME_WIDTH = 1024;
 	private static int GAME_HEIGHT = 768;
 	private static double ACCELERATION_Y = -10.0;
 	private static double VELOCITY_Y_INIT = 8.0;
 	private static double VELOCITY_X_MAX_MOVING = 3.0;
 	private static double VELOCITY_X_MAX_DUCKING = 1.0;
 
-	private boolean ducking = false; // -> initialiseren in constructor met setter?
+	private boolean ducking;
 
 	private int currentSpriteIteration = 0;
 	private double timeSinceLastSprite = 0;
@@ -41,6 +40,9 @@ public class Mazub {
 	// 			accepts an array of n images as parameter (n even, n >= 10)
 	//			TOTAAL, NOMINAAL OF DEFENSIEF???
 	//				 voorlopig als totaal behandeld in postcondities
+	
+	//			setVelocityXInit ? of niet nodig?
+	//			setAccelerationXInit
 
 	/**
 	 * Constructor for the class Mazub.
@@ -67,9 +69,13 @@ public class Mazub {
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
 		this.setPositionX(pixelLeftX);
 		this.setPositionY(pixelBottomY);
+		this.setDucking(false);
+		velocityXInit = 1.0;
+		this.setVelocityXMax(VELOCITY_X_MAX_MOVING);
+		accelerationXInit = 0.9;
 		// als het een ongeldige positie is, gewoon op (0,0) initialiseren?
 		
-		this.setOrientation(Orientation.LEFT); // beter RIGHT ?
+		this.setOrientation(Orientation.RIGHT);
 		
 		// nog check doen of een even aantal is? Nominaal, totaal of defensief?
 		//  -> misschien kunnen we dit gewoon nominaal doen door dit in de commentaar als preconditie te stellen
@@ -95,7 +101,8 @@ public class Mazub {
 	 * @return 	An integer that represents the x-coordinate of Mazub's
 	 * 			bottom left pixel in the world.
 	 */
-	public int getX(){
+	public int getX(){ // andere naam: Rounded of Grid
+						// floor ipv round: ...shall be rounded down...
 		return (int) Math.round(this.getPositionX());
 	}
 	
@@ -128,6 +135,8 @@ public class Mazub {
 	public int getHeight(){
 		return this.height;
 	}
+	
+	// defensief: niet kleiner dan 0, niet groter dan wereld
 		
 	private void setWidth(){
 		this.width = width;
@@ -234,7 +243,7 @@ public class Mazub {
 	 * @throws 
 	 */
 	public void endJump() {
-		if( this.getVelocityY() > 0 ){
+		if( this.getVelocityY() > 0 ){ // fuzzygreaterthan
 			this.setVelocityY(0);
 		}
 	}
@@ -462,8 +471,7 @@ public class Mazub {
 	
 	private double velocityX;
 	private double velocityY;
-	private double velocityXInit = 1.0;
-//	private double vy_init;	 -> is al gedefinieerd hierboven? zie VY_INIT
+	private double velocityXInit;
 	
 	// Maximal velocity
 	
@@ -487,7 +495,7 @@ public class Mazub {
 		this.velocityXMax = vx_max;
 	}
 	
-	private double velocityXMax = VELOCITY_X_MAX_MOVING;
+	private double velocityXMax;
 	
 	// Acceleration
 	
@@ -537,7 +545,7 @@ public class Mazub {
 		
 	private double accelerationX;
 	private double accelerationY;
-	private double accelerationXInit = 0.9;
+	private double accelerationXInit;
 	
 	// Orientation
 	
@@ -573,6 +581,8 @@ public class Mazub {
 	// 				multiple sprites for moving to the right/left (same amount), alternate (75ms) and repeat
 	// 				it must be possible to turn to other algorithms for displaying successive images of a Mazub
 	//					during some period of time
+	//				
+	//				aparte klasse
 	
 	/**
 	 * Return the correct sprite of Mazub, depending on his current status.
@@ -710,6 +720,7 @@ public class Mazub {
 	//				y_new = y_curr + sy
 	//				ensure that the bottom-left pixel of Mazub stays at all times within the boundaries of the
 	//					game world
+	//				error: delta_t > 0.2 or delta_t < 0
 	
 	/**
 	 * Advance time and update Mazub's position and velocity accordingly.
@@ -720,6 +731,14 @@ public class Mazub {
 	 */
 	public void advanceTime(double dt){
 		
+		// Update  horizontal position
+		double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
+		this.setPositionX( this.getPositionX() + 100 * sx );
+				
+		// Update vertical position
+		double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
+		this.setPositionY( this.getPositionY() + 100 * sy );
+				
 		// Update horizontal velocity
 		double newVx = this.getVelocityX() + this.getAccelerationX() * dt;
 		this.setVelocityX( newVx );
@@ -727,14 +746,6 @@ public class Mazub {
 		// Update vertical velocity
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
 		this.setVelocityY( newVy );
-		
-		// Update  horizontal position
-		double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
-		this.setPositionX( this.getPositionX() + 100 * sx );
-		
-		// Update vertical position
-		double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
-		this.setPositionY( this.getPositionY() + 100 * sy );
 		
 		// If Mazub hits the ground, stop falling
 		if( isOnGround() ){
