@@ -1,39 +1,42 @@
 package jumpingalien.model;
 
-
-// Wordt nog niet gebruikt in Mazub
 public class Time {
+	
 	public Time(){
-		
+		this.setSinceLastMove(0);
+		this.setSinceLastSprite(0);
 	}
 	
 	// Last move
-	public double getLastMove() {
-		return lastMove;
+	
+	public double getSinceLastMove() {
+		return this.sinceLastMove;
 	}
 
-	public void setLastMove(double lastMove) {
-		this.lastMove = lastMove;
+	public void setSinceLastMove(double sinceLastMove) {
+		this.sinceLastMove = sinceLastMove;
 	}
 	
-	public void lastMoveIncrease(double dt){
-		setLastMove( getLastMove() + dt);
+	public void sinceLastMoveIncrease(double dt){
+		setSinceLastMove( getSinceLastMove() + dt);
 	}
+	
+	private double sinceLastMove;
 	
 	// Last sprite
-	public double getLastSprite() {
-		return lastSprite;
+	
+	public double getSinceLastSprite() {
+		return sinceLastSprite;
 	}
 	
-	public void setLastSprite(double lastSprite) {
-		this.lastSprite = lastSprite;
+	public void setSinceLastSprite(double sinceLastSprite) {
+		this.sinceLastSprite = sinceLastSprite;
 	}
 	
-	public void lastSpriteIncrease(double dt){
-		setLastSprite(getLastSprite() + dt);
+	public void setSinceLastSpriteIncrease(double dt){
+		setSinceLastSprite(getSinceLastSprite() + dt);
 	}
 
-	private double lastSprite = 0;
-	private double lastMove = 0;
-	
+	private double sinceLastSprite;
+		
 }

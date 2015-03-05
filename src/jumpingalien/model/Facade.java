@@ -30,7 +30,7 @@ public class Facade implements IFacade {
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
 	public int[] getLocation(Mazub alien){
-		return new int[] {alien.getX(), alien.getY()};
+		return new int[] {alien.getRoundedPositionX(), alien.getRoundedPositionY()};
 	}
 
 	/**
