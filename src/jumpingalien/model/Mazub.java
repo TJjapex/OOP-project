@@ -4,6 +4,7 @@ import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import jumpingalien.model.Time;
+import jumpingalien.model.Animation;
 
 /**
  * A class of Mazubs, characters for a platform game with several properties. This class has been worked out
@@ -30,10 +31,9 @@ public class Mazub {
 	private static double VELOCITY_Y_INIT = 8.0;
 	private static double VELOCITY_X_MAX_MOVING = 3.0;
 	private static double VELOCITY_X_MAX_DUCKING = 1.0;
-	
-	private Time time = new Time(); // initialiseren in constructor?
-
 	private int currentSpriteIteration = 0;
+	private Time time;
+	private Animation animation;
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -80,7 +80,8 @@ public class Mazub {
 		this.setVelocityXMax(VELOCITY_X_MAX_MOVING);
 		accelerationXInit = 0.9;		
 		this.setOrientation(Orientation.RIGHT);
-		this.sprites = sprites;
+		this.animation = new Animation(sprites);
+		this.time = new Time();
 	}
 	
 	
@@ -121,7 +122,7 @@ public class Mazub {
 	 */
 	@Basic
 	public int getWidth(){
-		return this.width;
+		return this.getCurrentSprite().getWidth();
 	}
 	
 	/**
@@ -131,34 +132,8 @@ public class Mazub {
 	 */
 	@Basic
 	public int getHeight(){
-		return this.height;
+		return this.getCurrentSprite().getHeight();
 	}
-	
-		
-	/**
-	 * Set the width of Mazub.
-	 * 
-	 * @post	The width of Mazub is equal to the given width.
-	 * 			| new.getWidth() == width
-	 * @throws	... (width < 0) || (width > GAME_WIDTH)
-	 */
-	private void setWidth(int width){
-		this.width = width;
-	}
-	
-	/**
-	 * Set the height of Mazub.
-	 * 
-	 * @post	The height of Mazub is equal to the given height.
-	 * 			| new.getHeight() == height
-	 * @throws	... (height < 0) || (height > GAME_HEIGHT)
-	 */
-	private void setHeight(int height){
-		this.height = height;
-	}
-	
-	private int width;
-	private int height;
 	
 	/************************************************ RUNNING *************************************************/
 	
@@ -597,99 +572,15 @@ public class Mazub {
 	 * @return	A sprite that fits the current status of Mazub.
 	 */
 	public Sprite getCurrentSprite(){
-		
-		// Moet mooier/efficienter/korter
-		
-		// m bepalen -> mss beter gewoon een keer doen in constructor en dan opslaan?
-		int m = ( this.sprites.length - 8) / 2; // Als length even is geeft dit altijd een correct getal 
-												//	-> moeten nog check doen
-		
-		
-		// Voor animatie
-		
-		while(time.getSinceLastSprite() > 0.075){
-			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() + 1);
-			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() % m);
-			time.setSinceLastSprite(time.getSinceLastSprite() - 0.075);
+		// Voor animatie	
+		while(Util.fuzzyGreaterThanOrEqualTo(time.getSinceLastSprite(), 0.075)){
+				animation.updateAnimationIndex();
+				time.increaseSinceLastSprite(-0.075);
 		}
 		
-		int index = 0;
-		
-		if(!this.isMoving()){
-			
-			if(!this.hasMovedInLastSecond()){
-				if(!this.isDucking()){
-					index = 0;
-				}else{
-					index = 1;
-				}
-			}else{
-				if(!this.isDucking()){
-					if(this.getOrientation() == Orientation.RIGHT){
-						index = 2;
-					}else{ // LEFT
-						index = 3;
-					}
-				}else{
-					if(this.getOrientation() == Orientation.RIGHT){
-						index = 6;
-					}else{ // LEFT
-						index = 7;
-					}
-				}
-			}
-			
-		}else{ // MOVING
-			if(this.isJumping()){
-				if(!this.isDucking()){
-					if(this.getOrientation() == Orientation.RIGHT){
-						index = 4;
-					}else{ // LEFT
-						index = 5;
-					}
-				}
-			}
-			
-			if(this.isDucking()){
-				if(this.getOrientation() == Orientation.RIGHT){
-					index = 6;
-				}else{ // LEFT
-					index = 7;
-				}
-			}
-			if(!this.isDucking() && !this.isJumping()){
-				if(this.getOrientation() == Orientation.RIGHT){
-					index = 8 + this.getCurrentSpriteIteration();
-				}else{ // LEFT
-					index = 8 + m + this.getCurrentSpriteIteration();
-				}
-			}
-		}
-		
-		return this.sprites[index];
+		return animation.getCurrentSprite(this);
 		
 	}
-	
-	/**
-	 * Return the number referring to the current sprite in an iterative process of sprites.
-	 * 
-	 * @return	An integer that represents the current sprite in an iterative process of sprites.
-	 */
-	public int getCurrentSpriteIteration(){
-		return this.currentSpriteIteration;
-	}
-	
-	/**
-	 * Set the number referring to the current sprite in an iterative process of sprites.
-	 * 
-	 * @param currentSprite
-	 * 			An integer that represents the desired sprite in an iterative process of sprites.
-	 */
-	public void setCurrentSpriteIteration(int currentSprite){
-		this.currentSpriteIteration = currentSprite;
-	}
-	
-	private Sprite[] sprites;	
 	
 	/************************************************ ADVANCE TIME ********************************************/
 	
@@ -751,8 +642,9 @@ public class Mazub {
 		}
 		
 		if(!this.isMoving())
-			time.setSinceLastMove(time.getSinceLastMove() + dt);
-		time.setSinceLastSprite(time.getSinceLastSprite() + dt);
+			time.increaseSinceLastMove(dt);
+		
+		time.increaseSinceLastSprite(dt);
 	}
 
 }

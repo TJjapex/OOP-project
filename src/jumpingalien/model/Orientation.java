@@ -10,11 +10,6 @@ public enum Orientation {
 		public int getDirection(){
 			return 1;
 		}
-	},
-	NONE {
-		public int getDirection(){
-			return 0;
-		}
 	};
 	
 	public abstract int getDirection(); // Slechte naam

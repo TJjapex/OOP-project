@@ -37,7 +37,7 @@ public class Time {
 	 * @param dt
 	 * 		A double that represents the elapsed time that should be added.
 	 */
-	public void sinceLastMoveIncrease(double dt){
+	public void increaseSinceLastMove(double dt){
 		setSinceLastMove( getSinceLastMove() + dt);
 	}
 	
@@ -70,7 +70,7 @@ public class Time {
 	 * @param dt
 	 * 		A double that represents the elapsed time that should be added.
 	 */
-	public void setSinceLastSpriteIncrease(double dt){
+	public void increaseSinceLastSprite(double dt){
 		setSinceLastSprite(getSinceLastSprite() + dt);
 	}
 
