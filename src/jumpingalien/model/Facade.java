@@ -44,7 +44,7 @@ public class Facade implements IFacade {
 	 *         velocity, in units of m/s.
 	 */
 	public double[] getVelocity(Mazub alien){
-		return new double[] {alien.getVx(), alien.getVy()};	
+		return new double[] {alien.getVelocityX(), alien.getVelocityY()};	
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class Facade implements IFacade {
 	 *         acceleration, in units of m/s^2.
 	 */
 	public double[] getAcceleration(Mazub alien){
-		return new double[] {alien.getAx(), alien.getAy()};
+		return new double[] {alien.getAccelerationX(), alien.getAccelerationY()};
 	}
 
 	/**
