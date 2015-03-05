@@ -608,7 +608,6 @@ public class Mazub {
 		// Voor animatie
 		
 		while(time.getSinceLastSprite() > 0.075){
-			System.out.println("Check");
 			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() + 1);
 			this.setCurrentSpriteIteration(this.getCurrentSpriteIteration() % m);
 			time.setSinceLastSprite(time.getSinceLastSprite() - 0.075);
@@ -755,24 +754,5 @@ public class Mazub {
 			time.setSinceLastMove(time.getSinceLastMove() + dt);
 		time.setSinceLastSprite(time.getSinceLastSprite() + dt);
 	}
-	
-	/**
-	 * Return the elapsed time since the last move was made.
-	 * 
-	 * @return	A double that represents the elapsed time since the last move was made.
-	 */
-//	public double getTimeSinceLastMove(){
-//		return this.timeSinceLastMove;
-//	}
-	
-	/**
-	 * Set the elapsed time since the last move was made.
-	 * 
-	 * @param time
-	 * 			A double that represents the desired elapsed time since the last move was made.
-	 */
-//	public void setTimeSinceLastMove(double time){
-//		this.timeSinceLastMove = time;
-//	}
 
 }
