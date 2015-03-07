@@ -1,5 +1,6 @@
 package jumpingalien.model;
 
+import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 
 /**
@@ -9,9 +10,6 @@ import jumpingalien.util.Sprite;
  * @version 1.0
  */
 public class Animation {
-	
-	private Sprite[] sprites;
-	private final int nbFrames;
 	
 	/**
 	 * Constructor for the class Animation.
@@ -30,8 +28,8 @@ public class Animation {
 	 */
 	public Animation(Sprite[] sprites){
 		this.sprites = sprites;
-		this.setAnimationIndex(0);
 		this.nbFrames = ( this.sprites.length - 8) / 2;
+		this.setAnimationIndex(0);
 	}
 	
 	/**
@@ -100,10 +98,38 @@ public class Animation {
 	}	
 	
 	/**
+	 * Return the sprites of this animation class
+	 * 
+	 * @return	The sprites of this animation class
+	 */
+	@Basic @Immutable
+	public Sprite[] getSprites(){
+		return this.sprites;
+	}
+	
+	private final Sprite[] sprites;
+	
+	/**
+	 * Return the number of frames for an animation. This can also be determined by using the formula    ( this.sprites.length - 8) / 2 
+	 * but the result is explicitly stored to avoid unnecessary calculations.
+	 * 
+	 * @return	The number of frames for one kind of animation (e.g. walking in a given direction)
+	 * 			| ( this.sprites.length - 8) / 2;
+	 */
+	@Basic @Immutable
+	public int getNbFrames(){
+		return this.nbFrames;
+	}	
+	
+	private final int nbFrames;	
+	
+	
+	/**
 	 * Return the current iteration number of the animation.
 	 * 
 	 * @return	The current iteration number of the animation.
 	 */
+	@Basic
 	public int getAnimationIndex(){
 		return this.animationIndex;
 	}
@@ -119,6 +145,7 @@ public class Animation {
 	 * @post	The animation index is equal to the given animationIndex.
 	 * 			| new.getAnimationIndex() == animationIndex
 	 */
+	@Basic
 	private void setAnimationIndex(int animationIndex){
 		this.animationIndex = animationIndex;
 	}

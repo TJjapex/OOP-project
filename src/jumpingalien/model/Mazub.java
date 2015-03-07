@@ -98,7 +98,7 @@ public class Mazub {
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
 	// 			All methods here must be worked out defensively (using integer numbers) 
-	//				error if coordinates are negative?
+	//				error if coordinates are negative? Kan niet gebeuren? Of moet ge daar geen rekening mee houden en alle mogelijke beschouwen?
 	
 	// 			Game world (X,Y) : 1024x768 pixels (origin bottom-left)
 	// 			each pixel = 0.01m
@@ -180,8 +180,8 @@ public class Mazub {
 	 */
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
-		this.setVelocityX( orientation.getDirection() * this.velocityXInit );
-		this.setAccelerationX( orientation.getDirection() * this.accelerationXInit );
+		this.setVelocityX( orientation.getSign() * this.velocityXInit );
+		this.setAccelerationX( orientation.getSign() * this.accelerationXInit );
 	}
 	
 	/**
@@ -239,8 +239,10 @@ public class Mazub {
 	 * @throws	...
 	 */
 	public void startJump(){
-		this.setVelocityY( VELOCITY_Y_INIT );
-		this.setAccelerationY( ACCELERATION_Y ); 
+		if(!this.isJumping()){
+			this.setVelocityY( VELOCITY_Y_INIT );
+			this.setAccelerationY( ACCELERATION_Y ); 
+		}
 	}
 	
 	/**
@@ -394,7 +396,7 @@ public class Mazub {
 	 * 			| 	then new.getPositionX() == GAME_WIDTH-1
 	 */
 	private void setPositionX(double px) {
-		this.positionX = Math.min(Math.max(px, 0), GAME_WIDTH - 1);
+		this.positionX = Math.min( Math.max(px, 0), GAME_WIDTH - 1);
 	}
 	
 	/**
@@ -413,7 +415,7 @@ public class Mazub {
 	 * 			| 	then new.getPositionY() == GAME_HEIGHT-1
 	 */
 	private void setPositionY(double py) {
-		this.positionY = Math.min(Math.max(py, 0), GAME_HEIGHT - 1);
+		this.positionY = Math.min( Math.max(py, 0), GAME_HEIGHT - 1);
 	}	
 		
 	private double positionX;
@@ -455,7 +457,7 @@ public class Mazub {
 	 * 			|	new.getVelocityX() == Math.signum(vx)*this.getVelocityXMax()
 	 */
 	private void setVelocityX(double vx){
-		this.velocityX = Math.max(Math.min( vx , this.getVelocityXMax()), -this.getVelocityXMax());
+		this.velocityX = Math.max( Math.min( vx , this.getVelocityXMax()), -this.getVelocityXMax());
 	}
 	
 	/**
@@ -498,8 +500,8 @@ public class Mazub {
 	 * 			| else
 	 * 			|	new.getVelocityXMax() == this.velocityXInit
 	 */
-	private void setVelocityXMax(double vx_max){
-		this.velocityXMax = Math.max(this.velocityXInit, vx_max);
+	private void setVelocityXMax(double VelocityXMax){
+		this.velocityXMax = Math.max( this.velocityXInit , VelocityXMax );
 	}
 	
 	private double velocityXMax;
@@ -534,6 +536,7 @@ public class Mazub {
 	 * @post	The horizontal acceleration is equal to ax.
 	 * 			| new.getAccelerationX() == ax
 	 */
+	@Basic
 	private void setAccelerationX(double ax){
 		this.accelerationX = ax;
 	}
@@ -546,6 +549,7 @@ public class Mazub {
 	 * @post	The vertical acceleration is equal to ay.
 	 * 			| new.getAccelerationY() == ay
 	 */
+	@Basic
 	private void setAccelerationY(double ay){
 		this.accelerationY = ay;
 	}
@@ -595,14 +599,12 @@ public class Mazub {
 	 * @return	A sprite that fits the current status of Mazub.
 	 */
 	public Sprite getCurrentSprite(){
-		// Voor animatie	
 		while(Util.fuzzyGreaterThanOrEqualTo(time.getSinceLastSprite(), 0.075)){
 				animation.updateAnimationIndex();
 				time.increaseSinceLastSprite(-0.075);
 		}
 		
-		return animation.getCurrentSprite(this);
-		
+		return animation.getCurrentSprite(this);	
 	}
 	
 	/************************************************ ADVANCE TIME ********************************************/
@@ -652,7 +654,9 @@ public class Mazub {
 	 * 			| (new time).getSinceLastSprite() == time.getSinceLastSprite() + dt
 	 * @throws	error: delta_t > 0.2 or delta_t < 0
 	 */
-	public void advanceTime(double dt){
+	public void advanceTime(double dt) throws IllegalTimeAmountException{
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
+			throw new IllegalTimeAmountException(dt);
 		
 		// Update  horizontal position
 		this.updatePositionX(dt);

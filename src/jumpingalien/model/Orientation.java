@@ -2,15 +2,15 @@ package jumpingalien.model;
 
 public enum Orientation {
 	LEFT {
-		public int getDirection(){
+		public int getSign(){
 			return -1;
 		}
 	},
 	RIGHT{
-		public int getDirection(){
+		public int getSign(){
 			return 1;
 		}
 	};
 	
-	public abstract int getDirection(); // Slechte naam
+	public abstract int getSign();
 }
