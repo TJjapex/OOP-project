@@ -7,13 +7,12 @@ import jumpingalien.model.Time;
 import jumpingalien.model.Animation;
 
 /**
- * A class of Mazubs, characters for a platform game with several properties. This class has been worked out
+ * A class of Mazubs, characters for a 2D adventure game with several properties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
-
 public class Mazub {
 		
 	/************************************************** GENERAL ***********************************************/
@@ -31,7 +30,6 @@ public class Mazub {
 	private static double VELOCITY_Y_INIT = 8.0;
 	private static double VELOCITY_X_MAX_MOVING = 3.0;
 	private static double VELOCITY_X_MAX_DUCKING = 1.0;
-	private int currentSpriteIteration = 0;
 	private Time time;
 	private Animation animation;
 	
@@ -69,8 +67,6 @@ public class Mazub {
 	 *  		| setVelocityXMax(VELOCITY_X_MAX_MOVING)
 	 * @effect	The initial orientation of Mazub is equal to right.
 	 * 			| setOrientation(Orientation.RIGHT)
-	 * @post	The initial sprites of Mazub are equal to the given array sprites.
-	 * 			| this.sprites == sprites
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
 		this.setPositionX(pixelLeftX);
@@ -150,7 +146,7 @@ public class Mazub {
 	 * Make Mazub start moving. Set the initial horizontal velocity and acceleration of Mazub,
 	 * depending on his orientation.
 	 * 
-	 * @param orientation
+	 * @param 	orientation
 	 * 				The direction in which Mazub starts moving.
 	 * @pre		...
 	 * @post	...
@@ -311,8 +307,8 @@ public class Mazub {
 	/**
 	 * Set Mazub's status to ducking.
 	 * 
-	 * @param ducking
-	 * 			A boolean that represents if Mazub's status should be changed to ducking or not.
+	 * @param 	ducking
+	 * 				A boolean that represents if Mazub's status should be changed to ducking or not.
 	 * @post	The ducking status of Mazub is equal to the given boolean value of ducking.
 	 * 			| new.isDucking() == ducking
 	 */
@@ -326,7 +322,7 @@ public class Mazub {
 	
 	// 				All methods here must be worked out totally
 	// 				velocity, acceleration, orientation, timing 
-	// 				type double (not NaN, may be Double.NEGATIVE_INFINITY or Double.POSITIVE_INFINITY)
+	// 				type double (not NaN, may be double.NEGATIVE_INFINITY or double.POSITIVE_INFINITY)
 	// 				rounding down to integer value (at the end!) to determine Mazub's effective position
 
 	// Position
@@ -356,8 +352,8 @@ public class Mazub {
 	/**
 	 * Set the x-location of Mazub's bottom left pixel.
 	 * 
-	 * @param px
-	 * 			A double that represents the desired x-location of Mazub's bottom left pixel.
+	 * @param	px
+	 * 				A double that represents the desired x-location of Mazub's bottom left pixel.
 	 * @post	If the given px is within the boundaries of the game world, positionX is equal to px. 
 	 * 			If the given px is negative, positionX is equal to 0. Otherwise, if the given px is
 	 * 			greater than GAME_WIDTH - 1, positionX is equal to GAME_WIDTH - 1.
@@ -375,8 +371,8 @@ public class Mazub {
 	/**
 	 * Set the y-location of Mazub's bottom left pixel.
 	 * 
-	 * @param py
-	 * 			A double that represents the desired y-location of Mazub's bottom left pixel. 
+	 * @param 	py
+	 * 				A double that represents the desired y-location of Mazub's bottom left pixel. 
 	 * @post	If the given py is within the boundaries of the game world, positionY is equal to py. 
 	 * 			If the given py is negative, positionY is equal to 0. Otherwise, if the given py is
 	 * 			greater than GAME_HEIGHT - 1, positionY is equal to GAME_HEIGHT - 1.
@@ -419,8 +415,8 @@ public class Mazub {
 	/**
 	 * Set the horizontal velocity of Mazub.
 	 * 
-	 * @param vx
-	 * 			A double that represents the desired horizontal velocity of Mazub.
+	 * @param 	vx
+	 * 				A double that represents the desired horizontal velocity of Mazub.
 	 * @post	If the absolute value of the given vx is smaller than the maximal horizontal velocity,
 	 * 			velocityX is equal to vx. Else, velocityX is equal to the maximal horizontal velocity
 	 * 			provided with the sign of vx.
@@ -436,8 +432,8 @@ public class Mazub {
 	/**
 	 * Set the vertical velocity of Mazub.
 	 * 
-	 * @param vy
-	 * 			A double that represents the desired vertical velocity of Mazub.
+	 * @param 	vy
+	 * 				A double that represents the desired vertical velocity of Mazub.
 	 * @post	The vertical velocity is equal to vy.
 	 * 			| new.getVelocityY() == vy
 	 */
@@ -464,8 +460,8 @@ public class Mazub {
 	/**
 	 * Set the maximal horizontal velocity of Mazub.
 	 * 
-	 * @param vx_max
-	 * 			A double that represents the desired maximal horizontal velocity of Mazub.
+	 * @param 	vx_max
+	 * 				A double that represents the desired maximal horizontal velocity of Mazub.
 	 * @post	If vx_max is greater than the initial horizontal velocity, the maximal horizontal
 	 * 			velocity is equal to vx_max. Otherwise, it's equal to the initial horizontal velocity.
 	 * 			| if (vx_max > this.velocityXInit)
@@ -504,8 +500,8 @@ public class Mazub {
 	/**
 	 * Set the horizontal acceleration of Mazub.
 	 * 
-	 * @param ax
-	 * 			A double that represents the desired horizontal acceleration of Mazub.
+	 * @param 	ax
+	 * 				A double that represents the desired horizontal acceleration of Mazub.
 	 * @post	The horizontal acceleration is equal to ax.
 	 * 			| new.getAccelerationX() == ax
 	 */
@@ -516,8 +512,8 @@ public class Mazub {
 	/**
 	 * Set the vertical acceleration of Mazub.
 	 * 
-	 * @param ay
-	 * 			A double that represents the desired vertical acceleration of Mazub.
+	 * @param 	ay
+	 * 				A double that represents the desired vertical acceleration of Mazub.
 	 * @post	The vertical acceleration is equal to ay.
 	 * 			| new.getAccelerationY() == ay
 	 */
@@ -544,8 +540,8 @@ public class Mazub {
 	/**
 	 * Set the orientation of Mazub.
 	 * 
-	 * @param orientation
-	 * 			An orientation that represents the desired orientation of Mazub.
+	 * @param 	orientation
+	 * 				An orientation that represents the desired orientation of Mazub.
 	 * @post	The orientation of Mazub is equal to the given orientation.
 	 * 			| new.getOrientation() == orientation
 	 */
@@ -563,8 +559,6 @@ public class Mazub {
 	// 				multiple sprites for moving to the right/left (same amount), alternate (75ms) and repeat
 	// 				it must be possible to turn to other algorithms for displaying successive images of a Mazub
 	//					during some period of time
-	//				
-	//				aparte klasse
 	
 	/**
 	 * Return the correct sprite of Mazub, depending on his current status.
@@ -603,8 +597,8 @@ public class Mazub {
 	/**
 	 * Advance time and update Mazub's position and velocity accordingly.
 	 * 
-	 * @param dt
-	 * 			A double that represents the elapsed time.
+	 * @param 	dt
+	 * 				A double that represents the elapsed time.
 	 * @post	The horizontal position of Mazub is equal to ...
 	 * 			| new.getPositionX() == this.getPositionX() + 100*( this.getVelocityX() * dt +
 	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
