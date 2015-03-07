@@ -126,7 +126,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to stop moving left.
 	 */
 	public void endMoveLeft(Mazub alien){
-		alien.endMove();
+		alien.endMove(Orientation.LEFT);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class Facade implements IFacade {
 	 *            The alien that has to stop moving right.
 	 */
 	public void endMoveRight(Mazub alien){
-		alien.endMove();
+		alien.endMove(Orientation.RIGHT);
 	}
 
 	/**
