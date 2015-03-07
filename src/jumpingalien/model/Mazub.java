@@ -757,7 +757,8 @@ public class Mazub {
 	 * 			|	then (new time).getSinceLastMove() == time.getSinceLastMove() + dt
 	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
 	 * 			| (new time).getSinceLastSprite() == time.getSinceLastSprite() + dt
-	 * @throws	error: delta_t > 0.2 or delta_t < 0
+	 * @throws	IllegalTimeAmountException
+	 * 			| dt > 0.2 or dt < 0
 	 */
 	public void advanceTime(double dt) throws IllegalTimeAmountException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
