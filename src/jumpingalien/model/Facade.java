@@ -17,7 +17,7 @@ public class Facade implements IFacade {
 	 * @return
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
-		return new Mazub(0, 0, sprites);
+		return new Mazub(0, 0, 1.0, 3.0, sprites);
 	}
 
 	/**

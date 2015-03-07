@@ -7,7 +7,7 @@ import jumpingalien.model.Time;
 import jumpingalien.model.Animation;
 
 /**
- * A class of Mazubs, characters for a 2D adventure game with several properties. This class has been worked out
+ * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
@@ -28,7 +28,7 @@ public class Mazub {
 	private static int GAME_HEIGHT = 768;
 	private static double ACCELERATION_Y = -10.0;
 	private static double VELOCITY_Y_INIT = 8.0;
-	private static double VELOCITY_X_MAX_MOVING = 3.0;
+	private static double VELOCITY_X_MAX_RUNNING;
 	private static double VELOCITY_X_MAX_DUCKING = 1.0;
 	private Time time;
 	private Animation animation;
@@ -45,6 +45,10 @@ public class Mazub {
 	 * 				The x-location of Mazub's bottom left pixel.
 	 * @param 	pixelBottomY
 	 * 				The y-location of Mazub's bottom left pixel.
+	 * @param	velocityXInit
+	 * 				The initial horizontal velocity of Mazub.
+	 * @param	velocityXMaxRunning
+	 * 				The maximal horizontal velocity of Mazub when he's running.
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
@@ -61,20 +65,30 @@ public class Mazub {
 	 * 			| setPositionY(pixelBottomY)
 	 * @post	The initial ducking status of Mazub is equal to false.
 	 * 			| new.isDucking() == false
-	 * @effect	If VELOCITY_X_MAX_MOVING is greater than the initial horizontal velocity, the initial maximal
-	 *  		horizontal velocity is equal to VELOCITY_X_MAX_MOVING. Otherwise, it's equal to the initial 
+	 * @post	The value of the initial horizontal velocity is equal to velocityXInit.
+	 * 			| new.velocityXInit == velocityXInit
+	 * @effect	If VELOCITY_X_MAX_RUNNING is greater than the initial horizontal velocity, the initial maximal
+	 *  		horizontal velocity is equal to VELOCITY_X_MAX_RUNNING. Otherwise, it's equal to the initial 
 	 *  		horizontal velocity.
-	 *  		| setVelocityXMax(VELOCITY_X_MAX_MOVING)
+	 *  		| setVelocityXMax(VELOCITY_X_MAX_RUNNING)
+	 * @post	The value of the initial horizontal acceleration is equal to 0.9.
+	 * 			| new.accelerationXInit == 0.9
 	 * @effect	The initial orientation of Mazub is equal to right.
 	 * 			| setOrientation(Orientation.RIGHT)
+	 * @post	The animation is initiated.
+	 * 			| new.animation.isNull() == false
+	 * @post	The time is initiated.
+	 * 			| new.time.isNull() == false
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) {
+	public Mazub(int pixelLeftX, int pixelBottomY,double velocityXInit, double velocityXMaxRunning, Sprite[]
+				sprites) {
 		this.setPositionX(pixelLeftX);
 		this.setPositionY(pixelBottomY);
 		this.setDucking(false);
-		velocityXInit = 1.0;
-		this.setVelocityXMax(VELOCITY_X_MAX_MOVING);
-		accelerationXInit = 0.9;		
+		this.velocityXInit = velocityXInit;
+		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
+		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
+		this.accelerationXInit = 0.9;		
 		this.setOrientation(Orientation.RIGHT);
 		this.animation = new Animation(sprites);
 		this.time = new Time();
@@ -149,7 +163,20 @@ public class Mazub {
 	 * @param 	orientation
 	 * 				The direction in which Mazub starts moving.
 	 * @pre		...
-	 * @post	...
+	 * @post	The orientation of Mazub is equal to the given orientation.
+	 * 			| new.getOrientation() == orientation
+	 * @post	The horizontal velocity of Mazub is equal to the initial horizontal velocity. It's positive 
+	 * 			if the orientation of Mazub is right, negative if the orientation of Mazub is left.
+	 * 			| if (this.getOrientation() == RIGHT)
+	 * 			|	then new.getVelocityX() == this.velocityXInit
+	 * 			| else if (this.getOrientation() == LEFT)
+	 * 			| 	then new.getVelocityX() == -this.velocityXInit
+	 * @post	The horizontal acceleration of Mazub is equal to the initial horizontal acceleration. It's
+	 * 			positive if the orientation of Mazub is right, negative if the orientation of Mazub is left.
+	 * 			| if (this.getOrientation() == RIGHT)
+	 * 			|	then new.getAccelerationX() == this.accelerationXInit
+	 * 			| else if (this.getOrientation() == LEFT)
+	 * 			| 	then new.getAccelerationX() == -this.accelerationXInit
 	 */
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
@@ -160,11 +187,12 @@ public class Mazub {
 	/**
 	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
 	 * 
-	 * @post	The horizontal velocity and acceleration of Mazub is equal to zero. Also the time since the
-	 * 			last move was made is reset to 0.
+	 * @post	The horizontal velocity of Mazub is equal to zero. 
 	 * 			| new.getVelocityX() == 0
+	 * @post	The horizontal acceleration of Mazub is equal to zero.
 	 * 			| new.getAccelerationX() == 0
-	 * 			| (new time).getSinceLastMove() == 0
+	 * @post	The time since the last move was made is reset to 0.
+	 *			| (new time).getSinceLastMove() == 0
 	 */
 	public void endMove() {
 		this.setVelocityX(0);
@@ -204,9 +232,9 @@ public class Mazub {
 	/**
 	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
 	 * 
-	 * @post	The vertical velocity and acceleration of Mazub is equal to respectively VELOCITY_Y_INIT and
-	 * 			ACCELERATION_Y.
+	 * @post	The vertical velocity of Mazub is equal to VELOCITY_Y_INIT.
 	 * 			| new.getVelocityY() == VELOCITY_Y_INIT
+	 * @post	The vertical acceleration of Mazub is equal to ACCELERATION_Y.
 	 * 			| new.getAccelerationY() == ACCELERATION_Y
 	 * @throws	...
 	 */
@@ -218,7 +246,7 @@ public class Mazub {
 	/**
 	 * Make Mazub end jumping. Set the vertical velocity of Mazub to 0 when he's still moving upwards.
 	 * 
-	 * @post	If the vertical velocity of Mazub was greater than 0, it is now set to 0.
+	 * @post	If the vertical velocity of Mazub was greater than 0, it is now equal to 0.
 	 * 			| if (this.getVelocityY() > 0)
 	 * 			|	then new.getVelocityY() == 0
 	 * @throws 	...
@@ -241,8 +269,9 @@ public class Mazub {
 	/**
 	 * Make Mazub stop falling. Set the vertical velocity and acceleration of Mazub to 0.
 	 * 
-	 * @post	The vertical velocity and acceleration of Mazub is equal to 0.
+	 * @post	The vertical velocity of Mazub is equal to 0.
 	 * 			| new.getVelocityY() == 0
+	 * @post	The vertical acceleration of Mazub is equal to 0.
 	 * 			| new.getAccelerationY() == 0
 	 * @throws	...
 	 */
@@ -269,9 +298,9 @@ public class Mazub {
 	/**
 	 * Make Mazub start ducking. Set the maximal horizontal velocity for ducking.
 	 * 
-	 * @post	The maximal horizontal velocity of Mazub is equal to VELOCITY_X_MAX_DUCKING and the ducking
-	 * 			status of Mazub is true.
+	 * @post	The maximal horizontal velocity of Mazub is equal to VELOCITY_X_MAX_DUCKING.
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_DUCKING
+	 * @post	The ducking status of Mazub is true.
 	 * 			| new.isDucking() == true
 	 * @throws	...
 	 */
@@ -283,14 +312,14 @@ public class Mazub {
 	/**
 	 * Make Mazub end ducking. Reset the maximal horizontal velocity.
 	 * 
-	 * @post	The maximal horizontal velocity of Mazub is equal to VELOCITY_X_MAX_MOVING and the ducking
-	 * 			status of Mazub is false.
+	 * @post	The maximal horizontal velocity of Mazub is equal to VELOCITY_X_MAX_MOVING.
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_MOVING
+	 * @post	The ducking status of Mazub is false.
 	 * 			| new.isDucking() == false
 	 * @throws	...
 	 */
 	public void endDuck(){
-		this.setVelocityXMax(VELOCITY_X_MAX_MOVING);
+		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
 		this.setDucking(false);
 	}	
 	
@@ -599,28 +628,37 @@ public class Mazub {
 	 * 
 	 * @param 	dt
 	 * 				A double that represents the elapsed time.
-	 * @post	The horizontal position of Mazub is equal to ...
-	 * 			| new.getPositionX() == this.getPositionX() + 100*( this.getVelocityX() * dt +
-	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
-	 * @post	The vertical position of Mazub is equal to ...
-	 * 			| new.getPositionY() == this.getPositionY() + 100*( this.getVelocityY() * dt +
-	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) )
-	 * @post	The horizontal velocity of Mazub is equal to ...
+	 * @effect	The horizontal position of Mazub is equal to the result of the formula used in the method
+	 * 			updatePositionX.
+	 * 			| updatePositionX(dt)
+	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
+	 * 			updatePositionY.
+	 * 			| updatePositionY(dt)
+	 * @post	The horizontal velocity of Mazub is equal to the previous horizontal velocity incremented with
+	 * 			the product of the horizontal acceleration and dt.
 	 * 			| new.getVelocityX() == this.getVelocityX() + this.getAccelerationX() * dt
-	 * @post	The vertical velocity of Mazub is equal to ...
+	 * @post	The vertical velocity of Mazub is equal to the previous vertical velocity incremented with the
+	 * 			product of the vertical acceleration and dt.
 	 * 			| new.getVelocityY() == this.getVelocityY() + this.getAccelerationY() * dt
-	 * @post	...
+	 * @post	If Mazub was on the ground, he isn't falling anymore. This means that his vertical velocity and
+	 * 			acceleration are equal to 0.
+	 * 			| if ( this.isOnGround() )
+	 * 			|	then (new.getVelocityY() == 0) &&
+	 * 			|		 (new.getAccelerationY() == 0)
+	 * @post	If Mazub wasn't moving, the time since his last move is increased by dt.
+	 * 			| if ( !this.isMoving() )
+	 * 			|	then (new time).getSinceLastMove() == time.getSinceLastMove() + dt
+	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
+	 * 			| (new time).getSinceLastSprite() == time.getSinceLastSprite() + dt
 	 * @throws	error: delta_t > 0.2 or delta_t < 0
 	 */
 	public void advanceTime(double dt){
 		
 		// Update  horizontal position
-		double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
-		this.setPositionX( this.getPositionX() + 100 * sx );
+		this.updatePositionX(dt);
 				
 		// Update vertical position
-		double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
-		this.setPositionY( this.getPositionY() + 100 * sy );
+		this.updatePositionY(dt);
 				
 		// Update horizontal velocity
 		double newVx = this.getVelocityX() + this.getAccelerationX() * dt;
@@ -631,14 +669,48 @@ public class Mazub {
 		this.setVelocityY( newVy );
 		
 		// If Mazub hits the ground, stop falling
-		if( isOnGround() ){
-			stopFall();
+		if( this.isOnGround() ){
+			this.stopFall();
 		}
 		
 		if(!this.isMoving())
 			time.increaseSinceLastMove(dt);
 		
 		time.increaseSinceLastSprite(dt);
+	}
+	
+	/**
+	 * Update Mazub's horizontal position according to the given dt.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed time.
+	 * @post	The horizontal position of Mazub is equal to the previous horizontal position incremented 
+	 * 			with the product of the horizontal velocity and dt, and half of the product of the horizontal 
+	 * 			acceleration and the second power of dt, all multiplied with a scaling factor which in this is
+	 * 			equal to 100.
+	 * 			| new.getPositionX() == this.getPositionX() + 100*( this.getVelocityX() * dt +
+	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
+	 */
+	public void updatePositionX(double dt){
+		double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
+		this.setPositionX( this.getPositionX() + 100 * sx );
+	}
+	
+	/**
+	 * Update Mazub's vertical position according to the given dt.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed time.
+	 * @post	The vertical position of Mazub is equal to the previous vertical position incremented 
+	 * 			with the product of the vertical velocity and dt, and half of the product of the vertical 
+	 * 			acceleration and the second power of dt, all multiplied with a scaling factor which in this is
+	 * 			equal to 100.
+	 * 			| new.getPositionY() == this.getPositionY() + 100*( this.getVelocityY() * dt +
+	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) )
+	 */
+	public void updatePositionY(double dt){
+		double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
+		this.setPositionY( this.getPositionY() + 100 * sy );
 	}
 
 }
