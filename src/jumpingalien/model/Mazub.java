@@ -10,9 +10,11 @@ import jumpingalien.model.Animation;
 
 /* Moving */ 
 
-// vx_init = 1 m/s	(may change in future but never below 1 m/s, instance variable, does not change during game (final!) )
+// vx_init = 1 m/s	(may change in future but never below 1 m/s, instance variable, does not change during game
+//					(final!) )
 // ax = 0.9 m/s^2	(may change in future, class variable)
-// vx_max = 3 m/s	(may change in future but never below vx_init, instance variable, can change during game (ducking))
+// vx_max = 3 m/s	(may change in future but never below vx_init, instance variable, can change during game
+//					(ducking))
 // startMove:
 // 	vx_new = vx_curr + ax*delta_t (for vx_init < vx_curr < vx_max)
 // endMove:
@@ -39,21 +41,18 @@ import jumpingalien.model.Animation;
  * for a project of the course Object Oriented Programming at KULeuven.
  * 
  * 
- * @invar	The x position must be valid
+ * @invar	The x position must be valid.
  * 			|	isValidPositionX( this.getPositionX() )
- * @invar	The y position must be valid
+ * @invar	The y position must be valid.
  * 			|	isValidPositionY( this.getPositionY() )
- * @invar	The width of the character must be valid
+ * @invar	The width of the character must be valid.
  * 			|	isValidWidth( this.getWidth() )
- * @invar	The height of the character must be valid
+ * @invar	The height of the character must be valid.
  * 			|	isValidHeight( this.getHeight() )
- * @invar	The horizontal velocity must be valid
+ * @invar	The horizontal velocity must be valid.
  * 			|	isValidVelocityX( this.getVelocityX() )
- * @invar	The maximum horizontal velocity must be greater than the initial horizontal velocity
+ * @invar	The maximal horizontal velocity must be greater than the initial horizontal velocity.
  * 			|	canHaveAsVelocityXMax( this.getVelocityXMax() )
- * 
- * 
- * 
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
@@ -68,6 +67,7 @@ public class Mazub {
 	//				class invariants
 	//				annotations
 	//				private/public
+	//				commentary for each constant? see page 167
 	
 	private static final int GAME_WIDTH = 1024;
 	private static final int GAME_HEIGHT = 768;
@@ -76,10 +76,8 @@ public class Mazub {
 	private static final double VELOCITY_X_MAX_DUCKING = 1.0;
 	private static final double ACCELERATION_X_INIT = 0.9;	
 	private static double VELOCITY_X_MAX_RUNNING;	
-	private Time time;
-	private Animation animation;
-	
-	
+	//		-> is deze ook niet final nadat er een waarde is aan toegekend?
+		
 	/************************************************ CONSTRUCTOR *********************************************/
 	
 	// 			accepts an array of n images as parameter (n even, n >= 10)
@@ -87,7 +85,9 @@ public class Mazub {
 
 	
 	
-	// !! ------------------------------> Deze throwt nu gewoon de erros van positionX en Y door, is die dan ook niet defensief?
+	// !! ------------------------------> 	Deze throwt nu gewoon de erros van positionX en Y door, is die dan 
+	//										ook niet defensief?
+	//			-> op zich wel denk ik maar over de constructor werd niets gezegd dus we mogen kiezen
 	/**
 	 * Constructor for the class Mazub.
 	 * 
@@ -107,6 +107,8 @@ public class Mazub {
 	 * 
 	 * 
 	 * Moet deze hier of bij de animation class of bij  beide? Bij animation heb ik al een assert gemaakt
+	 * 		-> daar twijfelde ik ook over maar omdat je die hier ook als argument moet meegeven dacht ik dat het
+	 * 		-> hier ook zeker als preconditie moest staan.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
 	 * 
@@ -121,9 +123,9 @@ public class Mazub {
 	 * 			equal to GAME_WIDTH - 1.
 	 * 			| setPositionX(pixelLeftX)
 	 * @effect	If the given pixelBottomY is within the boundaries of the game world, the initial positionY is
-	 * 			equal to pixelBottomY. If the given pixelBottomY is negative, the initial positionY is equal to 0.
-	 *  		Otherwise, if the given pixelBottomY is greater than GAME_HEIGHT - 1, the initial positionY is
-	 *   		equal to GAME_HEIGHT - 1.
+	 * 			equal to pixelBottomY. If the given pixelBottomY is negative, the initial positionY is equal 
+	 * 			to 0. Otherwise, if the given pixelBottomY is greater than GAME_HEIGHT - 1, the initial positionY
+	 * 			is equal to GAME_HEIGHT - 1.
 	 * 			| setPositionY(pixelBottomY)
 	 * @post	The initial ducking status of Mazub is equal to false.
 	 * 			| new.isDucking() == false
@@ -138,12 +140,14 @@ public class Mazub {
 	 * @post	The animation is initiated.
 	 * 			| new.getAnimation().isNull() == false
 	 * @post	The time is initiated.
-	 * 			| new.this.getTime().isNull() == false
+	 * 			| new.getTime().isNull() == false
 	 * @throws 	IllegalPositionXException
 	 * @throws	IllegalPositionYException
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[]
 				sprites) throws IllegalPositionXException, IllegalPositionYException {
+		assert sprites.length >= 10 && sprites.length % 2 == 0;
+		
 		this.setPositionX(pixelLeftX);
 		this.setPositionY(pixelBottomY);
 		this.setDucking(false);
@@ -161,26 +165,56 @@ public class Mazub {
 	
 	/************************************************* HELPER CLASSES *****************************************/
 	
+	/**
+	 * Set the time properties of Mazub.
+	 * 
+	 * @param 	timerClass
+	 * 				A time that keeps track of several times involving the behaviour of Mazub.
+	 * @post	The new time of Mazub is equal to timerClass.
+	 * 			| new.getTime() == timerClass
+	 */
 	private void setTime( Time timerClass){
 		this.time = timerClass;
 	}
 	
+	/**
+	 * Return the time properties of Mazub.
+	 * 
+	 * @return	A time that keeps track of several times involving the behaviour of Mazub.
+	 */
 	private Time getTime(){
 		return this.time;
 	}
 	
+	private Time time;
+	
+	/**
+	 * Set the animation for Mazub.
+	 * 
+	 * @param 	animationClass
+	 * 				An animation that consists of consecutive sprites.
+	 * @post	The new animation for Mazub is equal to animationClass.
+	 */
 	private void setAnimation( Animation animationClass){
 		this.animation = animationClass;
 	}
 	
+	/**
+	 * Return the animation for Mazub.
+	 * 
+	 * @return	An animation that consists of consecutive sprites.
+	 */
 	private Animation getAnimation(){
 		return this.animation;
 	}
 	
+	private Animation animation;
+	
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
 	// 			All methods here must be worked out defensively (using integer numbers) 
-	//				error if coordinates are negative? Kan niet gebeuren? Of moet ge daar geen rekening mee houden en alle mogelijke beschouwen?
+	//				error if coordinates are negative? Kan niet gebeuren? Of moet ge daar geen rekening mee
+	//				houden en alle mogelijke beschouwen?
 	
 	// 			Game world (X,Y) : 1024x768 pixels (origin bottom-left)
 	// 			each pixel = 0.01m
@@ -200,13 +234,12 @@ public class Mazub {
 	/**
 	 * Check whether the given X position is a valid X position.
 	 * 
-	 * @param positionX
-	 * 			An integer that represents an x-coordinate
+	 * @param 	positionX
+	 * 				An integer that represents an x-coordinate.
 	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
-	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller than GAME_WIDTH
-	 * 			|  positionX >= 0 && positionX < GAME_WIDTH;
+	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller than GAME_WIDTH.
+	 * 			|  result == ( (positionX >= 0) && (positionX < GAME_WIDTH) )
 	 */
-	
 	public static boolean isValidRoundedPositionX(int positionX){
 		return positionX >= 0 && positionX < GAME_WIDTH;
 	}
@@ -224,13 +257,13 @@ public class Mazub {
 	/**
 	 * Check whether the given Y position is a valid Y position.
 	 * 
-	 * @param positionY
-	 * 			An integer that represents an y-coordinate
+	 * @param 	positionY
+	 * 				An integer that represents a y-coordinate.
 	 * @return	True if and only if the given y-position positionY is between the boundaries of the game world, 
-	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller than GAME_HEIGHT
-	 * 			|  positionY >= 0 && positionY < GAME_HEIGHT
+	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller than
+	 * 			GAME_HEIGHT.
+	 * 			|  result == ( (positionY >= 0) && (positionY < GAME_HEIGHT) )
 	 */
-	
 	public static boolean isValidRoundedPositionY(int positionY){
 		return positionY >= 0 && positionY < GAME_HEIGHT;
 	}
@@ -246,15 +279,15 @@ public class Mazub {
 	
 	/**
 	 * Check whether the given width is a valid width for any Mazub instance.
-	 * @param width
-	 * 			The width to check
-	 * @return
-	 * 			True if and only if the given width is positive and smaller than the width of the game world
-	 * 			| width > 0 && width < GAME_WIDTH
+	 * 
+	 * @param 	width
+	 * 				The width to check.
+	 * @return	True if and only if the given width is positive and smaller than the width of the game world.
+	 * 			| result == ( (width > 0) && (width < GAME_WIDTH) )
 	 */
 	
-	public static boolean isValidWidth(int width){// Alleen nodig voor class invariant?
-		return width > 0 && width < GAME_WIDTH; // > of >= en < of <=?
+	public static boolean isValidWidth(int width){
+		return width > 0 && width < GAME_WIDTH;
 	}
 	
 	/**
@@ -268,14 +301,14 @@ public class Mazub {
 	
 	/**
 	 * Check whether the given height is a valid height for any Mazub instance.
-	 * @param height
-	 * 			The height to check
-	 * @return
-	 * 			True if and only if the given height is positive and smaller than the height of the game world
-	 * 			| height > 0 && height < GAME_HEIGHT
+	 * 
+	 * @param 	height
+	 * 				The height to check.
+	 * @return	True if and only if the given height is positive and smaller than the height of the game world.
+	 * 			| result == ( (height > 0) && (height < GAME_HEIGHT) )
 	 */
-	public static boolean isValidHeight(int height){	// Alleen nodig voor class invariant?
-		return height > 0 && height < GAME_HEIGHT; // > of >= en < of <=?
+	public static boolean isValidHeight(int height){
+		return height > 0 && height < GAME_HEIGHT;
 	}
 	
 	/************************************************ RUNNING *************************************************/
@@ -295,7 +328,7 @@ public class Mazub {
 	 * 
 	 * @param 	orientation
 	 * 				The direction in which Mazub starts moving.
-	 * @pre		The given orientation is not null
+	 * @pre		The given orientation is not null.
 	 * 			| orientation != null
 	 * @post	The orientation of Mazub is equal to the given orientation.
 	 * 			| new.getOrientation() == orientation
@@ -313,6 +346,8 @@ public class Mazub {
 	 * 			| 	then new.getAccelerationX() == -this.ACCELERATION_X_INIT
 	 */
 	public void startMove(Orientation orientation){		
+		assert (this.getOrientation() != null);
+		
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
 		this.setAccelerationX( orientation.getSign() * ACCELERATION_X_INIT);
@@ -320,7 +355,7 @@ public class Mazub {
 	
 	/**
 	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
-	 * @pre		The given orientation is not null
+	 * @pre		The given orientation is not null.
 	 * 			| orientation != null
 	 * @post	The horizontal velocity of Mazub is equal to zero. 
 	 * 			| new.getVelocityX() == 0
@@ -330,6 +365,8 @@ public class Mazub {
 	 *			| (new time).getSinceLastMove() == 0
 	 */
 	public void endMove(Orientation orientation) {
+		assert (this.getOrientation() != null);
+		
 		if(orientation == this.getOrientation()){
 			this.setVelocityX(0);
 			this.setAccelerationX(0);
@@ -340,7 +377,8 @@ public class Mazub {
 	/**
 	 * Checks whether Mazub is moving.
 	 * 
-	 * @return 	A boolean that represents if Mazub is moving or not.
+	 * @return 	True if and only if the horizontal velocity is not equal to 0. (up to a certain epsilon)
+	 * 			| result == ( this.getVelocityX() != 0 )
 	 */
 	public boolean isMoving(){
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
@@ -349,7 +387,9 @@ public class Mazub {
 	/**
 	 * Checks whether Mazub has moved in the last second.
 	 * 
-	 * @return	A boolean that represents if Mazub has moved in the last second or not.
+	 * @return	True if and only if the time since the last move by Mazub was made is less or equal to 1.
+	 * 			(up to a certain epsilon)
+	 * 			| result == ( this.getTime().getSinceLastMove() <= 1.0 )
 	 */
 	public boolean hasMovedInLastSecond(){
 		return Util.fuzzyLessThanOrEqualTo(this.getTime().getSinceLastMove(), 1.0);
@@ -382,7 +422,8 @@ public class Mazub {
 	/**
 	 * Make Mazub end jumping. Set the vertical velocity of Mazub to 0 when he's still moving upwards.
 	 * 
-	 * @post	If the vertical velocity of Mazub was greater than 0, it is now equal to 0.
+	 * @post	If the vertical velocity of Mazub was greater than 0 (up to a certain epsilon) ,
+	 * 			it is now equal to 0.
 	 * 			| if (this.getVelocityY() > 0)
 	 * 			|	then new.getVelocityY() == 0
 	 * @throws 	...
@@ -396,10 +437,11 @@ public class Mazub {
 	/**
 	 * Checks whether Mazub is jumping.
 	 * 
-	 * @return	A boolean that represents if Mazub is jumping or not.
+	 * @return	True if and only if the vertical position of Mazub is equal to 0. (up to a certain epsilon)
+	 * 			| result == ( this.getPositionY() == 0 )
 	 */
 	public boolean isJumping(){
-		return !Util.fuzzyEquals(this.getVelocityY(), 0);
+		return !Util.fuzzyEquals(this.getPositionY(), 0);
 	}
 	
 	/**
@@ -419,7 +461,8 @@ public class Mazub {
 	/**
 	 * Checks whether Mazub is on the ground.
 	 * 
-	 * @return	A boolean that represents if Mazub is on the ground or not.
+	 * @return	True if and only if the round vertical position of Mazub is 0. (up to a certain epsilon)
+	 * 			| result == ( this.getRoundedPositionY() == 0 )
 	 */
 	public boolean isOnGround() {
 		return Util.fuzzyEquals(this.getRoundedPositionY(), 0);
@@ -535,7 +578,6 @@ public class Mazub {
 		if( !isValidPositionX(positionX)) 
 			throw new IllegalPositionXException(positionX);
 		this.positionX = positionX;
-		
 	}
 	
 	/**
@@ -562,25 +604,39 @@ public class Mazub {
 	}	
 	
 	/**
-	 * Check whether the given X position is a valid horizontal position
-	 * @param positionX
-	 * @return
+	 * Check whether the given X position is a valid horizontal position.
+	 * 
+	 * @param 	positionX
+	 * 				A double that represents an x-coordinate.
+	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
+	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
+	 * 			GAME_WIDTH. (up to a certain epsilon)
+	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
 	 */
 	@Basic
 	public static boolean isValidPositionX(double positionX) {
-		//return Util.fuzzyGreaterThanOrEqualTo(positionX, 0) && Util.fuzzyLessThanOrEqualTo(positionX, GAME_WIDTH); // Mag eigenlijk niet equal to gameWidth?
-		return isValidRoundedPositionX((int) Math.floor(positionX));
+		return Util.fuzzyGreaterThanOrEqualTo(positionX, 0) &&
+			   Util.fuzzyLessThanOrEqualTo(positionX, GAME_WIDTH-1);
+		//return isValidRoundedPositionX((int) Math.floor(positionX));
+		//	-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
 	}
 	
 	/**
+	 * Check whether the given Y position is a valid vertical position.
 	 * 
-	 * @param positionY
-	 * @return 
+	 * @param 	positionY
+	 * 				A double that represents a y-coordinate.
+	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
+	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
+	 * 			GAME_HEIGHT. (up to a certain epsilon)
+	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
 	 */
 	@Basic
 	public static boolean isValidPositionY(double positionY) {
-		//return Util.fuzzyGreaterThanOrEqualTo(positionY, 0) && Util.fuzzyLessThanOrEqualTo(positionY, GAME_HEIGHT);
-		return isValidRoundedPositionY((int) Math.floor(positionY));
+		return Util.fuzzyGreaterThanOrEqualTo(positionY, 0) &&
+			   Util.fuzzyLessThanOrEqualTo(positionY, GAME_HEIGHT-1);
+		//return isValidRoundedPositionY((int) Math.floor(positionY));
+//		-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
 	}
 		
 	private double positionX;
@@ -640,12 +696,18 @@ public class Mazub {
 	}
 	
 	/**
+	 * Checks whether the horizontal velocity of Mazub is a valid velocity.
 	 * 
-	 * @param velocityX
-	 * @return
+	 * @param 	velocityX
+	 * 				A double that represents the horizontal velocity of Mazub.
+	 * @return	True if and only if the absolute value of the given horizontal velocity is greater or equal to 
+	 * 			the initial horizontal velocity and smaller or equal to the maximal horizontal velocity.
+	 * 			| result == ( ( Math.abs(this.getVelocityX()) >= this.getVelocityXInit()) &&
+	 * 			| 			  ( Math.abs(this.getVelocityX()) <= this.getVelocityXMax()) )
 	 */
 	public boolean isValidVelocityX(double velocityX){
-		return Math.abs(this.getVelocityX()) >= this.getVelocityXInit() && Math.abs(this.getVelocityX()) <= this.getVelocityXMax();
+		return Math.abs(this.getVelocityX()) >= this.getVelocityXInit() &&
+			   Math.abs(this.getVelocityX()) <= this.getVelocityXMax();
 	}
 	
 	
@@ -655,9 +717,10 @@ public class Mazub {
 	// Initial velocity
 	
 	/**
-	 * Return the initial horizontal velocity of Mazub. The initial horizontal velocity is used when Mazub starts walking.
+	 * Return the initial horizontal velocity of Mazub. The initial horizontal velocity is used when Mazub
+	 * starts walking.
 	 *  
-	 * @return	A double that represents the initial horizontal velocity of Mazub
+	 * @return	A double that represents the initial horizontal velocity of Mazub.
 	 */
 	public double getVelocityXInit(){
 		return this.velocityXInit;
@@ -697,11 +760,11 @@ public class Mazub {
 	/**
 	 * Checks wether the given maximum velocity is a valid value for this instance of Mazub
 	 * 
-	 * @param velocityXMax
-	 * 			A double that represents the maximal horizontal velocity that needs to be checked.
-	 * @return
-	 * 			Returns true the given velocityXMax is greater than or equal to the current initial velocity of Mazub
-	 * 			| velocityXMax >= this.getVelocityXIinit();
+	 * @param 	velocityXMax
+	 * 				A double that represents the maximal horizontal velocity that needs to be checked.
+	 * @return	True if and only if the given velocityXMax is greater than or equal to the current initial
+	 * 			velocity of Mazub.
+	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
 	 */
 	
 	public boolean canHaveAsVelocityXMax(double velocityXMax){

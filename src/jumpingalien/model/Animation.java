@@ -112,8 +112,8 @@ public class Animation {
 	private final Sprite[] sprites;
 	
 	/**
-	 * Return the number of frames for an animation. This can also be determined by using the formula    ( this.sprites.length - 8) / 2 
-	 * but the result is explicitly stored to avoid unnecessary calculations.
+	 * Return the number of frames for an animation. This can also be determined by using the formula   
+	 * ( this.sprites.length - 8) / 2 , but the result is explicitly stored to avoid unnecessary calculations.
 	 * 
 	 * @return	The number of frames for one kind of animation (e.g. walking in a given direction)
 	 * 			| ( this.sprites.length - 8) / 2;
@@ -149,6 +149,8 @@ public class Animation {
 	 */
 	@Basic
 	private void setAnimationIndex(int animationIndex){
+		assert (animationIndex >= 0) && (animationIndex <= this.nbFrames);
+		
 		this.animationIndex = animationIndex;
 	}
 	
