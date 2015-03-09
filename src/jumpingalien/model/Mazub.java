@@ -121,9 +121,11 @@ public class Mazub {
 	 * 			| new.animation.isNull() == false
 	 * @post	The time is initiated.
 	 * 			| new.time.isNull() == false
+	 * @throws 	IllegalPositionXException
+	 * @throws	IllegalPositionYException
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[]
-				sprites) {
+				sprites) throws IllegalPositionXException, IllegalPositionYException {
 		this.setPositionX(pixelLeftX);
 		this.setPositionY(pixelBottomY);
 		this.setDucking(false);
@@ -137,6 +139,8 @@ public class Mazub {
 		this.animation = new Animation(sprites);
 		this.time = new Time();
 	}
+	
+	/************************************************* HELPER CLASSE ******************************************/
 	
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
@@ -299,10 +303,10 @@ public class Mazub {
 	 * @throws	...
 	 */
 	public void startJump(){
-		if(!this.isJumping()){ // Of eigenlijk error throwen en dan catchen en niks doen?
+		//if(!this.isJumping()){ // Of eigenlijk error throwen en dan catchen en niks doen?
 			this.setVelocityY( VELOCITY_Y_INIT );
 			this.setAccelerationY( ACCELERATION_Y ); 
-		}
+		//}
 	}
 	
 	/**
@@ -443,7 +447,7 @@ public class Mazub {
 	/**
 	 * Set the x-location of Mazub's bottom left pixel.
 	 * 
-	 * @param	px
+	 * @param	positionX
 	 * 				A double that represents the desired x-location of Mazub's bottom left pixel.
 	 * @post	If the given px is within the boundaries of the game world, positionX is equal to px. 
 	 * 			If the given px is negative, positionX is equal to 0. Otherwise, if the given px is
@@ -454,16 +458,20 @@ public class Mazub {
 	 * 			|	then new.getPositionX() == 0
 	 * 			| else if (px > GAME_WIDTH-1)
 	 * 			| 	then new.getPositionX() == GAME_WIDTH-1
+	 * @throws	IllegalPositionXException
 	 */
 	@Basic
-	private void setPositionX(double px) {
-		this.positionX = Math.min( Math.max(px, 0), GAME_WIDTH - 1);
+	private void setPositionX(double positionX) {
+		if( !isValidPositionX(positionX)) 
+			throw new IllegalPositionXException(positionX);
+		this.positionX = positionX;
+		
 	}
 	
 	/**
 	 * Set the y-location of Mazub's bottom left pixel.
 	 * 
-	 * @param 	py
+	 * @param 	positionY
 	 * 				A double that represents the desired y-location of Mazub's bottom left pixel. 
 	 * @post	If the given py is within the boundaries of the game world, positionY is equal to py. 
 	 * 			If the given py is negative, positionY is equal to 0. Otherwise, if the given py is
@@ -474,10 +482,13 @@ public class Mazub {
 	 * 			|	then new.getPositionY() == 0
 	 * 			| else if (py > GAME_HEIGHT-1)
 	 * 			| 	then new.getPositionY() == GAME_HEIGHT-1
+	 * @throws	IllegalPositionXException
 	 */
 	@Basic
-	private void setPositionY(double py) {
-		this.positionY = Math.min( Math.max(py, 0), GAME_HEIGHT - 1);
+	private void setPositionY(double positionY) {
+		if( !isValidPositionY(positionY)) 
+			throw new IllegalPositionYException(positionY);
+		this.positionY = positionY;
 	}	
 	
 	/**
@@ -776,9 +787,10 @@ public class Mazub {
 		// Update vertical velocity
 		this.updateVelocityY(dt);
 		
-		// If Mazub hits the ground, stop falling
-		if( this.isOnGround() )
-			this.stopFall();
+		// Onderstaande wordt nu eigenlijk in this.updatePositionY afgehandeld?
+//		// If Mazub hits the ground, stop falling
+//		if( this.isOnGround() )
+//			this.stopFall();
 		
 		if(!this.isMoving())
 			time.increaseSinceLastMove(dt);
@@ -800,8 +812,18 @@ public class Mazub {
 	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
 	 */
 	private void updatePositionX(double dt){
-		double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
-		this.setPositionX( this.getPositionX() + 100 * sx );
+		try{
+			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
+			this.setPositionX( this.getPositionX() + 100 * sx );
+		}catch( IllegalPositionXException exc){
+			if(exc.getPositionX() < 0 ){
+				this.setPositionX( 0 );
+				endMove(Orientation.LEFT);
+			}else{ // > GAME_WIDTH - 1 
+				this.setPositionX( GAME_WIDTH - 1 );
+				endMove(Orientation.RIGHT);
+			}
+		}
 	}
 	
 	/**
@@ -817,8 +839,17 @@ public class Mazub {
 	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) )
 	 */
 	private void updatePositionY(double dt){
-		double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
-		this.setPositionY( this.getPositionY() + 100 * sy );
+		try{
+			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
+			this.setPositionY( this.getPositionY() + 100 * sy );
+		}catch( IllegalPositionYException exc){
+			if(exc.getPositionY() < 0 ){
+				this.setPositionY(0);
+				this.stopFall();
+			}else{ // > GAME_HEIGHT - 1 
+				this.setPositionY( GAME_HEIGHT - 1);
+			}
+		}
 	}
 
 	/**
