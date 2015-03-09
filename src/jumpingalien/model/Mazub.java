@@ -554,14 +554,14 @@ public class Mazub {
 	 * 
 	 * @param	positionX
 	 * 				A double that represents the desired x-location of Mazub's bottom left pixel.
-	 * @post	If the given px is within the boundaries of the game world, positionX is equal to px. 
-	 * 			If the given px is negative, positionX is equal to 0. Otherwise, if the given px is
-	 * 			greater than GAME_WIDTH - 1, positionX is equal to GAME_WIDTH - 1.
-	 * 			| if ( (px >= 0) && (px <= GAME_WIDTH-1) )
+	 * @post	If the given positionX is within the boundaries of the game world, the horizontal position is equal to positionX. 
+	 * 			If the given positionX is negative, the horizontal position is equal to 0. Otherwise, if the given positionX is
+	 * 			greater than GAME_WIDTH - 1, the horizontal position is equal to GAME_WIDTH - 1.
+	 * 			| if ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
 	 * 			|	then new.getPositionX() == px
-	 * 			| else if (px < 0)
+	 * 			| else if (positionX < 0)
 	 * 			|	then new.getPositionX() == 0
-	 * 			| else if (px > GAME_WIDTH-1)
+	 * 			| else if (positionX > GAME_WIDTH-1)
 	 * 			| 	then new.getPositionX() == GAME_WIDTH-1
 	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
@@ -579,14 +579,14 @@ public class Mazub {
 	 * 
 	 * @param 	positionY
 	 * 				A double that represents the desired y-location of Mazub's bottom left pixel. 
-	 * @post	If the given py is within the boundaries of the game world, positionY is equal to py. 
-	 * 			If the given py is negative, positionY is equal to 0. Otherwise, if the given py is
-	 * 			greater than GAME_HEIGHT - 1, positionY is equal to GAME_HEIGHT - 1.
-	 * 			| if ( (py >= 0) && (px <= GAME_HEIGHT-1) )
-	 * 			|	then new.getPositionY() == py
-	 * 			| else if (py < 0)
+	 * @post	If the given positionY is within the boundaries of the game world, the horizontal position is equal to positionY. 
+	 * 			If the given positionY is negative, the vertical position is equal to 0. Otherwise, if the given positionY is
+	 * 			greater than GAME_HEIGHT - 1, the vertical position is equal to GAME_HEIGHT - 1.
+	 * 			| if ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
+	 * 			|	then new.getPositionY() == positionY
+	 * 			| else if (positionY < 0)
 	 * 			|	then new.getPositionY() == 0
-	 * 			| else if (py > GAME_HEIGHT-1)
+	 * 			| else if (positionY > GAME_HEIGHT-1)
 	 * 			| 	then new.getPositionY() == GAME_HEIGHT-1
 	 * @throws	IllegalPositionYException
 	 * 				The Y position of Mazub is not a valid Y position.
@@ -665,13 +665,13 @@ public class Mazub {
 	 * 
 	 * @param 	velocityX
 	 * 				A double that represents the desired horizontal velocity of Mazub.
-	 * @post	If the absolute value of the given vx is smaller than the maximal horizontal velocity,
-	 * 			velocityX is equal to vx. Else, velocityX is equal to the maximal horizontal velocity
-	 * 			provided with the sign of vx.
-	 * 			| if (Math.abs(vx) < this.getVelocityXMax())
-	 * 			|	then new.getVelocityX() == vx
+	 * @post	If the absolute value of the given velocityX is smaller than the maximal horizontal velocity,
+	 * 			the horizontal velocity is equal to the given velocityX. Else, the horizontal velocity is equal to the maximal horizontal velocity
+	 * 			provided with the sign of velocityX.
+	 * 			| if (Math.abs(velocityX) < this.getVelocityXMax())
+	 * 			|	then new.getVelocityX() == velocityX
 	 * 			| else
-	 * 			|	new.getVelocityX() == Math.signum(vx)*this.getVelocityXMax()
+	 * 			|	new.getVelocityX() == Math.signum(velocityX)*this.getVelocityXMax()
 	 */
 	@Basic
 	private void setVelocityX(double velocityX){
@@ -683,8 +683,8 @@ public class Mazub {
 	 * 
 	 * @param 	velocityY
 	 * 				A double that represents the desired vertical velocity of Mazub.
-	 * @post	The vertical velocity is equal to vy.
-	 * 			| new.getVelocityY() == vy
+	 * @post	The vertical velocity is equal to velocityY.
+	 * 			| new.getVelocityY() == velocityY
 	 */
 	@Basic
 	private void setVelocityY(double velocityY){
@@ -744,7 +744,7 @@ public class Mazub {
 	 * @post	If velocityXMax is greater than the initial horizontal velocity, the maximal horizontal
 	 * 			velocity is equal to velocityXMax. Otherwise, it's equal to the initial horizontal velocity.
 	 * 			| if velocityXMax > this.getVelocityXInit()
-	 * 			| 	then new.getVelocityXMax() == vx_max
+	 * 			| 	then new.getVelocityXMax() == velocityXMax
 	 * 			| else
 	 * 			|	new.getVelocityXMax() == this.getVelocityXInit()
 	 */
@@ -794,10 +794,10 @@ public class Mazub {
 	/**
 	 * Set the horizontal acceleration of Mazub.
 	 * 
-	 * @param 	accelerationXx
+	 * @param 	accelerationX
 	 * 				A double that represents the desired horizontal acceleration of Mazub.
-	 * @post	The horizontal acceleration is equal to ax.
-	 * 			| new.getAccelerationX() == ax
+	 * @post	The horizontal acceleration is equal to accelerationX.
+	 * 			| new.getAccelerationX() == accelerationX
 	 */
 	@Basic
 	private void setAccelerationX(double accelerationXx){
@@ -809,8 +809,8 @@ public class Mazub {
 	 * 
 	 * @param 	accelerationY
 	 * 				A double that represents the desired vertical acceleration of Mazub.
-	 * @post	The vertical acceleration is equal to ay.
-	 * 			| new.getAccelerationY() == ay
+	 * @post	The vertical acceleration is equal to accelerationY.
+	 * 			| new.getAccelerationY() == accelerationY
 	 */
 	@Basic
 	private void setAccelerationY(double accelerationY){
