@@ -27,6 +27,8 @@ public class Animation {
 	 * 			| new.nbFrames == (this.sprites.length - 8) / 2
 	 */
 	public Animation(Sprite[] sprites){
+		assert sprites.length >= 10 && sprites.length % 2 == 0;
+		
 		this.sprites = sprites;
 		this.nbFrames = ( this.sprites.length - 8) / 2;
 		this.setAnimationIndex(0);
