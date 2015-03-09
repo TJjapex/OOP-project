@@ -142,7 +142,11 @@ public class Mazub {
 	 * @post	The time is initiated.
 	 * 			| new.getTime().isNull() == false
 	 * @throws 	IllegalPositionXException
+	 * 				The X position of Mazub is not a valid X position.
+	 * 			| ! isValidPositionX(pixelLeftX)
 	 * @throws	IllegalPositionYException
+	 * 				The Y position of Mazub is not a valid Y position.
+	 * 			| ! isValidPositionY(pixelBottomY)
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[]
 				sprites) throws IllegalPositionXException, IllegalPositionYException {
@@ -426,7 +430,8 @@ public class Mazub {
 	 * 			it is now equal to 0.
 	 * 			| if (this.getVelocityY() > 0)
 	 * 			|	then new.getVelocityY() == 0
-	 * @throws 	...
+	 * @throws 	... 
+	 //			-> if test veranderen in een error met een try/catch er rond? 
 	 */
 	public void endJump() {
 		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
@@ -451,21 +456,10 @@ public class Mazub {
 	 * 			| new.getVelocityY() == 0
 	 * @post	The vertical acceleration of Mazub is equal to 0.
 	 * 			| new.getAccelerationY() == 0
-	 * @throws	...
 	 */
 	private void stopFall() {
 		this.setVelocityY( 0 );
 		this.setAccelerationY( 0 );
-	}
-	
-	/**
-	 * Checks whether Mazub is on the ground.
-	 * 
-	 * @return	True if and only if the round vertical position of Mazub is 0. (up to a certain epsilon)
-	 * 			| result == ( this.getRoundedPositionY() == 0 )
-	 */
-	public boolean isOnGround() {
-		return Util.fuzzyEquals(this.getRoundedPositionY(), 0);
 	}
 	
 	/*************************************************** DUCKING **********************************************/
@@ -481,7 +475,6 @@ public class Mazub {
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_DUCKING
 	 * @post	The ducking status of Mazub is true.
 	 * 			| new.isDucking() == true
-	 * @throws	...
 	 */
 	public void startDuck(){
 		this.setVelocityXMax(VELOCITY_X_MAX_DUCKING);
@@ -495,7 +488,6 @@ public class Mazub {
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_MOVING
 	 * @post	The ducking status of Mazub is false.
 	 * 			| new.isDucking() == false
-	 * @throws	...
 	 */
 	public void endDuck(){
 		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
@@ -572,6 +564,8 @@ public class Mazub {
 	 * 			| else if (px > GAME_WIDTH-1)
 	 * 			| 	then new.getPositionX() == GAME_WIDTH-1
 	 * @throws	IllegalPositionXException
+	 * 				The X position of Mazub is not a valid X position.
+	 * 			| ! isValidPositionX(positionX)
 	 */
 	@Basic
 	private void setPositionX(double positionX) {
@@ -594,7 +588,9 @@ public class Mazub {
 	 * 			|	then new.getPositionY() == 0
 	 * 			| else if (py > GAME_HEIGHT-1)
 	 * 			| 	then new.getPositionY() == GAME_HEIGHT-1
-	 * @throws	IllegalPositionXException
+	 * @throws	IllegalPositionYException
+	 * 				The Y position of Mazub is not a valid Y position.
+	 * 			| ! isValidPositionY(positionY)
 	 */
 	@Basic
 	private void setPositionY(double positionY) {
@@ -618,7 +614,7 @@ public class Mazub {
 		return Util.fuzzyGreaterThanOrEqualTo(positionX, 0) &&
 			   Util.fuzzyLessThanOrEqualTo(positionX, GAME_WIDTH-1);
 		//return isValidRoundedPositionX((int) Math.floor(positionX));
-		//	-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
+		//		-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
 	}
 	
 	/**
@@ -636,7 +632,7 @@ public class Mazub {
 		return Util.fuzzyGreaterThanOrEqualTo(positionY, 0) &&
 			   Util.fuzzyLessThanOrEqualTo(positionY, GAME_HEIGHT-1);
 		//return isValidRoundedPositionY((int) Math.floor(positionY));
-//		-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
+		//		-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
 	}
 		
 	private double positionX;
@@ -863,9 +859,8 @@ public class Mazub {
 	/**
 	 * Return the correct sprite of Mazub, depending on his current status.
 	 * 
-	 * @pre
-	 * 
 	 * @return	A sprite that fits the current status of Mazub.
+	 * @note	No formal documentation was required for this method.
 	 */
 	public Sprite getCurrentSprite(){
 		while(Util.fuzzyGreaterThanOrEqualTo(this.getTime().getSinceLastSprite(), 0.075)){
@@ -911,18 +906,14 @@ public class Mazub {
 	 * @post	The vertical velocity of Mazub is equal to the previous vertical velocity incremented with the
 	 * 			product of the vertical acceleration and dt.
 	 * 			| new.getVelocityY() == this.getVelocityY() + this.getAccelerationY() * dt
-	 * @post	If Mazub was on the ground, he isn't falling anymore. This means that his vertical velocity and
-	 * 			acceleration are equal to 0.
-	 * 			| if ( this.isOnGround() )
-	 * 			|	then (new.getVelocityY() == 0) &&
-	 * 			|		 (new.getAccelerationY() == 0)
 	 * @post	If Mazub wasn't moving, the time since his last move is increased by dt.
 	 * 			| if ( !this.isMoving() )
 	 * 			|	then (new time).getSinceLastMove() == this.getTime().getSinceLastMove() + dt
 	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
 	 * 			| (new time).getSinceLastSprite() == this.getTime().getSinceLastSprite() + dt
 	 * @throws	IllegalTimeAmountException
-	 * 			| dt > 0.2 or dt < 0
+	 * 				The given time dt is either negative or greater than 0.2s.
+	 * 			| (dt > 0.2) || (dt < 0)
 	 */
 	public void advanceTime(double dt) throws IllegalTimeAmountException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
@@ -940,17 +931,11 @@ public class Mazub {
 		// Update vertical velocity
 		this.updateVelocityY(dt);
 		
-		// Onderstaande wordt nu eigenlijk in this.updatePositionY afgehandeld?
-//		// If Mazub hits the ground, stop falling
-//		if( this.isOnGround() )
-//			this.stopFall();
-		
 		if(!this.isMoving())
 			this.getTime().increaseSinceLastMove(dt);
 		
 		this.getTime().increaseSinceLastSprite(dt);
 	}
-
 	
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
