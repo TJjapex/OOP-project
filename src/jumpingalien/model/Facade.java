@@ -1,5 +1,6 @@
 package jumpingalien.model;
 import jumpingalien.part1.facade.IFacade;
+import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Mazub;
 
@@ -17,7 +18,12 @@ public class Facade implements IFacade {
 	 * @return
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
-		return new Mazub(0, 0, 1.0, 3.0, sprites);
+		try{
+			return new Mazub(pixelLeftX, pixelBottomY, sprites);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given");
+		}
+		
 	}
 
 	/**
@@ -71,8 +77,7 @@ public class Facade implements IFacade {
 	 *         current width and height of the given alien, in number of pixels.
 	 */
 	public int[] getSize(Mazub alien){
-		return new int[] {alien.getWidth(), alien.getHeight()};
-		
+		return new int[] {alien.getWidth(), alien.getHeight()};	
 	}
 
 	/**
@@ -179,6 +184,11 @@ public class Facade implements IFacade {
 	 *            alien's time.
 	 */
 	public void advanceTime(Mazub alien, double dt){
-		alien.advanceTime(dt);
+		try{
+			alien.advanceTime(dt);
+		}catch(IllegalTimeAmountException exc){
+			throw new ModelException("Illegal time amount: " + exc.getTimeAmount() + " s");
+		}
+		
 	}
 }

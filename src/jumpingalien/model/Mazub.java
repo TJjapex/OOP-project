@@ -167,6 +167,19 @@ public class Mazub {
 		
 	}
 	
+	/**
+	 * Constructor met defaults
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param sprites
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 */
+	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] 
+			sprites) throws IllegalPositionXException, IllegalPositionYException {
+		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites);
+	}
+	
 	/************************************************* HELPER CLASSES *****************************************/
 	
 	/**
