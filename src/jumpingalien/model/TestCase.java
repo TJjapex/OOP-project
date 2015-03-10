@@ -1,12 +1,8 @@
-package jumpingalien.part1.tests;
+package jumpingalien.model;
 
 import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
-import jumpingalien.model.Facade;
-import jumpingalien.model.IllegalPositionXException;
-import jumpingalien.model.IllegalPositionYException;
-import jumpingalien.model.Mazub;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.Util;
 
@@ -21,7 +17,10 @@ import org.junit.Test;
  * - Initializeren met correcte positie
  * - Initializeren met incorrecte positie(s)
  * - Verticale positie update (springen)
- * - 
+ * - width / height? Hoe?
+ * - isMoving?
+ * - acceleration?
+ * - sprites?
  * 
  * 
  * benaming pff.
@@ -45,32 +44,42 @@ public class TestCase {
 	}
 	
 	
+	/**
+	 * Checks if Mazub is initialized with the right x position.
+	 */
+	@Test
+	public void constructorPositionX_LegalCase(){
+		IFacade facade = new Facade();
+		
+		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
+		assertEquals(alien.getRoundedPositionX(), 10);
+	}
 	
 	/**
-	 * Checks if Mazub cannot be initialized with an out of bound position.
+	 * Checks if Mazub is initialized with the right y position.
 	 */
 	@Test
-	public void initializeBadPositionXCase(){
-		try{
-			new Mazub(-10, 0, spriteArrayForSize(2, 2) );
-			assertTrue(false);
-		}catch(IllegalPositionXException exc){
-			//assertEquals(exc.getPositionX(), -10.0); <- werkt niet
-			assertTrue( Util.fuzzyEquals(exc.getPositionX(), -10.0));
-		}
+	public void constructorPositionY_LegalCase(){
+		IFacade facade = new Facade();
+		
+		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
+		assertEquals(alien.getRoundedPositionY(), 5);
 	}
+	
 	/**
-	 * Checks if Mazub cannot be initialized with an out of bound position.
+	 * Checks if Mazub cannot be initialized with an out of bound x position.
 	 */
-	@Test
-	public void initializeBadPositionYCase(){
-		try{
-			new Mazub(0, -5, spriteArrayForSize(2, 2) );
-			assertTrue(false);
-		}catch(IllegalPositionYException exc){
-			//assertEquals(exc.getPositionY(), -5.0); <- werkt niet deprecated?
-			assertTrue( Util.fuzzyEquals(exc.getPositionY(), -5.0));
-		}
+	@Test(expected=IllegalPositionXException.class)
+	public void constructorPositionX_IllegalCase() throws Exception{
+		new Mazub(-5, 0, spriteArrayForSize(2, 2) );
+	}
+	
+	/**
+	 * Checks if Mazub cannot be initialized with an out of bound y position.
+	 */
+	@Test(expected=IllegalPositionYException.class)
+	public void constructorPositionY_IllegalCase() throws Exception{
+		new Mazub(0, -5, spriteArrayForSize(2, 2) );
 	}
 	
 	/**
@@ -130,6 +139,8 @@ public class TestCase {
 		facade.advanceTime(alien, 0.199);
 		assertArrayEquals(intArray(0, 0), facade.getLocation(alien));
 	}
+	
+	
 
 
 }

@@ -76,7 +76,7 @@ public class Mazub {
 	private static final double VELOCITY_X_MAX_DUCKING = 1.0;
 	private static final double ACCELERATION_X_INIT = 0.9;	
 	private static double VELOCITY_X_MAX_RUNNING;	
-	//		-> is deze ook niet final nadat er een waarde is aan toegekend?
+	//		-> is deze ook niet final nadat er een waarde is aan toegekend? ja maar op een of andere manier kon ik dat er niet bijkrijgen :s
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -149,7 +149,7 @@ public class Mazub {
 	 * 			| ! isValidPositionY(pixelBottomY)
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[]
-				sprites) throws IllegalPositionXException, IllegalPositionYException {
+				sprites) throws IllegalPositionXException, IllegalPositionYException { // <--- moet die throws er wel bij? Worden die niet gewoon altijd doorgegeven?
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		this.setPositionX(pixelLeftX);
@@ -168,15 +168,20 @@ public class Mazub {
 	}
 	
 	/**
-	 * Constructor met defaults
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param sprites
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
+	 * Initialize Mazub with default velocityXInit and velocityXMaxRunning
+	 * 
+	 * @param 	pixelLeftX
+	 * 				The x-location of Mazub's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of Mazub's bottom left pixel.
+	 * @param 	sprites
+	 * 				The array of sprite images for Mazub.
+	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
+	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
+	 * @effect  Construct Mazub with velocityXInit = 1.0 and velocityXMaxRunning  = 3.0
+	 * 			| this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites)
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] 
-			sprites) throws IllegalPositionXException, IllegalPositionYException {
+	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
 		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites);
 	}
 	
@@ -185,13 +190,13 @@ public class Mazub {
 	/**
 	 * Set the time properties of Mazub.
 	 * 
-	 * @param 	timerClass
+	 * @param 	timer
 	 * 				A time that keeps track of several times involving the behaviour of Mazub.
 	 * @post	The new time of Mazub is equal to timerClass.
-	 * 			| new.getTime() == timerClass
+	 * 			| new.getTime() == timer
 	 */
-	private void setTime( Time timerClass){
-		this.time = timerClass;
+	private void setTime( Time timer){
+		this.time = timer;
 	}
 	
 	/**
@@ -206,18 +211,19 @@ public class Mazub {
 	private Time time;
 	
 	/**
-	 * Set the animation for Mazub.
+	 * Set the animation object for Mazub.
 	 * 
-	 * @param 	animationClass
+	 * @param 	animation
 	 * 				An animation that consists of consecutive sprites.
 	 * @post	The new animation for Mazub is equal to animationClass.
+	 * 			| new.getAnimation() == animtion
 	 */
-	private void setAnimation( Animation animationClass){
-		this.animation = animationClass;
+	private void setAnimation( Animation animation){
+		this.animation = animation;
 	}
 	
 	/**
-	 * Return the animation for Mazub.
+	 * Return the animation object for Mazub.
 	 * 
 	 * @return	An animation that consists of consecutive sprites.
 	 */
@@ -237,6 +243,9 @@ public class Mazub {
 	// 			each pixel = 0.01m
 	// 			Position of Mazub: bottom-left pixel of Mazub
 	// 			Mazub's dimension (X_p,Y_p), depends on active sprite
+	
+	
+	// X position 
 	
 	/**
 	 * Return the round x-location of Mazub's bottom left pixel.
@@ -260,6 +269,8 @@ public class Mazub {
 	public static boolean isValidRoundedPositionX(int positionX){
 		return positionX >= 0 && positionX < GAME_WIDTH;
 	}
+	
+	// Y position
 	
 	/**
 	 * Return the round y-location of Mazub's bottom left pixel.
@@ -285,6 +296,8 @@ public class Mazub {
 		return positionY >= 0 && positionY < GAME_HEIGHT;
 	}
 	
+	// width
+	
 	/**
 	 * Return the width of Mazub, depending on the active sprite.
 	 * 
@@ -306,6 +319,8 @@ public class Mazub {
 	public static boolean isValidWidth(int width){
 		return width > 0 && width < GAME_WIDTH;
 	}
+	
+	// height
 	
 	/**
 	 * Return the height of Mazub, depending on the active sprite.
@@ -525,6 +540,7 @@ public class Mazub {
 	 * @post	The ducking status of Mazub is equal to the given boolean value of ducking.
 	 * 			| new.isDucking() == ducking
 	 */
+	@Basic
 	public void setDucking(boolean ducking){
 		this.ducking = ducking;
 	}
@@ -731,6 +747,7 @@ public class Mazub {
 	 *  
 	 * @return	A double that represents the initial horizontal velocity of Mazub.
 	 */
+	@Basic
 	public double getVelocityXInit(){
 		return this.velocityXInit;
 	}
@@ -853,8 +870,8 @@ public class Mazub {
 	 * @post	The orientation of Mazub is equal to the given orientation.
 	 * 			| new.getOrientation() == orientation
 	 */
-	@Basic
-	public void setOrientation(Orientation orientation){
+	@Basic @Model
+	private void setOrientation(Orientation orientation){
 		this.orientation = orientation;
 	}	
 	
@@ -875,13 +892,16 @@ public class Mazub {
 	 * @return	A sprite that fits the current status of Mazub.
 	 * @note	No formal documentation was required for this method.
 	 */
-	public Sprite getCurrentSprite(){
-		while(Util.fuzzyGreaterThanOrEqualTo(this.getTime().getSinceLastSprite(), 0.075)){
-				this.getAnimation().updateAnimationIndex();
-				this.getTime().increaseSinceLastSprite(-0.075);
-		}
-		
+	public Sprite getCurrentSprite(){		
 		return this.getAnimation().getCurrentSprite(this);	
+	}
+	
+	// Slechte naam enzo, mss verhuizen naar animation class? Dan moet time object voor t package aanpasbaar zijn ipv private
+	public void updateSpriteIndex(){
+		while(Util.fuzzyGreaterThanOrEqualTo(this.getTime().getSinceLastSprite(), 0.075)){
+			this.getAnimation().updateAnimationIndex();
+			this.getTime().increaseSinceLastSprite(-0.075);
+		}
 	}
 	
 	/************************************************ ADVANCE TIME ********************************************/
@@ -947,7 +967,9 @@ public class Mazub {
 		if(!this.isMoving())
 			this.getTime().increaseSinceLastMove(dt);
 		
+		// Sprites
 		this.getTime().increaseSinceLastSprite(dt);
+		this.updateSpriteIndex();	
 	}
 	
 	/**
@@ -962,6 +984,7 @@ public class Mazub {
 	 * 			| new.getPositionX() == this.getPositionX() + 100*( this.getVelocityX() * dt +
 	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
 	 */
+	@Model
 	private void updatePositionX(double dt){
 		try{
 			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
@@ -989,6 +1012,7 @@ public class Mazub {
 	 * 			| new.getPositionY() == this.getPositionY() + 100*( this.getVelocityY() * dt +
 	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) )
 	 */
+	@Model
 	private void updatePositionY(double dt){
 		try{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );

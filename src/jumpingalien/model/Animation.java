@@ -11,11 +11,11 @@ import jumpingalien.util.Sprite;
  */
 public class Animation {
 	
-	// Geen idee of dit wel beter is dan gewoon cijfertjes :p
+	// Geen idee of dit wel beter is dan gewoon cijfertjes :p mss beter gewoon cijfertjes en in ne comment de betekenis want dees is ook echt nie handig
 	private final int NOTMOVING_HASNOTMOVED_NOTDUCKING = 0;
 	private final int NOTMOVING_HASNOTMOVED_DUCKING = 1;
 	private final int NOTMOVING_HASMOVED_RIGHT_NOTDUCKING = 2;
-	private final int NOTMOVING_HASMOVEd_LEFT_NOTDUCING = 3;
+	private final int NOTMOVING_HASMOVED_LEFT_NOTDUCKING = 3;
 	private final int MOVING_RIGHT_JUMPING_NOTDUCKING = 4;
 	private final int MOVING_LEFT_JUMPING_NOTDUCKING = 5;
 	private final int DUCKING_MOVING_RIGHT_OR_HASMOVED = 6;
@@ -42,7 +42,7 @@ public class Animation {
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		this.sprites = sprites;
-		this.nbFrames = ( this.sprites.length - 8) / 2;
+		//this.nbFrames = ( this.sprites.length - 8) / 2;
 		this.setAnimationIndex(0);
 	}
 	
@@ -103,12 +103,12 @@ public class Animation {
 				if(alien.getOrientation() == Orientation.RIGHT){
 					index = 8 + this.getAnimationIndex();
 				}else{ // LEFT
-					index = 8 + this.nbFrames + this.getAnimationIndex();
+					index = 8 + this.getNbFrames() + this.getAnimationIndex();
 				}
 			}
 		}
 
-		return this.sprites[index];
+		return this.getSpriteAt(index);
 	}	
 	
 	/**
@@ -121,21 +121,42 @@ public class Animation {
 		return this.sprites;
 	}
 	
+	/**
+	 * Returns the sprite of this animation class, with the given index
+	 * 
+	 * @param index
+	 * 			The index of the sprite
+	 * @return
+	 * 		The sprite of this animation class, with the given index
+	 */
+	public Sprite getSpriteAt(int index){
+		return this.getSprites()[index];
+	}
+	
+	/**
+	 * Returns the number of elements in the sprites array of the object
+	 * 
+	 * @return	The number of elements in the sprites array of the object
+	 * 			
+	 */
+	public int getNbSprites(){
+		return this.getSprites().length;
+	}
+	
 	private final Sprite[] sprites;
 	
 	/**
-	 * Return the number of frames for an animation. This can also be determined by using the formula   
-	 * ( this.sprites.length - 8) / 2 , but the result is explicitly stored to avoid unnecessary calculations.
+	 * Return the number of frames for an animation.
 	 * 
 	 * @return	The number of frames for one kind of animation (e.g. walking in a given direction)
-	 * 			| ( this.sprites.length - 8) / 2;
 	 */
-	@Basic @Immutable
+	@Basic // @Immutable
 	public int getNbFrames(){
-		return this.nbFrames;
+		return ( this.getNbSprites() - 8) / 2;
+		//return this.nbFrames;
 	}	
 	
-	private final int nbFrames;	
+	//private final int nbFrames;	
 	
 	
 	/**
@@ -161,7 +182,7 @@ public class Animation {
 	 */
 	@Basic
 	private void setAnimationIndex(int animationIndex){
-		assert (animationIndex >= 0) && (animationIndex <= this.nbFrames);
+		assert (animationIndex >= 0) && (animationIndex <= this.getNbFrames());
 		
 		this.animationIndex = animationIndex;
 	}
@@ -178,7 +199,7 @@ public class Animation {
 	 * 			|	then new.getAnimationIndex() == 0		
 	 */
 	void updateAnimationIndex(){
-		this.setAnimationIndex( (this.getAnimationIndex() + 1) % nbFrames );
+		this.setAnimationIndex( (this.getAnimationIndex() + 1) % this.getNbFrames() );
 	}
 	
 	private int animationIndex;
