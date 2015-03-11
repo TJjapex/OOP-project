@@ -11,18 +11,6 @@ import jumpingalien.util.Sprite;
  */
 public class Animation {
 	
-	// Geen idee of dit wel beter is dan gewoon cijfertjes :p mss beter gewoon cijfertjes en in ne comment de betekenis want dees is ook echt nie handig
-	private final int NOTMOVING_HASNOTMOVED_NOTDUCKING = 0;
-	private final int NOTMOVING_HASNOTMOVED_DUCKING = 1;
-	private final int NOTMOVING_HASMOVED_RIGHT_NOTDUCKING = 2;
-	private final int NOTMOVING_HASMOVED_LEFT_NOTDUCKING = 3;
-	private final int MOVING_RIGHT_JUMPING_NOTDUCKING = 4;
-	private final int MOVING_LEFT_JUMPING_NOTDUCKING = 5;
-	private final int DUCKING_MOVING_RIGHT_OR_HASMOVED = 6;
-	private final int DUCKING_MOVING_LEFT_OR_HASMOVED = 7;
-	private final int NOTDUCKING_NOTJUMPING_MOVING_RIGHT = 8;
-	private final int DUCKING_NOTJUMPING_MOVING_LEFT = 9;
-	
 	/**
 	 * Constructor for the class Animation.
 	 * 

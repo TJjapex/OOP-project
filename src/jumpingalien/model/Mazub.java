@@ -183,7 +183,7 @@ public class Mazub {
 	 * 
 	 * @return	A time that keeps track of several times involving the behaviour of Mazub.
 	 */
-	private Time getTime(){
+	public Time getTime(){
 		return this.time;
 	}
 	
@@ -614,15 +614,13 @@ public class Mazub {
 	 * 				A double that represents an x-coordinate.
 	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
 	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
-	 * 			GAME_WIDTH. (up to a certain epsilon)
+	 * 			GAME_WIDTH.
 	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
 	 */
 	@Basic
 	public static boolean isValidPositionX(double positionX) {
-		return Util.fuzzyGreaterThanOrEqualTo(positionX, 0) &&
-			   Util.fuzzyLessThanOrEqualTo(positionX, GAME_WIDTH-1);
-		//return isValidRoundedPositionX((int) Math.floor(positionX));
-		//		-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
+		return isValidRoundedPositionX((int) Math.floor(positionX));
+
 	}
 	
 	/**
@@ -632,15 +630,12 @@ public class Mazub {
 	 * 				A double that represents a y-coordinate.
 	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
 	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
-	 * 			GAME_HEIGHT. (up to a certain epsilon)
+	 * 			GAME_HEIGHT. 
 	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
 	 */
 	@Basic
 	public static boolean isValidPositionY(double positionY) {
-		return Util.fuzzyGreaterThanOrEqualTo(positionY, 0) &&
-			   Util.fuzzyLessThanOrEqualTo(positionY, GAME_HEIGHT-1);
-		//return isValidRoundedPositionY((int) Math.floor(positionY));
-		//		-> deze zou ik niet gebruiken voor de niet-afgeronde posities?
+		return isValidRoundedPositionY((int) Math.floor(positionY));
 	}
 		
 	private double positionX;

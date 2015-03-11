@@ -1,6 +1,7 @@
 package jumpingalien.model;
 
 import static jumpingalien.tests.util.TestUtils.intArray;
+import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 import jumpingalien.part1.facade.IFacade;
@@ -88,8 +89,8 @@ public class TestCase {
 	@Test
 	public void jumpCorrectly() {
 		IFacade facade = new Facade();
-
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
 		facade.startJump(alien);
 		facade.advanceTime(alien, 0.1);
 
@@ -105,8 +106,8 @@ public class TestCase {
 	@Test
 	public void endJumpCorrectly() {
 		IFacade facade = new Facade();
-
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
 		facade.startJump(alien);
 
 		facade.advanceTime(alien, 0.1);
@@ -121,8 +122,8 @@ public class TestCase {
 	@Test
 	public void backOnGroundCorrectly() {
 		IFacade facade = new Facade();
-
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
 		facade.startJump(alien);
 
 		facade.advanceTime(alien, 0.025);
@@ -141,24 +142,89 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if Mazub's maximal horizontal speed while ducking is correct.
+	 * Checks if Mazub's maximal horizontal velocity while ducking is correct.
 	 */
 	@Test
 	public void maxSpeedDuckingCorrectly() {
 		IFacade facade = new Facade();
-		
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
-		facade.startDuck;
-		facade.startMoveRight(alien);
-		for (int i = 0; i < 12; i++) {
-			facade.advanceTime(alien, 0.1);
-		}
 		
-		// Horizontal velocity after 12 time steps of 0.1 seconds.
-		// velocity_x_new [m/s] = 0 [m/s] + 12 * 0.9 [m/s^2] * 0.1 [s] = 1.08 [m/s]
-		// The new velocity should be limited to 1 [m/s] whilst ducking.
+		facade.startDuck(alien);
+		facade.startMoveRight(alien);
+		facade.advanceTime(alien, 0.1);	
+		
+		// Horizontal velocity after a time step of 0.1 seconds.
+		// velocity_x_new [m/s] = 1.0 [m/s] + 0.9 [m/s^2] * 0.1 [s] = 1.09 [m/s]
+		// However the velocity should be limited to 1 m/s whilst ducking, so the new velocity is equal to
+		// 1 m/s.
 
-		assertArrayEquals(intArray(1, 0), facade.getVelocity(alien));
+		// assertArrayEquals(doubleArray(1, 0), facade.getVelocity(alien));
+		// 		-> assertArrayEquals werkt niet om één of andere reden met doubles.
+		assertEquals(1, facade.getVelocity(alien)[0],0.00001);
 	}
 	
-}
+	/**
+	 * Checks if Mazub's maximal horizontal velocity is correct when he was moving right at maximum velocity
+	 * whilst ducking and then stops ducking while still moving right.
+	 */
+	@Test
+	public void correctSpeedStopDuckingWhileMoving() {
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
+		facade.startDuck(alien);
+		facade.startMoveRight(alien);
+		facade.advanceTime(alien, 0.1);
+		
+		// Horizontal velocity of Mazub is now equal to the maximal velocity while ducking, which is 1 m/s.
+		
+		facade.endDuck(alien);
+		facade.advanceTime(alien, 0.05);
+		
+		// velocity_x_new [m/s] = 1 [m/s] + 0.9 [m/s^2] * 0.05[s] = 1.045 [m/s]
+		
+		assertEquals(1.045, facade.getVelocity(alien)[0],0.00001);
+	}
+	
+	/**
+	 * Checks if Mazub's vertical velocity is equal to zero at a certain moment during his jump. Also checks if
+	 * Mazub is still jumping at that moment.
+	 */
+	@Test
+	public void midAirVelocityZero(){
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
+		facade.startJump(alien);
+			
+		// velocity_y_new [m/s] = 8 [m/s] - 10 [m/s^2] * dt [s] = 0 [m/s]
+		// solving for dt we find: dt = 0.8
+		
+		for (int i = 0; i < 10; i++){
+			facade.advanceTime(alien, 0.08);
+		}
+		
+		assertEquals(0, facade.getVelocity(alien)[0],0.00001);	
+		assert alien.isJumping();
+	}
+	
+	/**
+	 * Checks if the time since the last move by Mazub was made, is tracked correctly.
+	 */
+	@Test
+	public void correctTimeSinceLastMove() {
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
+		facade.startMoveLeft(alien);
+		facade.advanceTime(alien, 0.15);
+		facade.endMoveLeft(alien);
+		for (int i = 0; i < 4; i++){
+			facade.advanceTime(alien, 0.10);
+		}
+		
+		assertEquals(0.4, alien.getTime().getSinceLastMove(), 0.00001);
+	}
+	
+	}
+
