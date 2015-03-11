@@ -116,7 +116,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if Mazub is back on the ground on the expected moment, after invoking endJump
+	 * Checks if Mazub is back on the ground on the expected moment, after invoking endJump.
 	 */
 	@Test
 	public void backOnGroundCorrectly() {
@@ -128,19 +128,37 @@ public class TestCase {
 		facade.advanceTime(alien, 0.025);
 		facade.endJump(alien);
 		
-		// Hoogte bij endJump:
+		// Height after 0.025 seconds:
 		// y_new [m] = 0 + 8 [m/s] * 0.025 [s] + 1/2 * (-10.0) [m/s^2] * (0.025 [s])^2 =
-		// 0.1968750 [m] = 19.68750 [cm], which falls into pixel (0, 38)
+		// 0.1968750 [m] = 19.68750 [cm], which falls into pixel (0, 20)
 
-		// Tot tot grond:
+		// Time step until Mazub has reached the ground:
 		// 0.1968750 [m] + 0 [m/s] * dt [s] + 1/2 * (-10.0) [m/s^2] * (dt [s])^2 = 0
-		// Oplossen geeft: 0.1984313483 (positieve oplossing)
+		// Solving the equation for a positive solution gives: dt = 0.1984313483
 		
 		facade.advanceTime(alien, 0.199);
 		assertArrayEquals(intArray(0, 0), facade.getLocation(alien));
 	}
 	
+	/**
+	 * Checks if Mazub's maximal horizontal speed while ducking is correct.
+	 */
+	@Test
+	public void maxSpeedDuckingCorrectly() {
+		IFacade facade = new Facade();
+		
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		facade.startDuck;
+		facade.startMoveRight(alien);
+		for (int i = 0; i < 12; i++) {
+			facade.advanceTime(alien, 0.1);
+		}
+		
+		// Horizontal velocity after 12 time steps of 0.1 seconds.
+		// velocity_x_new [m/s] = 0 [m/s] + 12 * 0.9 [m/s^2] * 0.1 [s] = 1.08 [m/s]
+		// The new velocity should be limited to 1 [m/s] whilst ducking.
+
+		assertArrayEquals(intArray(1, 0), facade.getVelocity(alien));
+	}
 	
-
-
 }

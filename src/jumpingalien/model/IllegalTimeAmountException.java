@@ -1,8 +1,8 @@
 package jumpingalien.model;
 
 /**
- * A class for singaling illegal timestep amounts 
- * for the advanceTime function of the class Mazub
+ * A class for signaling illegal time step amounts 
+ * for the advanceTime function of the class Mazub.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
@@ -11,11 +11,11 @@ package jumpingalien.model;
 public class IllegalTimeAmountException extends RuntimeException {
 	
 	/**
-	 * Initialize this new illegal timestep exception with the given time amount
-	 * @param dt
-	 * 			The timestep amount for this new illegal timestep amount exception
-	 * @post	The temestep amount dt of this new illegal timestep amount exception
-	 * 			is equal to the given dt
+	 * Initialize this new illegal time step exception with the given time amount.
+	 * @param 	dt
+	 * 				The time step amount for this new illegal time step amount exception.
+	 * @post	The time step amount dt of this new illegal time step amount exception
+	 * 			is equal to the given dt.
 	 *			| new.getTimeAmount() == dt
 	 */
 	public IllegalTimeAmountException(double dt){
@@ -24,8 +24,8 @@ public class IllegalTimeAmountException extends RuntimeException {
 	
 	
 	/**
-	 * Return the time amount registered for this illegal timestep amount exception
-	 * @return	 The time amount registered for this illegal timestep amount exception
+	 * Return the time amount registered for this illegal time step amount exception.
+	 * @return	 The time amount registered for this illegal time step amount exception.
 	 */
 	public double getTimeAmount(){
 		return this.dt;

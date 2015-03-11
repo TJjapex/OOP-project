@@ -51,7 +51,24 @@ public class Animation {
 	 * 
 	 * @param 	alien
 	 * 				A valid instance of the class Mazub.
-	 * @return	A sprite that fits the current status of the given Mazub instance.
+	 * @return	A sprite located at index in sprites that fits the current status of the given Mazub instance.
+	 * 			The index represents a certain status of Mazub:
+	 * 			index = 0: 	Mazub is not moving horizontally, has not moved horizontally within the last 
+	 * 						second of in-game-time and is not ducking.
+	 * 					1:	Mazub is not moving horizontally, has not moved horizontally within the last second
+	 * 						of in-game-time and is ducking.
+	 * 					2:	Mazub is not moving horizontally but its last horizontal movement was to the right
+	 * 						(within 1s), and the character is not ducking.
+	 * 					3:	Mazub is not moving horizontally but its last horizontal movement was to the left
+	 * 						(within 1s), and the character is not ducking.
+	 * 					4:	Mazub is moving to the right and jumping and not ducking.
+	 * 					5:	Mazub is moving to the left and jumping and not ducking.
+	 * 					6:	Mazub is ducking and moving to the right or was moving to the right (within 1s).
+	 * 					7:	Mazub is ducking and moving to the left or was moving to the left (within 1s).
+	 * 					8 .. this.getNbFrames():	
+	 * 						Mazub is neither ducking nor jumping and moving to the right.
+	 * 					9 + this.getNbFrames() .. 9 + 2*this.getNbFrames():	
+	 * 						Mazub is neither ducking nor jumping and moving to the left.
 	 * @note	No formal documentation was required for this method.
 	 */
 	public Sprite getCurrentSprite(Mazub alien){
@@ -112,9 +129,9 @@ public class Animation {
 	}	
 	
 	/**
-	 * Return the sprites of this animation class
+	 * Return the sprites of this animation class.
 	 * 
-	 * @return	The sprites of this animation class
+	 * @return	The sprites of this animation class.
 	 */
 	@Basic @Immutable
 	public Sprite[] getSprites(){
@@ -122,22 +139,20 @@ public class Animation {
 	}
 	
 	/**
-	 * Returns the sprite of this animation class, with the given index
+	 * Returns the sprite of this animation class, with the given index.
 	 * 
-	 * @param index
-	 * 			The index of the sprite
-	 * @return
-	 * 		The sprite of this animation class, with the given index
+	 * @param 	index
+	 * 				The index of the sprite
+	 * @return	The sprite of this animation class, with the given index.
 	 */
 	public Sprite getSpriteAt(int index){
 		return this.getSprites()[index];
 	}
 	
 	/**
-	 * Returns the number of elements in the sprites array of the object
+	 * Returns the number of elements in the sprites array of the object.
 	 * 
-	 * @return	The number of elements in the sprites array of the object
-	 * 			
+	 * @return	The number of elements in the sprites array of the object.		
 	 */
 	public int getNbSprites(){
 		return this.getSprites().length;
@@ -148,7 +163,7 @@ public class Animation {
 	/**
 	 * Return the number of frames for an animation.
 	 * 
-	 * @return	The number of frames for one kind of animation (e.g. walking in a given direction)
+	 * @return	The number of frames for one kind of animation. (e.g. walking in a given direction)
 	 */
 	@Basic // @Immutable
 	public int getNbFrames(){

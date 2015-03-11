@@ -76,18 +76,12 @@ public class Mazub {
 	private static final double VELOCITY_X_MAX_DUCKING = 1.0;
 	private static final double ACCELERATION_X_INIT = 0.9;	
 	private static double VELOCITY_X_MAX_RUNNING;	
-	//		-> is deze ook niet final nadat er een waarde is aan toegekend? ja maar op een of andere manier kon ik dat er niet bijkrijgen :s
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 	
 	// 			accepts an array of n images as parameter (n even, n >= 10)
 	//			chosen to be worked out nominally
 
-	
-	
-	// !! ------------------------------> 	Deze throwt nu gewoon de erros van positionX en Y door, is die dan 
-	//										ook niet defensief?
-	//			-> op zich wel denk ik maar over de constructor werd niets gezegd dus we mogen kiezen
 	/**
 	 * Constructor for the class Mazub.
 	 * 
@@ -101,22 +95,8 @@ public class Mazub {
 	 * 				The maximal horizontal velocity of Mazub when he's running.
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * Moet deze hier of bij de animation class of bij  beide? Bij animation heb ik al een assert gemaakt
-	 * 		-> daar twijfelde ik ook over maar omdat je die hier ook als argument moet meegeven dacht ik dat het
-	 * 		-> hier ook zeker als preconditie moest staan.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @effect	If the given pixelLeftX is within the boundaries of the game world, the initial positionX is 
 	 * 			equal to pixelLeftX. If the given pixelLeftX is negative, the initial positionX is equal to 0.
 	 * 			Otherwise, if the given pixelLeftX is greater than GAME_WIDTH - 1, the initial positionX is
@@ -164,7 +144,6 @@ public class Mazub {
 		
 		this.setTime(new Time());
 		this.setAnimation(new Animation(sprites));
-		
 	}
 	
 	/**

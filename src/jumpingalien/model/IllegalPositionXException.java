@@ -10,10 +10,10 @@ import be.kuleuven.cs.som.annotate.*;
 public class IllegalPositionXException extends RuntimeException {
 	
 	/**
-	 * Initiliaze this new illegal x position exception with the given x position 
-	 * @param positionX
-	 * 			The x position for this exception
-	 * @post	The x position for this exception is set to the given x position
+	 * Initialize this new illegal x position exception with the given x position .
+	 * @param 	positionX
+	 * 				The x position for this exception.
+	 * @post	The x position for this exception is set to the given x position.
 	 * 			| new.getPositionX() == positionX
 	 */
 	public IllegalPositionXException(double positionX) {
@@ -23,7 +23,7 @@ public class IllegalPositionXException extends RuntimeException {
 	/**
 	 * Returns the horizontal position for this exception.
 	 * 
-	 * @return	The horizontal position for this exception
+	 * @return	The horizontal position for this exception.
 	 * 
 	 */
 	@Basic @Immutable

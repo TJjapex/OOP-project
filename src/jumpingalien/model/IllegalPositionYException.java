@@ -11,10 +11,10 @@ import be.kuleuven.cs.som.annotate.*;
 public class IllegalPositionYException extends RuntimeException {
 
 	/**
-	 * Initiliaze this new illegal y position exception with the given y position 
-	 * @param positionY
-	 * 			The y position for this exception
-	 * @post	The y position for this exception is set to the given y position
+	 * Initialize this new illegal y position exception with the given y position.
+	 * @param 	positionY
+	 * 				The y position for this exception.
+	 * @post	The y position for this exception is set to the given y position.
 	 * 			| new.getPositionY() == positionY
 	 */
 	public IllegalPositionYException(double positionY) {
@@ -24,7 +24,7 @@ public class IllegalPositionYException extends RuntimeException {
 	/**
 	 * Returns the y position for this exception.
 	 * 
-	 * @return	The y position for this exception
+	 * @return	The y position for this exception.
 	 * 
 	 */
 	@Basic @Immutable
