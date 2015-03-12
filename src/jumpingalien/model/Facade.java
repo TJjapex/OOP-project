@@ -186,8 +186,8 @@ public class Facade implements IFacade {
 	public void advanceTime(Mazub alien, double dt){
 		try{
 			alien.advanceTime(dt);
-		}catch(IllegalTimeAmountException exc){
-			throw new ModelException("Illegal time amount: " + exc.getTimeAmount() + " s");
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal time amount given!");
 		}
 		
 	}

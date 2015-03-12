@@ -169,12 +169,16 @@ public class Mazub {
 	/**
 	 * Set the time properties of Mazub.
 	 * 
+	 * @pre		The given time object is not null.
+	 * 			| time != null
 	 * @param 	timer
 	 * 				A time that keeps track of several times involving the behaviour of Mazub.
 	 * @post	The new time of Mazub is equal to timerClass.
 	 * 			| new.getTime() == timer
 	 */
 	private void setTime( Time timer){
+		assert timer != null;
+		
 		this.time = timer;
 	}
 	
@@ -192,12 +196,16 @@ public class Mazub {
 	/**
 	 * Set the animation object for Mazub.
 	 * 
+	 * @pre		The given animation object is not null.
+	 * 			| animation != null
 	 * @param 	animation
 	 * 				An animation that consists of consecutive sprites.
 	 * @post	The new animation for Mazub is equal to animationClass.
 	 * 			| new.getAnimation() == animtion
 	 */
 	private void setAnimation( Animation animation){
+		assert animation != null;
+		
 		this.animation = animation;
 	}
 	
@@ -576,7 +584,7 @@ public class Mazub {
 	 * 			| ! isValidPositionX(positionX)
 	 */
 	@Basic
-	private void setPositionX(double positionX) {
+	private void setPositionX(double positionX) throws IllegalPositionXException{
 		if( !isValidPositionX(positionX)) 
 			throw new IllegalPositionXException(positionX);
 		this.positionX = positionX;
@@ -601,7 +609,7 @@ public class Mazub {
 	 * 			| ! isValidPositionY(positionY)
 	 */
 	@Basic
-	private void setPositionY(double positionY) {
+	private void setPositionY(double positionY) throws IllegalPositionYException{
 		if( !isValidPositionY(positionY)) 
 			throw new IllegalPositionYException(positionY);
 		this.positionY = positionY;
@@ -870,13 +878,6 @@ public class Mazub {
 		return this.getAnimation().getCurrentSprite(this);	
 	}
 	
-	// Slechte naam enzo, mss verhuizen naar animation class? Dan moet time object voor t package aanpasbaar zijn ipv private
-	public void updateSpriteIndex(){
-		while(Util.fuzzyGreaterThanOrEqualTo(this.getTime().getSinceLastSprite(), 0.075)){
-			this.getAnimation().updateAnimationIndex();
-			this.getTime().increaseSinceLastSprite(-0.075);
-		}
-	}
 	
 	/************************************************ ADVANCE TIME ********************************************/
 	
@@ -918,13 +919,14 @@ public class Mazub {
 	 * 			|	then (new time).getSinceLastMove() == this.getTime().getSinceLastMove() + dt
 	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
 	 * 			| (new time).getSinceLastSprite() == this.getTime().getSinceLastSprite() + dt
-	 * @throws	IllegalTimeAmountException
+	 * @throws	IllegalArgumentException
 	 * 				The given time dt is either negative or greater than 0.2s.
 	 * 			| (dt > 0.2) || (dt < 0)
 	 */
-	public void advanceTime(double dt) throws IllegalTimeAmountException{
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalTimeAmountException(dt);
+	public void advanceTime(double dt) throws IllegalArgumentException{
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2)) // Moeten dit wel fuzzys zijn eigenlijk? :p
+			throw new IllegalArgumentException("Illegal timestep amount given: "+ dt + " s");
+			//throw new IllegalTimeAmountException(dt);
 		
 		// Update  horizontal position
 		this.updatePositionX(dt);
@@ -943,7 +945,7 @@ public class Mazub {
 		
 		// Sprites
 		this.getTime().increaseSinceLastSprite(dt);
-		this.updateSpriteIndex();	
+		this.getAnimation().updateAnimationIndex(this.getTime());
 	}
 	
 	/**

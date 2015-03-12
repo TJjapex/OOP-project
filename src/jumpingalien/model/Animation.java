@@ -2,6 +2,7 @@ package jumpingalien.model;
 
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
+import jumpingalien.util.Util;
 
 /**
  * An Animation class, implemented with methods to serve as a helper class for the class Mazub.
@@ -30,7 +31,6 @@ public class Animation {
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		this.sprites = sprites;
-		//this.nbFrames = ( this.sprites.length - 8) / 2;
 		this.setAnimationIndex(0);
 	}
 	
@@ -153,13 +153,10 @@ public class Animation {
 	 * 
 	 * @return	The number of frames for one kind of animation. (e.g. walking in a given direction)
 	 */
-	@Basic // @Immutable
+	@Basic @Immutable
 	public int getNbFrames(){
 		return ( this.getNbSprites() - 8) / 2;
-		//return this.nbFrames;
 	}	
-	
-	//private final int nbFrames;	
 	
 	
 	/**
@@ -183,7 +180,6 @@ public class Animation {
 	 * @post	The animation index is equal to the given animationIndex.
 	 * 			| new.getAnimationIndex() == animationIndex
 	 */
-	@Basic
 	private void setAnimationIndex(int animationIndex){
 		assert (animationIndex >= 0) && (animationIndex <= this.getNbFrames());
 		
@@ -191,7 +187,25 @@ public class Animation {
 	}
 	
 	/**
-	 * Updates the animation index for the next sprite of the animation.
+	 * Updates the current animation frame, based on the time since the last frame.
+	 * ...
+	 * @pre The given time object is not null
+	 * 		| time != null
+	 * @param time
+	 * 			A valid time object
+	 * ...
+	 */
+	public void updateAnimationIndex(Time time){
+		assert time != null;
+		
+		while(Util.fuzzyGreaterThanOrEqualTo(time.getSinceLastSprite(), 0.075)){
+			this.incrementAnimationIndex();
+			time.increaseSinceLastSprite(-0.075);
+		}
+	}
+	
+	/**
+	 * Increments the frame index, or sets it to 0 if the current frame is the last one.
 	 * 
 	 * @post	If the animation index was smaller than the number of frames of the animation minus one,
 	 * 			the animation index is now increased with one. If the animation index was equal to
@@ -201,7 +215,7 @@ public class Animation {
 	 * 			| else if (this.getAnimationIndex() + 1  == this.nbFrames)
 	 * 			|	then new.getAnimationIndex() == 0		
 	 */
-	void updateAnimationIndex(){
+	private void incrementAnimationIndex(){
 		this.setAnimationIndex( (this.getAnimationIndex() + 1) % this.getNbFrames() );
 	}
 	
