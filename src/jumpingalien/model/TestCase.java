@@ -4,6 +4,7 @@ import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
+import jumpingalien.common.gui.AlienGameScreen;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.Util;
 
@@ -84,6 +85,111 @@ public class TestCase {
 	}
 	
 	/**
+	 * Checks if Mazub's default initial horizontal velocity is equal to 1.0 .
+	 */
+	@Test
+	public void correctDefaultVelocityXInit() {
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2) );
+		assertEquals(1.0, alien.getVelocityXInit(),0.00001);
+	}
+	
+	/**
+	 * Checks if Mazub's default maximal horizontal velocity is equal to 3.0 .
+	 */
+	@Test
+	public void correctDefaultVelocityXMax() {
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2) );
+		assertEquals(3.0, alien.getVelocityXMax(),0.00001);
+	}
+	
+	/**
+	 * Checks if the helper classes (Time and Animation) are properly initiated.
+	 */
+	@Test
+	public void helperClassesCorrectlyInitiated(){
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
+		
+		assertNotNull(alien.getTime());
+		assertNotNull(alien.getAnimation());
+	}
+	
+	/**
+	 * Checks if the positions of Mazub are correctly rounded down to the right integer.
+	 */
+	@Test
+	public void positionsCorrectlyRounded(){
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2) );
+		facade.startMoveRight(alien);
+		facade.startJump(alien);
+		facade.advanceTime(alien, 0.14);
+		
+		// x_new [m] = 0 [m] + 1 [m/s] * 0.14 [s] + 1/2 * 0.9 [m/s^2] * (0.14 [s]) ^2 =
+		// 0.14882 [m] = 14.882 [cm] 
+		// y_new [m] = 0 [m] + 8 [m/s] * 0.14 [s] + 1/2 * (-10.0) [m/s^2] * (0.14 [s])^2 =
+		// 1.022 [m] = 102.20 [cm]
+		// The position of Mazub should be (14, 102) because the doubles are always rounded down.
+
+		assertEquals(14, alien.getRoundedPositionX());
+		assertEquals(102, alien.getRoundedPositionY());
+	}
+	
+	/**
+	 * Checks if isValidRoundedPosition() correctly determines which positions are valid and which
+	 * are not.
+	 */
+	@Test
+	public void correctValidRoundedPositions(){
+		assertFalse(Mazub.isValidRoundedPositionX(-1));
+		assertTrue(Mazub.isValidRoundedPositionX(0));
+		assertTrue(Mazub.isValidRoundedPositionX(546));
+		assertFalse(Mazub.isValidRoundedPositionX(1024));
+		assertTrue(Mazub.isValidRoundedPositionX(1023));
+		assertFalse(Mazub.isValidRoundedPositionY(-1));
+		assertTrue(Mazub.isValidRoundedPositionY(0));
+		assertTrue(Mazub.isValidRoundedPositionY(546));
+		assertFalse(Mazub.isValidRoundedPositionY(768));
+		assertTrue(Mazub.isValidRoundedPositionY(767));
+	}
+	
+	/**
+	 * Checks if isValidPosition() correctly determines which positions are valid and which are not.
+	 */
+	@Test
+	public void correctValidPositions(){
+		assertFalse(Mazub.isValidPositionX(-0.00001));
+		assertTrue(Mazub.isValidPositionX(0.00001));
+		assertTrue(Mazub.isValidPositionX(546.72));
+		assertFalse(Mazub.isValidPositionX(1024.00001));
+		assertTrue(Mazub.isValidPositionX(1023.99999));
+		assertFalse(Mazub.isValidPositionY(-0.00001));
+		assertTrue(Mazub.isValidPositionY(0.00001));
+		assertTrue(Mazub.isValidPositionY(546.72));
+		assertFalse(Mazub.isValidPositionY(768.00001));
+		assertTrue(Mazub.isValidPositionY(767.99999));
+	}
+	
+	/**
+	 * Checks if isValidVelocityX() correctly determines which velocities are valid and which are not.
+	 */
+	@Test
+	public void correctValidVelocityX(){
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
+		assertFalse(alien.isValidVelocityX(0.01));
+		assertFalse(alien.isValidVelocityX(-0.99));
+		assertTrue(alien.isValidVelocityX(1.0));
+		assertTrue(alien.isValidVelocityX(-1.75));
+		assertTrue(alien.isValidVelocityX(3.0));
+		assertFalse(alien.isValidVelocityX(3.00001));
+		assertFalse(alien.isValidVelocityX(54.54));
+	}
+	
+	/**
 	 * Checks the y-position when jumping.
 	 */
 	@Test
@@ -94,7 +200,7 @@ public class TestCase {
 		facade.startJump(alien);
 		facade.advanceTime(alien, 0.1);
 
-		// y_new [m] = 0 + 8 [m/s] * 0.1 [s] + 1/2 * (-10.0) [m/s^2] * (0.1 [s])^2 =
+		// y_new [m] = 0 [m] + 8 [m/s] * 0.1 [s] + 1/2 * (-10.0) [m/s^2] * (0.1 [s])^2 =
 		// 0.75 [m] = 75.00 [cm], which falls into pixel (0, 75)
 
 		assertArrayEquals(intArray(0, 75), facade.getLocation(alien));

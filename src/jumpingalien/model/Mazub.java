@@ -206,7 +206,7 @@ public class Mazub {
 	 * 
 	 * @return	An animation that consists of consecutive sprites.
 	 */
-	private Animation getAnimation(){
+	public Animation getAnimation(){
 		return this.animation;
 	}
 	
@@ -701,12 +701,12 @@ public class Mazub {
 	 * 				A double that represents the horizontal velocity of Mazub.
 	 * @return	True if and only if the absolute value of the given horizontal velocity is greater or equal to 
 	 * 			the initial horizontal velocity and smaller or equal to the maximal horizontal velocity.
-	 * 			| result == ( ( Math.abs(this.getVelocityX()) >= this.getVelocityXInit()) &&
-	 * 			| 			  ( Math.abs(this.getVelocityX()) <= this.getVelocityXMax()) )
+	 * 			| result == ( ( Math.abs(velocityX) >= this.getVelocityXInit()) &&
+	 * 			| 			  ( Math.abs(velocityX) <= this.getVelocityXMax()) )
 	 */
 	public boolean isValidVelocityX(double velocityX){
-		return Math.abs(this.getVelocityX()) >= this.getVelocityXInit() &&
-			   Math.abs(this.getVelocityX()) <= this.getVelocityXMax();
+		return Math.abs(velocityX) >= this.getVelocityXInit() &&
+			   Math.abs(velocityX) <= this.getVelocityXMax();
 	}
 	
 	
