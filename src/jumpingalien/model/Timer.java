@@ -3,22 +3,22 @@ package jumpingalien.model;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
- * A Time class, implemented with methods to serve as a helper class for the class Mazub.
+ * A Timer class, implemented with methods to serve as a helper class for the class Mazub.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
-public class Time {
+public class Timer {
 	
 	/**
-	 * Constructor for the class Time.
+	 * Constructor for the class Timer.
 	 * 
 	 * @post	The initial time since the last move of a Mazub was made, is equal to infinity.
 	 * 			| new.getSinceLastMove() == Double.POSITIVE_INFINITY
 	 * @post	The initial time since the last sprite of a Mazub was activated, is equal to 0.
 	 * 			| new.getSinceLastSprite() == 0
 	 */
-	public Time(){
+	public Timer(){
 		this.setSinceLastMove(Double.POSITIVE_INFINITY);
 		this.setSinceLastSprite(0);
 	}
@@ -38,7 +38,7 @@ public class Time {
 	/**
 	 * Set the elapsed time since the last move was made.
 	 * 
-	 * @param 	time
+	 * @param 	sinceLastMove
 	 * 				A double that represents the desired elapsed time since the last move was made.
 	 * @post	The time since the last move of a Mazub was made, is equal to sinceLastMove.
 	 * 			| new.getSinceLastMove() == sinceLastMove
@@ -78,7 +78,7 @@ public class Time {
 	/**
 	 * Set the elapsed time since the last sprite was activated.
 	 * 
-	 * @param 	time
+	 * @param 	sinceLastSprite
 	 * 				A double that represents the desired elapsed time since the last sprite was activated.
 	 * @post	The time since the last sprite of a Mazub was activated, is equal to sinceLastSprite.
 	 * 			| new.getSinceLastSprite() == sinceLastSprite

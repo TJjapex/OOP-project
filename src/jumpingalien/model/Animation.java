@@ -13,10 +13,10 @@ import jumpingalien.util.Util;
  * 			| 	this.getNbFrames() > 0
  * 
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  * @note	For an Animation instance, the sprites can only be set once in the constructor. 
- * 			If new sprites are required, the instance should be destroyed and an new instance should be created
+ * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  */
 public class Animation {
 	
@@ -138,7 +138,7 @@ public class Animation {
 	 * Returns the sprite of this animation class, with the given index.
 	 * 
 	 * @param 	index
-	 * 				The index of the sprite
+	 * 				The index of the sprite.
 	 * @return	The sprite of this animation class, with the given index.
 	 */
 	@Immutable
@@ -199,18 +199,18 @@ public class Animation {
 	/**
 	 * Updates the current animation frame, based on the time since the last frame.
 	 * 
-	 * @pre The given time instance is not null
-	 * 		| time != null
-	 * @param time
-	 * 			A valid time instance	
+	 * @pre The given timer instance is not null.
+	 * 		| timer != null
+	 * @param timer
+	 * 			A valid timer instance.
 	 * 
 	 */
-	public void updateAnimationIndex(Time time){
-		assert time != null;
+	public void updateAnimationIndex(Timer timer){
+		assert timer != null;
 		
-		while(Util.fuzzyGreaterThanOrEqualTo(time.getSinceLastSprite(), 0.075)){
+		while(Util.fuzzyGreaterThanOrEqualTo(timer.getSinceLastSprite(), 0.075)){
 			this.incrementAnimationIndex();
-			time.increaseSinceLastSprite(-0.075);
+			timer.increaseSinceLastSprite(-0.075);
 		}
 	}
 	

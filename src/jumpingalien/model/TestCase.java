@@ -126,7 +126,7 @@ public class TestCase {
 	public void helperClassesCorrectlyInitiated(){
 		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
 		
-		assertNotNull(alien.getTime());
+		assertNotNull(alien.getTimer());
 		assertNotNull(alien.getAnimation());
 	}
 	
@@ -389,7 +389,7 @@ public class TestCase {
 			facade.advanceTime(alien_0_0, 0.10);
 		}
 		
-		assertEquals(0.4, alien_0_0.getTime().getSinceLastMove(), Util.DEFAULT_EPSILON);
+		assertEquals(0.4, alien_0_0.getTimer().getSinceLastMove(), Util.DEFAULT_EPSILON);
 	}
 	
 
@@ -401,7 +401,7 @@ public class TestCase {
 		
 		facade.advanceTime(alien_0_0, 0.020);
 		
-		assertEquals(0.020, alien_0_0.getTime().getSinceLastSprite(), Util.DEFAULT_EPSILON);
+		assertEquals(0.020, alien_0_0.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
 		
 		for(int i = 0; i < 10; i++){
 			facade.advanceTime(alien_0_0, 0.10);
@@ -409,13 +409,13 @@ public class TestCase {
 		
 		// total time passed: 0.020 + 10 * 0.010 = 0.120;
 		// calculated time since last sprite: 0.120 - 0.075 = 0.045
-		assertEquals(0.045, alien_0_0.getTime().getSinceLastSprite(),  Util.DEFAULT_EPSILON);
+		assertEquals(0.045, alien_0_0.getTimer().getSinceLastSprite(),  Util.DEFAULT_EPSILON);
 	}
 	
 	/********************************************* SPRITES ****************************************/
 
 	/**
-	 * Checks ducking sprite
+	 * Checks ducking sprite.
 	 */
 	@Test
 	public void spriteDucking(){		
@@ -457,7 +457,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if the sprite index is back 0 (idle sprite) just after the one second limit
+	 * Checks if the sprite index is back 0 (idle sprite) just after the one second limit.
 	 */
 	@Test
 	public void spriteIdleAfterRunning(){
@@ -480,7 +480,7 @@ public class TestCase {
 	
 	/********************************************* ADVANCE TIME ****************************************/	
 	/**
-	 * Checks if advanceTime cannot be used with a negative timestep
+	 * Checks if advanceTime cannot be used with a negative time step.
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void advanceTime_SmallerThanZeroCase(){
@@ -488,7 +488,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if advanceTime cannot be used with a timestep greater than 0.2
+	 * Checks if advanceTime cannot be used with a time step greater than 0.2.
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void advanceTime_GreaterThanCase(){
