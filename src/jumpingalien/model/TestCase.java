@@ -14,19 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/*
- * Tests:
- * - Initializeren met correcte positie
- * - Initializeren met incorrecte positie(s)
- * - Verticale positie update (springen)
- * - width / height? Hoe?
- * - isMoving?
- * - acceleration?
- * - sprites?
- * 
- * 
- * benaming pff.
-*/
 public class TestCase {
 
 	@BeforeClass

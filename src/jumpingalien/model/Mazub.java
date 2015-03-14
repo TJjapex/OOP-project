@@ -718,9 +718,16 @@ public class Mazub {
 	 * 			|	then new.getVelocityX() == velocityX
 	 * 			| else
 	 * 			|	new.getVelocityX() == Math.signum(velocityX)*this.getVelocityXMax()
+	 * @post	If the absoltue value of the given velocityX is greater than or equal to
+	 * 			the maximum horizontal velocity, the horizontal acceleration will be zero.
+	 * 			| if(Math.abs(velocityX) >= this.getVelocityXMax())
+	 * 			|	then new.getAccelerationX() == 0
 	 */
 	@Basic
 	private void setVelocityX(double velocityX){
+		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax()))
+			this.setAccelerationX(0);
+			
 		this.velocityX = Math.max( Math.min( velocityX , this.getVelocityXMax()), -this.getVelocityXMax());
 	}
 	
