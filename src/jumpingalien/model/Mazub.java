@@ -56,6 +56,17 @@ import jumpingalien.model.Animation;
  * for a project of the course Object Oriented Programming at KULeuven.
  * 
  * 
+ * 
+ * @note	The source of this project is hosted in a private GIT repository on Bitbucket.
+ * 			The repository is only available to invited users. In case acces to this 
+ * 			repository is needed, please contact thomas.verelst1@student.kuleuven.be
+ * 
+ * 			The link (which is not be accessible for unauthorized users) of the repo is
+ * 				https://bitbucket.org/thmz/oop-project/
+ * 
+ * 
+ * 
+ * 
  * @invar	The x position must be valid.
  * 			|	isValidPositionX( this.getPositionX() )
  * @invar	The y position must be valid.
@@ -78,6 +89,8 @@ import jumpingalien.model.Animation;
  * 			| 	this.getAnimation() != null
  * @invar	The current orientation of Mazub is not null.
  * 			|	this.getOrientation() != null
+ * @invar	The current orientation is valid
+ * 			|	isValidOrientation( this.getOrientation() )
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
@@ -92,7 +105,7 @@ public class Mazub {
 	public static final double VELOCITY_Y_INIT = 8.0; 			// The initial vertical velocity when jumping
 	public static final double VELOCITY_X_MAX_DUCKING = 1.0;	// The maximum horizontal velocity when ducked
 	public static final double ACCELERATION_X = 0.9;	 		// The horizontal acceleration
-	private static double VELOCITY_X_MAX_RUNNING;	 			//  The maximum horizontal velocity when not ducked
+	private static double VELOCITY_X_MAX_RUNNING;	 			// The maximum horizontal velocity when not ducked
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 
@@ -110,22 +123,7 @@ public class Mazub {
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
-	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
-	 
-	 
-		//@effect	If the given pixelLeftX is within the boundaries of the game world, the initial positionX is 
-		// 			equal to pixelLeftX. If the given pixelLeftX is negative, the initial positionX is equal to 0.
-		// 			Otherwise, if the given pixelLeftX is greater than GAME_WIDTH - 1, the initial positionX is
-		// 			equal to GAME_WIDTH - 1.
-		// 			| setPositionX(pixelLeftX)
-		//@effect	If the given pixelBottomY is within the boundaries of the game world, the initial positionY is
-		// 			equal to pixelBottomY. If the given pixelBottomY is negative, the initial positionY is equal 
-		// 			to 0. Otherwise, if the given pixelBottomY is greater than GAME_HEIGHT - 1, the initial positionY
-		// 			is equal to GAME_HEIGHT - 1.
-		// 			| setPositionY(pixelBottomY)
-		  
-		// DIT IS NOG DE TOTALE UITWERKING? MAG WEG?
- 
+	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0) 
 	 * @post	The initial ducking status of Mazub is equal to false.
 	 * 			| new.isDucking() == false
 	 * @post	The value of the initial horizontal velocity is equal to velocityXInit.
@@ -133,22 +131,22 @@ public class Mazub {
 	 * @effect	If VELOCITY_X_MAX_RUNNING is greater than the initial horizontal velocity, the initial maximal
 	 *  		horizontal velocity is equal to VELOCITY_X_MAX_RUNNING. Otherwise, it's equal to the initial 
 	 *  		horizontal velocity.
-	 *  		| setVelocityXMax(VELOCITY_X_MAX_RUNNING)
+	 *  		| setVelocityXMax(VEL0TY_X_MAX_RUNNING)
 	 * @effect	The initial orientation of Mazub is equal to right.
 	 * 			| setOrientation(Orientation.RIGHT)
 	 * @post	The animation is initiated.
 	 * 			| new.getAnimation() != null
 	 * @post	The timer is initiated.
 	 * 			| new.getTimer() != null
-	 * @throws 	IllegalPositionXException
+	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
-	 * 				| ! isValidPositionX(pixelLeftX)
+	 * 				| ! isValidPositionX(positionX)
 	 * @throws	IllegalPositionYException
 	 * 				The Y position of Mazub is not a valid Y position.
-	 * 				| ! isValidPositionY(pixelBottomY)
+	 * 				| ! isValidPositionY(positionY)
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[]
-				sprites) throws IllegalPositionXException, IllegalPositionYException { // <--- moet die throws er wel bij? Worden die niet gewoon altijd doorgegeven?
+	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[] sprites)
+		throws IllegalPositionXException, IllegalPositionYException{
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		this.setPositionX(pixelLeftX);
@@ -161,8 +159,8 @@ public class Mazub {
 		
 		this.setOrientation(Orientation.RIGHT);
 		
-		this.setTimer(new Timer());
-		this.setAnimation(new Animation(sprites));
+		this.setTimer( new Timer() );
+		this.setAnimation( new Animation(sprites) );
 	}
 	
 	/**
@@ -178,8 +176,14 @@ public class Mazub {
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
 	 * @effect  Construct Mazub with velocityXInit = 1.0 and velocityXMaxRunning  = 3.0
 	 * 			| this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites)
+	 * @throws	IllegalPositionXException
+	 * 				The X position of Mazub is not a valid X position.
+	 * 				| ! isValidPositionX(positionX)
+	 * @throws	IllegalPositionYException
+	 * 				The Y position of Mazub is not a valid Y position.
+	 * 				| ! isValidPositionY(positionY)
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
+	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException, IllegalPositionYException{
 		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites);
 	}
 	
@@ -195,6 +199,7 @@ public class Mazub {
 	 * @post	The new time of Mazub is equal to timerClass.
 	 * 			| new.getTimer() == timer
 	 */
+	@Basic
 	private void setTimer(Timer timer){
 		assert timer != null;
 		
@@ -206,6 +211,7 @@ public class Mazub {
 	 * 
 	 * @return	A timer that keeps track of several times involving the behaviour of Mazub.
 	 */
+	@Basic @Raw
 	public Timer getTimer(){
 		return this.timer;
 	}
@@ -222,6 +228,7 @@ public class Mazub {
 	 * @post	The new animation for Mazub is equal to the given animation.
 	 * 			| new.getAnimation() == animation
 	 */
+	@Basic
 	private void setAnimation( Animation animation){
 		assert animation != null;
 		
@@ -233,6 +240,7 @@ public class Mazub {
 	 * 
 	 * @return	An animation that consists of consecutive sprites.
 	 */
+	@Basic @Raw
 	public Animation getAnimation(){
 		return this.animation;
 	}
@@ -253,6 +261,7 @@ public class Mazub {
 	 * @return 	An integer that represents the x-coordinate of Mazub's
 	 * 			bottom left pixel in the world.
 	 */
+	@Raw
 	public int getRoundedPositionX(){
 		return (int) Math.floor(this.getPositionX());
 	}
@@ -266,6 +275,7 @@ public class Mazub {
 	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller than GAME_WIDTH.
 	 * 			|  result == ( (positionX >= 0) && (positionX < GAME_WIDTH) )
 	 */
+	@Basic @Raw
 	public static boolean isValidRoundedPositionX(int positionX){
 		return positionX >= 0 && positionX < GAME_WIDTH;
 	}
@@ -278,6 +288,7 @@ public class Mazub {
 	 * @return 	An integer that represents the y-coordinate of Mazub's
 	 * 			bottom left pixel in the world.
 	 */
+	@Raw
 	public int getRoundedPositionY(){
 		return (int) Math.floor(this.getPositionY());
 	}
@@ -315,7 +326,6 @@ public class Mazub {
 	 * @return	True if and only if the given width is positive and smaller than the width of the game world.
 	 * 			| result == ( (width > 0) && (width < GAME_WIDTH) )
 	 */
-	
 	public static boolean isValidWidth(int width){
 		return width > 0 && width < GAME_WIDTH;
 	}
@@ -405,6 +415,7 @@ public class Mazub {
 	 * @return 	True if and only if the horizontal velocity is not equal to 0. (up to a certain epsilon)
 	 * 			| result == ( this.getVelocityX() != 0 )
 	 */
+	@Raw
 	public boolean isMoving(){
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
 	}
@@ -416,6 +427,7 @@ public class Mazub {
 	 * 			(up to a certain epsilon)
 	 * 			| result == ( this.getTime().getSinceLastMove() <= 1.0 )
 	 */
+	@Raw
 	public boolean hasMovedInLastSecond(){
 		return Util.fuzzyLessThanOrEqualTo(this.getTimer().getSinceLastMove(), 1.0);
 	}
@@ -451,12 +463,15 @@ public class Mazub {
 	 * 			it is now equal to 0.
 	 * 			| if (this.getVelocityY() > 0)
 	 * 			|	then new.getVelocityY() == 0
-	 * @throws 	... 
-	 //			-> if test veranderen in een error met een try/catch er rond? 
+	 * @throws 	IllegalStateException
+	 * 				Mazub does not have a positive vertical velocity
+	 * 				| this.getVelocityY() < 0
 	 */
-	public void endJump() {
+	public void endJump() throws IllegalStateException{
 		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
 			this.setVelocityY(0);
+		}else{
+			throw new IllegalStateException("Mazub does not have a positive vertical velocity!");
 		}
 	}
 	
@@ -478,6 +493,7 @@ public class Mazub {
 	 * @post	The vertical acceleration of Mazub is equal to 0.
 	 * 			| new.getAccelerationY() == 0
 	 */
+	@Raw
 	private void stopFall() {
 		this.setVelocityY( 0 );
 		this.setAccelerationY( 0 );
@@ -507,10 +523,17 @@ public class Mazub {
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_RUNNING
 	 * @post	The ducking status of Mazub is false.
 	 * 			| new.isDucking() == false
+	 * @throws	IllegalStateException
+	 * 				Mazub is not ducking
+	 * 				| !this.isDucking()
 	 */
-	public void endDuck(){
+	public void endDuck() throws IllegalStateException{
+		if(!this.isDucking())
+			throw new IllegalStateException("Mazub not ducking!");
+		
 		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
 		this.setDucking(false);
+		
 	}	
 	
 	/**
@@ -552,7 +575,7 @@ public class Mazub {
 	 * @return	A double that represents the x-coordinate of Mazub's
 	 * 			bottom left pixel in the world.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getPositionX(){
 		return this.positionX;
 	}
@@ -563,7 +586,7 @@ public class Mazub {
 	 * @return	A double that represents the y-coordinate of Mazub's
 	 * 			bottom left pixel in the world.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getPositionY(){
 		return this.positionY;
 	}
@@ -592,7 +615,7 @@ public class Mazub {
 	 * 				The X position of Mazub is not a valid X position.
 	 * 				| ! isValidPositionX(positionX)
 	 */
-	@Basic
+	@Basic @Raw
 	private void setPositionX(double positionX) throws IllegalPositionXException{
 		if( !isValidPositionX(positionX)) 
 			throw new IllegalPositionXException(positionX);
@@ -622,7 +645,7 @@ public class Mazub {
 	 * 				The Y position of Mazub is not a valid Y position.
 	 * 			| ! isValidPositionY(positionY)
 	 */
-	@Basic
+	@Basic @Raw
 	private void setPositionY(double positionY) throws IllegalPositionYException{
 		if( !isValidPositionY(positionY)) 
 			throw new IllegalPositionYException(positionY);
@@ -639,7 +662,6 @@ public class Mazub {
 	 * 			GAME_WIDTH.
 	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
 	 */
-	@Basic
 	public static boolean isValidPositionX(double positionX) {
 		return isValidRoundedPositionX((int) Math.floor(positionX));
 
@@ -655,7 +677,6 @@ public class Mazub {
 	 * 			GAME_HEIGHT. 
 	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
 	 */
-	@Basic
 	public static boolean isValidPositionY(double positionY) {
 		return isValidRoundedPositionY((int) Math.floor(positionY));
 	}
@@ -670,7 +691,7 @@ public class Mazub {
 	 * 
 	 * @return	A double that represents the horizontal velocity of Mazub.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getVelocityX(){
 		return this.velocityX;
 	}
@@ -680,7 +701,7 @@ public class Mazub {
 	 * 
 	 * @return	A double that represents the vertical velocity of Mazub.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getVelocityY(){
 		return this.velocityY;
 	}
@@ -711,7 +732,7 @@ public class Mazub {
 	 * @post	The vertical velocity is equal to velocityY.
 	 * 			| new.getVelocityY() == velocityY
 	 */
-	@Basic
+	@Basic @Raw
 	private void setVelocityY(double velocityY){
 		this.velocityY = velocityY;
 	}
@@ -740,7 +761,7 @@ public class Mazub {
 	 *  
 	 * @return	A double that represents the initial horizontal velocity of Mazub.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getVelocityXInit(){
 		return this.velocityXInit;
 	}
@@ -754,7 +775,7 @@ public class Mazub {
 	 * 
 	 * @return	A double that represents the maximal horizontal velocity of Mazub.
 	 */
-	@Basic
+	@Basic @Raw
 	public double getVelocityXMax(){
 		return this.velocityXMax;
 	}
@@ -771,7 +792,7 @@ public class Mazub {
 	 * 			| else
 	 * 			|	new.getVelocityXMax() == this.getVelocityXInit()
 	 */
-	@Basic
+	@Basic @Raw
 	private void setVelocityXMax(double velocityXMax){
 		this.velocityXMax = Math.max( this.getVelocityXInit() , velocityXMax );
 	}
@@ -785,7 +806,6 @@ public class Mazub {
 	 * 			velocity of Mazub.
 	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
 	 */
-	
 	public boolean canHaveAsVelocityXMax(double velocityXMax){
 		return  velocityXMax >= this.getVelocityXInit();
 	}
@@ -799,7 +819,7 @@ public class Mazub {
 	 * 
 	 * @return	A double that represents the horizontal acceleration of Mazub.
 	 */
-	@Basic
+	@Basic  @Raw
 	public double getAccelerationX(){
 		return this.accelerationX;
 	}
@@ -809,7 +829,7 @@ public class Mazub {
 	 * 
 	 * @return	A double that represents the vertical acceleration of Mazub.
 	 */
-	@Basic @Immutable
+	@Basic @Raw @Immutable
 	public double getAccelerationY(){
 		return this.accelerationY;
 	}
@@ -822,7 +842,7 @@ public class Mazub {
 	 * @post	The horizontal acceleration is equal to accelerationX.
 	 * 			| new.getAccelerationX() == accelerationX
 	 */
-	@Basic
+	@Basic @Raw
 	private void setAccelerationX(double accelerationXx){
 		this.accelerationX = accelerationXx;
 	}
@@ -835,7 +855,7 @@ public class Mazub {
 	 * @post	The vertical acceleration is equal to accelerationY.
 	 * 			| new.getAccelerationY() == accelerationY
 	 */
-	@Basic
+	@Basic @Raw
 	private void setAccelerationY(double accelerationY){
 		this.accelerationY = accelerationY;
 	}
@@ -850,7 +870,7 @@ public class Mazub {
 	 * 
 	 * @return	An orientation that represents the current orientation of Mazub.
 	 */
-	@Basic
+	@Basic @Raw
 	public Orientation getOrientation(){
 		return this.orientation;
 	}
@@ -863,10 +883,22 @@ public class Mazub {
 	 * @post	The orientation of Mazub is equal to the given orientation.
 	 * 			| new.getOrientation() == orientation
 	 */
-	@Basic @Model
+	@Basic @Raw @Model
 	private void setOrientation(Orientation orientation){
 		this.orientation = orientation;
 	}	
+	
+	/**
+	 * Checks if the given orientation is valid
+	 * 
+	 * @param	orientation
+	 * 				An orientation that represents the desired orientation of Mazub.
+	 * @return	True if and only if the orientation is valid, which means it should be LEFT or RIGHT
+	 * 			| (orientation == Orientation.LEFT) || orientation == Orientation.RIGHT)
+	 */
+	public static boolean isValidOrientation(Orientation orientation){
+		return (orientation == Orientation.LEFT) || (orientation == Orientation.RIGHT);
+	}
 	
 	private Orientation orientation;
 	
@@ -917,10 +949,10 @@ public class Mazub {
 	 * 			| (new timer).getSinceLastSprite() == this.getTimer().getSinceLastSprite() + dt
 	 * @throws	IllegalArgumentException
 	 * 				The given time dt is either negative or greater than 0.2s.
-	 * 			| (dt > 0.2) || (dt < 0)
+	 * 				| (dt > 0.2) || (dt < 0)
 	 */
 	public void advanceTime(double dt) throws IllegalArgumentException{
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2)) // Moeten dit wel fuzzys zijn eigenlijk? :p
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal timestep amount given: "+ dt + " s");
 		
 		// Update  horizontal position

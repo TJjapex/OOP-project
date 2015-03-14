@@ -4,7 +4,6 @@ import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
-import jumpingalien.common.gui.AlienGameScreen;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -220,8 +219,7 @@ public class TestCase {
 		IFacade facade = new Facade();
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		
-		assertFalse(alien.isValidVelocityX(0.01));
-		assertFalse(alien.isValidVelocityX(-0.99));
+		assertTrue(alien.isValidVelocityX(0));
 		assertTrue(alien.isValidVelocityX(1.0));
 		assertTrue(alien.isValidVelocityX(-1.75));
 		assertTrue(alien.isValidVelocityX(3.0));

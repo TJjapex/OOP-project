@@ -14,10 +14,11 @@ public class Facade implements IFacade {
 	 *            The y-location of Mazub's bottom left pixel.
 	 * @param sprites
 	 *            The array of sprite images for Mazub.
-	 * 
-	 * @return
+	 * @throws ModelException
+	 * 			 The given horizontal or vertical position is not valid
+	 * 			 | !Mazub.isValidRoundedPositionX(pixelLeftX) || !Mazub.isValidRoundedPositionY(pixelLeftY)
 	 */
-	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
+	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
 			return new Mazub(pixelLeftX, pixelBottomY, sprites);
 		}catch( IllegalPositionXException | IllegalPositionYException exc){
@@ -111,7 +112,11 @@ public class Facade implements IFacade {
 	 *            The alien that has to stop jumping.
 	 */
 	public void endJump(Mazub alien){
-		alien.endJump();
+		try{
+			alien.endJump();
+		}catch( IllegalStateException exc ){
+		}
+		
 	}
 
 	/**
@@ -171,7 +176,11 @@ public class Facade implements IFacade {
 	 *            The alien that has to stop ducking.
 	 */
 	public void endDuck(Mazub alien){
-		alien.endDuck();
+		try{
+			alien.endDuck();
+		}catch(IllegalStateException exc){
+		}
+		
 	}
 
 	/**
@@ -182,8 +191,11 @@ public class Facade implements IFacade {
 	 * @param dt
 	 *            The time interval (in seconds) by which to advance the given
 	 *            alien's time.
+	 * @throws ModelException
+	 * 				The given dt is greater than 0.2 or smaller than 0
+	 * 				| dt < 0 || dt > 0.2
 	 */
-	public void advanceTime(Mazub alien, double dt){
+	public void advanceTime(Mazub alien, double dt) throws ModelException{
 		try{
 			alien.advanceTime(dt);
 		}catch(IllegalArgumentException exc){
