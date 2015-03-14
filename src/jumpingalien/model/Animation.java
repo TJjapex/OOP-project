@@ -6,9 +6,17 @@ import jumpingalien.util.Util;
 
 /**
  * An Animation class, implemented with methods to serve as a helper class for the class Mazub.
+ *
+ * @invar	The sprites array of this animation has a length greater than or equal to 10 and is the length an even number
+ * 			|	this.getNbSprites() >= 10 && (this.getNbSprites() % 2) == 0;
+ * @invar	The number of frames for the walking animation should be greater than or equal to 1.
+ * 			| 	this.getNbFrames() > 0
+ * 
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
+ * @note	For an Animation instance, the sprites can only be set once in the constructor. 
+ * 			If new sprites are required, the instance should be destroyed and an new instance should be created
  */
 public class Animation {
 	
@@ -60,7 +68,7 @@ public class Animation {
 	 * @note	No formal documentation was required for this method.
 	 */
 	public Sprite getCurrentSprite(Mazub alien){
-		int index = 0;	
+		int index = 0;	// Default
 		
 		if(!alien.isMoving()){
 			
@@ -133,6 +141,7 @@ public class Animation {
 	 * 				The index of the sprite
 	 * @return	The sprite of this animation class, with the given index.
 	 */
+	@Immutable
 	public Sprite getSpriteAt(int index){
 		return this.getSprites()[index];
 	}
@@ -142,6 +151,7 @@ public class Animation {
 	 * 
 	 * @return	The number of elements in the sprites array of the object.		
 	 */
+	@Immutable
 	public int getNbSprites(){
 		return this.getSprites().length;
 	}
@@ -188,12 +198,12 @@ public class Animation {
 	
 	/**
 	 * Updates the current animation frame, based on the time since the last frame.
-	 * ...
-	 * @pre The given time object is not null
+	 * 
+	 * @pre The given time instance is not null
 	 * 		| time != null
 	 * @param time
-	 * 			A valid time object
-	 * ...
+	 * 			A valid time instance	
+	 * 
 	 */
 	public void updateAnimationIndex(Time time){
 		assert time != null;

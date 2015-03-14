@@ -45,6 +45,10 @@ import jumpingalien.model.Animation;
  * 			|	isValidPositionX( this.getPositionX() )
  * @invar	The y position must be valid.
  * 			|	isValidPositionY( this.getPositionY() )
+ * @invar	The rounded x position must be valid.
+ * 			|	isValidRoundedPositionX( this.getRoundedPositionX() )
+ * @invar	The rounded y position must be valid.
+ * 			|	isValidRoundedPositionY( this.getRoundedPositionY() )
  * @invar	The width of the character must be valid.
  * 			|	isValidWidth( this.getWidth() )
  * @invar	The height of the character must be valid.
@@ -53,6 +57,12 @@ import jumpingalien.model.Animation;
  * 			|	isValidVelocityX( this.getVelocityX() )
  * @invar	The maximal horizontal velocity must be greater than the initial horizontal velocity.
  * 			|	canHaveAsVelocityXMax( this.getVelocityXMax() )
+ * @invar	The timer object linked to a Mazub instance is not null
+ * 			| 	this.getTime() != null
+ * @invar	The animation object linked to a Mazub instance is not null
+ * 			| 	this.getAnimation() != null
+ * @invar	The current orientation of Mazub is not null
+ * 			|	this.getOrientation() != null
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
@@ -61,21 +71,13 @@ public class Mazub {
 		
 	/************************************************** GENERAL ***********************************************/
 	
-	// 			the class Util provides methods for comparing doubles up to a fixed epsilon
-	// 			TO DO:
-	//				write a test suite
-	//				class invariants
-	//				annotations
-	//				private/public
-	//				commentary for each constant? see page 167
-	
-	private static final int GAME_WIDTH = 1024;
-	private static final int GAME_HEIGHT = 768;
-	private static final double ACCELERATION_Y = -10.0;
-	private static final double VELOCITY_Y_INIT = 8.0;
-	private static final double VELOCITY_X_MAX_DUCKING = 1.0;
-	private static final double ACCELERATION_X_INIT = 0.9;	
-	private static double VELOCITY_X_MAX_RUNNING;	
+	public static final int GAME_WIDTH = 1024; // The width of the game world
+	public static final int GAME_HEIGHT = 768; // The height of the game world
+	public static final double ACCELERATION_Y = -10.0; // The vertical acceleration
+	public static final double VELOCITY_Y_INIT = 8.0; // The initial vertical velocity when jumping
+	public static final double VELOCITY_X_MAX_DUCKING = 1.0; // The maximum horizontal velocity when ducked
+	public static final double ACCELERATION_X_INIT = 0.9;	 // The horizontal acceleration
+	private static double VELOCITY_X_MAX_RUNNING;	 //  The maximum horizontal velocity when not ducked
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -926,7 +928,6 @@ public class Mazub {
 	public void advanceTime(double dt) throws IllegalArgumentException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2)) // Moeten dit wel fuzzys zijn eigenlijk? :p
 			throw new IllegalArgumentException("Illegal timestep amount given: "+ dt + " s");
-			//throw new IllegalTimeAmountException(dt);
 		
 		// Update  horizontal position
 		this.updatePositionX(dt);

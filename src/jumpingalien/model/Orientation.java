@@ -5,18 +5,8 @@ import be.kuleuven.cs.som.annotate.Value;
 @Value
 public enum Orientation {
 
-// Nieuwe implementatie:
-//	LEFT(-1), RIGHT(1);
-//	private int sign;
-//
-//	private Orientation(int sign) {
-//		this.sign = sign;
-//	}
-//	
-//	public int getSign(){
-//		return this.sign;
-//	}
-//	
+	// Implementation as seen in the course:
+
 	LEFT {
 		public int getSign(){
 			return -1;
@@ -29,4 +19,19 @@ public enum Orientation {
 	};
 	
 	public abstract int getSign();
+	
+	
+	// Another possible implementation:
+
+	//	LEFT(-1), RIGHT(1);
+	//	private int sign;
+	//
+	//	private Orientation(int sign) {
+	//		this.sign = sign;
+	//	}
+	//	
+	//	public int getSign(){
+	//		return this.sign;
+	//	}
+	//	
 }

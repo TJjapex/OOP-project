@@ -13,13 +13,13 @@ public class Time {
 	/**
 	 * Constructor for the class Time.
 	 * 
-	 * @post	The initial time since the last move of a Mazub was made, is equal to 0.
-	 * 			| new.getSinceLastMove() == 0
+	 * @post	The initial time since the last move of a Mazub was made, is equal to infinity.
+	 * 			| new.getSinceLastMove() == Double.POSITIVE_INFINITY
 	 * @post	The initial time since the last sprite of a Mazub was activated, is equal to 0.
 	 * 			| new.getSinceLastSprite() == 0
 	 */
 	public Time(){
-		this.setSinceLastMove(0);
+		this.setSinceLastMove(Double.POSITIVE_INFINITY);
 		this.setSinceLastSprite(0);
 	}
 	
