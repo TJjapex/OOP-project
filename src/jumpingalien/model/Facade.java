@@ -20,10 +20,11 @@ public class Facade implements IFacade {
 	 * @param	sprites
 	 *        		The array of sprite images for Mazub.
 	 * @throws 	ModelException
-	 * 			 	The given horizontal or vertical position is not valid.
+	 * 			 	The given horizontal or vertical position is not valid, or the sprite size of at least one
+	 * 				sprite is not valid.
 	 * 			 	| !Mazub.isValidRoundedPositionX(pixelLeftX) || !Mazub.isValidRoundedPositionY(pixelLeftY) ||
-	 * 				| for some sprite in sprites: !Mazub.isValidWidth(sprite.getWidth()) ||
-	 * 				| for some sprite in sprites: !Mazub.isValidHeight(sprite.getHeight())
+	 * 				| ( for some sprite in sprites: !Mazub.isValidWidth(sprite.getWidth()) ) ||
+	 * 				| ( for some sprite in sprites: !Mazub.isValidHeight(sprite.getHeight()) )
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
