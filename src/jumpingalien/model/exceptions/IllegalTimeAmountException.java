@@ -1,4 +1,4 @@
-package jumpingalien.model;
+package jumpingalien.model.exceptions;
 
 /**
  * A class for signaling illegal time step amounts 

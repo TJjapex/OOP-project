@@ -2,7 +2,7 @@ package jumpingalien.model.helper;
 import be.kuleuven.cs.som.annotate.Value;
 
 /**
- * An enumration of directions. The direction can be left or right.
+ * An enumeration of directions. The direction can be left or right.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0

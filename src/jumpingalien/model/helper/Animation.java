@@ -7,17 +7,17 @@ import jumpingalien.util.Util;
 
 /**
  * An Animation class, implemented with methods to serve as a helper class for the class Mazub.
+ * 
+ * @note	For an Animation instance, the sprites can only be set once in the constructor. 
+ * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  *
  * @invar	The sprites array of this animation has a length greater than or equal to 10 and is the length an even number
  * 			|	this.getNbSprites() >= 10 && (this.getNbSprites() % 2) == 0;
  * @invar	The number of frames for the walking animation should be greater than or equal to 1.
  * 			| 	this.getNbFrames() > 0
  * 
- * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
- * @note	For an Animation instance, the sprites can only be set once in the constructor. 
- * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  */
 public class Animation {
 	

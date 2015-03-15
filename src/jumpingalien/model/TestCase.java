@@ -16,6 +16,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * A test suite for the class Mazub and helper classes.
+ * 
+ * @author Thomas Verelst, Hans Cauwenbergh
+ * @version 1.0
+ */
 public class TestCase {
 
 	@BeforeClass
@@ -30,7 +36,8 @@ public class TestCase {
 	@Before
 	public void setUp() throws Exception {
 		
-		// Initiliaze some often used variables. These will be reset each test
+		// Initiliaze some often used variables. These will be reset each test.
+		
 		facade = new Facade();
 		sprites = spriteArrayForSize(3, 4);
 		alien_0_0 = new Mazub(0, 0, sprites);
@@ -46,19 +53,8 @@ public class TestCase {
 	
 	/********************************************* CONSTRUCTOR ****************************************/
 	
-	
-// Die assertArrayEquals geeft een error hier, terwijl er op het einde van deze file in "given tests" hetzelfde gedaan wordt...
-//	/**
-//	 * Checks if Mazub is initialized with the right location.
-//	 */
-//	@Test
-//	public void constructorPositionX_LegalCase(){
-//		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
-//		assertArrayEquals(doubleArray(10.0, 5.0) , facade.getLocation(alien), Util.DEFAULT_EPSILON);
-//	}
-	
 	/**
-	 * Checks if Mazub is initialized with the right x position.
+	 * Checks if Mazub is initialized with the right X position.
 	 */
 	@Test
 	public void constructorPositionX_LegalCase(){
@@ -67,7 +63,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if Mazub is initialized with the right y position.
+	 * Checks if Mazub is initialized with the right Y position.
 	 */
 	@Test
 	public void constructorPositionY_LegalCase(){
@@ -76,7 +72,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if Mazub cannot be initialized with an out of bound x position.
+	 * Checks if Mazub cannot be initialized with an out of bound X position.
 	 */
 	@Test(expected=IllegalPositionXException.class)
 	public void constructorPositionX_IllegalCase() throws Exception{
@@ -84,7 +80,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if Mazub cannot be initialized with an out of bound y position.
+	 * Checks if Mazub cannot be initialized with an out of bound Y position.
 	 */
 	@Test(expected=IllegalPositionYException.class)
 	public void constructorPositionY_IllegalCase() throws Exception{
@@ -108,7 +104,7 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if the helper classes (Time and Animation) are properly initiated.
+	 * Checks if the helper classes (Timer and Animation) are properly initiated.
 	 */
 	@Test
 	public void helperClassesCorrectlyInitiated(){
@@ -121,26 +117,22 @@ public class TestCase {
 	/*************************************** WIDTH AND HEIGHT ***************************************/
 
 	/**
-	 * Checks if the sprite height is correctly retreived
+	 * Checks if the sprite width is correctly retrieved.
 	 */
 	@Test
-	public void checkDefaultSpriteSize() {
+	public void checkDefaultSpriteWidth() {
 		// The default idle sprite index is 0
 		assertEquals( facade.getSize(alien_0_0)[0], sprites[0].getWidth() );
 	}
 	
 	/**
-	 * Checks if the sprite height is correctly retreived
+	 * Checks if the sprite height is correctly retrieved.
 	 */
 	@Test
 	public void checkDefaultSpriteHeight() {
 		// The default idle sprite index is 0
 		assertEquals( facade.getSize(alien_0_0) [1], sprites[0].getHeight() );
 	}
-	
-	/**
-	 * Check 
-	 */
 	
 	/********************************************* POSITION ****************************************/
 	
@@ -217,10 +209,11 @@ public class TestCase {
 	}
 	
 	/**
-	 * Checks if canHaveAsVelocityXMax() correctly determines which maximum velocities are valid for this instance
+	 * Checks if canHaveAsVelocityXMax() correctly determines which maximal velocities are valid for 
+	 * this instance.
 	 */
 	@Test
-	public void correctMaximumVelocityX(){
+	public void correctMaximalVelocityX(){
 		assertTrue( alien_0_0.canHaveAsVelocityXMax( alien_0_0.getVelocityXInit()));
 		assertFalse( alien_0_0.canHaveAsVelocityXMax( alien_0_0.getVelocityXInit() - 0.001  ));
 	}
@@ -229,23 +222,51 @@ public class TestCase {
 	/****************************************** ACCELERATION **************************************/
 	
 	/**
-	 * Checks if the acceleration is 0.9 while running to the right 
+	 * Checks if the acceleration of Mazub is 0.9 while running to the right.
 	 */
 	@Test
-	public void checkAccelerationWhileRunningRight(){
+	public void checkAccelerationXWhileRunningRight(){
 		facade.startMoveRight(alien_0_0);
 		assertEquals(0.9, facade.getAcceleration(alien_0_0)[0], Util.DEFAULT_EPSILON);
 	}
 	
 	/**
-	 * Checks if the acceleration is 0 when running to the right is ended 
+	 * Checks if the acceleration of Mazub is 0 when running to the right is ended.
 	 */
 	@Test
-	public void checkAccelerationWhenRunningRightEnded(){
+	public void checkAccelerationXWhenRunningRightEnded(){
 		facade.startMoveRight(alien_0_0);
 		facade.advanceTime(alien_0_0, 0.10);
 		facade.endMoveRight(alien_0_0);
 		assertEquals(0, facade.getAcceleration(alien_0_0)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Checks if the horizontal velocity does not exceed the maximal horizontal 
+	 * velocity after some time.
+	 */
+	@Test
+	public void checkVelocityXNotExceedingVelocityXMax(){
+		facade.startMoveRight(alien_0_0);
+		for (int i = 0; i < 100; i++) {
+			facade.advanceTime(alien_0_0, 0.2 / 9);
+		}
+		// Mazub reached his maximal velocity.
+		facade.advanceTime(alien_0_0, 0.1);
+		assertEquals(alien_0_0.getVelocityXMax(), alien_0_0.getVelocityX(), Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Checks if the acceleration of Mazub is 0 when he reached his maximal velocity.
+	 */
+	@Test
+	public void checkAccelerationXAtMaxVelocityX(){
+		facade.startMoveRight(alien_0_0);
+		for (int i = 0; i < 100; i++) {
+			facade.advanceTime(alien_0_0, 0.2 / 9);
+		}
+		// Mazub reached his maximal velocity.
+		assertEquals(alien_0_0.getAccelerationX(), 0, Util.DEFAULT_EPSILON);
 	}
 	
 	/********************************************* JUMPING ****************************************/
@@ -333,8 +354,8 @@ public class TestCase {
 		
 		// Horizontal velocity after a time step of 0.1 seconds.
 		// velocity_x_new [m/s] = 1.0 [m/s] + 0.9 [m/s^2] * 0.1 [s] = 1.09 [m/s]
-		// However the velocity should be limited to 1 m/s whilst ducking, so the new velocity is equal to
-		// 1 m/s.
+		// However the velocity should be limited to 1 m/s whilst ducking, so the new velocity is equal 
+		// to 1 m/s.
 
 		assertEquals(1, facade.getVelocity(alien_0_0)[0], Util.DEFAULT_EPSILON);
 	}
@@ -457,13 +478,14 @@ public class TestCase {
 			facade.advanceTime(alien_0_0, 0.10);
 		}
 		
-		// Total time passed since last move right is one second
-		// The sprite index should be 2
+		// Total time passed since last move right is one second.
+		// Therefore, the sprite index should be 2.
 		assertEquals(sprites[2], facade.getCurrentSprite(alien_0_0));
 	}
 	
 	/**
-	 * Checks if the sprite index is back 0 (idle sprite) just after the one second limit.
+	 * Checks if the sprite index is set back to 0 (which represents the idle sprite)
+	 * just after the one second limit.
 	 */
 	@Test
 	public void spriteIdleAfterRunning(){
@@ -478,13 +500,13 @@ public class TestCase {
 		
 		facade.advanceTime(alien_0_0, 0.001);
 		
-		// Total time passed since last move right is one second
-		// The sprite index should be 2
+		// Total time passed since last move right is one second.
+		// Therefore, the sprite index should be 2.
 		assertEquals(sprites[0], facade.getCurrentSprite(alien_0_0));
 	}
 	
 	/**
-	 * Checks sprite for jumping and moving right
+	 * Checks sprite for jumping and moving right.
 	 */
 	@Test
 	public void spriteJumpingMovingRight(){
@@ -492,12 +514,12 @@ public class TestCase {
 		facade.startJump(alien_0_0);
 		facade.advanceTime(alien_0_0, 0.10);
 		
-		// The sprite index should be 4
+		// The sprite index should be 4.
 		assertEquals(sprites[4], facade.getCurrentSprite(alien_0_0));
 	}
 	
 	/**
-	 * Checks sprite for ducking and moving right
+	 * Checks sprite for ducking and moving right.
 	 */
 	@Test
 	public void spriteDuckingMovingRight(){
@@ -505,7 +527,7 @@ public class TestCase {
 		facade.startDuck(alien_0_0);
 		facade.advanceTime(alien_0_0, 0.10);
 		
-		// The sprite index should be 6
+		// The sprite index should be 6.
 		assertEquals(sprites[6], facade.getCurrentSprite(alien_0_0));
 	}
 	

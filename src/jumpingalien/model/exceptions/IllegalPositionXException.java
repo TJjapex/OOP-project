@@ -24,7 +24,6 @@ public class IllegalPositionXException extends RuntimeException {
 	 * Returns the horizontal position for this exception.
 	 * 
 	 * @return	The horizontal position for this exception.
-	 * 
 	 */
 	@Basic @Immutable
 	public double getPositionX() {

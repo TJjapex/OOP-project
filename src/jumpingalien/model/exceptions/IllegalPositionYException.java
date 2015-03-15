@@ -7,7 +7,6 @@ import be.kuleuven.cs.som.annotate.*;
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
-
 public class IllegalPositionYException extends RuntimeException {
 
 	/**
