@@ -28,9 +28,10 @@ public class Facade implements IFacade {
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
 			return new Mazub(pixelLeftX, pixelBottomY, sprites);
-		}catch( IllegalPositionXException | IllegalPositionYException | IllegalWidthException |
-				IllegalHeightException exc){
-			throw new ModelException("Invalid position or size given.");
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
 		}
 		
 	}
