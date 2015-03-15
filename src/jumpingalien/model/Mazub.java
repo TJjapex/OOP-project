@@ -5,9 +5,9 @@ import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
+import jumpingalien.model.exceptions.IllegalHeightException;
+import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
-import jumpingalien.model.helper.IllegalHeightException;
-import jumpingalien.model.helper.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Timer;
 

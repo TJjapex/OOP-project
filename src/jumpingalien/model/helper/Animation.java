@@ -52,9 +52,9 @@ public class Animation {
 		
 		for (int i = 0; i < sprites.length; i++){
 			if( !isValidWidth(sprites[i].getWidth()))
-				throw new IllegalWidthException();
+				throw new IllegalWidthException(sprites[i].getWidth());
 			if ( !isValidHeight(sprites[i].getHeight()))
-				throw new IllegalHeightException();
+				throw new IllegalHeightException(sprites[i].getHeight());
 		}
 		
 		this.sprites = sprites;
