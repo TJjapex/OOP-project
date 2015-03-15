@@ -33,6 +33,9 @@ public class IllegalHeightException extends RuntimeException{
 		return this.height;
 	}
 	
+	/**
+	 * Variable referencing the height of this illegal height exception.
+	 */
 	private final int height;
 	
 	/**

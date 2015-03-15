@@ -61,6 +61,9 @@ public class Timer {
 		setSinceLastMove( getSinceLastMove() + dt);
 	}
 	
+	/**
+	 * Variable registering the time since the last move was made for this Timer.
+	 */
 	private double sinceLastMove;
 	
 	// Last sprite
@@ -101,6 +104,9 @@ public class Timer {
 		setSinceLastSprite(getSinceLastSprite() + dt);
 	}
 
+	/**
+	 * Variable registering the time since the last sprite was activated for this Timer.
+	 */
 	private double sinceLastSprite;
 		
 }

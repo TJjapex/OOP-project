@@ -4,7 +4,6 @@ import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
-import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 
@@ -51,9 +50,9 @@ public class Animation {
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		for (int i = 0; i < sprites.length; i++){
-			if( !isValidWidth(sprites[i].getWidth()))
+			if( !Mazub.isValidWidth(sprites[i].getWidth()))
 				throw new IllegalWidthException(sprites[i].getWidth());
-			if ( !isValidHeight(sprites[i].getHeight()))
+			if ( !Mazub.isValidHeight(sprites[i].getHeight()))
 				throw new IllegalHeightException(sprites[i].getHeight());
 		}
 		
@@ -175,6 +174,9 @@ public class Animation {
 		return this.getSprites().length;
 	}
 	
+	/**
+	 * Variable registering the sprites of this Animation.
+	 */
 	private final Sprite[] sprites;
 	
 	/**
@@ -248,6 +250,9 @@ public class Animation {
 		}
 	}
 	
+	/**
+	 * Variable registering the current index of the Animation.
+	 */
 	private int animationIndex;
 	
 }

@@ -25,6 +25,9 @@ public class IllegalPositionXException extends RuntimeException {
 		return this.positionX;
 	}
 
+	/**
+	 * Variable referencing the horizontal position of this illegal position X exception.
+	 */
 	private final double positionX;
 	
 	/**

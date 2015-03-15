@@ -33,6 +33,9 @@ public class IllegalWidthException extends RuntimeException{
 		return this.width;
 	}
 	
+	/**
+	 * Variable referencing the width of this illegal width exception.
+	 */
 	private final int width;
 	
 	/**

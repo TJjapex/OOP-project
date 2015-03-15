@@ -31,6 +31,9 @@ public class IllegalPositionYException extends RuntimeException {
 		return this.positionY;
 	}
 
+	/**
+	 * Variable referencing the vertical position of this illegal position Y exception.
+	 */
 	private final double positionY;
 	
 	/**

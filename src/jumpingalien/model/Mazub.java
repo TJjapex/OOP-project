@@ -16,21 +16,16 @@ import jumpingalien.model.helper.Timer;
  * for a project of the course Object Oriented Programming at KULeuven.
  *
  *
- * @author Thomas Verelst, Hans Cauwenbergh
- * 
- * 
- * @note	Courses:	Thomas Verelst,		r0457538; Ingenieurswetenschappen: Elektrotechniek - Computerwetenschappen
- * 						Hans Cauwenbergh,	r0449585; Ingenieurswetenschappen: Computerwetenschappen - Elektrotechniek	
- * 
- * 
+ * @author 	Thomas Verelst	:	r0457538, Ingenieurswetenschappen: Elektrotechniek - Computerwetenschappen
+ * 			Hans Cauwenbergh:	r0449585, Ingenieurswetenschappen: Computerwetenschappen - Elektrotechniek
+ * 	
  * @note	The test file of this class is located in tests/jumpingaline.part1.tests/TestCase.java
  * 
- * 
  * @note	The source of this project is hosted in a private GIT repository on Bitbucket.
- * 			The repository is only available to invited users. In case acces to this 
+ * 			The repository is only available to invited users. In case access to this 
  * 			repository is needed, please contact thomas.verelst1@student.kuleuven.be
  * 
- * 			The link (which is not be accessible for unauthorized users) of the repository is:
+ * 			The link (which is not accessible for unauthorized users) of the repository is:
  * 				https://bitbucket.org/thmz/oop-project/
  * 
  * 
@@ -68,13 +63,60 @@ public class Mazub {
 		
 	/************************************************** GENERAL ***********************************************/
 	
-	public static final int GAME_WIDTH = 1024; 					// The width of the game world
-	public static final int GAME_HEIGHT = 768;					// The height of the game world
-	public static final double ACCELERATION_Y = -10.0; 			// The vertical acceleration
-	public static final double VELOCITY_Y_INIT = 8.0; 			// The initial vertical velocity when jumping
-	public static final double VELOCITY_X_MAX_DUCKING = 1.0;	// The maximum horizontal velocity when ducked
-	public static final double ACCELERATION_X = 0.9;	 		// The horizontal acceleration
-	private static double VELOCITY_X_MAX_RUNNING;	 			// The maximum horizontal velocity when not ducked
+	/**
+	 * Constant reflecting the width of the game world (i.e. the amount of pixels).
+	 * 
+	 * @return	The game world consists of 1024 pixels in width.
+	 * 			| result == 1024
+	 */
+	public static final int GAME_WIDTH = 1024;
+	
+	/**
+	 * Constant reflecting the height of the game world (i.e. the amount of pixels).
+	 * 
+	 * @return	The game world consists of 768 pixels in height.
+	 * 			| result == 768
+	 */
+	public static final int GAME_HEIGHT = 768;
+	
+	/**
+	 * Constant reflecting the vertical acceleration for Mazubs.
+	 * 
+	 * @return	The vertical acceleration of Mazubs is equal to -10.0 m/s^2.
+	 * 			| result == -10.0
+	 */
+	public static final double ACCELERATION_Y = -10.0;
+	
+	/**
+	 * Constant reflecting the initial vertical velocity for Mazubs when jumping.
+	 * 
+	 * @return	The initial vertical velocity of Mazubs when jumping is equal to 8.0 m/s.
+	 * 			| result == 8.0
+	 */
+	public static final double VELOCITY_Y_INIT = 8.0;
+	
+	/**
+	 * Constant reflecting the maximal horizontal velocity for Mazubs when ducking.
+	 * 
+	 * @return	The maximal horizontal velocity of Mazubs when ducking is equal to 1.0 m/s.
+	 * 			| result == 1.0
+	 */
+	public static final double VELOCITY_X_MAX_DUCKING = 1.0;
+	
+	/**
+	 * Constant reflecting the horizontal acceleration for Mazubs when running.
+	 * 
+	 * @return	The horizontal acceleration of Mazubs when running is equal to 0.9 m/s^2. 
+	 * 			| result == 0.9
+	 */
+	public static final double ACCELERATION_X = 0.9;
+	
+	/**
+	 * Constant reflecting the maximal horizontal velocity for Mazubs when running.
+	 * 
+	 * @return	The maximal horizontal velocity of Mazubs when running.
+	 */
+	private static double VELOCITY_X_MAX_RUNNING;
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 
@@ -227,6 +269,9 @@ public class Mazub {
 		return this.animation;
 	}
 	
+	/**
+	 * Variable registering the animation of this Mazub.
+	 */
 	private Animation animation;
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
@@ -536,6 +581,9 @@ public class Mazub {
 		this.ducking = ducking;
 	}
 	
+	/**
+	 * Variable registering the ducking status of this Mazub.
+	 */
 	private boolean ducking;
 	
 	/************************************************ CHARACTERISTICS *****************************************/
@@ -629,7 +677,14 @@ public class Mazub {
 		return isValidRoundedPositionY((int) Math.floor(positionY));
 	}
 		
+	/**
+	 * Variable registering the horizontal position of this Mazub.
+	 */
 	private double positionX;
+	
+	/**
+	 * Variable registering the vertical position of this Mazub.
+	 */
 	private double positionY;
 	
 	// Velocity
@@ -706,7 +761,14 @@ public class Mazub {
 		return Math.abs(velocityX) <= this.getVelocityXMax();
 	}
 	
+	/**
+	 * Variable registering the horizontal velocity of this Mazub.
+	 */
 	private double velocityX;
+	
+	/**
+	 * Variable registering the vertical velocity of this Mazub.
+	 */
 	private double velocityY;
 	
 	// Initial velocity
@@ -722,6 +784,9 @@ public class Mazub {
 		return this.velocityXInit;
 	}
 	
+	/**
+	 * Variable registering the initial horizontal velocity of this Mazub.
+	 */
 	private final double velocityXInit;
 	
 	// Maximal velocity
@@ -766,6 +831,9 @@ public class Mazub {
 		return  velocityXMax >= this.getVelocityXInit();
 	}
 	
+	/**
+	 * Variable registering the maximal horizontal velocity of this Mazub.
+	 */
 	private double velocityXMax;
 	
 	// Acceleration
@@ -830,7 +898,14 @@ public class Mazub {
 			this.accelerationY = accelerationY;
 	}
 		
+	/**
+	 * Variable registering the horizontal acceleration of this Mazub.
+	 */
 	private double accelerationX;
+	
+	/**
+	 * Variable registering the vertical acceleration of this Mazub.
+	 */
 	private double accelerationY;
 	
 	// Orientation
@@ -870,6 +945,9 @@ public class Mazub {
 		return (orientation == Orientation.LEFT) || (orientation == Orientation.RIGHT);
 	}
 	
+	/**
+	 * Variable registering the orientation of this Mazub.
+	 */
 	private Orientation orientation;
 	
 	/******************************************* CHARACTER SIZE AND ANIMATION *********************************/
