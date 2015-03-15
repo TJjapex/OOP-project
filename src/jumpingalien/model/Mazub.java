@@ -6,6 +6,8 @@ import jumpingalien.util.Util;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.helper.Animation;
+import jumpingalien.model.helper.IllegalHeightException;
+import jumpingalien.model.helper.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Timer;
 
@@ -18,7 +20,7 @@ import jumpingalien.model.helper.Timer;
  * 
  * 
  * @note	Courses:	Thomas Verelst,		r0457538; Ingenieurswetenschappen: Elektrotechniek - Computerwetenschappen
- * 						Hans Cauwenbergh,	r		; Ingenieurswetenschappen: Computerwetenschappen - Elektrotechniek	
+ * 						Hans Cauwenbergh,	r0449585; Ingenieurswetenschappen: Computerwetenschappen - Elektrotechniek	
  * 
  * 
  * @note	The test file of this class is located in tests/jumpingaline.part1.tests/TestCase.java
@@ -115,9 +117,17 @@ public class Mazub {
 	 * @throws	IllegalPositionYException
 	 * 				The Y position of Mazub is not a valid Y position.
 	 * 				| ! isValidPositionY(positionY)
+	 * @throws	IllegalWidthException
+	 * 				The width of at least one sprite in the given array sprites is not a valid width.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws	IllegalHeightException
+	 * 				The height of at least one sprite in the given array sprites is not a valid height.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[] sprites)
-		throws IllegalPositionXException, IllegalPositionYException{
+		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		this.setPositionX(pixelLeftX);

@@ -4,6 +4,9 @@ import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
+import jumpingalien.model.exceptions.IllegalPositionXException;
+import jumpingalien.model.exceptions.IllegalWidthException;
+import jumpingalien.model.exceptions.IllegalHeightException;
 
 /**
  * An Animation class, implemented with methods to serve as a helper class for the class Mazub.
@@ -35,9 +38,24 @@ public class Animation {
 	 * @post	The initial number of frames of the animation is equal to the length of the sprites array
 	 * 			decremented with 8 and afterwards divided by 2.
 	 * 			| new.nbFrames == (this.sprites.length - 8) / 2
+	 * @throws 	IllegalWidthException
+	 * 				The width of at least one sprite in the given array sprites is not a valid width.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws	IllegalHeightException
+	 * 				The height of at least one sprite in the given array sprites is not a valid height.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
-	public Animation(Sprite[] sprites){
+	public Animation(Sprite[] sprites) throws IllegalWidthException, IllegalHeightException{
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
+		
+		for (int i = 0; i < sprites.length; i++){
+			if( !isValidWidth(sprites[i].getWidth()))
+				throw new IllegalWidthException();
+			if ( !isValidHeight(sprites[i].getHeight()))
+				throw new IllegalHeightException();
+		}
 		
 		this.sprites = sprites;
 		this.setAnimationIndex(0);
