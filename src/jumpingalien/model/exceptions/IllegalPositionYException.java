@@ -1,4 +1,4 @@
-package jumpingalien.model;
+package jumpingalien.model.exceptions;
 import be.kuleuven.cs.som.annotate.*;
 
 /**

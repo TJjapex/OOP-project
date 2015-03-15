@@ -3,8 +3,11 @@ package jumpingalien.model;
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
-import jumpingalien.model.Timer;
-import jumpingalien.model.Animation;
+import jumpingalien.model.exceptions.IllegalPositionXException;
+import jumpingalien.model.exceptions.IllegalPositionYException;
+import jumpingalien.model.helper.Animation;
+import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.Timer;
 
 // Reference
 
@@ -63,9 +66,7 @@ import jumpingalien.model.Animation;
  * 
  * 			The link (which is not be accessible for unauthorized users) of the repo is
  * 				https://bitbucket.org/thmz/oop-project/
- * 
- * 
- * 
+ *
  * 
  * @invar	The x position must be valid.
  * 			|	isValidPositionX( this.getPositionX() )
@@ -523,6 +524,8 @@ public class Mazub {
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_RUNNING
 	 * @post	The ducking status of Mazub is false.
 	 * 			| new.isDucking() == false
+	 * @post	If Mazub is moving, set the acceleration to the default value
+	 * 			| new.getAccelerationX() == this.getOrientation().getSign() * ACCELERATION_X
 	 * @throws	IllegalStateException
 	 * 				Mazub is not ducking
 	 * 				| !this.isDucking()
@@ -531,7 +534,11 @@ public class Mazub {
 		if(!this.isDucking())
 			throw new IllegalStateException("Mazub not ducking!");
 		
-		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
+		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);		
+		if(this.isMoving()){
+			this.setAccelerationX(this.getOrientation().getSign() * ACCELERATION_X);
+		}
+		
 		this.setDucking(false);
 		
 	}	
@@ -725,8 +732,9 @@ public class Mazub {
 	 */
 	@Basic
 	private void setVelocityX(double velocityX){
-		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax()))
+		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax())){
 			this.setAccelerationX(0);
+		}
 			
 		this.velocityX = Math.max( Math.min( velocityX , this.getVelocityXMax()), -this.getVelocityXMax());
 	}

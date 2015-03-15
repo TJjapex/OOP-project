@@ -1,6 +1,7 @@
-package jumpingalien.model;
+package jumpingalien.model.helper;
 
 import be.kuleuven.cs.som.annotate.*;
+import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
@@ -197,6 +198,21 @@ public class Animation {
 	}
 	
 	/**
+	 * Increments the frame index, or sets it to 0 if the current frame is the last one.
+	 * 
+	 * @post	If the animation index was smaller than the number of frames of the animation minus one,
+	 * 			the animation index is now increased with one. If the animation index was equal to
+	 * 			the animation index plus one, the animation index is now reset to 0.
+	 * 			| if (this.getAnimationIndex() + 1 < this.nbFrames)
+	 * 			|	then new.getAnimationIndex() == this.getAnimationIndex() + 1 
+	 * 			| else if (this.getAnimationIndex() + 1  == this.nbFrames)
+	 * 			|	then new.getAnimationIndex() == 0		
+	 */
+	private void incrementAnimationIndex(){
+		this.setAnimationIndex( (this.getAnimationIndex() + 1) % this.getNbFrames() );
+	}
+	
+	/**
 	 * Updates the current animation frame, based on the time since the last frame.
 	 * 
 	 * @pre The given timer instance is not null.
@@ -212,21 +228,6 @@ public class Animation {
 			this.incrementAnimationIndex();
 			timer.increaseSinceLastSprite(-0.075);
 		}
-	}
-	
-	/**
-	 * Increments the frame index, or sets it to 0 if the current frame is the last one.
-	 * 
-	 * @post	If the animation index was smaller than the number of frames of the animation minus one,
-	 * 			the animation index is now increased with one. If the animation index was equal to
-	 * 			the animation index plus one, the animation index is now reset to 0.
-	 * 			| if (this.getAnimationIndex() + 1 < this.nbFrames)
-	 * 			|	then new.getAnimationIndex() == this.getAnimationIndex() + 1 
-	 * 			| else if (this.getAnimationIndex() + 1  == this.nbFrames)
-	 * 			|	then new.getAnimationIndex() == 0		
-	 */
-	private void incrementAnimationIndex(){
-		this.setAnimationIndex( (this.getAnimationIndex() + 1) % this.getNbFrames() );
 	}
 	
 	private int animationIndex;

@@ -3,6 +3,9 @@ import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Mazub;
+import jumpingalien.model.exceptions.IllegalPositionXException;
+import jumpingalien.model.exceptions.IllegalPositionYException;
+import jumpingalien.model.helper.Orientation;
 
 public class Facade implements IFacade {
 	/**

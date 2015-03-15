@@ -4,6 +4,8 @@ import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
+import jumpingalien.model.exceptions.IllegalPositionXException;
+import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -338,6 +340,25 @@ public class TestCase {
 	}
 	
 	/**
+	 * Checks if Mazub's acceleration is correct when he was moving right
+	 * whilst ducking and then stops ducking while still moving right.
+	 */
+	@Test
+	public void correctAccelerationStopDuckingWhileMoving() {
+		facade.startDuck(alien_0_0);
+		assertTrue(alien_0_0.isDucking());
+		
+		facade.startMoveRight(alien_0_0);
+		facade.advanceTime(alien_0_0, 0.1);
+		
+		facade.endDuck(alien_0_0);
+		assertFalse(alien_0_0.isDucking());
+		facade.advanceTime(alien_0_0, 0.001);
+		
+		assertEquals(0.9, facade.getAcceleration(alien_0_0)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
 	 * Checks if Mazub's maximal horizontal velocity is correct when he was moving right at maximum velocity
 	 * whilst ducking and then stops ducking while still moving right.
 	 */
@@ -415,7 +436,7 @@ public class TestCase {
 		
 		facade.endDuck(alien_0_0);
 		facade.advanceTime(alien_0_0, 0.010);
-		
+
 		// The sprite index should be 0
 		assertEquals(sprites[0], facade.getCurrentSprite(alien_0_0));
 	}
@@ -460,6 +481,32 @@ public class TestCase {
 		// Total time passed since last move right is one second
 		// The sprite index should be 2
 		assertEquals(sprites[0], facade.getCurrentSprite(alien_0_0));
+	}
+	
+	/**
+	 * Checks sprite for jumping and moving right
+	 */
+	@Test
+	public void spriteJumpingMovingRight(){
+		facade.startMoveRight(alien_0_0);
+		facade.startJump(alien_0_0);
+		facade.advanceTime(alien_0_0, 0.10);
+		
+		// The sprite index should be 4
+		assertEquals(sprites[4], facade.getCurrentSprite(alien_0_0));
+	}
+	
+	/**
+	 * Checks sprite for ducking and moving right
+	 */
+	@Test
+	public void spriteDuckingMovingRight(){
+		facade.startMoveRight(alien_0_0);
+		facade.startDuck(alien_0_0);
+		facade.advanceTime(alien_0_0, 0.10);
+		
+		// The sprite index should be 6
+		assertEquals(sprites[6], facade.getCurrentSprite(alien_0_0));
 	}
 	
 	
