@@ -1,9 +1,11 @@
-package jumpingalien.model;
+package jumpingalien.part1.tests;
 
 import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
+import jumpingalien.model.Facade;
+import jumpingalien.model.Mazub;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.part1.facade.IFacade;

@@ -20,11 +20,6 @@ public class IllegalPositionXException extends RuntimeException {
 		this.positionX = positionX;
 	}
 
-	/**
-	 * Returns the horizontal position for this exception.
-	 * 
-	 * @return	The horizontal position for this exception.
-	 */
 	@Basic @Immutable
 	public double getPositionX() {
 		return this.positionX;

@@ -12,6 +12,17 @@ import jumpingalien.model.helper.Timer;
 /**
  * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
+ *
+ *
+ * @author Thomas Verelst, Hans Cauwenbergh
+ * 
+ * 
+ * @note	Courses:	Thomas Verelst,		r0457538; Ingenieurswetenschappen: Elektrotechniek - Computerwetenschappen
+ * 						Hans Cauwenbergh,	r		; Ingenieurswetenschappen: Computerwetenschappen - Elektrotechniek	
+ * 
+ * 
+ * @note	The test file of this class is located in tests/jumpingaline.part1.tests/TestCase.java
+ * 
  * 
  * @note	The source of this project is hosted in a private GIT repository on Bitbucket.
  * 			The repository is only available to invited users. In case acces to this 
@@ -19,6 +30,9 @@ import jumpingalien.model.helper.Timer;
  * 
  * 			The link (which is not be accessible for unauthorized users) of the repository is:
  * 				https://bitbucket.org/thmz/oop-project/
+ * 
+ * 
+ * 
  * 
  * @invar	The x position must be valid.
  * 			|	isValidPositionX( this.getPositionX() )
@@ -45,7 +59,7 @@ import jumpingalien.model.helper.Timer;
  * @invar	The current orientation is valid
  * 			|	isValidOrientation( this.getOrientation() )
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+
  * @version 1.0
  */
 public class Mazub {
