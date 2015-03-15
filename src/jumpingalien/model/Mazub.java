@@ -511,8 +511,14 @@ public class Mazub {
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_DUCKING
 	 * @post	The ducking status of Mazub is true.
 	 * 			| new.isDucking() == true
+	 * @throws	IllegalStateException
+	 * 				Mazub is already ducking
+	 * 				| this.isDucking()
 	 */
 	public void startDuck(){
+		if( this.isDucking())
+			throw new IllegalStateException("Mazub already ducking!");
+		
 		this.setVelocityXMax(VELOCITY_X_MAX_DUCKING);
 		this.setDucking(true);
 	}

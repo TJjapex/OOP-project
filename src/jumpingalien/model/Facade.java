@@ -169,7 +169,11 @@ public class Facade implements IFacade {
 	 *            The alien that has to start ducking.
 	 */
 	public void startDuck(Mazub alien){
-		alien.startDuck();
+		try{
+			alien.startDuck();
+		}catch(IllegalStateException exc){
+		}
+		
 	}
 
 	/**

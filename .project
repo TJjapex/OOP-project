@@ -18,13 +18,17 @@
 		<link>
 			<name>resources/levels</name>
 			<type>2</type>
-			<locationURI>PROJECT_LOC/levels</locationURI>
+			<locationURI>copy_PROJECT_LOC1/levels</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
 			<name>copy_PROJECT_LOC</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/OGP1415-JumpingAlien-Part2</value>
+		</variable>
+		<variable>
+			<name>copy_PROJECT_LOC1</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/OGP1415-JumpingAlien</value>
 		</variable>
 	</variableList>
 </projectDescription>
