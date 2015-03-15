@@ -3,29 +3,34 @@ import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Mazub;
+import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
+import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 
 public class Facade implements IFacade {
 	/**
 	 * Create an instance of Mazub.
 	 * 
-	 * @param pixelLeftX
-	 *            The x-location of Mazub's bottom left pixel.
-	 * @param pixelBottomY
-	 *            The y-location of Mazub's bottom left pixel.
-	 * @param sprites
-	 *            The array of sprite images for Mazub.
-	 * @throws ModelException
-	 * 			 The given horizontal or vertical position is not valid
-	 * 			 | !Mazub.isValidRoundedPositionX(pixelLeftX) || !Mazub.isValidRoundedPositionY(pixelLeftY)
+	 * @param 	pixelLeftX
+	 *            	The x-location of Mazub's bottom left pixel.
+	 * @param 	pixelBottomY
+	 *            	The y-location of Mazub's bottom left pixel.
+	 * @param	sprites
+	 *        		The array of sprite images for Mazub.
+	 * @throws 	ModelException
+	 * 			 	The given horizontal or vertical position is not valid.
+	 * 			 	| !Mazub.isValidRoundedPositionX(pixelLeftX) || !Mazub.isValidRoundedPositionY(pixelLeftY) ||
+	 * 				| for some sprite in sprites: !Mazub.isValidWidth(sprite.getWidth()) ||
+	 * 				| for some sprite in sprites: !Mazub.isValidHeight(sprite.getHeight())
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
 			return new Mazub(pixelLeftX, pixelBottomY, sprites);
-		}catch( IllegalPositionXException | IllegalPositionYException exc){
-			throw new ModelException("Invalid position given");
+		}catch( IllegalPositionXException | IllegalPositionYException | IllegalWidthException |
+				IllegalHeightException exc){
+			throw new ModelException("Invalid position or size given.");
 		}
 		
 	}
