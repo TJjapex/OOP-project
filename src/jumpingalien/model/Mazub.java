@@ -11,6 +11,10 @@ import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Timer;
 
+
+// All aspects shall be specified both formally and informally.
+
+
 /**
  * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
