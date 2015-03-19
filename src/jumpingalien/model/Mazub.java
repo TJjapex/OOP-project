@@ -14,6 +14,30 @@ import jumpingalien.model.helper.Timer;
 
 // All aspects shall be specified both formally and informally.
 
+// Hit-points:
+
+// * integer numbers
+// * at the beginning of the game, Mazub is assigned 100 hit-points
+// * current number of hit-points may change during the game as a response to actions performed by Mazub
+// * never lower than 0 -> Mazub's death
+// * never above 500
+// * gain hit-points by consuming Plant objects: - when Mazub's perimeters overlap with a Plant object while 
+//												   Mazub has less than 500 hit-points, hit-points are increased
+//												   by 50 and the Plant object is removed from the world
+// * lose hit-points due to contact with enemy objects: - when Mazub's perimeters (other than bottom) overlap
+//														  with an enemy (Slime/Shark), hit-points are decreased
+//														  by 50
+//														- subsequent interactions shall have no effect for 0.6s
+// * lose hit-points due to contact with terrain: - water: after contact of 0.2s, hit-points decrease by 2 per
+//														   0.2s
+//											      - magma: hit-points immediately decrease by 50 per 0.2s
+// * method to inspect the current number of hit-points
+
+// Death:
+
+// * Mazub dies as its hit-points drop to zero or below or when its bottom-left pixel leaves the boundaries
+// 	 of the game world
+// * Mazub is removed from the game world
 
 /**
  * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
@@ -31,9 +55,7 @@ import jumpingalien.model.helper.Timer;
  * 
  * 			The link (which is not accessible for unauthorized users) of the repository is:
  * 				https://bitbucket.org/thmz/oop-project/
- * 
- * 
- * 
+ *
  * 
  * @invar	The x position must be valid.
  * 			|	isValidPositionX( this.getPositionX() )
@@ -60,8 +82,7 @@ import jumpingalien.model.helper.Timer;
  * @invar	The current orientation is valid
  * 			|	isValidOrientation( this.getOrientation() )
  * 
-
- * @version 1.0
+ * @version 2.0
  */
 public class Mazub {
 		
@@ -382,6 +403,10 @@ public class Mazub {
 	
 	/************************************************ RUNNING *************************************************/
 	
+	// * move through tiles of passable terrain
+	// * if there are multiple ongoing movements at the same time, the horizontal velocity shall not be set
+	//	 to zero before all ongoing movements are terminated
+	
 	/**
 	 * Make Mazub start moving. Set the initial horizontal velocity and acceleration of Mazub,
 	 * depending on his orientation.
@@ -459,6 +484,16 @@ public class Mazub {
 	
 	/********************************************* JUMPING AND FALLING ****************************************/
 	
+	// * once startJump has been invoked while Mazub is located on top of solid ground or another game object,
+	//	 Mazub starts moving up with a velocity of 8 [m/s] -> NO MORE INFINITE JUMPING
+	// * if Mazub overlaps with impassable terrain or other game objects while jumping, endJump will set the
+	//	 vertical velocity to zero immediately
+	// * when Mazub's bottom perimeter does not overlap with pixels belonging to impassable tiles or game 
+	//	 objects, Mazub shall fall until Mazub's bottom perimeter reaches the top-most row of pixels of an
+	//	 impassable tile, game object or leaves the map
+	// * as Mazub stands on impassable terrain or another game object, the vertical acceleration shall be
+	//	 set to zero
+	
 	/**
 	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
 	 * 
@@ -516,6 +551,11 @@ public class Mazub {
 	}
 	
 	/*************************************************** DUCKING **********************************************/
+	
+	// * if endDuck is invoked in a location where the appropriate non-ducking Yp would result in Mazub
+	//	 overlappping with impassable terrain, Mazub shall continue to duck until appropriate space is 
+	//	 available. Thus, startDuck may be invoked while Mazub is still trying to stand up from previously
+	//	 ducking. -> wrong defensive implementation at the moment?
 	
 	/**
 	 * Make Mazub start ducking. Set the maximal horizontal velocity for ducking.
@@ -591,6 +631,10 @@ public class Mazub {
 	private boolean ducking;
 	
 	/************************************************ CHARACTERISTICS *****************************************/
+	
+	// * values for the initial velocity, the maximum horizontal velocity and the horizontal acceleration
+	//	 may change with respect to interaction with other game objects, terrain and actions performed by 
+	//	 Mazub
 	
 	// Position
 	
@@ -969,6 +1013,9 @@ public class Mazub {
 	
 	/************************************************ ADVANCE TIME ********************************************/
 	
+	// * Mazub shall not move if its side perimeter in the direction of movements overlaps with impassable
+	//	 terrain or another game object
+	
 	/**
 	 * Advance time and update Mazub's position and velocity accordingly.
 	 * 
@@ -997,7 +1044,7 @@ public class Mazub {
 	 */
 	public void advanceTime(double dt) throws IllegalArgumentException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal timestep amount given: "+ dt + " s");
+			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
