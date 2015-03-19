@@ -1,5 +1,4 @@
-package jumpingalien.model;
-import jumpingalien.part1.facade.IFacade;
+package jumpingalien.part1.facade;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Mazub;

@@ -10,6 +10,22 @@ package jumpingalien.model;
  */
 public class World {
 
+	public World(int tileSize, int nbTilesX, int nbTilesY,
+			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
+			int targetTileY) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getWorldWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getWorldHeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	/************************************************** GENERAL ***********************************************/
 	
 	// 	World segmentation:
@@ -69,4 +85,10 @@ public class World {
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
 	//  * inspect position (bottom-left corner) of the display window
 	//	* inspect height and width of the display window
+	
+	/*
+	 * Uitwerking:
+	 * 
+	 *  Map objects = Map (object, {positionX, position})
+	 */
 }

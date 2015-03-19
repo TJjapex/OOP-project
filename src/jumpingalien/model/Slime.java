@@ -28,4 +28,12 @@ public class Slime {
 	//													   Slime of a larger school
 	//													 - no more than 10 schools in a game world
 		
+	
+	
+	/*
+	 * Algemene uitwerking:
+	 * 
+	 * schools:
+	 * 	Extra klasse die dan een variabele heeft 'member'. Als 
+	 */
 }

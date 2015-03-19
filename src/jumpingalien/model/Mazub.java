@@ -1148,4 +1148,9 @@ public class Mazub {
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
 		this.setVelocityY( newVy );
 	}
+
+	public int getNbHitPoints() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
