@@ -11,33 +11,7 @@ import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Timer;
 
-
 // All aspects shall be specified both formally and informally.
-
-// Hit-points:
-
-// * integer numbers
-// * at the beginning of the game, Mazub is assigned 100 hit-points
-// * current number of hit-points may change during the game as a response to actions performed by Mazub
-// * never lower than 0 -> Mazub's death
-// * never above 500
-// * gain hit-points by consuming Plant objects: - when Mazub's perimeters overlap with a Plant object while 
-//												   Mazub has less than 500 hit-points, hit-points are increased
-//												   by 50 and the Plant object is removed from the world
-// * lose hit-points due to contact with enemy objects: - when Mazub's perimeters (other than bottom) overlap
-//														  with an enemy (Slime/Shark), hit-points are decreased
-//														  by 50
-//														- subsequent interactions shall have no effect for 0.6s
-// * lose hit-points due to contact with terrain: - water: after contact of 0.2s, hit-points decrease by 2 per
-//														   0.2s
-//											      - magma: hit-points immediately decrease by 50 per 0.2s
-// * method to inspect the current number of hit-points
-
-// Death:
-
-// * Mazub dies as its hit-points drop to zero or below or when its bottom-left pixel leaves the boundaries
-// 	 of the game world
-// * Mazub is removed from the game world
 
 /**
  * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
@@ -79,8 +53,10 @@ import jumpingalien.model.helper.Timer;
  * 			| 	this.getAnimation() != null
  * @invar	The current orientation of Mazub is not null.
  * 			|	this.getOrientation() != null
- * @invar	The current orientation is valid
+ * @invar	The current orientation is valid.
  * 			|	isValidOrientation( this.getOrientation() )
+ * @invar	The current number of Mazub's hit-points is valid.
+ * 			|	isValidNbHitPoints( this.getNbHitPoints() )
  * 
  * @version 2.0
  */
@@ -142,6 +118,13 @@ public class Mazub {
 	 * @return	The maximal horizontal velocity of Mazubs when running.
 	 */
 	private static double VELOCITY_X_MAX_RUNNING;
+	
+	/**
+	 * Constant reflecting the maximal number of hit-points for a Mazub.
+	 * 
+	 * @return	The maximal number of hit-points for a Mazub.
+	 */
+	public static final int MAX_NB_HITPOINTS = 500;
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 
@@ -158,6 +141,8 @@ public class Mazub {
 	 * 				The maximal horizontal velocity of Mazub when he's running.
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
+	 * @param	hitPoints
+	 * 				The number of Mazub's hit-points.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0) 
 	 * @post	The initial ducking status of Mazub is equal to false.
@@ -171,13 +156,16 @@ public class Mazub {
 	 * @effect	If VELOCITY_X_MAX_RUNNING is greater than the initial horizontal velocity, the initial maximal
 	 *  		horizontal velocity is equal to VELOCITY_X_MAX_RUNNING. Otherwise, it's equal to the initial 
 	 *  		horizontal velocity.
-	 *  		| setVelocityXMax(VEL0TY_X_MAX_RUNNING)
+	 *  		| setVelocityXMax(VELOCITY_X_MAX_RUNNING)
 	 * @effect	The initial orientation of Mazub is equal to right.
 	 * 			| setOrientation(Orientation.RIGHT)
 	 * @post	The animation is initiated.
 	 * 			| new.getAnimation() != null
 	 * @post	The timer is initiated.
 	 * 			| new.getTimer() != null
+	 * @effect	If nbHitPoints is smaller or equal to MAX_NB_HITPOINTS, the number of Mazub's hit-points is equal
+	 * 		 	to nbHitPoints. Otherwise, it's equal to MAX_NB_HITPOINTS.
+	 * 			| setNbHitPoints(nbHitPoints)
 	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
 	 * 				| ! isValidPositionX(positionX)
@@ -193,7 +181,8 @@ public class Mazub {
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning, Sprite[] sprites)
+	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
+				 Sprite[] sprites, int nbHitPoints)
 		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
@@ -209,6 +198,8 @@ public class Mazub {
 		
 		this.setTimer( new Timer() );
 		this.setAnimation( new Animation(sprites) );
+		
+		this.setNbHitPoints(nbHitPoints);
 	}
 	
 	/**
@@ -233,7 +224,7 @@ public class Mazub {
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException,
 				IllegalPositionYException{
-		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites);
+		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100);
 	}
 	
 	/************************************************* HELPER CLASSES *****************************************/
@@ -1148,9 +1139,44 @@ public class Mazub {
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
 		this.setVelocityY( newVy );
 	}
+	
+	/*************************************************** HIT-POINTS *******************************************/
 
+	// * TOTAL PROGRAMMING
+	// * integer numbers
+	// * at the beginning of the game, Mazub is assigned 100 hit-points
+	// * current number of hit-points may change during the game as a response to actions performed by Mazub
+	// * never lower than 0 -> Mazub's death
+	// * never above 500
+	// * gain hit-points by consuming Plant objects: - when Mazub's perimeters overlap with a Plant object while 
+	//												   Mazub has less than 500 hit-points, hit-points are increased
+	//												   by 50 and the Plant object is removed from the world
+	// * lose hit-points due to contact with enemy objects: - when Mazub's perimeters (other than bottom) overlap
+	//														  with an enemy (Slime/Shark), hit-points are decreased
+	//														  by 50
+	//														- subsequent interactions shall have no effect for 0.6s
+	// * lose hit-points due to contact with terrain: - water: after contact of 0.2s, hit-points decrease by 2 per
+	//														   0.2s
+	//												  - magma: hit-points immediately decrease by 50 per 0.2s
+	// * method to inspect the current number of hit-points
+
+	// Death:
+
+	// * Mazub dies as its hit-points drop to zero or below or when its bottom-left pixel leaves the boundaries
+	//	 of the game world
+	// * Mazub is removed from the game world
+	
 	public int getNbHitPoints() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.nbHitPoints;
 	}
+	
+	public void setNbHitPoints(int nbHitPoints) {
+		this.nbHitPoints = Math.min(nbHitPoints, MAX_NB_HITPOINTS);
+	}
+	
+	public boolean isValidNbHitPoints(int nbHitPoints) {
+		return (nbHitPoints <= MAX_NB_HITPOINTS);
+	}
+	
+	private int nbHitPoints;
 }

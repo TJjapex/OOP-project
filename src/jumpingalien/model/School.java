@@ -1,9 +1,12 @@
 package jumpingalien.model;
 
+// All aspects shall ONLY be specified in a formal way.
+
 /**
- * A class of Schools
- * @author Thomas
- *
+ * A class of Schools, groups of Slimes in the game world of Mazub.
+ * 
+ * @author Thomas Verelst, Hans Cauwenbergh
+ * @version 1.0
  */
 
 /*
@@ -13,5 +16,13 @@ package jumpingalien.model;
  */
 
 public class School {
+	
+	/************************************************** GENERAL ***********************************************/
+	
+	
+	
+	/************************************************ CONSTRUCTOR *********************************************/
+	
+	
 	
 }

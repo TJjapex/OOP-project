@@ -1,5 +1,14 @@
 package jumpingalien.model;
 
+// All aspects shall ONLY be specified in a formal way.
+
+/*
+ * Algemene uitwerking:
+ * 
+ * schools:
+ * 	Extra klasse die dan een variabele heeft 'member'. Als 
+ */
+
 /**
  * A class of Slimes, enemy characters in the game world of Mazub.
  * 
@@ -7,16 +16,60 @@ package jumpingalien.model;
  * @version 1.0
  */
 public class Slime {
+	
+	/************************************************** GENERAL ***********************************************/
 
+	
+	
+	/************************************************ CONSTRUCTOR *********************************************/
+	
 	// * possess 100 hit-points
-	// * move randomly to the left or right
+	
+	
+	/********************************************* SIZE AND POSITIONING ***************************************/
+	
+	
+	
+	/*************************************************** MOVING ***********************************************/
+	
+	
+	
+	/************************************************ CHARACTERISTICS *****************************************/
+	
 	// * horizontal acceleration is equal to 0.7 [m/s^2] 
 	// * maximal horizontal velocity is equal to 2.5 [m/s]
-	// * movement periods have a duration of 2s to 6s
+	
+	// Position
+	
+	// Velocity
+	
+	// Initial velocity
+	
+	// Maximal velocity
+	
+	// Acceleration
+	
+	// Orientation
+	
+	/*************************************************** ANIMATION ********************************************/
+	
+	
+	
+	/*************************************************** HIT-POINTS *******************************************/
+	
 	// * lose 50 hit-points when making contact with Mazub or Shark
+	// * Slimes lose hit-points upon touching water/magma (same as Mazub)
+	
+	
+	/**************************************************** MOVEMENT ********************************************/
+	
+	// * move randomly to the left or right
+	// * movement periods have a duration of 2s to 6s
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Slimes
-	// * Slimes lose hit-points upon touching water/magma (same as Mazub)
+
+	/***************************************************** SCHOOL *********************************************/
+	
 	// * Slimes are organised in groups, called schools: - each Slime belongs to exactly one school
 	// 													 - Slimes may switch from one school to another
 	//													 - when a Slime loses hit-points, all other Slimes of that
@@ -27,13 +80,7 @@ public class Slime {
 	//													 - Slimes switch from school when they collide with a 
 	//													   Slime of a larger school
 	//													 - no more than 10 schools in a game world
-		
 	
 	
-	/*
-	 * Algemene uitwerking:
-	 * 
-	 * schools:
-	 * 	Extra klasse die dan een variabele heeft 'member'. Als 
-	 */
+	
 }
