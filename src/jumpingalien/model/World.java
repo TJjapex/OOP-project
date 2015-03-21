@@ -3,6 +3,9 @@ package jumpingalien.model;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import jumpingalien.util.ModelException;
@@ -273,6 +276,11 @@ public class World {
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
 	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
 	public void advanceTime( double dt) {
+		
+		for(Mazub alien: getAliens()){
+			alien.advanceTime(dt);
+		}
+		
 		// TODO Auto-generated method stub
 	}
 	
@@ -300,11 +308,12 @@ public class World {
 	//						  - passively interact with other objects
 	//	* game terminates when Mazub is removed from the world or reaches a target tile
 	
-	//  * determine whose bottom-left pixel is positioned on a given position (constant time! -> Map(key,value) )
-	public int getGameObjectOnPosition(int positionX, int positionY){
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	//  * determine whose bottom-left pixel is positioned on a given position (constant time! -> Map(key,value) 
+//	public int getGameObjectOnPosition(int positionX, int positionY){
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+	// Volgens mij is dit wat er onder geological features wordt bedoeld.
 
 	public boolean isGameOver() {
 		// TODO Auto-generated method stub
@@ -325,8 +334,14 @@ public class World {
 	 *            The alien to be set as the player's character.
 	 */
 	public void setMazub(Mazub alien){
-		
+		aliens.add(alien);
 	}
+	
+	public HashSet<Mazub> getAliens(){
+		return this.aliens;
+	}
+	
+	HashSet<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
 	
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
@@ -356,8 +371,10 @@ public class World {
 	 *            </ul>
 	 */
 	public void setGeologicalFeature(int tileX, int tileY, int tileType) {
-		// TODO Auto-generated method stub
-		
+		if( tileType == 0 ){
+			return;
+		}
+		gameObjects.put(new Integer[]{tileX,  tileY}, tileType);
 	}
 	
 	/**
@@ -386,8 +403,21 @@ public class World {
 	 *        bottom left pixel of a tile.
 	 */
 	public int getGeologicalFeature(int pixelX, int pixelY) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		// Checken of gegeven pixel in game-world ligt?
+		
+		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0){
+			throw new IllegalArgumentException("Given position does not correspond to the bottom left pixel of a tile");
+		}
+		
+		// Opmerking: map.get() geeft null als de key niet bestaat, dus misschien kan dat ook gebruikt worden ipv containsKey. (efficienter) Maar bij
+		// int value = this.gameObjects.get(... ), kan value nooit null worden want das geen geldige integer.
+		if(this.gameObjects.containsKey(new int[]{getTileX(pixelX), getTileY(pixelY)})){
+			return this.gameObjects.get(new int[]{getTileX(pixelX), getTileY(pixelY)});
+		}else{
+			return 0;
+		}
 	}
-
+	
+	private HashMap<Integer[], Integer> gameObjects = new HashMap<Integer[], Integer>();
 }
