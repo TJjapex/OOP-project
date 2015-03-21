@@ -1171,7 +1171,7 @@ public class Mazub {
 	}
 	
 	public void setNbHitPoints(int nbHitPoints) {
-		this.nbHitPoints = Math.min(nbHitPoints, MAX_NB_HITPOINTS);
+		this.nbHitPoints = Math.max( Math.min(nbHitPoints, MAX_NB_HITPOINTS), 0);
 	}
 	
 	public boolean isValidNbHitPoints(int nbHitPoints) {
@@ -1179,4 +1179,18 @@ public class Mazub {
 	}
 	
 	private int nbHitPoints;
+	
+	/**
+	 * Returns whether the given alien is currently immune against enemies (see
+	 * section 1.2.5 of the assignment).
+	 * 
+	 * @param alien
+	 *            The alien for which to retrieve the immunity status.
+	 * @return True if the given alien is immune against other enemies (i.e.,
+	 *         there are no interactions between the alien and enemy objects).
+	 */
+	public boolean isImmune() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
