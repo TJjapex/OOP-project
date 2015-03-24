@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.util.ModelException;
@@ -376,31 +377,53 @@ public class World {
 		
 	}
 	
-	public static List<Orientation> collidesWith(Mazub object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
+//	public static List<Orientation> collidesWith(Mazub object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
+//		
+//		// needs to iterate over all possible obstacles ( near game objects and geological features)
+//		
+//		List<Orientation> obstacleOrientations = new ArrayList<Orientation>();
+//		
+//		// check if object overlaps with obstacles to the right
+//		
+//		if (!(object.getPositionX() + (object.getWidth()-1) < obstacle.getPositionX()))
+//			obstacleOrientations.add(Orientation.RIGHT);
+//		
+//		// check if object overlaps with obstacles to the left
+//		
+//		if (!(obstacle.getPositionX() + (obstacle.getWidth()-1) < object.getPositionX()))
+//			obstacleOrientations.add(Orientation.LEFT);
+//				
+//		// check if object overlaps with obstacles above
+//		
+//		if (!(object.getPositionY() + (object.getHeight()-1) < obstacle.getPositionY()))
+//			obstacleOrientations.add(Orientation.UP);
+//		
+//		// check if object overlaps with objects underneath
+//		
+//		if (!(obstacle.getPositionY() + (obstacle.getHeight()-1) < object.getPositionY()))
+//			obstacleOrientations.add(Orientation.DOWN);
+//		
+//		return obstacleOrientations;
+//	}
+	
+	public Set<Orientation> collidesWith(Mazub object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
 		
-		// needs to iterate over all possible obstacles ( near game objects and geological features)
+		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
 		
-		List<Orientation> obstacleOrientations = new ArrayList<Orientation>();
+		for (Map.Entry<Integer[], Integer> feature: geologicalFeatures.entrySet()){
+			if (feature.getValue() == 1){
+				if (!(object.getPositionX() + (object.getWidth()-1) < getPositionOfTileX(feature.getKey()[0])))
+					obstacleOrientations.add(Orientation.RIGHT);
+				if (!(getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1) < object.getPositionX()))
+					obstacleOrientations.add(Orientation.LEFT);
+				if (!(object.getPositionY() + (object.getHeight()-1) < getPositionOfTileY(feature.getKey()[1])))
+					obstacleOrientations.add(Orientation.UP);
+				if (!(getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1) < object.getPositionY()))
+					obstacleOrientations.add(Orientation.DOWN);
+			}
+		}
 		
-		// check if object overlaps with obstacles to the right
-		
-		if (!(object.getPositionX() + (object.getWidth()-1) < obstacle.getPositionX()))
-			obstacleOrientations.add(Orientation.RIGHT);
-		
-		// check if object overlaps with obstacles to the left
-		
-		if (!(obstacle.getPositionX() + (obstacle.getWidth()-1) < object.getPositionX()))
-			obstacleOrientations.add(Orientation.LEFT);
-				
-		// check if object overlaps with obstacles above
-		
-		if (!(object.getPositionY() + (object.getHeight()-1) < obstacle.getPositionY()))
-			obstacleOrientations.add(Orientation.UP);
-		
-		// check if object overlaps with objects underneath
-		
-		if (!(obstacle.getPositionY() + (obstacle.getHeight()-1) < object.getPositionY()))
-			obstacleOrientations.add(Orientation.DOWN);
+		System.out.println(obstacleOrientations);
 		
 		return obstacleOrientations;
 	}
@@ -474,10 +497,10 @@ public class World {
 		return this.plants;
 	}
 	
-	HashSet<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
-	HashSet<Shark> sharks = new HashSet<Shark>();
-	HashSet<Slime> slimes = new HashSet<Slime>();
-	HashSet<Plant> plants = new HashSet<Plant>();
+	public HashSet<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	public HashSet<Shark> sharks = new HashSet<Shark>();
+	public HashSet<Slime> slimes = new HashSet<Slime>();
+	public HashSet<Plant> plants = new HashSet<Plant>();
 	
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
@@ -508,7 +531,7 @@ public class World {
 		if( tileType == 0 ){
 			return;
 		}
-		gameObjects.put(new Integer[]{tileX,  tileY}, tileType);
+		geologicalFeatures.put(new Integer[]{tileX,  tileY}, tileType);
 	}
 	
 	/**
@@ -544,13 +567,13 @@ public class World {
 		
 		// Opmerking: map.get() geeft null als de key niet bestaat, dus misschien kan dat ook gebruikt worden ipv containsKey. (efficienter) Maar bij
 		// int value = this.gameObjects.get(... ), kan value nooit null worden want das geen geldige integer.
-		if(this.gameObjects.containsKey(new int[]{getTileX(pixelX), getTileY(pixelY)})){
-			return this.gameObjects.get(new int[]{getTileX(pixelX), getTileY(pixelY)});
+		if(this.geologicalFeatures.containsKey(new int[]{getTileX(pixelX), getTileY(pixelY)})){
+			return this.geologicalFeatures.get(new int[]{getTileX(pixelX), getTileY(pixelY)});
 		}else{
 			return 0;
 		}
 	}
 	
-	private HashMap<Integer[], Integer> gameObjects = new HashMap<Integer[], Integer>();
+	private HashMap<Integer[], Integer> geologicalFeatures = new HashMap<Integer[], Integer>();
 	
 }
