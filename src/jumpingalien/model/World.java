@@ -412,18 +412,49 @@ public class World {
 		
 		for (Map.Entry<Integer[], Integer> feature: geologicalFeatures.entrySet()){
 			if (feature.getValue() == 1){
-				if (!(object.getPositionX() + (object.getWidth()-1) < getPositionOfTileX(feature.getKey()[0])))
+//				if ( (getPositionOfTileX(feature.getKey()[0]) > object.getPositionX()) &&
+//					!(object.getPositionX() + (object.getWidth()-1) < getPositionOfTileX(feature.getKey()[0])))
+//					obstacleOrientations.add(Orientation.RIGHT);
+//				if ( (getPositionOfTileX(feature.getKey()[0]) < object.getPositionX()) &&
+//					!(getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1) < object.getPositionX()))
+//					obstacleOrientations.add(Orientation.LEFT);
+//				if ( (getPositionOfTileY(feature.getKey()[1]) > object.getPositionY()) &&
+//					!(object.getPositionY() + (object.getHeight()-1) < getPositionOfTileY(feature.getKey()[1])))
+//					obstacleOrientations.add(Orientation.UP);
+//				if ( (getPositionOfTileY(feature.getKey()[1]) < object.getPositionY()) &&
+//					!(getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1) < object.getPositionY()))
+//					obstacleOrientations.add(Orientation.DOWN);
+				
+				if ( (object.getPositionX()+(object.getWidth()-1) >= getPositionOfTileX(feature.getKey()[0])) &&
+					 (object.getPositionX()+(object.getWidth()-1) <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
+					  (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
+					  (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
 					obstacleOrientations.add(Orientation.RIGHT);
-				if (!(getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1) < object.getPositionX()))
+				}
+				
+				if ( (object.getPositionX() >= getPositionOfTileX(feature.getKey()[0])) &&
+					 (object.getPositionX() <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
+					 (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
+					 (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
 					obstacleOrientations.add(Orientation.LEFT);
-				if (!(object.getPositionY() + (object.getHeight()-1) < getPositionOfTileY(feature.getKey()[1])))
+				}
+				
+				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(feature.getKey()[1])) &&
+					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(feature.getKey()[1])+ (this.tileLength-1)) &&
+					 (object.getPositionX() > getPositionOfTileX(feature.getKey()[0])) &&
+					 (object.getPositionX() < getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1))){
 					obstacleOrientations.add(Orientation.UP);
-				if (!(getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1) < object.getPositionY()))
+				}
+				
+				if ( (object.getPositionY() >= getPositionOfTileY(feature.getKey()[1])) &&
+					 (object.getPositionY() <= getPositionOfTileY(feature.getKey()[1])+ (this.tileLength-1)) &&
+					 (object.getPositionX() > getPositionOfTileX(feature.getKey()[0])) &&
+					 (object.getPositionX() < getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1))){
 					obstacleOrientations.add(Orientation.DOWN);
+				}
+				
 			}
 		}
-		
-		System.out.println(obstacleOrientations);
 		
 		return obstacleOrientations;
 	}
