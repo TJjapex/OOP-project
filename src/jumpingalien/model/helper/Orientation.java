@@ -16,7 +16,7 @@ public enum Orientation {
 		/**
 		 * Return the sign of the left orientation.
 		 * 
-		 * @return	Negative direction
+		 * @return	Negative X direction
 		 * 			| -1
 		 */
 		public int getSign(){
@@ -25,13 +25,35 @@ public enum Orientation {
 	},
 	RIGHT{
 		/**
-		 * Return the sign of the positive orientation.
+		 * Return the sign of the right orientation.
 		 * 
-		 * @return	Positive direction
+		 * @return	Positive X direction
 		 * 			| 1
 		 */
 		public int getSign(){
 			return 1;
+		}
+	},
+	UP{
+		/**
+		 * Return the sign of the up orientation.
+		 * 
+		 * @return	Positive Y direction
+		 * 			| 1
+		 */
+		public int getSign(){
+			return 1;
+		}
+	},
+	DOWN{
+		/**
+		 * Return the sign of the down orientation.
+		 * 
+		 * @return	Negative Y direction
+		 * 			| -1
+		 */
+		public int getSign(){
+			return -1;
 		}
 	};
 	

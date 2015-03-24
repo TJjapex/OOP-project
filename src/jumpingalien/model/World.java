@@ -6,9 +6,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
+import jumpingalien.model.helper.Orientation;
 import jumpingalien.util.ModelException;
+import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
 
@@ -277,11 +280,129 @@ public class World {
 	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
 	public void advanceTime( double dt) {
 		
-		for(Mazub alien: getAliens()){
-			alien.advanceTime(dt);
+		double minDt;
+		
+		for(Mazub alien: this.getAliens()){
+				
+			// determine minDt
+			
+			minDt = Math.min(dt,Math.min(
+					 1/(Math.abs(alien.getVelocityX()/100)),
+					 1/(Math.abs(alien.getVelocityY()/100))));
+			if (!Util.fuzzyEquals(alien.getAccelerationX(), 0))
+				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(alien.getAccelerationX())/100 +
+				Math.pow(alien.getVelocityX()/100, 2)) - Math.abs(alien.getVelocityX()/100))/
+				Math.abs(alien.getAccelerationX()/100) );
+			if (!Util.fuzzyEquals(alien.getAccelerationY(), 0))
+				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(alien.getAccelerationY())/100 +
+				Math.pow(alien.getVelocityY()/100, 2)) - Math.abs(alien.getVelocityY()/100))/
+				Math.abs(alien.getAccelerationY()/100) );
+			
+			// iteratively advance time
+			
+			for(int i=0; i<(dt/minDt); i++){
+				
+				alien.advanceTime(minDt);
+				
+	        }
+		}
+					
+		for(Shark shark: this.getSharks()){
+			
+			// determine minDt
+			
+			minDt = Math.min(dt,Math.min(
+					 1/(Math.abs(shark.getVelocityX()/100)),
+					 1/(Math.abs(shark.getVelocityY()/100))));
+			if (!Util.fuzzyEquals(shark.getAccelerationX(), 0))
+				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationX())/100 +
+				Math.pow(shark.getVelocityX()/100, 2)) - Math.abs(shark.getVelocityX()/100))/
+				Math.abs(shark.getAccelerationX()/100) );
+			if (!Util.fuzzyEquals(shark.getAccelerationY(), 0))
+				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationY())/100 +
+				Math.pow(shark.getVelocityY()/100, 2)) - Math.abs(shark.getVelocityY()/100))/
+				Math.abs(shark.getAccelerationY()/100) );
+			
+			// iteratively advance time
+			
+			for(int i=0; i<(dt/minDt); i++){
+				
+				shark.advanceTime(minDt);
+				
+	        }
 		}
 		
-		// TODO Auto-generated method stub
+		for(Slime slime: this.getSlimes()){
+			
+			// determine minDt
+			
+			minDt = Math.min(dt,Math.min(
+					 1/(Math.abs(slime.getVelocityX()/100)),
+					 1/(Math.abs(slime.getVelocityY()/100))));
+			if (!Util.fuzzyEquals(slime.getAccelerationX(), 0))
+				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationX())/100 +
+				Math.pow(slime.getVelocityX()/100, 2)) - Math.abs(slime.getVelocityX()/100))/
+				Math.abs(slime.getAccelerationX()/100) );
+			if (!Util.fuzzyEquals(slime.getAccelerationY(), 0))
+				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationY())/100 +
+				Math.pow(slime.getVelocityY()/100, 2)) - Math.abs(slime.getVelocityY()/100))/
+				Math.abs(slime.getAccelerationY()/100) );
+			
+			// iteratively advance time
+			
+			for(int i=0; i<(dt/minDt); i++){
+				
+				slime.advanceTime(minDt);
+					
+	        }
+		}
+		
+		for(Plant plant: this.getPlants()){
+			
+			// determine minDt
+			
+			minDt = Math.min(dt,1/(Math.abs(plant.getVelocityX()/100)));
+			
+			// iteratively advance time
+			
+			for(int i=0; i<(dt/minDt); i++){
+				
+				plant.advanceTime(minDt);
+				
+	        }
+		}
+		
+		// the separate for statements for each type of game object results in redundant code...
+		
+	}
+	
+	public static List<Orientation> collidesWith(Mazub object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
+		
+		// needs to iterate over all possible obstacles ( near game objects and geological features)
+		
+		List<Orientation> obstacleOrientations = new ArrayList<Orientation>();
+		
+		// check if object overlaps with obstacles to the right
+		
+		if (!(object.getPositionX() + (object.getWidth()-1) < obstacle.getPositionX()))
+			obstacleOrientations.add(Orientation.RIGHT);
+		
+		// check if object overlaps with obstacles to the left
+		
+		if (!(obstacle.getPositionX() + (obstacle.getWidth()-1) < object.getPositionX()))
+			obstacleOrientations.add(Orientation.LEFT);
+				
+		// check if object overlaps with obstacles above
+		
+		if (!(object.getPositionY() + (object.getHeight()-1) < obstacle.getPositionY()))
+			obstacleOrientations.add(Orientation.UP);
+		
+		// check if object overlaps with objects underneath
+		
+		if (!(obstacle.getPositionY() + (obstacle.getHeight()-1) < object.getPositionY()))
+			obstacleOrientations.add(Orientation.DOWN);
+		
+		return obstacleOrientations;
 	}
 	
 	/************************************************ GAME OBJECTS ********************************************/
@@ -341,7 +462,22 @@ public class World {
 		return this.aliens;
 	}
 	
+	public HashSet<Shark> getSharks(){
+		return this.sharks;
+	}
+	
+	public HashSet<Slime> getSlimes(){
+		return this.slimes;
+	}
+	
+	public HashSet<Plant> getPlants(){
+		return this.plants;
+	}
+	
 	HashSet<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	HashSet<Shark> sharks = new HashSet<Shark>();
+	HashSet<Slime> slimes = new HashSet<Slime>();
+	HashSet<Plant> plants = new HashSet<Plant>();
 	
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
@@ -362,13 +498,11 @@ public class World {
 	 *            The y-position y_T of the tile for which the type needs to be
 	 *            modified
 	 * @param tileType
-	 *            The new type for the given tile, where
-	 *            <ul>
-	 *            <li>the value 0 is provided for an <b>air</b> tile;</li>
-	 *            <li>the value 1 is provided for a <b>solid ground</b> tile;</li>
-	 *            <li>the value 2 is provided for a <b>water</b> tile;</li>
-	 *            <li>the value 3 is provided for a <b>magma</b> tile.</li>
-	 *            </ul>
+	 *            The new type for the given tile, where:
+	 *            	- the value 0 is returned for an air tile
+	 *         		- the value 1 is returned for a solid ground tile
+	 *         		- the value 2 is returned for a water tile
+	 *         		- the value 3 is returned for a magma tile
 	 */
 	public void setGeologicalFeature(int tileX, int tileY, int tileType) {
 		if( tileType == 0 ){
@@ -389,13 +523,11 @@ public class World {
 	 *            which the geological feature should be returned.
 	 * 
 	 * @return The type of the tile with the given bottom left pixel position,
-	 *         where
-	 *         <ul>
-	 *         <li>the value 0 is returned for an <b>air</b> tile;</li>
-	 *         <li>the value 1 is returned for a <b>solid ground</b> tile;</li>
-	 *         <li>the value 2 is returned for a <b>water</b> tile;</li>
-	 *         <li>the value 3 is returned for a <b>magma</b> tile.</li>
-	 *         </ul>
+	 *         where:
+	 *         	- the value 0 is returned for an air tile
+	 *         	- the value 1 is returned for a solid ground tile
+	 *         	- the value 2 is returned for a water tile
+	 *         	- the value 3 is returned for a magma tile
 	 * 
 	 * @note This method must return its result in constant time.
 	 * 
@@ -420,4 +552,5 @@ public class World {
 	}
 	
 	private HashMap<Integer[], Integer> gameObjects = new HashMap<Integer[], Integer>();
+	
 }

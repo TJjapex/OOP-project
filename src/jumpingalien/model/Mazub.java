@@ -1,5 +1,8 @@
 package jumpingalien.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -699,7 +702,6 @@ public class Mazub {
 	 */
 	public static boolean isValidPositionX(double positionX) {
 		return isValidRoundedPositionX((int) Math.floor(positionX));
-
 	}
 	
 	/**
@@ -1037,17 +1039,36 @@ public class Mazub {
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
 		
+		double oldPositionX = this.getPositionX();
+		double oldPositionY = this.getPositionY();
+		
 		// Update horizontal position
 		this.updatePositionX(dt);
 				
 		// Update vertical position
-		this.updatePositionY(dt);
+		this.updatePositionY(dt);		
 				
 		// Update horizontal velocity
 		this.updateVelocityX(dt);
 		
 		// Update vertical velocity
 		this.updateVelocityY(dt);
+		
+		List<Orientation> obstacleOrientations = World.collidesWith(this);
+		
+		for(int i=0; i<obstacleOrientations.size(); i++){
+			// horizontal
+			if (this.orientation == obstacleOrientations.get(i)){
+				this.setPositionX(oldPositionX);
+				this.setVelocityX(0);
+			}
+			// vertical
+			if ((this.getVelocityY() > 0 && this.orientation == Orientation.UP) ||
+				(this.getVelocityY() < 0 && this.orientation == Orientation.DOWN)){
+				this.setPositionY(oldPositionY);
+				this.setVelocityY(0);
+			}
+		}
 		
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);
