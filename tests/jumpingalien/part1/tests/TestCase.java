@@ -4,10 +4,11 @@ import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
+import jumpingalien.model.GameObject;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
-import jumpingalien.part1.facade.Facade;
+import jumpingalien.part2.facade.Facade;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -60,7 +61,7 @@ public class TestCase {
 	 */
 	@Test
 	public void constructorPositionX_LegalCase(){
-		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
+		GameObject alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
 		assertEquals(alien.getRoundedPositionX(), 10);
 	}
 	
@@ -69,7 +70,7 @@ public class TestCase {
 	 */
 	@Test
 	public void constructorPositionY_LegalCase(){
-		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
+		GameObject alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
 		assertEquals(alien.getRoundedPositionY(), 5);
 	}
 	
@@ -110,7 +111,7 @@ public class TestCase {
 	 */
 	@Test
 	public void helperClassesCorrectlyInitiated(){
-		Mazub alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
+		GameObject alien = facade.createMazub(10, 5, spriteArrayForSize(2, 2) );
 		
 		assertNotNull(alien.getTimer());
 		assertNotNull(alien.getAnimation());
@@ -200,7 +201,7 @@ public class TestCase {
 	@Test
 	public void correctValidVelocityX(){
 		IFacade facade = new Facade();
-		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		
 		assertTrue(alien.isValidVelocityX(0));
 		assertTrue(alien.isValidVelocityX(1.0));
@@ -557,7 +558,7 @@ public class TestCase {
 	public void startMoveRightCorrect() {
 		IFacade facade = new Facade();
 
-		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		facade.startMoveRight(alien);
 		facade.advanceTime(alien, 0.1);
 
@@ -571,7 +572,7 @@ public class TestCase {
 	public void startMoveRightMaxSpeedAtRightTime() {
 		IFacade facade = new Facade();
 
-		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		facade.startMoveRight(alien);
 		// maximum speed reached after 20/9 seconds
 		for (int i = 0; i < 100; i++) {
@@ -586,7 +587,7 @@ public class TestCase {
 	public void testAccellerationZeroWhenNotMoving() {
 		IFacade facade = new Facade();
 
-		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
 				Util.DEFAULT_EPSILON);
 	}
@@ -597,7 +598,7 @@ public class TestCase {
 
 		int m = 10;
 		Sprite[] sprites = spriteArrayForSize(2, 2, 10 + 2 * m);
-		Mazub alien = facade.createMazub(0, 0, sprites);
+		GameObject alien = facade.createMazub(0, 0, sprites);
 
 		facade.startMoveRight(alien);
 

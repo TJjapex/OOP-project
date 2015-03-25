@@ -8,7 +8,7 @@ import jumpingalien.common.game.JumpingAlienGame;
 import jumpingalien.common.game.WorldInfoProvider;
 import jumpingalien.common.sprites.JumpingAlienSprites;
 import jumpingalien.part1.facade.IFacade;
-import jumpingalien.model.Mazub;
+import jumpingalien.model.GameObject;
 import jumpingalien.util.Sprite;
 
 public class JumpingAlienGamePart1 extends JumpingAlienGame {
@@ -16,7 +16,7 @@ public class JumpingAlienGamePart1 extends JumpingAlienGame {
 	private static final int WORLD_HEIGHT = 768;
 	private static final int WORLD_WIDTH = 1024;
 
-	private Mazub alien;
+	private GameObject alien;
 
 	public JumpingAlienGamePart1(Part1Options options, IFacade facade) {
 		super(options, facade);
@@ -45,14 +45,14 @@ public class JumpingAlienGamePart1 extends JumpingAlienGame {
 				JumpingAlienSprites.ALIEN_SPRITESET));
 	}
 
-	private void setAlien(Mazub alien) {
+	private void setAlien(GameObject alien) {
 		if (this.alien != null) {
 			throw new IllegalStateException("Mazub already created!");
 		}
 		this.alien = alien;
 	}
 
-	Mazub getAlien() {
+	GameObject getAlien() {
 		return alien;
 	}
 

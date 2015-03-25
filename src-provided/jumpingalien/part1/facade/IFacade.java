@@ -1,5 +1,6 @@
 package jumpingalien.part1.facade;
 
+import jumpingalien.model.GameObject;
 import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 
@@ -93,7 +94,7 @@ public interface IFacade {
 	 * @return an array, consisting of 2 integers {x, y}, that represents the
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
-	int[] getLocation(Mazub alien);
+	int[] getLocation(GameObject alien);
 
 	/**
 	 * Return the current velocity (in m/s) of the given alien.
@@ -105,7 +106,7 @@ public interface IFacade {
 	 *         horizontal and vertical components of the given alien's current
 	 *         velocity, in units of m/s.
 	 */
-	double[] getVelocity(Mazub alien);
+	double[] getVelocity(GameObject alien);
 
 	/**
 	 * Return the current acceleration (in m/s^2) of the given alien.
@@ -117,7 +118,7 @@ public interface IFacade {
 	 *         horizontal and vertical components of the given alien's current
 	 *         acceleration, in units of m/s^2.
 	 */
-	double[] getAcceleration(Mazub alien);
+	double[] getAcceleration(GameObject alien);
 
 	/**
 	 * Return the current size of the given alien.
@@ -128,7 +129,7 @@ public interface IFacade {
 	 * @return An array, consisting of 2 integers {w, h}, that represents the
 	 *         current width and height of the given alien, in number of pixels.
 	 */
-	int[] getSize(Mazub alien);
+	int[] getSize(GameObject alien);
 
 	/**
 	 * Return the current sprite image for the given alien.
@@ -139,7 +140,7 @@ public interface IFacade {
 	 * @return The current sprite image for the given alien, determined by its
 	 *         state as defined in the assignment.
 	 */
-	Sprite getCurrentSprite(Mazub alien);
+	Sprite getCurrentSprite(GameObject alien);
 
 	/**
 	 * Make the given alien jump.
@@ -147,7 +148,7 @@ public interface IFacade {
 	 * @param alien
 	 *            The alien that has to start jumping.
 	 */
-	void startJump(Mazub alien);
+	void startJump(GameObject alien);
 
 	/**
 	 * End the given alien's jump.
@@ -155,7 +156,7 @@ public interface IFacade {
 	 * @param alien
 	 *            The alien that has to stop jumping.
 	 */
-	void endJump(Mazub alien);
+	void endJump(GameObject alien);
 
 	/**
 	 * Make the given alien move left.
@@ -163,7 +164,7 @@ public interface IFacade {
 	 * @param alien
 	 *            The alien that has to start moving left.
 	 */
-	void startMoveLeft(Mazub alien);
+	void startMoveLeft(GameObject alien);
 
 	/**
 	 * End the given alien's left move.
@@ -171,7 +172,7 @@ public interface IFacade {
 	 * @param alien
 	 *            The alien that has to stop moving left.
 	 */
-	void endMoveLeft(Mazub alien);
+	void endMoveLeft(GameObject alien);
 
 	/**
 	 * Make the given alien move right.
@@ -179,7 +180,7 @@ public interface IFacade {
 	 * @param alien
 	 *            The alien that has to start moving right.
 	 */
-	void startMoveRight(Mazub alien);
+	void startMoveRight(GameObject alien);
 
 	/**
 	 * End the given alien's right move.
@@ -187,7 +188,7 @@ public interface IFacade {
 	 * @param alien
 	 *            The alien that has to stop moving right.
 	 */
-	void endMoveRight(Mazub alien);
+	void endMoveRight(GameObject alien);
 
 	/**
 	 * Make the given alien duck.
@@ -214,5 +215,5 @@ public interface IFacade {
 	 *            The time interval (in seconds) by which to advance the given
 	 *            alien's time.
 	 */
-	void advanceTime(Mazub alien, double dt);
+	void advanceTime(GameObject alien, double dt);
 }

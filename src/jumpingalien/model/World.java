@@ -283,7 +283,7 @@ public class World {
 		
 		double minDt;
 		
-		for(Mazub alien: this.getAliens()){
+		for(GameObject alien: this.getAliens()){
 				
 			// determine minDt
 			
@@ -300,7 +300,7 @@ public class World {
 				Math.abs(alien.getAccelerationY()/100) );
 			
 			// iteratively advance time
-			
+			System.out.println(minDt);
 			for(int i=0; i<(dt/minDt); i++){
 				
 				alien.advanceTime(minDt);
@@ -406,12 +406,36 @@ public class World {
 //		return obstacleOrientations;
 //	}
 	
-	public Set<Orientation> collidesWith(Mazub object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
+	public Set<Orientation> collidesWith(GameObject object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
 		
 		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
 		
 		for (Map.Entry<Integer[], Integer> feature: geologicalFeatures.entrySet()){
 			if (feature.getValue() == 1){
+				
+				// Minkowski sum
+//				double featureX = feature.getKey()[0];
+//				double featureY = feature.getKey()[1];
+//				
+//				double wy = (object.getWidth() + getTileLength()) * ( ( object.getPositionY() + 0.5*object.getHeight() ) - (featureY + 0.5*getTileLength()) );
+//				double hx = (object.getHeight() + getTileLength()) * ( ( object.getPositionX() + 0.5*object.getWidth() ) - (featureX + 0.5*getTileLength()) );
+//				
+//				if(wy > hx){
+//					if(wy > -hx){
+//						obstacleOrientations.add(Orientation.LEFT);
+//					}else{
+//						obstacleOrientations.add(Orientation.RIGHT);
+//					}
+//				}else{
+//					if( wy > - hx){
+//						obstacleOrientations.add(Orientation.BOTTOM);
+//					}else{
+//						obstacleOrientations.add(Orientation.TOP);
+//					}
+//				}
+				
+				
+				
 //				if ( (getPositionOfTileX(feature.getKey()[0]) > object.getPositionX()) &&
 //					!(object.getPositionX() + (object.getWidth()-1) < getPositionOfTileX(feature.getKey()[0])))
 //					obstacleOrientations.add(Orientation.RIGHT);
@@ -425,39 +449,43 @@ public class World {
 //					!(getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1) < object.getPositionY()))
 //					obstacleOrientations.add(Orientation.DOWN);
 				
-				if ( (object.getPositionX()+(object.getWidth()-1) >= getPositionOfTileX(feature.getKey()[0])) &&
-					 (object.getPositionX()+(object.getWidth()-1) <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
-					  (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
-					  (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
-					obstacleOrientations.add(Orientation.RIGHT);
-				}
-				
-				if ( (object.getPositionX() >= getPositionOfTileX(feature.getKey()[0])) &&
-					 (object.getPositionX() <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
-					 (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
-					 (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
-					obstacleOrientations.add(Orientation.LEFT);
-				}
+//				if ( (object.getPositionX()+(object.getWidth()-1) >= getPositionOfTileX(feature.getKey()[0])) &&
+//					 (object.getPositionX()+(object.getWidth()-1) <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
+//					  (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
+//					  (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
+//					obstacleOrientations.add(Orientation.RIGHT);pr
+//				}
+//				
+//				if ( (object.getPositionX() >= getPositionOfTileX(feature.getKey()[0])) &&
+//					 (object.getPositionX() <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
+//					 (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
+//					 (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
+//					obstacleOrientations.add(Orientation.LEFT);
+//				}
 				
 				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(feature.getKey()[1])) &&
 					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(feature.getKey()[1])+ (this.tileLength-1)) &&
 					 (object.getPositionX() > getPositionOfTileX(feature.getKey()[0])) &&
 					 (object.getPositionX() < getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1))){
-					obstacleOrientations.add(Orientation.UP);
+					obstacleOrientations.add(Orientation.TOP);
 				}
 				
 				if ( (object.getPositionY() >= getPositionOfTileY(feature.getKey()[1])) &&
 					 (object.getPositionY() <= getPositionOfTileY(feature.getKey()[1])+ (this.tileLength-1)) &&
 					 (object.getPositionX() > getPositionOfTileX(feature.getKey()[0])) &&
 					 (object.getPositionX() < getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1))){
-					obstacleOrientations.add(Orientation.DOWN);
+					obstacleOrientations.add(Orientation.BOTTOM);
 				}
 				
 			}
 		}
+		System.out.println(obstacleOrientations);
 		
 		return obstacleOrientations;
 	}
+	
+	
+	// Help functions
 	
 	/************************************************ GAME OBJECTS ********************************************/
 	
@@ -488,7 +516,7 @@ public class World {
 //		// TODO Auto-generated method stub
 //		return 0;
 //	}
-	// Volgens mij is dit wat er onder geological features wordt bedoeld.
+	// Volgens mij istttttttt dit wat er onder geological features wordt bedoeld.
 
 	public boolean isGameOver() {
 		// TODO Auto-generated method stub
@@ -509,6 +537,7 @@ public class World {
 	 *            The alien to be set as the player's character.
 	 */
 	public void setMazub(Mazub alien){
+		alien.setWorld(this);
 		aliens.add(alien);
 	}
 	

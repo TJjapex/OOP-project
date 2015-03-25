@@ -34,7 +34,7 @@ public enum Orientation {
 			return 1;
 		}
 	},
-	UP{
+	TOP{
 		/**
 		 * Return the sign of the up orientation.
 		 * 
@@ -45,7 +45,7 @@ public enum Orientation {
 			return 1;
 		}
 	},
-	DOWN{
+	BOTTOM{
 		/**
 		 * Return the sign of the down orientation.
 		 * 

@@ -2,6 +2,7 @@ package jumpingalien.part2.facade;
 
 import java.util.Collection;
 
+import jumpingalien.model.GameObject;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Mazub;
@@ -97,7 +98,7 @@ public interface IFacadePart2 extends jumpingalien.part1.facade.IFacade {
 	/**
 	 * Returns the current number of hitpoints of the given alien.
 	 */
-	int getNbHitPoints(Mazub alien);
+	int getNbHitPoints(GameObject alien);
 
 	/**
 	 * Create a new game world with the given parameters.
@@ -197,7 +198,7 @@ public interface IFacadePart2 extends jumpingalien.part1.facade.IFacade {
 	 */
 	@Override
 	@Deprecated
-	default public void advanceTime(Mazub alien, double dt) {
+	default public void advanceTime(GameObject alien, double dt) {
 		throw new IllegalStateException(
 				"This method should no longer be implemented or called");
 	};
