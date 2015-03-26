@@ -832,118 +832,118 @@ public abstract class GameObject {
 		this.updateVelocityY(dt);
 		
 		// Dummy world to test the collision detection algorithm because Mazub has no relation with a World yet
-		World dummyWorld = new World(70, 20, 12, 1024, 752, 18, 9);
-		dummyWorld.setGeologicalFeature(0, 0, 1);
-		dummyWorld.setGeologicalFeature(1, 0, 1);
-		dummyWorld.setGeologicalFeature(2, 0, 1);
-		dummyWorld.setGeologicalFeature(3, 0, 1);
-		dummyWorld.setGeologicalFeature(4, 0, 1);
-		dummyWorld.setGeologicalFeature(5, 0, 1);
-		dummyWorld.setGeologicalFeature(6, 0, 1);
-		dummyWorld.setGeologicalFeature(7, 0, 1);
-		dummyWorld.setGeologicalFeature(8, 0, 1);
-		dummyWorld.setGeologicalFeature(9, 0, 1);
-		dummyWorld.setGeologicalFeature(10, 0, 1);
-		dummyWorld.setGeologicalFeature(11, 0, 1);
-		dummyWorld.setGeologicalFeature(12, 0, 1);
-		dummyWorld.setGeologicalFeature(13, 0, 1);
-		dummyWorld.setGeologicalFeature(14, 0, 1);
-		dummyWorld.setGeologicalFeature(15, 0, 1);
-		dummyWorld.setGeologicalFeature(16, 0, 1);
-		dummyWorld.setGeologicalFeature(17, 0, 1);
-		dummyWorld.setGeologicalFeature(18, 0, 1);
-		dummyWorld.setGeologicalFeature(19, 0, 1);
-		dummyWorld.setGeologicalFeature(0, 1, 1);
-		dummyWorld.setGeologicalFeature(8, 1, 1);
-		dummyWorld.setGeologicalFeature(14, 1, 1);
-		dummyWorld.setGeologicalFeature(19, 1, 1);
-		dummyWorld.setGeologicalFeature(0, 2, 1);
-		dummyWorld.setGeologicalFeature(7, 2, 1);
-		dummyWorld.setGeologicalFeature(8, 2, 1);
-		dummyWorld.setGeologicalFeature(14, 2, 1);
-		dummyWorld.setGeologicalFeature(19, 2, 1);
-		dummyWorld.setGeologicalFeature(0, 3, 1);
-		dummyWorld.setGeologicalFeature(8, 3, 1);
-		dummyWorld.setGeologicalFeature(14, 3, 1);
-		dummyWorld.setGeologicalFeature(19, 3, 1);
-		dummyWorld.setGeologicalFeature(0, 4, 1);
-		dummyWorld.setGeologicalFeature(8, 4, 1);
-		dummyWorld.setGeologicalFeature(12, 4, 1);
-		dummyWorld.setGeologicalFeature(13, 4, 1);
-		dummyWorld.setGeologicalFeature(14, 4, 1);
-		dummyWorld.setGeologicalFeature(15, 4, 1);
-		dummyWorld.setGeologicalFeature(19, 4, 1);
-		dummyWorld.setGeologicalFeature(0, 5, 1);
-		dummyWorld.setGeologicalFeature(8, 5, 1);
-		dummyWorld.setGeologicalFeature(19, 5, 1);
-		dummyWorld.setGeologicalFeature(0, 6, 1);
-		dummyWorld.setGeologicalFeature(19, 6, 1);
-		dummyWorld.setGeologicalFeature(0, 7, 1);
-		dummyWorld.setGeologicalFeature(19, 7, 1);
-		dummyWorld.setGeologicalFeature(0, 8, 1);
-		dummyWorld.setGeologicalFeature(1, 8, 1);
-		dummyWorld.setGeologicalFeature(2, 8, 1);
-		dummyWorld.setGeologicalFeature(3, 8, 1);
-		dummyWorld.setGeologicalFeature(4, 8, 1);
-		dummyWorld.setGeologicalFeature(5, 8, 1);
-		dummyWorld.setGeologicalFeature(6, 8, 1);
-		dummyWorld.setGeologicalFeature(7, 8, 1);
-		dummyWorld.setGeologicalFeature(8, 8, 1);
-		dummyWorld.setGeologicalFeature(9, 8, 1);
-		dummyWorld.setGeologicalFeature(10, 8, 1);
-		dummyWorld.setGeologicalFeature(11, 8, 1);
-		dummyWorld.setGeologicalFeature(12, 8, 1);
-		dummyWorld.setGeologicalFeature(15, 8, 1);
-		dummyWorld.setGeologicalFeature(16, 8, 1);
-		dummyWorld.setGeologicalFeature(17, 8, 1);
-		dummyWorld.setGeologicalFeature(18, 8, 1);
-		dummyWorld.setGeologicalFeature(19, 8, 1);
-		dummyWorld.setGeologicalFeature(0, 9, 1);
-		dummyWorld.setGeologicalFeature(19, 9, 1);
-		dummyWorld.setGeologicalFeature(0, 10, 1);
-		dummyWorld.setGeologicalFeature(19, 10, 1);
-		dummyWorld.setGeologicalFeature(0, 11, 1);
-		dummyWorld.setGeologicalFeature(1, 11, 1);
-		dummyWorld.setGeologicalFeature(2, 11, 1);
-		dummyWorld.setGeologicalFeature(3, 11, 1);
-		dummyWorld.setGeologicalFeature(4, 11, 1);
-		dummyWorld.setGeologicalFeature(5, 11, 1);
-		dummyWorld.setGeologicalFeature(6, 11, 1);
-		dummyWorld.setGeologicalFeature(7, 11, 1);
-		dummyWorld.setGeologicalFeature(8, 11, 1);
-		dummyWorld.setGeologicalFeature(9, 11, 1);
-		dummyWorld.setGeologicalFeature(10, 11, 1);
-		dummyWorld.setGeologicalFeature(11, 11, 1);
-		dummyWorld.setGeologicalFeature(12, 11, 1);
-		dummyWorld.setGeologicalFeature(13, 11, 1);
-		dummyWorld.setGeologicalFeature(14, 11, 1);
-		dummyWorld.setGeologicalFeature(15, 11, 1);
-		dummyWorld.setGeologicalFeature(16, 11, 1);
-		dummyWorld.setGeologicalFeature(17, 11, 1);
-		dummyWorld.setGeologicalFeature(18, 11, 1);
-		dummyWorld.setGeologicalFeature(19, 11, 1);
-		
-		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-		obstacleOrientations = dummyWorld.collidesWith(this);
-		
-		//Y axis
-	
-		
-		
-		
-		for(Orientation obstacleOrientation: obstacleOrientations){
-			// horizontal
-			if (this.orientation == obstacleOrientation){
-				this.setPositionX(oldPositionX);
-				this.setVelocityX(0);
-			}
-			// vertical
-			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
-				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
-				this.setPositionY(oldPositionY);
-				this.setVelocityY(0);
-			}
-		}
+//		World dummyWorld = new World(70, 20, 12, 1024, 752, 18, 9);
+//		dummyWorld.setGeologicalFeature(0, 0, 1);
+//		dummyWorld.setGeologicalFeature(1, 0, 1);
+//		dummyWorld.setGeologicalFeature(2, 0, 1);
+//		dummyWorld.setGeologicalFeature(3, 0, 1);
+//		dummyWorld.setGeologicalFeature(4, 0, 1);
+//		dummyWorld.setGeologicalFeature(5, 0, 1);
+//		dummyWorld.setGeologicalFeature(6, 0, 1);
+//		dummyWorld.setGeologicalFeature(7, 0, 1);
+//		dummyWorld.setGeologicalFeature(8, 0, 1);
+//		dummyWorld.setGeologicalFeature(9, 0, 1);
+//		dummyWorld.setGeologicalFeature(10, 0, 1);
+//		dummyWorld.setGeologicalFeature(11, 0, 1);
+//		dummyWorld.setGeologicalFeature(12, 0, 1);
+//		dummyWorld.setGeologicalFeature(13, 0, 1);
+//		dummyWorld.setGeologicalFeature(14, 0, 1);
+//		dummyWorld.setGeologicalFeature(15, 0, 1);
+//		dummyWorld.setGeologicalFeature(16, 0, 1);
+//		dummyWorld.setGeologicalFeature(17, 0, 1);
+//		dummyWorld.setGeologicalFeature(18, 0, 1);
+//		dummyWorld.setGeologicalFeature(19, 0, 1);
+//		dummyWorld.setGeologicalFeature(0, 1, 1);
+//		dummyWorld.setGeologicalFeature(8, 1, 1);
+//		dummyWorld.setGeologicalFeature(14, 1, 1);
+//		dummyWorld.setGeologicalFeature(19, 1, 1);
+//		dummyWorld.setGeologicalFeature(0, 2, 1);
+//		dummyWorld.setGeologicalFeature(7, 2, 1);
+//		dummyWorld.setGeologicalFeature(8, 2, 1);
+//		dummyWorld.setGeologicalFeature(14, 2, 1);
+//		dummyWorld.setGeologicalFeature(19, 2, 1);
+//		dummyWorld.setGeologicalFeature(0, 3, 1);
+//		dummyWorld.setGeologicalFeature(8, 3, 1);
+//		dummyWorld.setGeologicalFeature(14, 3, 1);
+//		dummyWorld.setGeologicalFeature(19, 3, 1);
+//		dummyWorld.setGeologicalFeature(0, 4, 1);
+//		dummyWorld.setGeologicalFeature(8, 4, 1);
+//		dummyWorld.setGeologicalFeature(12, 4, 1);
+//		dummyWorld.setGeologicalFeature(13, 4, 1);
+//		dummyWorld.setGeologicalFeature(14, 4, 1);
+//		dummyWorld.setGeologicalFeature(15, 4, 1);
+//		dummyWorld.setGeologicalFeature(19, 4, 1);
+//		dummyWorld.setGeologicalFeature(0, 5, 1);
+//		dummyWorld.setGeologicalFeature(8, 5, 1);
+//		dummyWorld.setGeologicalFeature(19, 5, 1);
+//		dummyWorld.setGeologicalFeature(0, 6, 1);
+//		dummyWorld.setGeologicalFeature(19, 6, 1);
+//		dummyWorld.setGeologicalFeature(0, 7, 1);
+//		dummyWorld.setGeologicalFeature(19, 7, 1);
+//		dummyWorld.setGeologicalFeature(0, 8, 1);
+//		dummyWorld.setGeologicalFeature(1, 8, 1);
+//		dummyWorld.setGeologicalFeature(2, 8, 1);
+//		dummyWorld.setGeologicalFeature(3, 8, 1);
+//		dummyWorld.setGeologicalFeature(4, 8, 1);
+//		dummyWorld.setGeologicalFeature(5, 8, 1);
+//		dummyWorld.setGeologicalFeature(6, 8, 1);
+//		dummyWorld.setGeologicalFeature(7, 8, 1);
+//		dummyWorld.setGeologicalFeature(8, 8, 1);
+//		dummyWorld.setGeologicalFeature(9, 8, 1);
+//		dummyWorld.setGeologicalFeature(10, 8, 1);
+//		dummyWorld.setGeologicalFeature(11, 8, 1);
+//		dummyWorld.setGeologicalFeature(12, 8, 1);
+//		dummyWorld.setGeologicalFeature(15, 8, 1);
+//		dummyWorld.setGeologicalFeature(16, 8, 1);
+//		dummyWorld.setGeologicalFeature(17, 8, 1);
+//		dummyWorld.setGeologicalFeature(18, 8, 1);
+//		dummyWorld.setGeologicalFeature(19, 8, 1);
+//		dummyWorld.setGeologicalFeature(0, 9, 1);
+//		dummyWorld.setGeologicalFeature(19, 9, 1);
+//		dummyWorld.setGeologicalFeature(0, 10, 1);
+//		dummyWorld.setGeologicalFeature(19, 10, 1);
+//		dummyWorld.setGeologicalFeature(0, 11, 1);
+//		dummyWorld.setGeologicalFeature(1, 11, 1);
+//		dummyWorld.setGeologicalFeature(2, 11, 1);
+//		dummyWorld.setGeologicalFeature(3, 11, 1);
+//		dummyWorld.setGeologicalFeature(4, 11, 1);
+//		dummyWorld.setGeologicalFeature(5, 11, 1);
+//		dummyWorld.setGeologicalFeature(6, 11, 1);
+//		dummyWorld.setGeologicalFeature(7, 11, 1);
+//		dummyWorld.setGeologicalFeature(8, 11, 1);
+//		dummyWorld.setGeologicalFeature(9, 11, 1);
+//		dummyWorld.setGeologicalFeature(10, 11, 1);
+//		dummyWorld.setGeologicalFeature(11, 11, 1);
+//		dummyWorld.setGeologicalFeature(12, 11, 1);
+//		dummyWorld.setGeologicalFeature(13, 11, 1);
+//		dummyWorld.setGeologicalFeature(14, 11, 1);
+//		dummyWorld.setGeologicalFeature(15, 11, 1);
+//		dummyWorld.setGeologicalFeature(16, 11, 1);
+//		dummyWorld.setGeologicalFeature(17, 11, 1);
+//		dummyWorld.setGeologicalFeature(18, 11, 1);
+//		dummyWorld.setGeologicalFeature(19, 11, 1);
+//		
+//		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
+//		obstacleOrientations = dummyWorld.collidesWith(this);
+//		
+//		//Y axis
+//	
+//		
+//		
+//		
+//		for(Orientation obstacleOrientation: obstacleOrientations){
+//			// horizontal
+//			if (this.orientation == obstacleOrientation){
+//				this.setPositionX(oldPositionX);
+//				this.setVelocityX(0);
+//			}
+//			// vertical
+//			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
+//				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
+//				this.setPositionY(oldPositionY);
+//				this.setVelocityY(0);
+//			}
+//		}
 		
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);

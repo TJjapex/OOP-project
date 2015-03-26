@@ -36,12 +36,9 @@ public class World {
 	//	* world may at all times contain no other objects than these
 	//	* initial positions of objects are passed at time of their creation
 	
-	public World(int tileSize, int nbTilesX, int nbTilesY,
-			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
-			int targetTileY) {
+	public World(int tileSize, VectorInt nbTiles, int visibleWindowWidth, int visibleWindowHeight, VectorInt targetTile) {
 		this.tileLength = tileSize;
-		this.nbTilesX = nbTilesX;
-		this.nbTilesY = nbTilesY;
+		this.nbTiles = nbTiles;
 		
 		// Asserts staan hier maar tijdelijk =)
 		assert canHaveAsDisplayWidth(visibleWindowWidth);
@@ -50,19 +47,18 @@ public class World {
 		this.displayWidth = visibleWindowWidth;
 		this.displayHeight = visibleWindowHeight;
 		
-		this.targetTileX = targetTileX;
-		this.targetTileY = targetTileY;
+		this.targetTile = targetTile;
 	}
 	
 	/**************************************************** WORLD SIZE ************************************************/
 	
 	/* world dimensions */
 	public int getWorldWidth() {
-		return this.getNbTilesX() * getTileLength();
+		return this.getNbTiles().getX() * getTileLength();
 	}
 	
 	public int getWorldHeight() {
-		return this.getNbTilesY() * getTileLength();
+		return this.getNbTiles().getY() * getTileLength();
 	}
 	
 	/*********************************************** DISPLAY WINDOW *******************************************/	
@@ -117,41 +113,23 @@ public class World {
 	/* Number of tiles */
 	
 	/**
-	 * Returns the number of horizontal tiles of the game world
+	 * Returns a vector with the number of tiles of the game world
 	 * 
 	 * @return
-	 * 		The number of horizontal tiles of the game world
-	 * 		| this.getWorldWidth() / this.getTileLength();
+	 * 		
 	 */
-	public int getNbTilesX() {
-		return nbTilesX;
+	public VectorInt getNbTiles() {
+		return nbTiles;
 	}
-	private final int nbTilesX ;
-	
-	/**
-	 * Returns the number of vertical tiles of the game world
-	 * 
-	 * @return
-	 * 		The number of vertical tiles of the game world
-	 * 		| this.getWorldHeight() / this.getTileLength();
-	 */
-	public int getNbTilesY(){
-		return nbTilesY;
-	}
-	private final int nbTilesY;
+	private final VectorInt nbTiles;
 	
 	
 	/* Target tile */
 	
-	public int getTargetTileX() {
-		return targetTileX;
+	public VectorInt getTargetTile() {
+		return targetTile;
 	}
-	private final int targetTileX;
-	
-	public int getTargetTileY() {
-		return targetTileY;
-	}
-	private final int targetTileY;
+	private final VectorInt targetTile;
 	
 	/* Tile length */
 	
@@ -167,22 +145,14 @@ public class World {
 	/* Position of tiles */
 	
 	/**
-	 * Returns the horizontal position in pixels for a given x position of a tile.
+	 * Returns the position in pixels for a given vector position of a tile.
 	 * @param tileX
 	 * @return
 	 */
-	public int getPositionOfTileX(int tileX){
-		return tileX * getTileLength();
+	public VectorInt getPositionOfTile(VectorInt vectorInt){
+		return new VectorInt(vectorInt.getX() * getTileLength(),  vectorInt.getY() * getTileLength());
 	}
 
-	/**
-	 * Returns the horizontal position in pixels for a given y position of a tile.
-	 * @param tileY
-	 * @return
-	 */
-	public int getPositionOfTileY(int tileY){
-		return tileY * getTileLength();
-	}	
 	
 	/**
 	 * Returns the horizontal tile position for a given horizontal pixel position.
@@ -192,21 +162,10 @@ public class World {
 	 * @return
 	 * 			The horizontal tile position for the given horizontal pixel position
 	 */
-	public int getTileX(int positionX){
-		return (int) Math.floor( positionX / getTileLength());
+	public VectorInt getTile(VectorInt rightTopPixel){
+		return new VectorInt((int) Math.floor( rightTopPixel.getX() / getTileLength()), (int) Math.floor( rightTopPixel.getY() / getTileLength()));
 	}
-	
-	/**
-	 * Returns the vertical tile position for a given vertical pixel position.
-	 *
-	 * @param positionY
-	 * 			The pixel's vertical position
-	 * @return
-	 * 			The vertical tile position for the given vertical pixel position
-	 */
-	public int getTileY(int positionY){
-		return (int) Math.floor( positionY / getTileLength());
-	}
+
 	
 	/**
 	 * Returns the tile positions of all tiles within the given rectangular
@@ -233,21 +192,20 @@ public class World {
 	// Bij deze methode moet nog eens goed nagedacht worden over de randgevallen (zie opmerking <= of <). Of misschien moet getTileX(pixelTop - 1 ) ipv getTileX(pixelTop)
 	// dat ga ik later eens checken
 	
-	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom,
-	int pixelRight, int pixelTop) {
+	public int[][] getTilePositionsIn(VectorInt leftBottomPixel, VectorInt rightTopPixel) {
 
 		//ArrayList<int[]> positions = new ArrayList<int[]>(); 
 		// In plaats van het aantal elementen op voorhand te bepalen kan dit ook met een ArrayList, ik weet nogn iet wat het beste is dus effe in comments laten staan
 
-		int nbCols = getTileX(pixelRight) - getTileX(pixelLeft)   + 1 ;
-		int nbRows = getTileY(pixelTop)   - getTileY(pixelBottom) + 1 ;
+		int nbCols = getTile(rightTopPixel).getX() - getTile(leftBottomPixel).getX()   + 1 ;
+		int nbRows = getTile(rightTopPixel).getY()   - getTile(leftBottomPixel).getY() + 1 ;
 		int nbPositions = nbRows * nbCols;
 		
 		int[][] positions = new int[nbPositions][2];
 		
 		/* Loop trough all positions inside the rectangle */
-		for(int row = getTileX(pixelBottom); row <= getTileX(pixelTop); row++){
-			for(int col = getTileX(pixelLeft); col <= getTileX(pixelRight); col++){ // <= of < ?
+		for(int row = getTile(leftBottomPixel).getX(); row <= getTile(rightTopPixel).getX(); row++){
+			for(int col = getTile(leftBottomPixel).getX(); col <= getTile(rightTopPixel).getX(); col++){ // <= of < ?
 				positions[nbCols * row + col] = new int[] {col, row};
 				
 				// Voor arrayList
@@ -276,6 +234,7 @@ public class World {
 	// Deels uitgewerkt onder tiles...
 	
 	
+
 	/************************************************ ADVANCE TIME ********************************************/
 	
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
@@ -411,8 +370,9 @@ public class World {
 		
 		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
 		
-		for (Entry<Vector, Integer> feature: geologicalFeatures.entrySet()){
+		for (Entry<VectorInt, Integer> feature: geologicalFeatures.entrySet()){
 			if (feature.getValue() == 1){
+				VectorInt featurePosition = feature.getKey();
 				
 				// Minkowski sum
 //				double featureX = feature.getKey()[0];
@@ -464,17 +424,17 @@ public class World {
 //					obstacleOrientations.add(Orientation.LEFT);
 //				}
 				
-				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(feature.getKey()[1])) &&
-					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(feature.getKey()[1])+ (this.tileLength-1)) &&
-					 (object.getPositionX() > getPositionOfTileX(feature.getKey()[0])) &&
-					 (object.getPositionX() < getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1))){
+				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTile(featurePosition).getY()) &&
+					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTile(featurePosition).getY() + (this.tileLength-1)) &&
+					 (object.getPositionX() > getPositionOfTile(featurePosition).getX()) &&
+					 (object.getPositionX() < getPositionOfTile(featurePosition).getX() + (this.tileLength-1))){
 					obstacleOrientations.add(Orientation.TOP);
 				}
 				
-				if ( (object.getPositionY() >= getPositionOfTileY(feature.getKey()[1])) &&
-					 (object.getPositionY() <= getPositionOfTileY(feature.getKey()[1])+ (this.tileLength-1)) &&
-					 (object.getPositionX() > getPositionOfTileX(feature.getKey()[0])) &&
-					 (object.getPositionX() < getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1))){
+				if ( (object.getPositionY() >= getPositionOfTile(featurePosition).getY()) &&
+					 (object.getPositionY() <= getPositionOfTile(featurePosition).getY() + (this.tileLength-1)) &&
+					 (object.getPositionX() > getPositionOfTile(featurePosition).getX()) &&
+					 (object.getPositionX() < getPositionOfTile(featurePosition).getX() + (this.tileLength-1))){
 					obstacleOrientations.add(Orientation.BOTTOM);
 				}
 				
@@ -593,7 +553,7 @@ public class World {
 		if( tileType == 0 ){
 			return;
 		}
-		geologicalFeatures.put(new Vector(tileX,  tileY), tileType);
+		geologicalFeatures.put(new VectorInt(tileX,  tileY), tileType);
 		System.out.println(this.geologicalFeatures.containsKey(new Vector(tileX, tileY)));
 	}
 	
@@ -617,27 +577,27 @@ public class World {
 	 * 
 	 * @note This method must return its result in constant time.
 	 * 
-	 * @throw ...Exception if the given position does not correspond to the
+	 * @throw IllegalArgumentException if the given position does not correspond to the
 	 *        bottom left pixel of a tile.
 	 */
-	public int getGeologicalFeature(int pixelX, int pixelY) {
+	public int getGeologicalFeature(VectorInt pixel) {
 		
 		// Checken of gegeven pixel in game-world ligt?
 		
-		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0){
+		if(pixel.getX() % getTileLength() != 0 || pixel.getY() % getTileLength() != 0){
 			throw new IllegalArgumentException("Given position does not correspond to the bottom left pixel of a tile");
 		}
 		
 		// Opmerking: map.get() geeft null als de key niet bestaat, dus misschien kan dat ook gebruikt worden ipv containsKey. (efficienter) Maar bij
 		// int value = this.gameObjects.get(... ), kan value nooit null worden want das geen geldige integer.
-		if(this.geologicalFeatures.containsKey(new Vector(getTileX(pixelX), getTileY(pixelY)))){
-			return this.geologicalFeatures.get(new Vector(getTileX(pixelX), getTileY(pixelY)));
+		if(this.geologicalFeatures.containsKey( getTile(pixel))){
+			return this.geologicalFeatures.get( getTile(pixel));
 		}else{
 			return 0;
 		}
 		
 	}
 	
-	private HashMap<Vector, Integer> geologicalFeatures = new HashMap<Vector, Integer>();
+	private HashMap<VectorInt, Integer> geologicalFeatures = new HashMap<VectorInt, Integer>();
 	
 }

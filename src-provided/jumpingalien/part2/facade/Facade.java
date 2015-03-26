@@ -10,6 +10,8 @@ import jumpingalien.model.Plant;
 import jumpingalien.model.School;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
+import jumpingalien.model.Vector;
+import jumpingalien.model.VectorInt;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -246,9 +248,8 @@ public class Facade implements IFacadePart2 {
 	public World createWorld(int tileSize, int nbTilesX, int nbTilesY,
 			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
 			int targetTileY) {
-		return new World(tileSize, nbTilesX, nbTilesY,
-			visibleWindowWidth, visibleWindowHeight, targetTileX,
-			targetTileY);
+		return new World(tileSize, new VectorInt(nbTilesX, nbTilesY),
+			visibleWindowWidth, visibleWindowHeight, new VectorInt(targetTileX, targetTileY));
 	}
 
 	@Override
@@ -295,20 +296,20 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public int[] getBottomLeftPixelOfTile(World world, int tileX, int tileY) {
-		return new int[] { world.getPositionOfTileX(tileX), world.getPositionOfTileY(tileY) };
+		return world.getPositionOfTile(new VectorInt(tileX, tileY)).toArray();
 	}
 
 	@Override
 	public int[][] getTilePositionsIn(World world, int pixelLeft,
 			int pixelBottom, int pixelRight, int pixelTop) {
-		return world.getTilePositionsIn(pixelLeft, pixelBottom, pixelRight, pixelTop);
+		return world.getTilePositionsIn(new VectorInt(pixelLeft, pixelBottom), new VectorInt(pixelRight, pixelTop));
 		//return null;
 	}
 
 	@Override
 	public int getGeologicalFeature(World world, int pixelX, int pixelY)
 			throws ModelException {
-		return world.getGeologicalFeature(pixelX, pixelY);
+		return world.getGeologicalFeature( new VectorInt( pixelX, pixelY) );
 	}
 
 	@Override
