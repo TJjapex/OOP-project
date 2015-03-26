@@ -42,7 +42,7 @@ public class Facade implements IFacadePart2 {
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
-			return new Mazub(pixelLeftX, pixelBottomY, sprites);
+			return new Mazub(new VectorInt(pixelLeftX, int pixelBottomY), sprites);
 		}catch( IllegalPositionXException | IllegalPositionYException exc){
 			throw new ModelException("Invalid position given.");
 		}catch( IllegalWidthException | IllegalHeightException exc){
@@ -61,7 +61,7 @@ public class Facade implements IFacadePart2 {
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
 	public int[] getLocation(GameObject alien){
-		return new int[] {alien.getRoundedPositionX(), alien.getRoundedPositionY()};
+		alien.getRoundedPositionX().toArray();
 	}
 
 	/**
@@ -248,13 +248,15 @@ public class Facade implements IFacadePart2 {
 	public World createWorld(int tileSize, int nbTilesX, int nbTilesY,
 			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
 			int targetTileY) {
-		return new World(tileSize, new VectorInt(nbTilesX, nbTilesY),
-			visibleWindowWidth, visibleWindowHeight, new VectorInt(targetTileX, targetTileY));
+		return new World(tileSize, 
+							new VectorInt(nbTilesX, nbTilesY),
+							new VectorInt(visibleWindowWidth, visibleWindowHeight), 
+							new VectorInt(targetTileX, targetTileY));
 	}
 
 	@Override
 	public int[] getWorldSizeInPixels(World world) {
-		return new int[] { world.getWorldWidth(), world.getWorldHeight() };
+		return world.getWorldDimensions().toArray();
 	}
 
 	@Override
@@ -287,10 +289,10 @@ public class Facade implements IFacadePart2 {
 	public int[] getVisibleWindow(World world) {
 		return new int[] 
 			{ 
-				world.getDisplayPositionX(), 
-				world.getDisplayPositionY(), 
-				world.getDisplayPositionX() + world.getDisplayWidth(), 
-				world.getDisplayPositionY() + world.getDisplayHeight()
+				world.getDisplayPosition().getX(), 
+				world.getDisplayPosition().getY(), 
+				world.getDisplayPosition().getX() + world.getDisplayDimensions().getX(), 
+				world.getDisplayPosition().getY() + world.getDisplayDimensions().getY()
 			};
 	}
 
@@ -300,8 +302,7 @@ public class Facade implements IFacadePart2 {
 	}
 
 	@Override
-	public int[][] getTilePositionsIn(World world, int pixelLeft,
-			int pixelBottom, int pixelRight, int pixelTop) {
+	public int[][] getTilePositionsIn(World world, int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
 		return world.getTilePositionsIn(new VectorInt(pixelLeft, pixelBottom), new VectorInt(pixelRight, pixelTop));
 		//return null;
 	}
@@ -315,7 +316,7 @@ public class Facade implements IFacadePart2 {
 	@Override
 	public void setGeologicalFeature(World world, int tileX, int tileY,
 			int tileType) {
-		world.setGeologicalFeature(tileX, tileY, tileType);		
+		world.setGeologicalFeature(new VectorInt(tileX, tileY), tileType);		
 	}
 
 	@Override

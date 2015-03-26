@@ -36,16 +36,15 @@ public class World {
 	//	* world may at all times contain no other objects than these
 	//	* initial positions of objects are passed at time of their creation
 	
-	public World(int tileSize, VectorInt nbTiles, int visibleWindowWidth, int visibleWindowHeight, VectorInt targetTile) {
+	public World(int tileSize, VectorInt nbTiles, VectorInt visibleWindow, VectorInt targetTile) {
 		this.tileLength = tileSize;
 		this.nbTiles = nbTiles;
 		
 		// Asserts staan hier maar tijdelijk =)
-		assert canHaveAsDisplayWidth(visibleWindowWidth);
-		assert canHaveAsDisplayHeight(visibleWindowHeight);
+		//assert canHaveAsDisplayWidth(visibleWindowWidth);
+		//assert canHaveAsDisplayHeight(visibleWindowHeight);
 		
-		this.displayWidth = visibleWindowWidth;
-		this.displayHeight = visibleWindowHeight;
+		this.displayDimensions = visibleWindow;
 		
 		this.targetTile = targetTile;
 	}
@@ -53,49 +52,41 @@ public class World {
 	/**************************************************** WORLD SIZE ************************************************/
 	
 	/* world dimensions */
-	public int getWorldWidth() {
-		return this.getNbTiles().getX() * getTileLength();
+	public VectorInt getWorldDimensions() {
+		return new VectorInt(this.getNbTiles().getX() * getTileLength(), this.getNbTiles().getX() * getTileLength());
 	}
 	
-	public int getWorldHeight() {
-		return this.getNbTiles().getY() * getTileLength();
-	}
 	
 	/*********************************************** DISPLAY WINDOW *******************************************/	
 	
 	// width
 	
-	public int getDisplayWidth() {
-		return displayWidth;
+	public VectorInt getDisplayDimensions() {
+		return this.displayDimensions;
 	}
 	
-	public boolean canHaveAsDisplayWidth(int displayWidth){
-		return displayWidth <= this.getWorldWidth() && displayWidth > 0;
-	}
-	
-	private final int displayWidth;
+//	public boolean canHaveAsDisplayWidth(int displayWidth){
+//		return displayWidth <= this.getWorldWidth() && displayWidth > 0;
+//	}
+//	
+	private final VectorInt displayDimensions;
 
 	// height
 	
-	public int getDisplayHeight() {
-		return displayHeight;
-	}
+//	public int getDisplayHeight() {
+//		return displayHeight;
+//	}
 	
-	public boolean canHaveAsDisplayHeight(int displayHeight){
-		return displayHeight <= this.getWorldHeight() && displayHeight > 0;
-	}
+//	public boolean canHaveAsDisplayHeight(int displayHeight){
+//		return displayHeight <= this.getWorldHeight() && displayHeight > 0;
+//	}
 	
-	private final int displayHeight;
+//	private final int displayHeight;
+//	
 	
 	//  * inspect position (bottom-left corner) of the display window
-	public int getDisplayPositionX(){
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public int getDisplayPositionY(){
-		// TODO Auto-generated method stub
-		return 0;
+	public VectorInt getDisplayPosition(){
+		return new VectorInt(0, 0);
 	}
 
 	
@@ -140,6 +131,7 @@ public class World {
 	public int getTileLength() {
 		return this.tileLength;
 	}
+	
 	private final int tileLength;
 	
 	/* Position of tiles */
@@ -197,8 +189,8 @@ public class World {
 		//ArrayList<int[]> positions = new ArrayList<int[]>(); 
 		// In plaats van het aantal elementen op voorhand te bepalen kan dit ook met een ArrayList, ik weet nogn iet wat het beste is dus effe in comments laten staan
 
-		int nbCols = getTile(rightTopPixel).getX() - getTile(leftBottomPixel).getX()   + 1 ;
-		int nbRows = getTile(rightTopPixel).getY()   - getTile(leftBottomPixel).getY() + 1 ;
+		int nbCols = getTile(rightTopPixel).getX()  - getTile(leftBottomPixel).getX() + 1 ;
+		int nbRows = getTile(rightTopPixel).getY()  - getTile(leftBottomPixel).getY() + 1 ;
 		int nbPositions = nbRows * nbCols;
 		
 		int[][] positions = new int[nbPositions][2];
@@ -549,12 +541,11 @@ public class World {
 	 *         		- the value 2 is returned for a water tile
 	 *         		- the value 3 is returned for a magma tile
 	 */
-	public void setGeologicalFeature(int tileX, int tileY, int tileType) {
+	public void setGeologicalFeature(VectorInt tile, int tileType) {
 		if( tileType == 0 ){
 			return;
 		}
-		geologicalFeatures.put(new VectorInt(tileX,  tileY), tileType);
-		System.out.println(this.geologicalFeatures.containsKey(new Vector(tileX, tileY)));
+		geologicalFeatures.put(tile, tileType);
 	}
 	
 	/**

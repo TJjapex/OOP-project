@@ -86,13 +86,12 @@ public abstract class GameObject {
 
 	/************************************************ CONSTRUCTOR *********************************************/
 
-	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
+	public GameObject(VectorInt pixelLeftBottom, double velocityXInit, double velocityXMaxRunning,
 				 Sprite[] sprites, int nbHitPoints)
 		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
-		this.setPositionX(pixelLeftX);
-		this.setPositionY(pixelBottomY);
+		this.setPosition(pixelLeftBottom);
 
 		this.velocityXInit = velocityXInit;
 		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
@@ -110,9 +109,12 @@ public abstract class GameObject {
 		return world;
 	}
 
-
 	void setWorld(World world) {
 		this.world = world;
+	}
+	
+	public boolean hasProperWorld(){
+		return this.world != null;
 	}
 	
 	private World world;
@@ -207,7 +209,8 @@ public abstract class GameObject {
 //	}
 	
 	public boolean canHaveAsPositionX(int positionX){
-		return positionX >= 0;// && positionX < this.getWorld().getWorldWidth();
+		return true;
+		//return positionX >= 0; && (positionX < this.getWorld().getWorldDimensions().getX());
 	}
 
 	/**
@@ -383,7 +386,7 @@ public abstract class GameObject {
 	 * 			| result == ( this.getPositionY() == 0 )
 	 */
 	public boolean isJumping() {
-		return !Util.fuzzyEquals(this.getPositionY(), 0);
+		return !Util.fuzzyEquals(this.getPosition().getY(), 0);
 	}
 
 	/**
@@ -408,20 +411,8 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	public double getPositionX() {
-		return this.positionX;
-	}
-
-	/**
-	 * Return the y-location of Mazub's bottom left pixel.
-	 * 
-	 * @return	A double that represents the y-coordinate of Mazub's
-	 * 			bottom left pixel in the world.
-	 */
-	@Basic
-	@Raw
-	public double getPositionY() {
-		return this.positionY;
+	public Vector getPosition() {
+		return this.position;
 	}
 
 	/**
@@ -437,33 +428,12 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	protected void setPositionX(double positionX)
+	protected void setPosition(VectorInt pixelLeftBottom)
 			throws IllegalPositionXException {
 				if( !canHaveAsPositionX(positionX)) 
 					throw new IllegalPositionXException(positionX);
-				this.positionX = positionX;
+				this.position = pixelLeftBottom;
 			}
-
-	/**
-	 * Set the y-location of Mazub's bottom left pixel.
-	 * 
-	 * @param 	positionY
-	 * 				A double that represents the desired y-location of Mazub's bottom left pixel.  
-	 * @post	The Y position of Mazub is equal to positionY.
-	 * 			| new.getPositionY() == positionY
-	 * @throws	IllegalPositionYException
-	 * 				The Y position of Mazub is not a valid Y position.
-	 * 				| ! isValidPositionY(positionY)
-	 */
-	@Basic
-	@Raw
-	protected void setPositionY(double positionY)
-			throws IllegalPositionYException {
-				if( !canHaveAsPositionY(positionY)) 
-					throw new IllegalPositionYException(positionY);
-				this.positionY = positionY;
-			}
-
 //	/**
 //	 * Check whether the given X position is a valid horizontal position.
 //	 * 
@@ -498,11 +468,7 @@ public abstract class GameObject {
 	/**
 	 * Variable registering the horizontal position of this Mazub.
 	 */
-	private double positionX;
-	/**
-	 * Variable registering the vertical position of this Mazub.
-	 */
-	private double positionY;
+	private Vector position;
 
 	/**
 	 * Return the horizontal velocity of Mazub.
@@ -511,19 +477,8 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	public double getVelocityX() {
-		return this.velocityX;
-	}
-
-	/**
-	 * Return the vertical velocity of Mazub.
-	 * 
-	 * @return	A double that represents the vertical velocity of Mazub.
-	 */
-	@Basic
-	@Raw
-	public double getVelocityY() {
-		return this.velocityY;
+	public double getVelocity() {
+		return this.velocity;
 	}
 
 	/**
@@ -544,7 +499,7 @@ public abstract class GameObject {
 	 * 			|	then new.getAccelerationX() == 0
 	 */
 	@Basic
-	private void setVelocityX(double velocityX) {
+	private void setVelocity(double velocityX) {
 		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax())){
 			this.setAccelerationX(0);
 		}
@@ -968,14 +923,14 @@ public abstract class GameObject {
 	@Model
 	private void updatePositionX(double dt) {
 		try{
-			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
-			this.setPositionX( this.getPositionX() + 100 * sx );
+			double sx = this.getVelocity().getX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
+			this.getVelocity().setX( this.getPosition().getX() + 100 * sx );
 		}catch( IllegalPositionXException exc){
 			if(exc.getPositionX() < 0 ){
-				this.setPositionX( 0 );
+				this.getPosition.setX( 0 );
 				endMove(Orientation.LEFT);
 			}else{ // > GAME_WIDTH - 1 
-				this.setPositionX( GAME_WIDTH - 1 );
+				this.getPosition.setX( GAME_WIDTH - 1 );
 				endMove(Orientation.RIGHT);
 			}
 		}
