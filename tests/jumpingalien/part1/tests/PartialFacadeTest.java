@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part1.facade.IFacade;
-import jumpingalien.model.GameObject;
+import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
@@ -18,7 +18,7 @@ public class PartialFacadeTest {
 	public void startMoveRightCorrect() {
 		IFacade facade = new Facade();
 
-		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		facade.startMoveRight(alien);
 		facade.advanceTime(alien, 0.1);
 
@@ -32,7 +32,7 @@ public class PartialFacadeTest {
 	public void startMoveRightMaxSpeedAtRightTime() {
 		IFacade facade = new Facade();
 
-		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		facade.startMoveRight(alien);
 		// maximum speed reached after 20/9 seconds
 		for (int i = 0; i < 100; i++) {
@@ -47,7 +47,7 @@ public class PartialFacadeTest {
 	public void testAccellerationZeroWhenNotMoving() {
 		IFacade facade = new Facade();
 
-		GameObject alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
 				Util.DEFAULT_EPSILON);
 	}
@@ -58,7 +58,7 @@ public class PartialFacadeTest {
 
 		int m = 10;
 		Sprite[] sprites = spriteArrayForSize(2, 2, 10 + 2 * m);
-		GameObject alien = facade.createMazub(0, 0, sprites);
+		Mazub alien = facade.createMazub(0, 0, sprites);
 
 		facade.startMoveRight(alien);
 

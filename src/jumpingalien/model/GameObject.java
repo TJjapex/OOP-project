@@ -22,21 +22,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 public abstract class GameObject {
 	/************************************************** GENERAL ***********************************************/
 	
-	/**
-	 * Constant reflecting the width of the game world (i.e. the amount of pixels).
-	 * 
-	 * @return	The game world consists of 1024 pixels in width.
-	 * 			| result == 1024
-	 */
-	public static final int GAME_WIDTH = 1024;
 	
-	/**
-	 * Constant reflecting the height of the game world (i.e. the amount of pixels).
-	 * 
-	 * @return	The game world consists of 768 pixels in height.
-	 * 			| result == 768
-	 */
-	public static final int GAME_HEIGHT = 768;
 	
 	/**
 	 * Constant reflecting the vertical acceleration for Mazubs.
@@ -95,12 +81,12 @@ public abstract class GameObject {
 		this.setPositionY(pixelBottomY);
 
 		this.velocityXInit = velocityXInit;
-		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
-		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
 		
 		this.setOrientation(Orientation.RIGHT);
 		
 		this.setNbHitPoints(nbHitPoints);
+		
+
 	}
 
 	
@@ -110,6 +96,9 @@ public abstract class GameObject {
 		return world;
 	}
 
+	public boolean hasProperWorld(){
+		return getWorld() != null;
+	}
 
 	void setWorld(World world) {
 		this.world = world;
@@ -207,7 +196,7 @@ public abstract class GameObject {
 //	}
 	
 	public boolean canHaveAsPositionX(int positionX){
-		return positionX >= 0;// && positionX < this.getWorld().getWorldWidth();
+		return positionX >= 0 && (!hasProperWorld() || positionX < this.getWorld().getWorldWidth());
 	}
 
 	/**
@@ -235,7 +224,7 @@ public abstract class GameObject {
 //		return positionY >= 0 && positionY < GAME_HEIGHT;
 //	}
 	public boolean canHaveAsPositionY(int positionY){
-		return positionY >= 0;// && positionY < this.getWorld().getWorldHeight();
+		return positionY >= 0 && (!hasProperWorld() || positionY < this.getWorld().getWorldHeight());
 	}
 	
 
@@ -383,7 +372,13 @@ public abstract class GameObject {
 	 * 			| result == ( this.getPositionY() == 0 )
 	 */
 	public boolean isJumping() {
-		return !Util.fuzzyEquals(this.getPositionY(), 0);
+		//return !Util.fuzzyEquals(this.getPositionY(), 0);
+		
+		// Kan ook mss met collission gedaan worden (trager maar mss wel beter)
+		//if(!hasProperWorld())
+		//	return false;		
+		//return getWorld().collidesWith(this).contains(Orientation.BOTTOM);
+		return !Util.fuzzyEquals(this.getVelocityY(), 0);
 	}
 
 	/**
@@ -769,22 +764,9 @@ public abstract class GameObject {
 	 */
 	private Orientation orientation;
 
-	/**
-	 * Return the correct sprite of Mazub, depending on his current status.
-	 * 
-	 * @return	A sprite that fits the current status of Mazub.
-	 * @note	No formal documentation was required for this method.
-	 */
-	public Sprite getCurrentSprite() {	
-		return null;
-		
-		// Fix getAnimation first
-		
-//		if(this.getAnimation() == null){
-//			return null;
-//		}
-		//return this.getAnimation().getCurrentSprite(this);	
-	}
+	
+	// Sprite
+	public abstract Sprite getCurrentSprite();
 
 	/**
 	 * Advance time and update Mazub's position and velocity accordingly.
@@ -815,6 +797,10 @@ public abstract class GameObject {
 	public void advanceTime(double dt) throws IllegalArgumentException {
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
+		if( !hasProperWorld()){
+			throw new IllegalStateException(" This Mazub is not in world!");
+		}
+		
 		
 		double oldPositionX = this.getPositionX();
 		double oldPositionY = this.getPositionY();
@@ -832,118 +818,24 @@ public abstract class GameObject {
 		this.updateVelocityY(dt);
 		
 		// Dummy world to test the collision detection algorithm because Mazub has no relation with a World yet
-//		World dummyWorld = new World(70, 20, 12, 1024, 752, 18, 9);
-//		dummyWorld.setGeologicalFeature(0, 0, 1);
-//		dummyWorld.setGeologicalFeature(1, 0, 1);
-//		dummyWorld.setGeologicalFeature(2, 0, 1);
-//		dummyWorld.setGeologicalFeature(3, 0, 1);
-//		dummyWorld.setGeologicalFeature(4, 0, 1);
-//		dummyWorld.setGeologicalFeature(5, 0, 1);
-//		dummyWorld.setGeologicalFeature(6, 0, 1);
-//		dummyWorld.setGeologicalFeature(7, 0, 1);
-//		dummyWorld.setGeologicalFeature(8, 0, 1);
-//		dummyWorld.setGeologicalFeature(9, 0, 1);
-//		dummyWorld.setGeologicalFeature(10, 0, 1);
-//		dummyWorld.setGeologicalFeature(11, 0, 1);
-//		dummyWorld.setGeologicalFeature(12, 0, 1);
-//		dummyWorld.setGeologicalFeature(13, 0, 1);
-//		dummyWorld.setGeologicalFeature(14, 0, 1);
-//		dummyWorld.setGeologicalFeature(15, 0, 1);
-//		dummyWorld.setGeologicalFeature(16, 0, 1);
-//		dummyWorld.setGeologicalFeature(17, 0, 1);
-//		dummyWorld.setGeologicalFeature(18, 0, 1);
-//		dummyWorld.setGeologicalFeature(19, 0, 1);
-//		dummyWorld.setGeologicalFeature(0, 1, 1);
-//		dummyWorld.setGeologicalFeature(8, 1, 1);
-//		dummyWorld.setGeologicalFeature(14, 1, 1);
-//		dummyWorld.setGeologicalFeature(19, 1, 1);
-//		dummyWorld.setGeologicalFeature(0, 2, 1);
-//		dummyWorld.setGeologicalFeature(7, 2, 1);
-//		dummyWorld.setGeologicalFeature(8, 2, 1);
-//		dummyWorld.setGeologicalFeature(14, 2, 1);
-//		dummyWorld.setGeologicalFeature(19, 2, 1);
-//		dummyWorld.setGeologicalFeature(0, 3, 1);
-//		dummyWorld.setGeologicalFeature(8, 3, 1);
-//		dummyWorld.setGeologicalFeature(14, 3, 1);
-//		dummyWorld.setGeologicalFeature(19, 3, 1);
-//		dummyWorld.setGeologicalFeature(0, 4, 1);
-//		dummyWorld.setGeologicalFeature(8, 4, 1);
-//		dummyWorld.setGeologicalFeature(12, 4, 1);
-//		dummyWorld.setGeologicalFeature(13, 4, 1);
-//		dummyWorld.setGeologicalFeature(14, 4, 1);
-//		dummyWorld.setGeologicalFeature(15, 4, 1);
-//		dummyWorld.setGeologicalFeature(19, 4, 1);
-//		dummyWorld.setGeologicalFeature(0, 5, 1);
-//		dummyWorld.setGeologicalFeature(8, 5, 1);
-//		dummyWorld.setGeologicalFeature(19, 5, 1);
-//		dummyWorld.setGeologicalFeature(0, 6, 1);
-//		dummyWorld.setGeologicalFeature(19, 6, 1);
-//		dummyWorld.setGeologicalFeature(0, 7, 1);
-//		dummyWorld.setGeologicalFeature(19, 7, 1);
-//		dummyWorld.setGeologicalFeature(0, 8, 1);
-//		dummyWorld.setGeologicalFeature(1, 8, 1);
-//		dummyWorld.setGeologicalFeature(2, 8, 1);
-//		dummyWorld.setGeologicalFeature(3, 8, 1);
-//		dummyWorld.setGeologicalFeature(4, 8, 1);
-//		dummyWorld.setGeologicalFeature(5, 8, 1);
-//		dummyWorld.setGeologicalFeature(6, 8, 1);
-//		dummyWorld.setGeologicalFeature(7, 8, 1);
-//		dummyWorld.setGeologicalFeature(8, 8, 1);
-//		dummyWorld.setGeologicalFeature(9, 8, 1);
-//		dummyWorld.setGeologicalFeature(10, 8, 1);
-//		dummyWorld.setGeologicalFeature(11, 8, 1);
-//		dummyWorld.setGeologicalFeature(12, 8, 1);
-//		dummyWorld.setGeologicalFeature(15, 8, 1);
-//		dummyWorld.setGeologicalFeature(16, 8, 1);
-//		dummyWorld.setGeologicalFeature(17, 8, 1);
-//		dummyWorld.setGeologicalFeature(18, 8, 1);
-//		dummyWorld.setGeologicalFeature(19, 8, 1);
-//		dummyWorld.setGeologicalFeature(0, 9, 1);
-//		dummyWorld.setGeologicalFeature(19, 9, 1);
-//		dummyWorld.setGeologicalFeature(0, 10, 1);
-//		dummyWorld.setGeologicalFeature(19, 10, 1);
-//		dummyWorld.setGeologicalFeature(0, 11, 1);
-//		dummyWorld.setGeologicalFeature(1, 11, 1);
-//		dummyWorld.setGeologicalFeature(2, 11, 1);
-//		dummyWorld.setGeologicalFeature(3, 11, 1);
-//		dummyWorld.setGeologicalFeature(4, 11, 1);
-//		dummyWorld.setGeologicalFeature(5, 11, 1);
-//		dummyWorld.setGeologicalFeature(6, 11, 1);
-//		dummyWorld.setGeologicalFeature(7, 11, 1);
-//		dummyWorld.setGeologicalFeature(8, 11, 1);
-//		dummyWorld.setGeologicalFeature(9, 11, 1);
-//		dummyWorld.setGeologicalFeature(10, 11, 1);
-//		dummyWorld.setGeologicalFeature(11, 11, 1);
-//		dummyWorld.setGeologicalFeature(12, 11, 1);
-//		dummyWorld.setGeologicalFeature(13, 11, 1);
-//		dummyWorld.setGeologicalFeature(14, 11, 1);
-//		dummyWorld.setGeologicalFeature(15, 11, 1);
-//		dummyWorld.setGeologicalFeature(16, 11, 1);
-//		dummyWorld.setGeologicalFeature(17, 11, 1);
-//		dummyWorld.setGeologicalFeature(18, 11, 1);
-//		dummyWorld.setGeologicalFeature(19, 11, 1);
-//		
-//		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-//		obstacleOrientations = dummyWorld.collidesWith(this);
-//		
-//		//Y axis
-//	
-//		
-//		
-//		
-//		for(Orientation obstacleOrientation: obstacleOrientations){
-//			// horizontal
-//			if (this.orientation == obstacleOrientation){
-//				this.setPositionX(oldPositionX);
-//				this.setVelocityX(0);
-//			}
-//			// vertical
-//			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
-//				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
-//				this.setPositionY(oldPositionY);
-//				this.setVelocityY(0);
-//			}
-//		}
+		
+		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
+		obstacleOrientations = getWorld().collidesWith(this);
+		
+		//Y axis
+		for(Orientation obstacleOrientation: obstacleOrientations){
+			// horizontal
+			if (this.orientation == obstacleOrientation){
+				this.setPositionX(oldPositionX);
+				this.setVelocityX(0);
+			}
+			// vertical
+			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
+				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
+				this.setPositionY(oldPositionY);
+				this.setVelocityY(0);
+			}
+		}
 		
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);
@@ -975,7 +867,7 @@ public abstract class GameObject {
 				this.setPositionX( 0 );
 				endMove(Orientation.LEFT);
 			}else{ // > GAME_WIDTH - 1 
-				this.setPositionX( GAME_WIDTH - 1 );
+				this.setPositionX( world.getWorldWidth() - 1 );
 				endMove(Orientation.RIGHT);
 			}
 		}
@@ -1003,7 +895,7 @@ public abstract class GameObject {
 				this.setPositionY(0);
 				this.stopFall();
 			}else{ // > GAME_HEIGHT - 1 
-				this.setPositionY( GAME_HEIGHT - 1);
+				this.setPositionY( getWorld().getWorldHeight() - 1);
 			}
 		}
 	}

@@ -1,8 +1,5 @@
 package jumpingalien.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -65,32 +62,7 @@ import jumpingalien.model.helper.Timer;
  */
 public class Mazub extends GameObject{
 		
-	/************************************************** GENERAL ***********************************************/
-	
-	/**
-	 * Constant reflecting the width of the game world (i.e. the amount of pixels).
-	 * 
-	 * @return	The game world consists of 1024 pixels in width.
-	 * 			| result == 1024
-	 */
-	public static final int GAME_WIDTH = 1024;
-	
-	/**
-	 * Constant reflecting the height of the game world (i.e. the amount of pixels).
-	 * 
-	 * @return	The game world consists of 768 pixels in height.
-	 * 			| result == 768
-	 */
-	public static final int GAME_HEIGHT = 768;
-	
-	/**
-	 * Constant reflecting the vertical acceleration for Mazubs.
-	 * 
-	 * @return	The vertical acceleration of Mazubs is equal to -10.0 m/s^2.
-	 * 			| result == -10.0
-	 */
-	public static final double ACCELERATION_Y = -10.0;
-	
+	/************************************************** GENERAL ***********************************************/	
 	/**
 	 * Constant reflecting the initial vertical velocity for Mazubs when jumping.
 	 * 
@@ -189,6 +161,9 @@ public class Mazub extends GameObject{
 		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit, velocityXMaxRunning, sprites, nbHitPoints);
+		
+		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
+		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
 		
 		this.setDucking(false);
 		
@@ -393,7 +368,15 @@ public class Mazub extends GameObject{
 	
 	/******************************************* CHARACTER SIZE AND ANIMATION *********************************/
 	
-	
+	/**
+	 * Return the correct sprite of Mazub, depending on his current status.
+	 * 
+	 * @return	A sprite that fits the current status of Mazub.
+	 * @note	No formal documentation was required for this method.
+	 */
+	public Sprite getCurrentSprite() {
+		return this.getAnimation().getCurrentSprite(this);	
+	}
 	
 	
 	/************************************************ ADVANCE TIME ********************************************/
@@ -411,7 +394,6 @@ public class Mazub extends GameObject{
 	 *         there are no interactions between the alien and enemy objects).
 	 */
 	public boolean isImmune() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

@@ -4,14 +4,11 @@ import java.util.Collection;
 
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.School;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
-import jumpingalien.model.Vector;
-import jumpingalien.model.VectorInt;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -60,7 +57,7 @@ public class Facade implements IFacadePart2 {
 	 * @return an array, consisting of 2 integers {x, y}, that represents the
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
-	public int[] getLocation(GameObject alien){
+	public int[] getLocation(Mazub alien){
 		return new int[] {alien.getRoundedPositionX(), alien.getRoundedPositionY()};
 	}
 
@@ -74,7 +71,7 @@ public class Facade implements IFacadePart2 {
 	 *         horizontal and vertical components of the given alien's current
 	 *         velocity, in units of m/s.
 	 */
-	public double[] getVelocity(GameObject alien){
+	public double[] getVelocity(Mazub alien){
 		return new double[] {alien.getVelocityX(), alien.getVelocityY()};	
 	}
 
@@ -88,7 +85,7 @@ public class Facade implements IFacadePart2 {
 	 *         horizontal and vertical components of the given alien's current
 	 *         acceleration, in units of m/s^2.
 	 */
-	public double[] getAcceleration(GameObject alien){
+	public double[] getAcceleration(Mazub alien){
 		return new double[] {alien.getAccelerationX(), alien.getAccelerationY()};
 	}
 
@@ -101,7 +98,7 @@ public class Facade implements IFacadePart2 {
 	 * @return An array, consisting of 2 integers {w, h}, that represents the
 	 *         current width and height of the given alien, in number of pixels.
 	 */
-	public int[] getSize(GameObject alien){
+	public int[] getSize(Mazub alien){
 		return new int[] {alien.getWidth(), alien.getHeight()};	
 	}
 
@@ -114,7 +111,7 @@ public class Facade implements IFacadePart2 {
 	 * @return The current sprite image for the given alien, determined by its
 	 *         state as defined in the assignment.
 	 */
-	public Sprite getCurrentSprite(GameObject alien){
+	public Sprite getCurrentSprite(Mazub alien){
 		return alien.getCurrentSprite();
 		
 	}
@@ -125,7 +122,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to start jumping.
 	 */
-	public void startJump(GameObject alien){
+	public void startJump(Mazub alien){
 		alien.startJump();
 	}
 
@@ -135,7 +132,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop jumping.
 	 */
-	public void endJump(GameObject alien){
+	public void endJump(Mazub alien){
 		try{
 			alien.endJump();
 		}catch( IllegalStateException exc ){
@@ -149,7 +146,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to start moving left.
 	 */
-	public void startMoveLeft(GameObject alien){
+	public void startMoveLeft(Mazub alien){
 		alien.startMove(Orientation.LEFT);
 	}
 
@@ -159,7 +156,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop moving left.
 	 */
-	public void endMoveLeft(GameObject alien){
+	public void endMoveLeft(Mazub alien){
 		alien.endMove(Orientation.LEFT);
 	}
 
@@ -169,7 +166,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to start moving right.
 	 */
-	public void startMoveRight(GameObject alien){
+	public void startMoveRight(Mazub alien){
 		alien.startMove(Orientation.RIGHT);
 	}
 
@@ -179,7 +176,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop moving right.
 	 */
-	public void endMoveRight(GameObject alien){
+	public void endMoveRight(Mazub alien){
 		alien.endMove(Orientation.RIGHT);
 	}
 
@@ -223,7 +220,7 @@ public class Facade implements IFacadePart2 {
 	 * 				The given dt is greater than 0.2 or smaller than 0
 	 * 				| dt < 0 || dt > 0.2
 	 */
-	public void advanceTime(GameObject alien, double dt) throws ModelException{
+	public void advanceTime(Mazub alien, double dt) throws ModelException{
 		try{
 			alien.advanceTime(dt);
 		}catch(IllegalArgumentException exc){
@@ -240,7 +237,7 @@ public class Facade implements IFacadePart2 {
 	
 	
 	@Override
-	public int getNbHitPoints(GameObject alien) {
+	public int getNbHitPoints(Mazub alien) {
 		return alien.getNbHitPoints();
 	}
 
@@ -248,8 +245,9 @@ public class Facade implements IFacadePart2 {
 	public World createWorld(int tileSize, int nbTilesX, int nbTilesY,
 			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
 			int targetTileY) {
-		return new World(tileSize, new VectorInt(nbTilesX, nbTilesY),
-			visibleWindowWidth, visibleWindowHeight, new VectorInt(targetTileX, targetTileY));
+		return new World(tileSize, nbTilesX, nbTilesY,
+			visibleWindowWidth, visibleWindowHeight, targetTileX,
+			targetTileY);
 	}
 
 	@Override
@@ -296,20 +294,20 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public int[] getBottomLeftPixelOfTile(World world, int tileX, int tileY) {
-		return world.getPositionOfTile(new VectorInt(tileX, tileY)).toArray();
+		return new int[] { world.getPositionOfTileX(tileX), world.getPositionOfTileY(tileY) };
 	}
 
 	@Override
 	public int[][] getTilePositionsIn(World world, int pixelLeft,
 			int pixelBottom, int pixelRight, int pixelTop) {
-		return world.getTilePositionsIn(new VectorInt(pixelLeft, pixelBottom), new VectorInt(pixelRight, pixelTop));
+		return world.getTilePositionsIn(pixelLeft, pixelBottom, pixelRight, pixelTop);
 		//return null;
 	}
 
 	@Override
 	public int getGeologicalFeature(World world, int pixelX, int pixelY)
 			throws ModelException {
-		return world.getGeologicalFeature( new VectorInt( pixelX, pixelY) );
+		return world.getGeologicalFeature(pixelX, pixelY);
 	}
 
 	@Override
