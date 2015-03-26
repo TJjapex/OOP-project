@@ -1,5 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -199,12 +202,40 @@ public class Mazub extends GameObject{
 	
 	/************************************************* HELPER CLASSES *****************************************/
 	
-	Timer timer;
+	/**
+	 * Set the animation object for Mazub.
+	 * 
+	 * @pre		The given animation object is not null.
+	 * 			| animation != null
+	 * @param 	animation
+	 * 				An animation that consists of consecutive sprites.
+	 * @post	The new animation for Mazub is equal to the given animation.
+	 * 			| new.getAnimation() == animation
+	 */
+	@Basic
+	protected void setAnimation(Animation animation) {
+		assert animation != null;
+		
+		this.animation = animation;
+	}
+
+	/**
+	 * Return the animation object for Mazub.
+	 * 
+	 * @return	An animation that consists of consecutive sprites.
+	 */
+	@Basic
+	@Raw
+	public Animation getAnimation() {
+		return this.animation;
+	}
 	
 	/**
 	 * Variable registering the animation of this Mazub.
 	 */
-	Animation animation;
+	private Animation animation;
+	
+	
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
@@ -374,6 +405,7 @@ public class Mazub extends GameObject{
 	 * @return	A sprite that fits the current status of Mazub.
 	 * @note	No formal documentation was required for this method.
 	 */
+	@Override
 	public Sprite getCurrentSprite() {
 		return this.getAnimation().getCurrentSprite(this);	
 	}
@@ -383,6 +415,107 @@ public class Mazub extends GameObject{
 	
 	// * Mazub shall not move if its side perimeter in the direction of movements overlaps with impassable
 	//	 terrain or another game object
+	
+	/**
+	 * Advance time and update Mazub's position and velocity accordingly.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	The horizontal position of Mazub is equal to the result of the formula used in the method
+	 * 			updatePositionX.
+	 * 			| updatePositionX(dt)
+	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
+	 * 			updatePositionY.
+	 * 			| updatePositionY(dt)
+	 * @effect	The horizontal velocity of Mazub is equal to the result of the formula used in the method 
+	 * 			updateVelocityX.
+	 * 			| updateVelocityX(dt)
+	 * @effect	The vertical velocity of Mazub is equal to the result of the formula used in the method	
+	 * 			updateVelocityY.
+	 * 			| updateVelocityY(dt)
+	 * @post	If Mazub wasn't moving, the time since his last move is increased by dt.
+	 * 			| if ( !this.isMoving() )
+	 * 			|	then (new timer).getSinceLastMove() == this.getTimer().getSinceLastMove() + dt
+	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
+	 * 			| (new timer).getSinceLastSprite() == this.getTimer().getSinceLastSprite() + dt
+	 * @throws	IllegalArgumentException
+	 * 				The given time dt is either negative or greater than 0.2s.
+	 * 				| (dt > 0.2) || (dt < 0)
+	 */
+	public void advanceTime(double dt) throws IllegalArgumentException {
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
+			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
+		if( !hasProperWorld()){
+			throw new IllegalStateException(" This Mazub is not in world!");
+		}
+		
+		
+		double oldPositionX = this.getPositionX();
+		double oldPositionY = this.getPositionY();
+		
+		// Update horizontal position
+		updatePositionX(dt);
+				
+		// Update vertical position
+		this.updatePositionY(dt);		
+				
+		// Update horizontal velocity
+		this.updateVelocityX(dt);
+		
+		// Update vertical velocity
+		this.updateVelocityY(dt);
+		
+		// Dummy world to test the collision detection algorithm because Mazub has no relation with a World yet
+		
+		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
+		obstacleOrientations = getWorld().collidesWith(this);
+		
+		//Y axis
+		for(Orientation obstacleOrientation: obstacleOrientations){
+			// horizontal
+			if (this.orientation == obstacleOrientation){
+				this.setPositionX(oldPositionX);
+				this.setVelocityX(0);
+			}
+			// vertical
+			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
+				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
+				this.setPositionY(oldPositionY);
+				this.setVelocityY(0);
+			}
+		}
+		
+		if(!this.isMoving())
+			this.getTimer().increaseSinceLastMove(dt);
+		
+		// Sprites
+		this.getTimer().increaseSinceLastSprite(dt);
+		this.getAnimation().updateAnimationIndex(this.getTimer());
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Returns whether the given alien is currently immune against enemies (see

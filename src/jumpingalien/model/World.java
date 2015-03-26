@@ -279,7 +279,7 @@ public class World {
 		
 		double minDt;
 		
-		for(GameObject alien: this.getAliens()){
+		for(Mazub alien: this.getAliens()){
 				
 			// determine minDt
 			

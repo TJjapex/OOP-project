@@ -123,7 +123,6 @@ public abstract class GameObject {
 		this.timer = timer;
 	}
 
-
 	/**
 	 * Return the time properties of Mazub.
 	 * 
@@ -134,39 +133,9 @@ public abstract class GameObject {
 	public Timer getTimer() {
 		return this.timer;
 	}
-	
 
 	private Timer timer;
 		
-
-	/**
-	 * Set the animation object for Mazub.
-	 * 
-	 * @pre		The given animation object is not null.
-	 * 			| animation != null
-	 * @param 	animation
-	 * 				An animation that consists of consecutive sprites.
-	 * @post	The new animation for Mazub is equal to the given animation.
-	 * 			| new.getAnimation() == animation
-	 */
-	@Basic
-	protected void setAnimation(Animation animation) {
-		assert animation != null;
-		
-		this.animation = animation;
-	}
-
-	/**
-	 * Return the animation object for Mazub.
-	 * 
-	 * @return	An animation that consists of consecutive sprites.
-	 */
-	@Basic
-	@Raw
-	public Animation getAnimation() {
-		return this.animation;
-	}
-	private Animation animation;
 
 	/**
 	 * Return the rounded down x-location of Mazub's bottom left pixel.
@@ -539,7 +508,7 @@ public abstract class GameObject {
 	 * 			|	then new.getAccelerationX() == 0
 	 */
 	@Basic
-	private void setVelocityX(double velocityX) {
+	protected void setVelocityX(double velocityX) {
 		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax())){
 			this.setAccelerationX(0);
 		}
@@ -557,7 +526,7 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	private void setVelocityY(double velocityY) {
+	protected void setVelocityY(double velocityY) {
 		this.velocityY = velocityY;
 	}
 
@@ -762,89 +731,27 @@ public abstract class GameObject {
 	/**
 	 * Variable registering the orientation of this Mazub.
 	 */
-	private Orientation orientation;
+	protected Orientation orientation;
 
 	
-	// Sprite
-	public abstract Sprite getCurrentSprite();
-
-	/**
-	 * Advance time and update Mazub's position and velocity accordingly.
-	 * 
-	 * @param 	dt
-	 * 				A double that represents the elapsed in-game time.
-	 * @effect	The horizontal position of Mazub is equal to the result of the formula used in the method
-	 * 			updatePositionX.
-	 * 			| updatePositionX(dt)
-	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
-	 * 			updatePositionY.
-	 * 			| updatePositionY(dt)
-	 * @effect	The horizontal velocity of Mazub is equal to the result of the formula used in the method 
-	 * 			updateVelocityX.
-	 * 			| updateVelocityX(dt)
-	 * @effect	The vertical velocity of Mazub is equal to the result of the formula used in the method	
-	 * 			updateVelocityY.
-	 * 			| updateVelocityY(dt)
-	 * @post	If Mazub wasn't moving, the time since his last move is increased by dt.
-	 * 			| if ( !this.isMoving() )
-	 * 			|	then (new timer).getSinceLastMove() == this.getTimer().getSinceLastMove() + dt
-	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
-	 * 			| (new timer).getSinceLastSprite() == this.getTimer().getSinceLastSprite() + dt
-	 * @throws	IllegalArgumentException
-	 * 				The given time dt is either negative or greater than 0.2s.
-	 * 				| (dt > 0.2) || (dt < 0)
-	 */
-	public void advanceTime(double dt) throws IllegalArgumentException {
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-		if( !hasProperWorld()){
-			throw new IllegalStateException(" This Mazub is not in world!");
+	/******************************************************************* SPRITES *************************************************/
+	public Sprite getCurrentSprite(){
+		if(getOrientation() == Orientation.RIGHT){
+			return getSpriteAt(0);
+		}else{
+			return getSpriteAt(1);
 		}
-		
-		
-		double oldPositionX = this.getPositionX();
-		double oldPositionY = this.getPositionY();
-		
-		// Update horizontal position
-		this.updatePositionX(dt);
-				
-		// Update vertical position
-		this.updatePositionY(dt);		
-				
-		// Update horizontal velocity
-		this.updateVelocityX(dt);
-		
-		// Update vertical velocity
-		this.updateVelocityY(dt);
-		
-		// Dummy world to test the collision detection algorithm because Mazub has no relation with a World yet
-		
-		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-		obstacleOrientations = getWorld().collidesWith(this);
-		
-		//Y axis
-		for(Orientation obstacleOrientation: obstacleOrientations){
-			// horizontal
-			if (this.orientation == obstacleOrientation){
-				this.setPositionX(oldPositionX);
-				this.setVelocityX(0);
-			}
-			// vertical
-			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
-				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
-				this.setPositionY(oldPositionY);
-				this.setVelocityY(0);
-			}
-		}
-		
-		if(!this.isMoving())
-			this.getTimer().increaseSinceLastMove(dt);
-		
-		// Sprites
-		this.getTimer().increaseSinceLastSprite(dt);
-		this.getAnimation().updateAnimationIndex(this.getTimer());
+	};
+	
+	private Sprite getSpriteAt(int index){
+		return this.sprites[index];
 	}
+	
+	private Sprite[] sprites;
 
+	
+	
+	/********************************************************** CHARACTERISTICS UPDATERS *************************************************/
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
 	 * 
@@ -858,7 +765,7 @@ public abstract class GameObject {
 	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
 	 */
 	@Model
-	private void updatePositionX(double dt) {
+	protected void updatePositionX(double dt) {
 		try{
 			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
 			this.setPositionX( this.getPositionX() + 100 * sx );
@@ -886,7 +793,7 @@ public abstract class GameObject {
 	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) )
 	 */
 	@Model
-	private void updatePositionY(double dt) {
+	protected void updatePositionY(double dt) {
 		try{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
 			this.setPositionY( this.getPositionY() + 100 * sy );
@@ -909,7 +816,7 @@ public abstract class GameObject {
 	 * 			with the product of the horizontal acceleration and dt
 	 * 			| new.getVelocityX() == this.getVelocityX() + this.getAccelerationX() * dt
 	 */
-	private void updateVelocityX(double dt) {
+	protected void updateVelocityX(double dt) {
 		double newVx = this.getVelocityX() + this.getAccelerationX() * dt;
 		this.setVelocityX( newVx );
 	}
@@ -923,7 +830,7 @@ public abstract class GameObject {
 	 * 			with the product of the vertical acceleration and dt
 	 * 			| new.getVelocityY() == this.getVelocityY() + this.getAccelerationY() * dt
 	 */
-	private void updateVelocityY(double dt) {
+	protected void updateVelocityY(double dt) {
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
 		this.setVelocityY( newVy );
 	}
