@@ -207,7 +207,7 @@ public abstract class GameObject {
 //	}
 	
 	public boolean canHaveAsPositionX(int positionX){
-		return positionX >= 0 && positionX < this.getWorld().getWorldWidth();
+		return positionX >= 0;// && positionX < this.getWorld().getWorldWidth();
 	}
 
 	/**
@@ -235,7 +235,7 @@ public abstract class GameObject {
 //		return positionY >= 0 && positionY < GAME_HEIGHT;
 //	}
 	public boolean canHaveAsPositionY(int positionY){
-		return positionY >= 0 && positionY < this.getWorld().getWorldHeight();
+		return positionY >= 0;// && positionY < this.getWorld().getWorldHeight();
 	}
 	
 

@@ -162,37 +162,37 @@ public class TestCase {
 	 * Checks if isValidRoundedPosition() correctly determines which positions are valid and which
 	 * are not.
 	 */
-	@Test
-	public void correctValidRoundedPositions(){
-		assertFalse(Mazub.isValidRoundedPositionX(-1));
-		assertTrue(Mazub.isValidRoundedPositionX(0));
-		assertTrue(Mazub.isValidRoundedPositionX(546));
-		assertFalse(Mazub.isValidRoundedPositionX(1024));
-		assertTrue(Mazub.isValidRoundedPositionX(1023));
-		assertFalse(Mazub.isValidRoundedPositionY(-1));
-		assertTrue(Mazub.isValidRoundedPositionY(0));
-		assertTrue(Mazub.isValidRoundedPositionY(546));
-		assertFalse(Mazub.isValidRoundedPositionY(768));
-		assertTrue(Mazub.isValidRoundedPositionY(767));
-	}
-	
-	/**
-	 * Checks if isValidPosition() correctly determines which positions are valid and which are not.
-	 */
-	@Test
-	public void correctValidPositions(){
-		assertFalse(Mazub.isValidPositionX(-0.00001));
-		assertTrue(Mazub.isValidPositionX(0.00001));
-		assertTrue(Mazub.isValidPositionX(546.72));
-		assertFalse(Mazub.isValidPositionX(1024.00001));
-		assertTrue(Mazub.isValidPositionX(1023.99999));
-		assertFalse(Mazub.isValidPositionY(-0.00001));
-		assertTrue(Mazub.isValidPositionY(0.00001));
-		assertTrue(Mazub.isValidPositionY(546.72));
-		assertFalse(Mazub.isValidPositionY(768.00001));
-		assertTrue(Mazub.isValidPositionY(767.99999));
-	}
-	
+//	@Test
+//	public void correctValidRoundedPositions(){
+//		assertFalse(Mazub.isValidRoundedPositionX(-1));
+//		assertTrue(Mazub.isValidRoundedPositionX(0));
+//		assertTrue(Mazub.isValidRoundedPositionX(546));
+//		assertFalse(Mazub.isValidRoundedPositionX(1024));
+//		assertTrue(Mazub.isValidRoundedPositionX(1023));
+//		assertFalse(Mazub.isValidRoundedPositionY(-1));
+//		assertTrue(Mazub.isValidRoundedPositionY(0));
+//		assertTrue(Mazub.isValidRoundedPositionY(546));
+//		assertFalse(Mazub.isValidRoundedPositionY(768));
+//		assertTrue(Mazub.isValidRoundedPositionY(767));
+//	}
+//	
+//	/**
+//	 * Checks if isValidPosition() correctly determines which positions are valid and which are not.
+//	 */
+//	@Test
+//	public void correctValidPositions(){
+//		assertFalse(Mazub.isValidPositionX(-0.00001));
+//		assertTrue(Mazub.isValidPositionX(0.00001));
+//		assertTrue(Mazub.isValidPositionX(546.72));
+//		assertFalse(Mazub.isValidPositionX(1024.00001));
+//		assertTrue(Mazub.isValidPositionX(1023.99999));
+//		assertFalse(Mazub.isValidPositionY(-0.00001));
+//		assertTrue(Mazub.isValidPositionY(0.00001));
+//		assertTrue(Mazub.isValidPositionY(546.72));
+//		assertFalse(Mazub.isValidPositionY(768.00001));
+//		assertTrue(Mazub.isValidPositionY(767.99999));
+//	}
+//	
 	/********************************************* VELOCITY ****************************************/
 	
 	/**

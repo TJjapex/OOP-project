@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import jumpingalien.model.helper.Orientation;
@@ -410,7 +411,7 @@ public class World {
 		
 		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
 		
-		for (Map.Entry<Integer[], Integer> feature: geologicalFeatures.entrySet()){
+		for (Entry<Vector, Integer> feature: geologicalFeatures.entrySet()){
 			if (feature.getValue() == 1){
 				
 				// Minkowski sum
@@ -563,6 +564,7 @@ public class World {
 	public HashSet<Plant> plants = new HashSet<Plant>();
 	
 	
+	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
 	
 	//	- passable terrain (air=default, water, magma)
@@ -591,7 +593,8 @@ public class World {
 		if( tileType == 0 ){
 			return;
 		}
-		geologicalFeatures.put(new Integer[]{tileX,  tileY}, tileType);
+		geologicalFeatures.put(new Vector(tileX,  tileY), tileType);
+		System.out.println(this.geologicalFeatures.containsKey(new Vector(tileX, tileY)));
 	}
 	
 	/**
@@ -627,13 +630,14 @@ public class World {
 		
 		// Opmerking: map.get() geeft null als de key niet bestaat, dus misschien kan dat ook gebruikt worden ipv containsKey. (efficienter) Maar bij
 		// int value = this.gameObjects.get(... ), kan value nooit null worden want das geen geldige integer.
-		if(this.geologicalFeatures.containsKey(new int[]{getTileX(pixelX), getTileY(pixelY)})){
-			return this.geologicalFeatures.get(new int[]{getTileX(pixelX), getTileY(pixelY)});
+		if(this.geologicalFeatures.containsKey(new Vector(getTileX(pixelX), getTileY(pixelY)))){
+			return this.geologicalFeatures.get(new Vector(getTileX(pixelX), getTileY(pixelY)));
 		}else{
 			return 0;
 		}
+		
 	}
 	
-	private HashMap<Integer[], Integer> geologicalFeatures = new HashMap<Integer[], Integer>();
+	private HashMap<Vector, Integer> geologicalFeatures = new HashMap<Vector, Integer>();
 	
 }
