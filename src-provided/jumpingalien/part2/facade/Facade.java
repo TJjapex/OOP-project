@@ -318,7 +318,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void setMazub(World world, Mazub alien) {
-		world.setMazub(alien);
+		world.addAsMazub(alien);
 	}
 
 	@Override

@@ -56,21 +56,34 @@ public abstract class GameObject {
 	}
 
 	
-	// World
+	/************************************************ WORLD RELATION *****************************************/
 	
 	public World getWorld() {
-		return world;
+		return this.world;
 	}
 
 	public boolean hasProperWorld(){
-		return getWorld() != null;
+		return this.getWorld() != null;
 	}
 
 	void setWorld(World world) {
 		this.world = world;
 	}
 	
+	public boolean canHaveAsWorld(World world){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
 	private World world;
+	
+	public void terminate(){
+		this.isTerminated = true;
+	}
+	
+	private boolean isTerminated = false;
+	
+	/************************************************* HELPER CLASSES *****************************************/
 
 	/**
 	 * Set the time properties of Mazub.
@@ -100,9 +113,10 @@ public abstract class GameObject {
 		return this.timer;
 	}
 
-	private Timer timer;
-		
+	private Timer timer;	
 
+	/********************************************* SIZE AND POSITIONING ***************************************/
+	
 	/**
 	 * Return the rounded down x-location of Mazub's bottom left pixel.
 	 * 
@@ -204,6 +218,8 @@ public abstract class GameObject {
 	public static boolean isValidHeight(int height) {
 		return height > 0;
 	}
+	
+	/************************************************ MOVING *************************************************/
 
 	/**
 	 * Make Mazub start moving. Set the initial horizontal velocity and acceleration of Mazub,
@@ -267,6 +283,8 @@ public abstract class GameObject {
 	public boolean isMoving() {
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
 	}
+	
+	/********************************************* JUMPING AND FALLING ****************************************/
 
 	/**
 	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
@@ -330,6 +348,8 @@ public abstract class GameObject {
 		this.setAccelerationY( 0 );
 	}
 
+	/************************************************ CHARACTERISTICS *****************************************/
+	
 	/**
 	 * Return the x-location of Mazub's bottom left pixel.
 	 * 
@@ -713,7 +733,8 @@ public abstract class GameObject {
 	protected Orientation orientation;
 
 	
-	/******************************************************************* SPRITES *************************************************/
+	/****************************************************** SPRITES *******************************************/
+	
 	public Sprite getCurrentSprite(){
 		if(getOrientation() == Orientation.RIGHT){
 			return getSpriteAt(0);
@@ -730,7 +751,8 @@ public abstract class GameObject {
 
 	
 	
-	/********************************************************** CHARACTERISTICS UPDATERS *************************************************/
+	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
+	
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
 	 * 
@@ -815,6 +837,7 @@ public abstract class GameObject {
 	}
 
 	/*************************************************** HIT-POINTS *******************************************/
+	
 	public int getNbHitPoints() {
 		return this.nbHitPoints;
 	}

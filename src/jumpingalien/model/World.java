@@ -279,7 +279,7 @@ public class World {
 		
 		double minDt;
 		
-		for(Mazub alien: this.getAliens()){
+		for(Mazub alien: this.getAllMazubs()){
 				
 			// determine minDt
 			
@@ -304,7 +304,7 @@ public class World {
 	        }
 		}
 					
-		for(Shark shark: this.getSharks()){
+		for(Shark shark: this.getAllSharks()){
 			
 			// determine minDt
 			
@@ -329,7 +329,7 @@ public class World {
 	        }
 		}
 		
-		for(Slime slime: this.getSlimes()){
+		for(Slime slime: this.getAllSlimes()){
 			
 			// determine minDt
 			
@@ -354,7 +354,7 @@ public class World {
 	        }
 		}
 		
-		for(Plant plant: this.getPlants()){
+		for(Plant plant: this.getAllPlants()){
 			
 			// determine minDt
 			
@@ -431,49 +431,52 @@ public class World {
 //					}
 //				}
 				
+
 				
+				if ( (object.getPositionX() + (object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
+					 (object.getPositionX() + (object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
+					 // check right-bottom pixel
+				    (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
+					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
+					 // check right-top pixel
+					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
+					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
+					obstacleOrientations.add(Orientation.RIGHT);
+					}
 				
-//				if ( (getPositionOfTileX(feature.getKey()[0]) > object.getPositionX()) &&
-//					!(object.getPositionX() + (object.getWidth()-1) < getPositionOfTileX(feature.getKey()[0])))
-//					obstacleOrientations.add(Orientation.RIGHT);
-//				if ( (getPositionOfTileX(feature.getKey()[0]) < object.getPositionX()) &&
-//					!(getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1) < object.getPositionX()))
-//					obstacleOrientations.add(Orientation.LEFT);
-//				if ( (getPositionOfTileY(feature.getKey()[1]) > object.getPositionY()) &&
-//					!(object.getPositionY() + (object.getHeight()-1) < getPositionOfTileY(feature.getKey()[1])))
-//					obstacleOrientations.add(Orientation.UP);
-//				if ( (getPositionOfTileY(feature.getKey()[1]) < object.getPositionY()) &&
-//					!(getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1) < object.getPositionY()))
-//					obstacleOrientations.add(Orientation.DOWN);
-				
-//				if ( (object.getPositionX()+(object.getWidth()-1) >= getPositionOfTileX(feature.getKey()[0])) &&
-//					 (object.getPositionX()+(object.getWidth()-1) <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
-//					  (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
-//					  (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
-//					obstacleOrientations.add(Orientation.RIGHT);pr
-//				}
-//				
-//				if ( (object.getPositionX() >= getPositionOfTileX(feature.getKey()[0])) &&
-//					 (object.getPositionX() <= getPositionOfTileX(feature.getKey()[0]) + (this.tileLength-1)) &&
-//					 (object.getPositionY() > getPositionOfTileY(feature.getKey()[1])) &&
-//					 (object.getPositionY() < getPositionOfTileY(feature.getKey()[1]) + (this.tileLength-1))){
-//					obstacleOrientations.add(Orientation.LEFT);
-//				}
+				if ( (object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
+					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
+					 // check left-bottom pixel
+				   (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
+					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
+					 // check left-top pixel
+					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
+					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
+					obstacleOrientations.add(Orientation.LEFT);
+				}
 				
 				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
 					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
-					 (object.getPositionX() > getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() < getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))){
+					 // check left-top pixel
+				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
+					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
+					 // check right-top pixel
+					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
+					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
 					obstacleOrientations.add(Orientation.TOP);
 				}
 				
 				if ( (object.getPositionY() >= getPositionOfTileY(featureVector.getY())) &&
 					 (object.getPositionY() <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
-					 (object.getPositionX() > getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() < getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))){
+					 // check left-bottom pixel
+				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
+					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
+					 // check right-bottom pixel
+					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
+					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
 					obstacleOrientations.add(Orientation.BOTTOM);
-				}
-				
+					}
+							
 			}
 		}
 		//System.out.println(obstacleOrientations);
@@ -524,44 +527,6 @@ public class World {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	/**
-	 * Sets the given alien as the player's character in the given world.
-	 * 
-	 * @param world
-	 *            The world for which to set the player's character.
-	 * @param mazub
-	 *            The alien to be set as the player's character.
-	 */
-	public void setMazub(Mazub alien){
-		alien.setWorld(this);
-		aliens.add(alien);
-	}
-	
-	public Set<Mazub> getAliens(){
-		return this.aliens;
-	}
-	
-	public Set<Shark> getSharks(){
-		return this.sharks;
-	}
-	
-	public Set<Slime> getSlimes(){
-		return this.slimes;
-	}
-	
-	public Set<Plant> getPlants(){
-		return this.plants;
-	}
-	
-	public Set<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
-	public Set<Shark> sharks = new HashSet<Shark>();
-	public Set<Slime> slimes = new HashSet<Slime>();
-	public Set<Plant> plants = new HashSet<Plant>();
-	
-	
-	
-	
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
 	
@@ -637,4 +602,117 @@ public class World {
 	
 	private HashMap<VectorInt, Integer> geologicalFeatures = new HashMap<VectorInt, Integer>();
 	
+	/********************************************* RELATIONS *****************************************/
+	
+	public int getNbGameObjects(){
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getNbMazubs(){
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getNbSharks(){
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getNbSlimes(){
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getNbPlants(){
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public boolean canHaveAsGameObject(GameObject gameObject){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean canHaveAsMazub(Mazub mazub){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean canHaveAsShark(Shark shark){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean canHaveAsSlime(Slime slime){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean canHaveAsPlant(Plant plant){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean hasProperGameObjects(){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean hasAsGameObject(GameObject gameObject){
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	/**
+	 * Sets the given alien as the player's character in the given world.
+	 * 
+	 * @param world
+	 *            The world for which to set the player's character.
+	 * @param mazub
+	 *            The alien to be set as the player's character.
+	 */
+	public void addAsMazub(Mazub mazub){
+		mazub.setWorld(this);
+		mazubs.add(mazub);
+	}
+	
+	public void removeAsMazub(Mazub mazub){
+		// TODO Auto-generated method stub
+	}
+	
+	public void addAsGameObject(GameObject gameObject){
+		// TODO Auto-generated method stub
+	}
+	
+	public void removeAsGameObject(GameObject gameObject){
+		// TODO Auto-generated method stub
+	}
+	
+	public Set<Mazub> getAllMazubs(){
+		return this.mazubs;
+	}
+	
+	public Set<Shark> getAllSharks(){
+		return this.sharks;
+	}
+	
+	public Set<Slime> getAllSlimes(){
+		return this.slimes;
+	}
+	
+	public Set<Plant> getAllPlants(){
+		return this.plants;
+	}
+	
+	public Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	public Set<Shark> sharks = new HashSet<Shark>();
+	public Set<Slime> slimes = new HashSet<Slime>();
+	public Set<Plant> plants = new HashSet<Plant>();
+	
+	public void terminate(){
+		this.isTerminated = true;
+	}
+	
+	private boolean isTerminated = false;
 }
