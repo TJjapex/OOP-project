@@ -1,13 +1,9 @@
 package jumpingalien.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Timer;
 import jumpingalien.util.Sprite;
@@ -17,76 +13,46 @@ import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
-
 // Superclass for Mazub, Shark, Slime, Plant
+
 public abstract class GameObject {
 	/************************************************** GENERAL ***********************************************/
 	
-	
-	
 	/**
-	 * Constant reflecting the vertical acceleration for Mazubs.
+	 * Constant reflecting the vertical acceleration for game objects.
 	 * 
-	 * @return	The vertical acceleration of Mazubs is equal to -10.0 m/s^2.
+	 * @return	The vertical acceleration of GameObjects is equal to -10.0 m/s^2.
 	 * 			| result == -10.0
 	 */
 	public static final double ACCELERATION_Y = -10.0;
 	
-	/**
-	 * Constant reflecting the initial vertical velocity for Mazubs when jumping.
-	 * 
-	 * @return	The initial vertical velocity of Mazubs when jumping is equal to 8.0 m/s.
-	 * 			| result == 8.0
-	 */
-	public static final double VELOCITY_Y_INIT = 8.0;
-	
-	/**
-	 * Constant reflecting the maximal horizontal velocity for Mazubs when ducking.
-	 * 
-	 * @return	The maximal horizontal velocity of Mazubs when ducking is equal to 1.0 m/s.
-	 * 			| result == 1.0
-	 */
-	public static final double VELOCITY_X_MAX_DUCKING = 1.0;
-	
-	/**
-	 * Constant reflecting the horizontal acceleration for Mazubs when running.
-	 * 
-	 * @return	The horizontal acceleration of Mazubs when running is equal to 0.9 m/s^2. 
-	 * 			| result == 0.9
-	 */
-	public static final double ACCELERATION_X = 0.9;
-	
-	/**
-	 * Constant reflecting the maximal horizontal velocity for Mazubs when running.
-	 * 
-	 * @return	The maximal horizontal velocity of Mazubs when running.
-	 */
-	private static double VELOCITY_X_MAX_RUNNING;
-	
-	/**
-	 * Constant reflecting the maximal number of hit-points for a Mazub.
-	 * 
-	 * @return	The maximal number of hit-points for a Mazub.
-	 */
-	public static final int MAX_NB_HITPOINTS = 500;
+	public static final int GAME_WIDTH = 1024;
+	public static final int GAME_HEIGHT = 768;
 
 	/************************************************ CONSTRUCTOR *********************************************/
 
-	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
-				 Sprite[] sprites, int nbHitPoints)
-		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
+					  int maxNbHitPoints)
+	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		this.setPositionX(pixelLeftX);
 		this.setPositionY(pixelBottomY);
 
 		this.velocityXInit = velocityXInit;
+		this.velocityYInit = velocityYInit;
+		
+		this.setVelocityXMax(velocityXMax);
+		
+		this.accelerationXInit = accelerationXInit;
 		
 		this.setOrientation(Orientation.RIGHT);
 		
 		this.setNbHitPoints(nbHitPoints);
 		
-
+		this.maxNbHitPoints = maxNbHitPoints;
+		
 	}
 
 	
@@ -267,7 +233,7 @@ public abstract class GameObject {
 		
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
-		this.setAccelerationX( orientation.getSign() * ACCELERATION_X);
+		this.setAccelerationX( orientation.getSign() * accelerationXInit);
 	}
 
 	/**
@@ -311,7 +277,7 @@ public abstract class GameObject {
 	 * 			| new.getAccelerationY() == ACCELERATION_Y
 	 */
 	public void startJump() {
-		this.setVelocityY( VELOCITY_Y_INIT );
+		this.setVelocityY( this.getVelocityYInit() );
 		this.setAccelerationY( ACCELERATION_Y ); 
 	}
 
@@ -330,7 +296,7 @@ public abstract class GameObject {
 		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
 			this.setVelocityY(0);
 		}else{
-			throw new IllegalStateException("Mazub does not have a positive vertical velocity!");
+			throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
 		}
 	}
 
@@ -563,11 +529,17 @@ public abstract class GameObject {
 	public double getVelocityXInit() {
 		return this.velocityXInit;
 	}
+	
+	public double getVelocityYInit(){
+		return this.velocityYInit;
+	}
 
 	/**
 	 * Variable registering the initial horizontal velocity of this Mazub.
 	 */
 	protected final double velocityXInit;
+	
+	protected final double velocityYInit;
 
 	/**
 	 * Return the maximal horizontal velocity of Mazub.
@@ -690,6 +662,13 @@ public abstract class GameObject {
 	 */
 	private double accelerationY;
 
+	public double getAccelerationXInit() {
+		return this.accelerationXInit;
+	}
+	
+	protected final double accelerationXInit;
+
+	
 	/**
 	 * Return the orientation of Mazub.
 	 * 
@@ -841,13 +820,19 @@ public abstract class GameObject {
 	}
 
 	public void setNbHitPoints(int nbHitPoints) {
-		this.nbHitPoints = Math.max( Math.min(nbHitPoints, MAX_NB_HITPOINTS), 0);
+		this.nbHitPoints = Math.max( Math.min(nbHitPoints, this.getMaxNbHitPoints()), 0);
 	}
 
 	public boolean isValidNbHitPoints(int nbHitPoints) {
-		return (nbHitPoints <= MAX_NB_HITPOINTS);
+		return (nbHitPoints <= this.getMaxNbHitPoints());
 	}
 
 	private int nbHitPoints;
+	
+	public int getMaxNbHitPoints(){
+		return this.maxNbHitPoints;
+	}
+	
+	protected final int maxNbHitPoints;
 
 }

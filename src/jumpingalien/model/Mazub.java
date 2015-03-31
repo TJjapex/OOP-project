@@ -66,13 +66,6 @@ import jumpingalien.model.helper.Timer;
 public class Mazub extends GameObject{
 		
 	/************************************************** GENERAL ***********************************************/	
-	/**
-	 * Constant reflecting the initial vertical velocity for Mazubs when jumping.
-	 * 
-	 * @return	The initial vertical velocity of Mazubs when jumping is equal to 8.0 m/s.
-	 * 			| result == 8.0
-	 */
-	public static final double VELOCITY_Y_INIT = 8.0;
 	
 	/**
 	 * Constant reflecting the maximal horizontal velocity for Mazubs when ducking.
@@ -82,13 +75,6 @@ public class Mazub extends GameObject{
 	 */
 	public static final double VELOCITY_X_MAX_DUCKING = 1.0;
 	
-	/**
-	 * Constant reflecting the horizontal acceleration for Mazubs when running.
-	 * 
-	 * @return	The horizontal acceleration of Mazubs when running is equal to 0.9 m/s^2. 
-	 * 			| result == 0.9
-	 */
-	public static final double ACCELERATION_X = 0.9;
 	
 	/**
 	 * Constant reflecting the maximal horizontal velocity for Mazubs when running.
@@ -96,13 +82,6 @@ public class Mazub extends GameObject{
 	 * @return	The maximal horizontal velocity of Mazubs when running.
 	 */
 	private static double VELOCITY_X_MAX_RUNNING;
-	
-	/**
-	 * Constant reflecting the maximal number of hit-points for a Mazub.
-	 * 
-	 * @return	The maximal number of hit-points for a Mazub.
-	 */
-	public static final int MAX_NB_HITPOINTS = 500;
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 
@@ -161,12 +140,11 @@ public class Mazub extends GameObject{
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
 				 Sprite[] sprites, int nbHitPoints)
-		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
-		super(pixelLeftX, pixelBottomY, velocityXInit, velocityXMaxRunning, sprites, nbHitPoints);
+		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints,500);
 		
 		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
-		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
 		
 		this.setDucking(false);
 		
@@ -196,7 +174,7 @@ public class Mazub extends GameObject{
 	 * 				| ! isValidPositionY(positionY)
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException,
-				IllegalPositionYException{
+				IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100);
 	}
 	
@@ -332,7 +310,7 @@ public class Mazub extends GameObject{
 		
 		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);		
 		if(this.isMoving()){
-			this.setAccelerationX(this.getOrientation().getSign() * ACCELERATION_X);
+			this.setAccelerationX(this.getOrientation().getSign() * this.getAccelerationXInit());
 		}
 		
 		this.setDucking(false);

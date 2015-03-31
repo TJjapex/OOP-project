@@ -538,26 +538,26 @@ public class World {
 		aliens.add(alien);
 	}
 	
-	public HashSet<Mazub> getAliens(){
+	public Set<Mazub> getAliens(){
 		return this.aliens;
 	}
 	
-	public HashSet<Shark> getSharks(){
+	public Set<Shark> getSharks(){
 		return this.sharks;
 	}
 	
-	public HashSet<Slime> getSlimes(){
+	public Set<Slime> getSlimes(){
 		return this.slimes;
 	}
 	
-	public HashSet<Plant> getPlants(){
+	public Set<Plant> getPlants(){
 		return this.plants;
 	}
 	
-	public HashSet<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
-	public HashSet<Shark> sharks = new HashSet<Shark>();
-	public HashSet<Slime> slimes = new HashSet<Slime>();
-	public HashSet<Plant> plants = new HashSet<Plant>();
+	public Set<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	public Set<Shark> sharks = new HashSet<Shark>();
+	public Set<Slime> slimes = new HashSet<Slime>();
+	public Set<Plant> plants = new HashSet<Plant>();
 	
 	
 	
