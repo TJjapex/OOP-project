@@ -343,7 +343,7 @@ public abstract class GameObject {
 	 * 			| new.getAccelerationY() == 0
 	 */
 	@Raw
-	private void stopFall() {
+	protected void stopFall() {
 		this.setVelocityY( 0 );
 		this.setAccelerationY( 0 );
 	}
@@ -666,7 +666,7 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	private void setAccelerationY(double accelerationY) {
+	protected void setAccelerationY(double accelerationY) {
 		if (Double.isNaN(accelerationY)){
 			this.accelerationY = 0;
 		} else
@@ -857,5 +857,60 @@ public abstract class GameObject {
 	}
 	
 	protected final int maxNbHitPoints;
+	
+	
+	
+	
+	
+
+	
+	/******************************************** COLLISION *************************/
+	
+	public boolean doesCollide(){
+		return this.getWorld().objectCollides(this);
+
+		
+		/* Onderstaande is nu geimplementeerd in World, maar eigenlijk is die objectCollides(this) toch nie echt mooi */
+		
+//		// Check colision with tiles
+//		int[][] tiles = this.getWorld().getTilePositionsIn(	this.getRoundedPositionX(), 
+//															this.getRoundedPositionY(),
+//															this.getRoundedPositionX() + this.getWidth(), 
+//															this.getRoundedPositionY() + this.getHeight());
+//		for(int[] tile : tiles){
+//			
+//			if(this.getWorld().getGeologicalFeature(this.getWorld().getPositionOfTileX(tile[0]), this.getWorld().getPositionOfTileY(tile[1])) == 1 &&					
+//					this.doesCollideWith(this.getWorld().getPositionOfTileX(tile[0]), 
+//										this.getWorld().getPositionOfTileY(tile[1]), 
+//										this.getWorld().getTileLength(), 
+//										this.getWorld().getTileLength())){
+//				//System.out.println(this.getRoundedPositionX()+ " " + this.getRoundedPositionY());
+//				//System.out.println(this.getWorld().getPositionOfTileX(tile[0]) + " "+this.getWorld().getPositionOfTileY(tile[1]) );
+//				return true;
+//			}	
+//		}
+//		
+//		return false;
+		
+	}
+	
+	public boolean doesCollideWith(GameObject other){
+//		return (this.getPositionX() + ( this.getWidth() - 1) <  other.getPositionX()) 
+//				|| ( other.getPositionX() + (other.getWidth() - 1) < this.getPositionX())
+//				|| ( this.getPositionY() + (this.getHeight() - 1 ) < other.getPositionY())
+//				|| (other.getPositionY() + (other.getHeight() - 1) < this.getPositionY() )
+		
+		return doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+	}
+	
+	public boolean doesCollideWith(int x, int y, int width, int height){
+		return ! ( 
+				   (this.getPositionX() + ( this.getWidth() - 2) <  x) 
+				|| (x + (width - 1) < this.getPositionX())
+				|| ( this.getPositionY() + (this.getHeight() - 2 ) < y)
+				|| (y + (height - 2) < this.getPositionY() ) // -2 want mag 1 pixel overlappen, maar alleen met TILES?!
+				
+				);
+	}
 
 }

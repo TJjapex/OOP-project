@@ -1,9 +1,9 @@
 package jumpingalien.model;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -228,35 +228,34 @@ public class World {
 	// Bij deze methode moet nog eens goed nagedacht worden over de randgevallen (zie opmerking <= of <). Of misschien moet getTileX(pixelTop - 1 ) ipv getTileX(pixelTop)
 	// dat ga ik later eens checken
 	
-	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom,
-	int pixelRight, int pixelTop) {
+	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
 
-		//ArrayList<int[]> positions = new ArrayList<int[]>(); 
+		ArrayList<int[]> positions = new ArrayList<int[]>(); 
 		// In plaats van het aantal elementen op voorhand te bepalen kan dit ook met een ArrayList, ik weet nogn iet wat het beste is dus effe in comments laten staan
 
-		int nbCols = getTileX(pixelRight) - getTileX(pixelLeft)   + 1 ;
-		int nbRows = getTileY(pixelTop)   - getTileY(pixelBottom) + 1 ;
-		int nbPositions = nbRows * nbCols;
+		//int nbCols = getTileX(pixelRight) - getTileX(pixelLeft)   + 2 ;
+		//int nbRows = getTileY(pixelTop)   - getTileY(pixelBottom) + 2 ;
+		//int nbPositions = nbRows * nbCols + 1;
 		
-		int[][] positions = new int[nbPositions][2];
+		//int[][] positions = new int[nbPositions][2];
 		
 		/* Loop trough all positions inside the rectangle */
 		for(int row = getTileX(pixelBottom); row <= getTileX(pixelTop); row++){
 			for(int col = getTileX(pixelLeft); col <= getTileX(pixelRight); col++){ // <= of < ?
-				positions[nbCols * row + col] = new int[] {col, row};
+				//positions[nbCols * row + col] = new int[] {col, row};
 				
 				// Voor arrayList
-				//positions.add(new int[]{ col, row} );
+				positions.add(new int[]{ col, row} );
 			}
 		}
 		
 		// Om array te printen; Arrays.deepToString(theArray)
 		// System.out.println(Arrays.deepToString(positions));
 		
-		return positions;
+		//return positions;
 		
 		// Voor arrayList -> omzetten naar gewone array
-		//return  positions.toArray(new int[positions.size()][2]);
+		return  positions.toArray(new int[positions.size()][2]);
 	}
 
 	/******************************************** CHARACTERISTICS ********************************************/
@@ -282,208 +281,167 @@ public class World {
 		for(Mazub alien: this.getAllMazubs()){
 				
 			// determine minDt
+			double velocityMagnitude = Math.sqrt( Math.pow(alien.getVelocityX(), 2) + Math.sqrt( Math.pow(alien.getVelocityY(), 2)));
+			double accelerationMagnitude= Math.sqrt( Math.pow(alien.getAccelerationX(), 2) + Math.sqrt( Math.pow(alien.getAccelerationY(), 2)));
 			
-			minDt = Math.min(dt,Math.min(
-					 1/(Math.abs(alien.getVelocityX()/100)),
-					 1/(Math.abs(alien.getVelocityY()/100))));
-			if (!Util.fuzzyEquals(alien.getAccelerationX(), 0))
-				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(alien.getAccelerationX())/100 +
-				Math.pow(alien.getVelocityX()/100, 2)) - Math.abs(alien.getVelocityX()/100))/
-				Math.abs(alien.getAccelerationX()/100) );
-			if (!Util.fuzzyEquals(alien.getAccelerationY(), 0))
-				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(alien.getAccelerationY())/100 +
-				Math.pow(alien.getVelocityY()/100, 2)) - Math.abs(alien.getVelocityY()/100))/
-				Math.abs(alien.getAccelerationY()/100) );
+			minDt = Math.min( dt,  0.01/ (velocityMagnitude + accelerationMagnitude* dt));
 			
 			// iteratively advance time
 			//System.out.println(minDt);
 			for(int i=0; i<(dt/minDt); i++){
-				
 				alien.advanceTime(minDt);
-				
 	        }
 		}
-					
-		for(Shark shark: this.getAllSharks()){
-			
-			// determine minDt
-			
-			minDt = Math.min(dt,Math.min(
-					 1/(Math.abs(shark.getVelocityX()/100)),
-					 1/(Math.abs(shark.getVelocityY()/100))));
-			if (!Util.fuzzyEquals(shark.getAccelerationX(), 0))
-				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationX())/100 +
-				Math.pow(shark.getVelocityX()/100, 2)) - Math.abs(shark.getVelocityX()/100))/
-				Math.abs(shark.getAccelerationX()/100) );
-			if (!Util.fuzzyEquals(shark.getAccelerationY(), 0))
-				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationY())/100 +
-				Math.pow(shark.getVelocityY()/100, 2)) - Math.abs(shark.getVelocityY()/100))/
-				Math.abs(shark.getAccelerationY()/100) );
-			
-			// iteratively advance time
-			
-			for(int i=0; i<(dt/minDt); i++){
-				
-				shark.advanceTime(minDt);
-				
-	        }
-		}
-		
-		for(Slime slime: this.getAllSlimes()){
-			
-			// determine minDt
-			
-			minDt = Math.min(dt,Math.min(
-					 1/(Math.abs(slime.getVelocityX()/100)),
-					 1/(Math.abs(slime.getVelocityY()/100))));
-			if (!Util.fuzzyEquals(slime.getAccelerationX(), 0))
-				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationX())/100 +
-				Math.pow(slime.getVelocityX()/100, 2)) - Math.abs(slime.getVelocityX()/100))/
-				Math.abs(slime.getAccelerationX()/100) );
-			if (!Util.fuzzyEquals(slime.getAccelerationY(), 0))
-				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationY())/100 +
-				Math.pow(slime.getVelocityY()/100, 2)) - Math.abs(slime.getVelocityY()/100))/
-				Math.abs(slime.getAccelerationY()/100) );
-			
-			// iteratively advance time
-			
-			for(int i=0; i<(dt/minDt); i++){
-				
-				slime.advanceTime(minDt);
-					
-	        }
-		}
-		
-		for(Plant plant: this.getAllPlants()){
-			
-			// determine minDt
-			
-			minDt = Math.min(dt,1/(Math.abs(plant.getVelocityX()/100)));
-			
-			// iteratively advance time
-			
-			for(int i=0; i<(dt/minDt); i++){
-				
-				plant.advanceTime(minDt);
-				
-	        }
-		}
+//					
+//		for(Shark shark: this.getAllSharks()){
+//			
+//			// determine minDt
+//			
+//			minDt = Math.min(dt,Math.min(
+//					 1/(Math.abs(shark.getVelocityX()/100)),
+//					 1/(Math.abs(shark.getVelocityY()/100))));
+//			if (!Util.fuzzyEquals(shark.getAccelerationX(), 0))
+//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationX())/100 +
+//				Math.pow(shark.getVelocityX()/100, 2)) - Math.abs(shark.getVelocityX()/100))/
+//				Math.abs(shark.getAccelerationX()/100) );
+//			if (!Util.fuzzyEquals(shark.getAccelerationY(), 0))
+//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationY())/100 +
+//				Math.pow(shark.getVelocityY()/100, 2)) - Math.abs(shark.getVelocityY()/100))/
+//				Math.abs(shark.getAccelerationY()/100) );
+//			
+//			// iteratively advance time
+//			
+//			for(int i=0; i<(dt/minDt); i++){
+//				
+//				shark.advanceTime(minDt);
+//				
+//	        }
+//		}
+//		
+//		for(Slime slime: this.getAllSlimes()){
+//			
+//			// determine minDt
+//			
+//			minDt = Math.min(dt,Math.min(
+//					 1/(Math.abs(slime.getVelocityX()/100)),
+//					 1/(Math.abs(slime.getVelocityY()/100))));
+//			if (!Util.fuzzyEquals(slime.getAccelerationX(), 0))
+//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationX())/100 +
+//				Math.pow(slime.getVelocityX()/100, 2)) - Math.abs(slime.getVelocityX()/100))/
+//				Math.abs(slime.getAccelerationX()/100) );
+//			if (!Util.fuzzyEquals(slime.getAccelerationY(), 0))
+//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationY())/100 +
+//				Math.pow(slime.getVelocityY()/100, 2)) - Math.abs(slime.getVelocityY()/100))/
+//				Math.abs(slime.getAccelerationY()/100) );
+//			
+//			// iteratively advance time
+//			
+//			for(int i=0; i<(dt/minDt); i++){
+//				
+//				slime.advanceTime(minDt);
+//					
+//	        }
+//		}
+//		
+//		for(Plant plant: this.getAllPlants()){
+//			
+//			// determine minDt
+//			
+//			minDt = Math.min(dt,1/(Math.abs(plant.getVelocityX()/100)));
+//			
+//			// iteratively advance time
+//			
+//			for(int i=0; i<(dt/minDt); i++){
+//				
+//				plant.advanceTime(minDt);
+//				
+//	        }
+//		}
 		
 		// the separate for statements for each type of game object results in redundant code...
 		
 	}
 	
-//	public static List<Orientation> collidesWith(Mazub object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
+	public boolean objectCollides(GameObject object){
+		
+		// Check collision with tiles
+		int[][] tiles = getTilePositionsIn(	object.getRoundedPositionX(), 
+											object.getRoundedPositionY(),
+											object.getRoundedPositionX() + object.getWidth(), 
+											object.getRoundedPositionY() + object.getHeight());
+		for(int[] tile : tiles){
+			// Check if that tile is passable 
+			// and if the given object collides with a tile...
+			if(this.getGeologicalFeature(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1])) == 1 && 
+					object.doesCollideWith(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1]), getTileLength(), getTileLength())){
+				return true;
+			}	
+		}
+		
+		return false;
+		
+	}	
+	
+
+// Nog effe houden, misschien moeten we later nog voor iets weten aan welke kant er colission was
+//	public Set<Orientation> collidesWith(GameObject object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
 //		
-//		// needs to iterate over all possible obstacles ( near game objects and geological features)
+//		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
 //		
-//		List<Orientation> obstacleOrientations = new ArrayList<Orientation>();
-//		
-//		// check if object overlaps with obstacles to the right
-//		
-//		if (!(object.getPositionX() + (object.getWidth()-1) < obstacle.getPositionX()))
-//			obstacleOrientations.add(Orientation.RIGHT);
-//		
-//		// check if object overlaps with obstacles to the left
-//		
-//		if (!(obstacle.getPositionX() + (obstacle.getWidth()-1) < object.getPositionX()))
-//			obstacleOrientations.add(Orientation.LEFT);
+//		for (Entry<VectorInt, Integer> feature: geologicalFeatures.entrySet()){
+//			if (feature.getValue() == 1){
+//				VectorInt featureVector = feature.getKey(); 
 //				
-//		// check if object overlaps with obstacles above
-//		
-//		if (!(object.getPositionY() + (object.getHeight()-1) < obstacle.getPositionY()))
-//			obstacleOrientations.add(Orientation.UP);
-//		
-//		// check if object overlaps with objects underneath
-//		
-//		if (!(obstacle.getPositionY() + (obstacle.getHeight()-1) < object.getPositionY()))
-//			obstacleOrientations.add(Orientation.DOWN);
+//				if ( (object.getPositionX() + (object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
+//					 (object.getPositionX() + (object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
+//					 // check right-bottom pixel
+//				    (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
+//					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
+//					 // check right-top pixel
+//					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
+//					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
+//					obstacleOrientations.add(Orientation.RIGHT);
+//					}
+//				
+//				if ( (object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
+//					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
+//					 // check left-bottom pixel
+//				   (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
+//					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
+//					 // check left-top pixel
+//					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
+//					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
+//					obstacleOrientations.add(Orientation.LEFT);
+//				}
+//				
+//				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
+//					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
+//					 // check left-top pixel
+//				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
+//					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
+//					 // check right-top pixel
+//					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
+//					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
+//					obstacleOrientations.add(Orientation.TOP);
+//				}
+//				
+//				if ( (object.getPositionY() >= getPositionOfTileY(featureVector.getY())) &&
+//					 (object.getPositionY() <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
+//					 // check left-bottom pixel
+//				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
+//					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
+//					 // check right-bottom pixel
+//					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
+//					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
+//					obstacleOrientations.add(Orientation.BOTTOM);
+//					}
+//							
+//			}
+//		}
+//		//System.out.println(obstacleOrientations);
 //		
 //		return obstacleOrientations;
 //	}
-	
-	public Set<Orientation> collidesWith(GameObject object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
-		
-		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-		
-		for (Entry<VectorInt, Integer> feature: geologicalFeatures.entrySet()){
-			if (feature.getValue() == 1){
-				VectorInt featureVector = feature.getKey(); 
-				
-				// Minkowski sum
-//				double featureX = feature.getKey()[0];
-//				double featureY = feature.getKey()[1];
-//				
-//				double wy = (object.getWidth() + getTileLength()) * ( ( object.getPositionY() + 0.5*object.getHeight() ) - (featureY + 0.5*getTileLength()) );
-//				double hx = (object.getHeight() + getTileLength()) * ( ( object.getPositionX() + 0.5*object.getWidth() ) - (featureX + 0.5*getTileLength()) );
-//				
-//				if(wy > hx){
-//					if(wy > -hx){
-//						obstacleOrientations.add(Orientation.LEFT);
-//					}else{
-//						obstacleOrientations.add(Orientation.RIGHT);
-//					}
-//				}else{
-//					if( wy > - hx){
-//						obstacleOrientations.add(Orientation.BOTTOM);
-//					}else{
-//						obstacleOrientations.add(Orientation.TOP);
-//					}
-//				}
-				
-
-				
-				if ( (object.getPositionX() + (object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() + (object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
-					 // check right-bottom pixel
-				    (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
-					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
-					 // check right-top pixel
-					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
-					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
-					obstacleOrientations.add(Orientation.RIGHT);
-					}
-				
-				if ( (object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
-					 // check left-bottom pixel
-				   (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
-					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
-					 // check left-top pixel
-					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
-					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
-					obstacleOrientations.add(Orientation.LEFT);
-				}
-				
-				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
-					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
-					 // check left-top pixel
-				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
-					 // check right-top pixel
-					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
-					obstacleOrientations.add(Orientation.TOP);
-				}
-				
-				if ( (object.getPositionY() >= getPositionOfTileY(featureVector.getY())) &&
-					 (object.getPositionY() <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
-					 // check left-bottom pixel
-				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
-					 // check right-bottom pixel
-					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
-					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
-					obstacleOrientations.add(Orientation.BOTTOM);
-					}
-							
-			}
-		}
-		//System.out.println(obstacleOrientations);
-		
-		return obstacleOrientations;
-	}
-	
 	
 	// Help functions
 	
@@ -516,7 +474,7 @@ public class World {
 //		// TODO Auto-generated method stub
 //		return 0;
 //	}
-	// Volgens mij istttttttt dit wat er onder geological features wordt bedoeld.
+	// Volgens mij is dit wat er onder geological features wordt bedoeld.
 
 	public boolean isGameOver() {
 		// TODO Auto-generated method stub

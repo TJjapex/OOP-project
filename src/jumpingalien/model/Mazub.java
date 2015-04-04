@@ -17,7 +17,7 @@ import jumpingalien.model.helper.Timer;
 // All aspects shall be specified both formally and informally.
 
 /**
- * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
+ * A class of Mazubs, characters for a 2D platform game with several properwwssqz					 ties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
  *
  *
@@ -151,6 +151,7 @@ public class Mazub extends GameObject{
 		// Separate timer and animation for all game object types?
 		this.setTimer( new Timer() );
 		this.setAnimation( new Animation(sprites) );
+		
 	}
 	
 	/**
@@ -305,15 +306,25 @@ public class Mazub extends GameObject{
 	 * 				| !this.isDucking()
 	 */
 	public void endDuck() throws IllegalStateException{
+		// Check
+		if(this.doesCollide())
+			throw new IllegalStateException("Colission before invocation");
+		
 		if(!this.isDucking())
-			throw new IllegalStateException("Mazub not ducking!");
+			throw new IllegalStateException("Mazub not ducking!");		
 		
 		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);		
 		if(this.isMoving()){
 			this.setAccelerationX(this.getOrientation().getSign() * this.getAccelerationXInit());
 		}
 		
+		this.setShouldEndDucking(false);
 		this.setDucking(false);
+		
+		if(this.doesCollide()){
+			this.setDucking(true);
+			this.setShouldEndDucking(true);
+		}
 		
 	}	
 	
@@ -344,6 +355,19 @@ public class Mazub extends GameObject{
 	 * Variable registering the ducking status of this Mazub.
 	 */
 	private boolean ducking;
+	
+	
+	@Basic
+	public boolean shouldEndDucking(){
+		return this.shouldEndDucking;
+	}
+	
+	@Basic
+	public void setShouldEndDucking(boolean shouldEndDucking){
+		this.shouldEndDucking = shouldEndDucking;
+	}
+	
+	private boolean shouldEndDucking;
 	
 	/************************************************ CHARACTERISTICS *****************************************/
 	
@@ -423,45 +447,70 @@ public class Mazub extends GameObject{
 	public void advanceTime(double dt) throws IllegalArgumentException {
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-		if( !hasProperWorld()){
+		if( !hasProperWorld())
 			throw new IllegalStateException(" This Mazub is not in world!");
-		}
+		if( this.doesCollide())
+			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
 		
 		
 		double oldPositionX = this.getPositionX();
 		double oldPositionY = this.getPositionY();
 		
+	
 		// Update horizontal position
-		updatePositionX(dt);
+		this.updatePositionX(dt);
+		
+		// Update horizontal velocity
+		this.updateVelocityX(dt);
+		
+		if( this.doesCollide() ){
+			this.setPositionX(oldPositionX);
+			this.endMove(this.getOrientation());
+		}
 				
 		// Update vertical position
 		this.updatePositionY(dt);		
-				
-		// Update horizontal velocity
-		this.updateVelocityX(dt);
 		
 		// Update vertical velocity
 		this.updateVelocityY(dt);
 		
-		// Dummy world to test the collision detection algorithm because Mazub has no relation with a World yet
-		
-		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-		obstacleOrientations = getWorld().collidesWith(this);
-		
-		//Y axis
-		for(Orientation obstacleOrientation: obstacleOrientations){
-			// horizontal
-			if (this.orientation == obstacleOrientation){
-				this.setPositionX(oldPositionX);
-				this.setVelocityX(0);
+		if( this.doesCollide() ) {
+			this.setPositionY(oldPositionY);
+			
+			if(this.getVelocityY() > 0){
+				this.endJump();
+			}else{
+				this.stopFall();
 			}
-			// vertical
-			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
-				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
-				this.setPositionY(oldPositionY);
-				this.setVelocityY(0);
-			}
+			
+		}else{
+			
+			// Ugly...
+			this.setAccelerationY(-10);
 		}
+		
+		// Ducking
+		if(this.shouldEndDucking()){
+			this.endDuck();
+		}
+		
+//		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
+//		obstacleOrientations = getWorld().collidesWith(this);
+//		
+		//Y axis
+//		for(Orientation obstacleOrientation: obstacleOrientations){
+//			// horizontal
+//			if (this.orientation == obstacleOrientation){
+//				this.setPositionX(oldPositionX);
+//				//this.setVelocityX(0);
+//			}
+//			// vertical
+//			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
+//				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
+//				this.setPositionY(oldPositionY);
+//				this.setVelocityY(0);
+//			}
+//		}
 		
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);
