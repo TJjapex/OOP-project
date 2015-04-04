@@ -142,7 +142,7 @@ public class Mazub extends GameObject{
 				 Sprite[] sprites, int nbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
-		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints,500);
+		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints, 500);
 		
 		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
 		

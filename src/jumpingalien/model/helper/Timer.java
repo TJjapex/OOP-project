@@ -104,9 +104,24 @@ public class Timer {
 		setSinceLastSprite(getSinceLastSprite() + dt);
 	}
 
+	
+
 	/**
 	 * Variable registering the time since the last sprite was activated for this Timer.
 	 */
 	private double sinceLastSprite;
+	
+	
+	// Water
+	public double getSinceWater() {
+		return this.sinceWater;
+	}
+
+	public void setSinceWater(double sinceWater) {
+		this.sinceWater = sinceWater;
+	}
+	
+	private double sinceWater;
+	
 		
 }

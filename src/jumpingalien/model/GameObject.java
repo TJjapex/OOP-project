@@ -47,11 +47,10 @@ public abstract class GameObject {
 		
 		this.accelerationXInit = accelerationXInit;
 		
-		this.setOrientation(Orientation.RIGHT);
-		
-		this.setNbHitPoints(nbHitPoints);
+		this.setOrientation(Orientation.RIGHT);		
 		
 		this.maxNbHitPoints = maxNbHitPoints;
+		this.setNbHitPoints(nbHitPoints);
 		
 	}
 
@@ -839,6 +838,7 @@ public abstract class GameObject {
 	/*************************************************** HIT-POINTS *******************************************/
 	
 	public int getNbHitPoints() {
+		System.out.println(this.nbHitPoints);
 		return this.nbHitPoints;
 	}
 

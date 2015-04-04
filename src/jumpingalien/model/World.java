@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.TileType;
 import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
@@ -284,85 +285,22 @@ public class World {
 			double velocityMagnitude = Math.sqrt( Math.pow(alien.getVelocityX(), 2) + Math.sqrt( Math.pow(alien.getVelocityY(), 2)));
 			double accelerationMagnitude= Math.sqrt( Math.pow(alien.getAccelerationX(), 2) + Math.sqrt( Math.pow(alien.getAccelerationY(), 2)));
 			
-			minDt = Math.min( dt,  0.01/ (velocityMagnitude + accelerationMagnitude* dt));
+			minDt = Math.min( dt,  0.01/ (velocityMagnitude + accelerationMagnitude* dt) );
 			
-			// iteratively advance time
-			//System.out.println(minDt);
+			// iteratively advance time;
 			for(int i=0; i<(dt/minDt); i++){
 				alien.advanceTime(minDt);
 	        }
 		}
-//					
-//		for(Shark shark: this.getAllSharks()){
-//			
-//			// determine minDt
-//			
-//			minDt = Math.min(dt,Math.min(
-//					 1/(Math.abs(shark.getVelocityX()/100)),
-//					 1/(Math.abs(shark.getVelocityY()/100))));
-//			if (!Util.fuzzyEquals(shark.getAccelerationX(), 0))
-//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationX())/100 +
-//				Math.pow(shark.getVelocityX()/100, 2)) - Math.abs(shark.getVelocityX()/100))/
-//				Math.abs(shark.getAccelerationX()/100) );
-//			if (!Util.fuzzyEquals(shark.getAccelerationY(), 0))
-//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(shark.getAccelerationY())/100 +
-//				Math.pow(shark.getVelocityY()/100, 2)) - Math.abs(shark.getVelocityY()/100))/
-//				Math.abs(shark.getAccelerationY()/100) );
-//			
-//			// iteratively advance time
-//			
-//			for(int i=0; i<(dt/minDt); i++){
-//				
-//				shark.advanceTime(minDt);
-//				
-//	        }
-//		}
-//		
-//		for(Slime slime: this.getAllSlimes()){
-//			
-//			// determine minDt
-//			
-//			minDt = Math.min(dt,Math.min(
-//					 1/(Math.abs(slime.getVelocityX()/100)),
-//					 1/(Math.abs(slime.getVelocityY()/100))));
-//			if (!Util.fuzzyEquals(slime.getAccelerationX(), 0))
-//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationX())/100 +
-//				Math.pow(slime.getVelocityX()/100, 2)) - Math.abs(slime.getVelocityX()/100))/
-//				Math.abs(slime.getAccelerationX()/100) );
-//			if (!Util.fuzzyEquals(slime.getAccelerationY(), 0))
-//				minDt = Math.min(minDt, (Math.sqrt(2*Math.abs(slime.getAccelerationY())/100 +
-//				Math.pow(slime.getVelocityY()/100, 2)) - Math.abs(slime.getVelocityY()/100))/
-//				Math.abs(slime.getAccelerationY()/100) );
-//			
-//			// iteratively advance time
-//			
-//			for(int i=0; i<(dt/minDt); i++){
-//				
-//				slime.advanceTime(minDt);
-//					
-//	        }
-//		}
-//		
-//		for(Plant plant: this.getAllPlants()){
-//			
-//			// determine minDt
-//			
-//			minDt = Math.min(dt,1/(Math.abs(plant.getVelocityX()/100)));
-//			
-//			// iteratively advance time
-//			
-//			for(int i=0; i<(dt/minDt); i++){
-//				
-//				plant.advanceTime(minDt);
-//				
-//	        }
-//		}
-		
-		// the separate for statements for each type of game object results in redundant code...
 		
 	}
 	
 	public boolean objectCollides(GameObject object){
+		return getColissionTypes(object).contains(1);
+	}	
+	
+	public Set<Integer> getColissionTypes(GameObject object){
+		Set<Integer> colissionTypes = new HashSet<Integer>();
 		
 		// Check collision with tiles
 		int[][] tiles = getTilePositionsIn(	object.getRoundedPositionX(), 
@@ -372,15 +310,14 @@ public class World {
 		for(int[] tile : tiles){
 			// Check if that tile is passable 
 			// and if the given object collides with a tile...
-			if(this.getGeologicalFeature(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1])) == 1 && 
-					object.doesCollideWith(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1]), getTileLength(), getTileLength())){
-				return true;
-			}	
+			
+			if(object.doesCollideWith(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1]), getTileLength(), getTileLength())){
+				colissionTypes.add(this.getGeologicalFeature(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1])));	
+			}
 		}
 		
-		return false;
-		
-	}	
+		return colissionTypes;
+	}
 	
 
 // Nog effe houden, misschien moeten we later nog voor iets weten aan welke kant er colission was
