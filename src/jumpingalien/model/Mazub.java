@@ -525,7 +525,7 @@ public class Mazub extends GameObject{
 
 	
 	
-	/************************************************************* COLISSION *************************************************/
+	/************************************************************* COLLISION *************************************************/
 	
 	
 	public void processTileCollision(){
@@ -539,28 +539,7 @@ public class Mazub extends GameObject{
 				}
 			}
 		}
-	}
-	
-//	/**
-//	 * As long as any of the Mazub's perimeters overlap with a terrain tile containing water, Mazub's hitpoints shall be decreased by 2 per 0.2s
-//	 */
-//	public void processWaterCollision(){	
-//		if( getTimer().getSinceWaterCollission() > 0.2 ){ // > of >=? fuzzy?
-//			increaseNbHitPoints(-Terrain.WATER.getDamage());
-//			getTimer().setSinceWaterCollision(0);
-//		}
-//	}
-//	
-//	/**
-//	 * As long as any of the Mazub's perimeters overlap with a terrain tile containing magma, Mazub's hitpoints shall be decreased by 50 per 0.2s
-//	 */
-//	public void processMagmaCollision(){	
-//		if( getTimer().getSinceMagmaCollission() > 0.2 ){ // > of >=? fuzzy?
-//			increaseNbHitPoints(-Terrain.MAGMA.getDamage());
-//			getTimer().setSinceMagmaCollision(0);
-//		}
-//	}
-//	
+	}	
 	
 	public void processPlantCollision(Plant plant){
 		if(!plant.isKilled()){
@@ -575,26 +554,7 @@ public class Mazub extends GameObject{
 	
 	public void processSlimeCollision(){
 		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 	
 	/**
 	 * Returns whether the given alien is currently immune against enemies (see

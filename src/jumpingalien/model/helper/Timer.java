@@ -120,37 +120,6 @@ public class Timer {
 	 */
 	private double sinceLastSprite;	
 	
-	
-//	// Water
-//	public double getSinceWaterCollission() {
-//		return this.sinceWaterCollision;
-//	}
-//
-//	public void setSinceWaterCollision(double sinceWaterCollision) {
-//		this.sinceWaterCollision = sinceWaterCollision;
-//	}
-//
-//	public void increaseSinceWaterCollision(double dt) {
-//		setSinceWaterCollision(getSinceWaterCollission() + dt);
-//	}
-//	
-//	private double sinceWaterCollision;
-//	
-//	// Magma
-//	public double getSinceMagmaCollission() {
-//		return this.sinceMagmaCollision;
-//	}
-//
-//	public void setSinceMagmaCollision(double sinceMagmaCollision) {
-//		this.sinceMagmaCollision = sinceMagmaCollision;
-//	}
-//
-//	public void increaseSinceMagmaCollision(double dt) {
-//		setSinceMagmaCollision(getSinceMagmaCollission() + dt);
-//	}
-
-	//private double sinceMagmaCollision;
-	
 	// Kill
 	public double getSinceKilled() {
 		return sinceKilled;

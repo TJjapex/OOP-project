@@ -92,6 +92,7 @@ public class World {
 	
 	//  * inspect position (bottom-left corner) of the display window
 	public int getDisplayPositionX(){
+		// TODO Dit implementeren
 		return 0;
 	}
 	
@@ -283,7 +284,7 @@ public class World {
 		for(Mazub alien: this.getAllMazubs()){
 			
 			// determine minDt			
-			minDt = Math.min( dt,  0.01/ (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );
+			minDt = Math.min( dt,  0.01 / (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );
 			
 			// iteratively advance time;
 			for(int i=0; i<(dt/minDt); i++){
@@ -291,14 +292,14 @@ public class World {
 	        }
 		}
 		
-		for(Plant plant: this.getAllPlants()){
+		for(GameObject object: this.getAllEnemies()){
 			
 			// determine minDt			
-			minDt = Math.min( dt,  0.01/ ( plant.getVelocityMagnitude()) );
+			minDt = Math.min( dt,  0.01 / ( object.getVelocityMagnitude() + object.getAccelerationMagnitude()* dt) );
 			
 			// iteratively advance time;
 			for(int i=0; i<(dt/minDt); i++){
-				plant.advanceTime(minDt);
+				object.advanceTime(minDt);
 	        }
 		}
 		
@@ -409,8 +410,7 @@ public class World {
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
 	
-	public static Terrain tileTypeIndexToType(int tileTypeIndex){
-		
+	public static Terrain tileTypeIndexToType(int tileTypeIndex){ // Slechte naam	
 		switch(tileTypeIndex){
 			case 0:
 				return Terrain.AIR;
@@ -424,7 +424,6 @@ public class World {
 			default:
 				return Terrain.AIR;
 		}
-
 	}
 	
 	
@@ -565,11 +564,18 @@ public class World {
 	// Getters
 	
 	public Set<Mazub> getAllMazubs(){
-		return this.aliens;
+		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(this.mazubs);
+		return mazubsClone;
 	}
 	
-	public ArrayList<Plant> getAllPlants(){
-		return (ArrayList<Plant>) this.plants.clone();
+	public Set<GameObject> getAllEnemies(){
+		Set<GameObject> allEnemies = new HashSet<GameObject>(getAllPlants());
+		return allEnemies; // + nog sharks toevogen enzo
+	}
+
+	public Set<Plant> getAllPlants(){
+		Set<Plant> newPlants =  new HashSet<Plant>(this.plants);
+		return newPlants;
 	}
 //	public Set<Shark> getAllSharks(){
 //		return this.sharks;
@@ -585,7 +591,7 @@ public class World {
 	
 	public void addMazub(Mazub alien){
 		alien.setWorld(this);
-		aliens.add(alien);
+		mazubs.add(alien);
 	}
 	public void addPlant(Plant plant){
 		plant.setWorld(this);
@@ -599,7 +605,7 @@ public class World {
 	}
 	
 	public int getNbMazubs(){
-		return aliens.size();
+		return mazubs.size();
 	}
 	
 	public int getNbPlants(){
@@ -619,7 +625,7 @@ public class World {
 	public void removeGameObject(GameObject gameObject){
 		
 		// Ugly & tricky maar werkt... of isinstance gebruiken...
-		aliens.remove(gameObject);
+		mazubs.remove(gameObject);
 		plants.remove(gameObject);
 //		sharks.remove(gameObject);
 //		slimes.remove(gameObject);
@@ -627,17 +633,19 @@ public class World {
 	
 	// Vars
 	
-	public Set<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
-	public ArrayList<Plant> plants = new ArrayList<Plant>();
+	public Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	public Set<Plant> plants = new HashSet<Plant>();
+//	public Set<Shark> sharks = new HashSet<Shark>();
+//	public Set<Slime> slimes = new HashSet<Slime>();
 	
 	
 	
 	
-	
+	// Termination
 	
 	public void terminate(){
-		this.isTerminated = true;
+		this.terminated = true;
 	}
 	
-	private boolean isTerminated = false;
+	private boolean terminated = false;
 }

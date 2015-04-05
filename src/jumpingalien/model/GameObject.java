@@ -796,6 +796,8 @@ public abstract class GameObject {
 	
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
+	// TODO Eventueel een versie van advanceTime hier uitwerken die dingen doet die alle mazubs/plants/sharks nodig hebben en dan doorlinken naar advanceTime2 die dan gedefinieerd is in de subklassen
+	abstract public void advanceTime(double dt);
 	
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
@@ -906,13 +908,7 @@ public abstract class GameObject {
 	
 	protected final int maxNbHitPoints;
 	
-	
-	
-	
-	
-
-	
-	/*********************************$$$*********************** COLLISION ****************************************************/
+	/********************************************************** COLLISION ****************************************************/
 	
 	/* Checking */
 	
@@ -943,7 +939,7 @@ public abstract class GameObject {
 	}	
 	
 	/**
-	 * Checks if this object collides with (another) given object
+	 * Checks if this object collides with (another) given gameobject
 	 * @param other
 	 * @return
 	 */
@@ -985,11 +981,7 @@ public abstract class GameObject {
 	}
 	
 	public void processTileCollision(){
-		Set<Terrain> collisionTileTypes = getColissionTileTypes();
 		
-		for(Terrain terrain : collisionTileTypes){
-			
-		}
 	}
 	
 	public void processWaterCollision(){
@@ -1019,6 +1011,8 @@ public abstract class GameObject {
 		
 	}
 	
+	// Onderstaande methodes worden nu uitgewerkt in de subklasses, dus misschien abstract maken. 
+	// Misschien is het beter om da samen te voegen ofzo zoals bij die tiles
 	public void processPlantCollision(Plant plant){
 		
 	}
