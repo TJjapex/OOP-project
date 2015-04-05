@@ -149,9 +149,6 @@ public class Mazub extends GameObject{
 		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
 		
 		this.setDucking(false);
-		
-		// Separate timer and animation for all game object types?
-		this.setTimer( new Timer() );		
 	}
 	
 	/**
@@ -468,7 +465,6 @@ public class Mazub extends GameObject{
 		getAnimation().updateAnimationIndex(this.getTimer());
 		
 		// Other
-		//getTimer().increaseSinceWaterCollision(dt);
 		getTimer().increaseSinceLastCollision(dt);
 		
 		
@@ -512,7 +508,7 @@ public class Mazub extends GameObject{
 			
 		}else{
 			
-			// Ugly...
+			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
 			this.setAccelerationY(-10);
 		}
 		

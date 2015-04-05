@@ -14,16 +14,21 @@ import be.kuleuven.cs.som.annotate.Value;
 
 @Value
 public enum Terrain {
-	AIR(0, true, 0, Double.POSITIVE_INFINITY),
-	SOLID(1, false, 0, Double.POSITIVE_INFINITY),
-	WATER(2, true, 2, 0.2),
-	MAGMA(3, true, 50, 0.2);
 	
+	// Values
+	AIR		(0, true, 0, Double.POSITIVE_INFINITY),
+	SOLID	(1, false, 0, Double.POSITIVE_INFINITY),
+	WATER	(2, true, 2, 0.2),
+	MAGMA	(3, true, 50, 0.2);
+	
+	
+	// Variables
 	private final int id;
 	private final boolean passable;
 	private final int damage;
 	private final double damageTime;
-
+	
+	// Constructor
 	private Terrain(int id, boolean passable, int damage, double damageTime) {
 		this.id = id;
 		this.passable = passable;
@@ -31,6 +36,8 @@ public enum Terrain {
 		this.damageTime = damageTime;
 	}
 	
+	
+	// Getters
 	public int getId(){
 		return this.id;
 	}

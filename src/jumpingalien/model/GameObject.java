@@ -149,22 +149,6 @@ public abstract class GameObject {
 	public int getRoundedPositionX() {
 		return (int) Math.floor(this.getPositionX());
 	}
-
-//	Dit gaat niet meer omdat de wereldgrootte geen constante is :(
-//	/**
-//	 * Check whether the given X position is a valid X position.
-//	 * 
-//	 * @param 	positionX
-//	 * 				An integer that represents an x-coordinate.
-//	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
-//	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller than GAME_WIDTH.
-//	 * 			|  result == ( (positionX >= 0) && (positionX < GAME_WIDTH) )
-//	 */
-//	@Basic
-//	@Raw
-//	public static boolean isValidRoundedPositionX(int positionX) {
-//		return positionX >= 0 && positionX < this.getWorld().getWorldWidth();
-//	}
 	
 	public boolean canHaveAsPositionX(int positionX){
 		return positionX >= 0 && (!hasProperWorld() || positionX < this.getWorld().getWorldWidth());
@@ -181,19 +165,6 @@ public abstract class GameObject {
 		return (int) Math.floor(this.getPositionY());
 	}
 
-//	/**
-//	 * Check whether the given Y position is a valid Y position.
-//	 * 
-//	 * @param 	positionY
-//	 * 				An integer that represents a y-coordinate.
-//	 * @return	True if and only if the given y-position positionY is between the boundaries of the game world, 
-//	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller than
-//	 * 			GAME_HEIGHT.
-//	 * 			|  result == ( (positionY >= 0) && (positionY < GAME_HEIGHT) )
-//	 */
-//	public static boolean isValidRoundedPositionY(int positionY) {
-//		return positionY >= 0 && positionY < GAME_HEIGHT;
-//	}
 	public boolean canHaveAsPositionY(int positionY){
 		return positionY >= 0 && (!hasProperWorld() || positionY < this.getWorld().getWorldHeight());
 	}
@@ -316,9 +287,14 @@ public abstract class GameObject {
 	 * @post	The vertical acceleration of Mazub is equal to ACCELERATION_Y.
 	 * 			| new.getAccelerationY() == ACCELERATION_Y
 	 */
+	
+	// TODO update docs because now it checks if mazub is not already jumping
 	public void startJump() {
-		this.setVelocityY( this.getVelocityYInit() );
-		this.setAccelerationY( ACCELERATION_Y ); 
+		if(!isJumping()){
+			this.setVelocityY( this.getVelocityYInit() );
+			this.setAccelerationY( ACCELERATION_Y ); 
+		}
+		
 	}
 
 	/**
@@ -349,12 +325,14 @@ public abstract class GameObject {
 	public boolean isJumping() {
 		//return !Util.fuzzyEquals(this.getPositionY(), 0);
 		
-		// Kan ook mss met collission gedaan worden (trager maar mss wel beter)
 		//if(!hasProperWorld())
 		//	return false;		
 		//return getWorld().collidesWith(this).contains(Orientation.BOTTOM);
-		return !Util.fuzzyEquals(this.getVelocityY(), 0);
+		
+		// TODO: zou nog beter zijn als we hier checken of onder mazub een tile is. Deze check is eigenlijk niet voldoende
+		return (this.getVelocityY() != 0);
 	}
+	
 
 	/**
 	 * Make Mazub stop falling. Set the vertical velocity and acceleration of Mazub to 0.
@@ -957,10 +935,10 @@ public abstract class GameObject {
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
 		return ! ( 
-				   (this.getPositionX() + ( this.getWidth() - 2) <  x) 
+				   (this.getPositionX() + ( this.getWidth() - 1) <  x) 
 				|| (x + (width - 1) < this.getPositionX())
-				|| ( this.getPositionY() + (this.getHeight() - 2 ) < y)
-				|| (y + (height - 2) < this.getPositionY() ) // -2 want mag 1 pixel overlappen, maar alleen met TILES?!
+				|| ( this.getPositionY() + (this.getHeight() - 1 ) < y)
+				|| (y + (height - 1) <= this.getPositionY() ) // TODO geen idee warom hier <= maar anders geeft die direct een collision error en ik vind de oorzaak niet :/
 				
 				);
 	}
@@ -981,15 +959,7 @@ public abstract class GameObject {
 	}
 	
 	public void processTileCollision(){
-		
-	}
-	
-	public void processWaterCollision(){
-		
-	}
-		
-	public void processMagmaCollision(){
-		
+		// UItgewerkt in subklasse
 	}
 	
 	public void processGameObjectCollision(){
@@ -1011,7 +981,7 @@ public abstract class GameObject {
 		
 	}
 	
-	// Onderstaande methodes worden nu uitgewerkt in de subklasses, dus misschien abstract maken. 
+	// TODO Onderstaande methodes worden nu uitgewerkt in de subklasses, dus misschien abstract maken. 
 	// Misschien is het beter om da samen te voegen ofzo zoals bij die tiles
 	public void processPlantCollision(Plant plant){
 		
@@ -1028,7 +998,7 @@ public abstract class GameObject {
 
 	
 	/** 
-	 * Returns a set containing the colliding tiletypes 
+	 * Returns a set containing the colliding terrain types 
 	 * */
 	public Set<Terrain> getColissionTileTypes(){
 		World world = this.getWorld();
