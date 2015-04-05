@@ -11,8 +11,9 @@ import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
-import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.Terrain;
 import jumpingalien.model.helper.Timer;
+import jumpingalien.model.helper.Orientation;
 
 // All aspects shall be specified both formally and informally.
 
@@ -141,17 +142,16 @@ public class Mazub extends GameObject{
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
 				 Sprite[] sprites, int nbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		
 		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints, 500);
+		
+		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
 		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
 		
 		this.setDucking(false);
 		
 		// Separate timer and animation for all game object types?
-		this.setTimer( new Timer() );
-		this.setAnimation( new Animation(sprites) );
-		
+		this.setTimer( new Timer() );		
 	}
 	
 	/**
@@ -412,6 +412,12 @@ public class Mazub extends GameObject{
 		return this.getAnimation().getCurrentSprite(this);	
 	}
 	
+	@Override
+	protected void setSprites(Sprite[] sprites){
+		
+		this.setAnimation(new Animation(sprites));
+	}
+	
 	
 	/************************************************ ADVANCE TIME ********************************************/
 	
@@ -452,6 +458,22 @@ public class Mazub extends GameObject{
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
 		
+		/* Timers */
+		
+		if(!this.isMoving())
+			getTimer().increaseSinceLastMove(dt);
+		
+		// Sprites
+		getTimer().increaseSinceLastSprite(dt);
+		getAnimation().updateAnimationIndex(this.getTimer());
+		
+		// Other
+		//getTimer().increaseSinceWaterCollision(dt);
+		getTimer().increaseSinceLastCollision(dt);
+		
+		
+		
+		/* Position */
 		
 		double oldPositionX = this.getPositionX();
 		double oldPositionY = this.getPositionY();
@@ -463,6 +485,8 @@ public class Mazub extends GameObject{
 		// Update horizontal velocity
 		this.updateVelocityX(dt);
 		
+		this.processCollision();
+		
 		if( this.doesCollide() ){
 			this.setPositionX(oldPositionX);
 			this.endMove(this.getOrientation());
@@ -473,6 +497,9 @@ public class Mazub extends GameObject{
 		
 		// Update vertical velocity
 		this.updateVelocityY(dt);
+		
+		
+		this.processCollision();
 		
 		if( this.doesCollide() ) {
 			this.setPositionY(oldPositionY);
@@ -494,36 +521,61 @@ public class Mazub extends GameObject{
 			this.endDuck();
 		}
 		
-//		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-//		obstacleOrientations = getWorld().collidesWith(this);
-//		
-		//Y axis
-//		for(Orientation obstacleOrientation: obstacleOrientations){
-//			// horizontal
-//			if (this.orientation == obstacleOrientation){
-//				this.setPositionX(oldPositionX);
-//				//this.setVelocityX(0);
-//			}
-//			// vertical
-//			if ((this.getVelocityY() > 0 && obstacleOrientation == Orientation.TOP) ||
-//				(this.getVelocityY() < 0 && obstacleOrientation == Orientation.BOTTOM)){
-//				this.setPositionY(oldPositionY);
-//				this.setVelocityY(0);
-//			}
-//		}
-		
-		if(!this.isMoving())
-			this.getTimer().increaseSinceLastMove(dt);
-		
-		// Sprites
-		this.getTimer().increaseSinceLastSprite(dt);
-		this.getAnimation().updateAnimationIndex(this.getTimer());
 	}
 
 	
 	
+	/************************************************************* COLISSION *************************************************/
 	
 	
+	public void processTileCollision(){
+		Set<Terrain> collisionTileTypes = getColissionTileTypes();
+		
+		for(Terrain terrain : collisionTileTypes){
+			if( terrain.getDamage() != 0 ){
+				if( getTimer().getSinceLastCollision(terrain) > terrain.getDamageTime() ){ // > of >=? fuzzy?
+					increaseNbHitPoints(-terrain.getDamage());
+					getTimer().setSinceLastCollision(terrain, 0);
+				}
+			}
+		}
+	}
+	
+//	/**
+//	 * As long as any of the Mazub's perimeters overlap with a terrain tile containing water, Mazub's hitpoints shall be decreased by 2 per 0.2s
+//	 */
+//	public void processWaterCollision(){	
+//		if( getTimer().getSinceWaterCollission() > 0.2 ){ // > of >=? fuzzy?
+//			increaseNbHitPoints(-Terrain.WATER.getDamage());
+//			getTimer().setSinceWaterCollision(0);
+//		}
+//	}
+//	
+//	/**
+//	 * As long as any of the Mazub's perimeters overlap with a terrain tile containing magma, Mazub's hitpoints shall be decreased by 50 per 0.2s
+//	 */
+//	public void processMagmaCollision(){	
+//		if( getTimer().getSinceMagmaCollission() > 0.2 ){ // > of >=? fuzzy?
+//			increaseNbHitPoints(-Terrain.MAGMA.getDamage());
+//			getTimer().setSinceMagmaCollision(0);
+//		}
+//	}
+//	
+	
+	public void processPlantCollision(Plant plant){
+		if(!plant.isKilled()){
+			increaseNbHitPoints(50);
+			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
+		}
+	}
+	
+	public void processSharkCollision(Shark shark){
+		
+	}
+	
+	public void processSlimeCollision(){
+		
+	}
 	
 	
 	

@@ -307,13 +307,13 @@ public class Facade implements IFacadePart2 {
 	@Override
 	public int getGeologicalFeature(World world, int pixelX, int pixelY)
 			throws ModelException {
-		return world.getGeologicalFeature(pixelX, pixelY);
+		return world.getGeologicalFeature(pixelX, pixelY).getId();
 	}
 
 	@Override
 	public void setGeologicalFeature(World world, int tileX, int tileY,
 			int tileType) {
-		world.setGeologicalFeature(tileX, tileY, tileType);		
+		world.setGeologicalFeature(tileX, tileY,  world.tileTypeIndexToType(tileType));		
 	}
 
 	@Override
@@ -325,36 +325,35 @@ public class Facade implements IFacadePart2 {
 	public boolean isImmune(Mazub alien) {
 		return alien.isImmune();
 	}
+	
+	// Plants
 
 	@Override
 	public Plant createPlant(int x, int y, Sprite[] sprites) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Plant(x, y, sprites);
 	}
 
 	@Override
 	public void addPlant(World world, Plant plant) {
-		// TODO Auto-generated method stub
-		
+		world.addPlant(plant);
 	}
 
 	@Override
 	public Collection<Plant> getPlants(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getAllPlants();
 	}
 
 	@Override
 	public int[] getLocation(Plant plant) {
-		// TODO Auto-generated method stub
-		return null;
+		return new int[] { plant.getRoundedPositionX(), plant.getRoundedPositionY() };
 	}
 
 	@Override
 	public Sprite getCurrentSprite(Plant plant) {
-		// TODO Auto-generated method stub
-		return null;
+		return plant.getCurrentSprite();
 	}
+	
+	// Sharks
 
 	@Override
 	public Shark createShark(int x, int y, Sprite[] sprites) {
@@ -367,7 +366,7 @@ public class Facade implements IFacadePart2 {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public Collection<Shark> getSharks(World world) {
 		// TODO Auto-generated method stub
@@ -385,6 +384,8 @@ public class Facade implements IFacadePart2 {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	// Schools
 
 	@Override
 	public School createSchool() {
@@ -397,6 +398,8 @@ public class Facade implements IFacadePart2 {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	// Slimes
 
 	@Override
 	public void addSlime(World world, Slime slime) {
@@ -427,7 +430,4 @@ public class Facade implements IFacadePart2 {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	/**
-	 * 
-	 */
 }

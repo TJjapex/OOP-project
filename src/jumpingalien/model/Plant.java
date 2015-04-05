@@ -62,13 +62,25 @@ public class Plant extends GameObject {
 	public void advanceTime(double dt) throws IllegalArgumentException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
+		if( isTerminated() )
+			throw new IllegalStateException("Object terminated!");
+		
+		// Killed
+		if(this.isKilled() && !isTerminated()){
+			if(getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
+				this.terminate();
+			}else{
+				getTimer().increaseSinceKilled(dt);
+			}
+			
+		}
 		
 		// NEEDS RANDOMIZED MOVEMENT
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
 		
-		// COLLIDES WITH
+		
 			
 	}
 	

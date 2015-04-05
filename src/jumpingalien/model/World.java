@@ -4,11 +4,14 @@ package jumpingalien.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import jumpingalien.model.helper.Orientation;
-import jumpingalien.model.helper.TileType;
+import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
@@ -54,11 +57,11 @@ public class World {
 	
 	/* world dimensions */
 	public int getWorldWidth() {
-		return this.getNbTilesX() * getTileLength();
+		return ( this.getNbTilesX() + 1 ) * getTileLength();
 	}
 	
 	public int getWorldHeight() {
-		return this.getNbTilesY() * getTileLength();
+		return ( this.getNbTilesY() + 1 ) * getTileLength();
 	}
 	
 	/*********************************************** DISPLAY WINDOW *******************************************/	
@@ -89,12 +92,10 @@ public class World {
 	
 	//  * inspect position (bottom-left corner) of the display window
 	public int getDisplayPositionX(){
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	
 	public int getDisplayPositionY(){
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -280,12 +281,9 @@ public class World {
 		double minDt;
 		
 		for(Mazub alien: this.getAllMazubs()){
-				
-			// determine minDt
-			double velocityMagnitude = Math.sqrt( Math.pow(alien.getVelocityX(), 2) + Math.sqrt( Math.pow(alien.getVelocityY(), 2)));
-			double accelerationMagnitude= Math.sqrt( Math.pow(alien.getAccelerationX(), 2) + Math.sqrt( Math.pow(alien.getAccelerationY(), 2)));
 			
-			minDt = Math.min( dt,  0.01/ (velocityMagnitude + accelerationMagnitude* dt) );
+			// determine minDt			
+			minDt = Math.min( dt,  0.01/ (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );
 			
 			// iteratively advance time;
 			for(int i=0; i<(dt/minDt); i++){
@@ -293,34 +291,20 @@ public class World {
 	        }
 		}
 		
-	}
-	
-	public boolean objectCollides(GameObject object){
-		return getColissionTypes(object).contains(1);
-	}	
-	
-	public Set<Integer> getColissionTypes(GameObject object){
-		Set<Integer> colissionTypes = new HashSet<Integer>();
-		
-		// Check collision with tiles
-		int[][] tiles = getTilePositionsIn(	object.getRoundedPositionX(), 
-											object.getRoundedPositionY(),
-											object.getRoundedPositionX() + object.getWidth(), 
-											object.getRoundedPositionY() + object.getHeight());
-		for(int[] tile : tiles){
-			// Check if that tile is passable 
-			// and if the given object collides with a tile...
+		for(Plant plant: this.getAllPlants()){
 			
-			if(object.doesCollideWith(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1]), getTileLength(), getTileLength())){
-				colissionTypes.add(this.getGeologicalFeature(getPositionOfTileX(tile[0]), getPositionOfTileY(tile[1])));	
-			}
+			// determine minDt			
+			minDt = Math.min( dt,  0.01/ ( plant.getVelocityMagnitude()) );
+			
+			// iteratively advance time;
+			for(int i=0; i<(dt/minDt); i++){
+				plant.advanceTime(minDt);
+	        }
 		}
 		
-		return colissionTypes;
 	}
-	
 
-// Nog effe houden, misschien moeten we later nog voor iets weten aan welke kant er colission was
+// Nog effe houden, misschien moeten we later nog voor iets weten aan welke kant er collision was
 //	public Set<Orientation> collidesWith(GameObject object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
 //		
 //		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
@@ -425,6 +409,25 @@ public class World {
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
 	
+	public static Terrain tileTypeIndexToType(int tileTypeIndex){
+		
+		switch(tileTypeIndex){
+			case 0:
+				return Terrain.AIR;
+			case 1:
+				return Terrain.SOLID;
+			case 2:
+				return Terrain.WATER;
+			case 3:
+				return Terrain.MAGMA;
+				
+			default:
+				return Terrain.AIR;
+		}
+
+	}
+	
+	
 	//	- passable terrain (air=default, water, magma)
 	//	- impassable terrain (solid ground)
 	//
@@ -447,10 +450,7 @@ public class World {
 	 *         		- the value 2 is returned for a water tile
 	 *         		- the value 3 is returned for a magma tile
 	 */
-	public void setGeologicalFeature(int tileX, int tileY, int tileType) {
-		if( tileType == 0 ){
-			return;
-		}
+	public void setGeologicalFeature(int tileX, int tileY, Terrain tileType) {
 		geologicalFeatures.put(new VectorInt(tileX,  tileY), tileType);
 	}
 	
@@ -477,7 +477,7 @@ public class World {
 	 * @throw IllegalArgumentException if the given position does not correspond to the
 	 *        bottom left pixel of a tile.
 	 */
-	public int getGeologicalFeature(int pixelX, int pixelY) {
+	public Terrain getGeologicalFeature(int pixelX, int pixelY) {
 		
 		// Checken of gegeven pixel in game-world ligt?
 		
@@ -490,39 +490,16 @@ public class World {
 		if(this.geologicalFeatures.containsKey( new VectorInt(getTileX(pixelX), getTileY(pixelY)))){
 			return this.geologicalFeatures.get( new VectorInt(getTileX(pixelX), getTileY(pixelY)));
 		}else{
-			return 0;
+			return Terrain.AIR;
 		}
 		
 	}
 	
-	private HashMap<VectorInt, Integer> geologicalFeatures = new HashMap<VectorInt, Integer>();
+	private HashMap<VectorInt, Terrain> geologicalFeatures = new HashMap<VectorInt, Terrain>();
 	
 	/********************************************* RELATIONS *****************************************/
 	
-	public int getNbGameObjects(){
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public int getNbMazubs(){
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public int getNbSharks(){
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public int getNbSlimes(){
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	public int getNbPlants(){
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 	
 	public boolean canHaveAsGameObject(GameObject gameObject){
 		// TODO Auto-generated method stub
@@ -564,15 +541,15 @@ public class World {
 	 * 
 	 * @param world
 	 *            The world for which to set the player's character.
-	 * @param mazub
+	 * @param alien
 	 *            The alien to be set as the player's character.
 	 */
-	public void addAsMazub(Mazub mazub){
-		mazub.setWorld(this);
-		mazubs.add(mazub);
+	public void addAsMazub(Mazub alien){
+		alien.setWorld(this);
+		addMazub(alien);
 	}
 	
-	public void removeAsMazub(Mazub mazub){
+	public void removeAsMazub(Mazub alien){
 		// TODO Auto-generated method stub
 	}
 	
@@ -584,26 +561,79 @@ public class World {
 		// TODO Auto-generated method stub
 	}
 	
+	
+	// Getters
+	
 	public Set<Mazub> getAllMazubs(){
-		return this.mazubs;
+		return this.aliens;
 	}
 	
-	public Set<Shark> getAllSharks(){
-		return this.sharks;
+	public ArrayList<Plant> getAllPlants(){
+		return (ArrayList<Plant>) this.plants.clone();
+	}
+//	public Set<Shark> getAllSharks(){
+//		return this.sharks;
+//	}
+//	
+//	public Set<Slime> getAllSlimes(){
+//		return this.slimes;
+//	}
+//	
+	
+	
+	// Setters
+	
+	public void addMazub(Mazub alien){
+		alien.setWorld(this);
+		aliens.add(alien);
+	}
+	public void addPlant(Plant plant){
+		plant.setWorld(this);
+		plants.add(plant);
 	}
 	
-	public Set<Slime> getAllSlimes(){
-		return this.slimes;
+	// Count
+	
+	public int getNbGameObjects(){
+		return getNbMazubs() + getNbPlants();
 	}
 	
-	public Set<Plant> getAllPlants(){
-		return this.plants;
+	public int getNbMazubs(){
+		return aliens.size();
 	}
 	
-	public Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
-	public Set<Shark> sharks = new HashSet<Shark>();
-	public Set<Slime> slimes = new HashSet<Slime>();
-	public Set<Plant> plants = new HashSet<Plant>();
+	public int getNbPlants(){
+		return plants.size();
+	}	
+		
+//	public int getNbSharks(){
+//		return sharks.size();
+//	}
+//	
+//	public int getNbSlimes(){
+//		return slimes.size();
+//	}
+
+	// removers
+	
+	public void removeGameObject(GameObject gameObject){
+		
+		// Ugly & tricky maar werkt... of isinstance gebruiken...
+		aliens.remove(gameObject);
+		plants.remove(gameObject);
+//		sharks.remove(gameObject);
+//		slimes.remove(gameObject);
+	}
+	
+	// Vars
+	
+	public Set<Mazub> aliens = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	public ArrayList<Plant> plants = new ArrayList<Plant>();
+	
+	
+	
+	
+	
 	
 	public void terminate(){
 		this.isTerminated = true;

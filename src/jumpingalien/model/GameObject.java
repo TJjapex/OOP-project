@@ -1,11 +1,16 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Timer;
+import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.Terrain;
+import jumpingalien.part2.internal.tmxfile.data.Tileset;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import be.kuleuven.cs.som.annotate.Basic;
@@ -34,9 +39,7 @@ public abstract class GameObject {
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
 					  int maxNbHitPoints)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		assert sprites.length >= 10 && sprites.length % 2 == 0;
-		
+	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
 		this.setPositionX(pixelLeftX);
 		this.setPositionY(pixelBottomY);
 
@@ -51,6 +54,9 @@ public abstract class GameObject {
 		
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
+		
+		setSprites(sprites);
+		setTimer(new Timer());
 		
 	}
 
@@ -76,11 +82,28 @@ public abstract class GameObject {
 	
 	private World world;
 	
-	public void terminate(){
-		this.isTerminated = true;
+	// Invoked to remove object after 0.6s
+	void kill(){
+		this.killed = true;
+	}
+	public boolean isKilled(){
+		return this.killed;
+	}
+	private boolean killed = false;
+	
+	// Will remove object from world
+	protected void terminate(){
+		getWorld().removeGameObject(this);
+		setWorld(null);
+		
+		this.terminated = true;
 	}
 	
-	private boolean isTerminated = false;
+	public boolean isTerminated(){
+		return this.terminated;
+	}
+	
+	private boolean terminated = false;
 	
 	/************************************************* HELPER CLASSES *****************************************/
 
@@ -112,7 +135,7 @@ public abstract class GameObject {
 		return this.timer;
 	}
 
-	private Timer timer;	
+	protected Timer timer;	
 
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
@@ -502,7 +525,7 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the vertical velocity of Mazub.
+	 * Set the vertical velocity of this object.
 	 * 
 	 * @param 	velocityY
 	 * 				A double that represents the desired vertical velocity of Mazub.
@@ -513,6 +536,15 @@ public abstract class GameObject {
 	@Raw
 	protected void setVelocityY(double velocityY) {
 		this.velocityY = velocityY;
+	}
+	
+	/**
+	 * Returns the magnitude of the velocity of this object.
+	 * @return
+	 * 		the magnitude of the velocity of this object
+	 */
+	protected double getVelocityMagnitude(){
+		return Math.sqrt( Math.pow(this.getVelocityX(), 2) + Math.sqrt( Math.pow(this.getVelocityY(), 2)));
 	}
 
 	/**
@@ -650,6 +682,15 @@ public abstract class GameObject {
 		} else
 			this.accelerationX = accelerationX;
 	}
+	
+	/**
+	 * Returns the magnitude of the acceleration of this object.
+	 * @return
+	 * 		the magnitude of the acceleration of this object
+	 */
+	protected double getAccelerationMagnitude(){
+		 return Math.sqrt( Math.pow(this.getAccelerationX(), 2) + Math.sqrt( Math.pow(this.getAccelerationY(), 2)));
+	}
 
 	/**
 	 * Set the vertical acceleration of Mazub.
@@ -746,6 +787,10 @@ public abstract class GameObject {
 		return this.sprites[index];
 	}
 	
+	protected void setSprites(Sprite[] sprites){
+		this.sprites = sprites;
+	}
+	
 	private Sprite[] sprites;
 
 	
@@ -838,16 +883,19 @@ public abstract class GameObject {
 	/*************************************************** HIT-POINTS *******************************************/
 	
 	public int getNbHitPoints() {
-		System.out.println(this.nbHitPoints);
 		return this.nbHitPoints;
 	}
 
 	public void setNbHitPoints(int nbHitPoints) {
-		this.nbHitPoints = Math.max( Math.min(nbHitPoints, this.getMaxNbHitPoints()), 0);
+		this.nbHitPoints = Math.max( Math.min(nbHitPoints, getMaxNbHitPoints()), 0);
+	}
+	
+	public void increaseNbHitPoints(int nbHitPoints){
+		setNbHitPoints(getNbHitPoints() + nbHitPoints);
 	}
 
 	public boolean isValidNbHitPoints(int nbHitPoints) {
-		return (nbHitPoints <= this.getMaxNbHitPoints());
+		return (nbHitPoints <= getMaxNbHitPoints());
 	}
 
 	private int nbHitPoints;
@@ -864,45 +912,53 @@ public abstract class GameObject {
 	
 
 	
-	/******************************************** COLLISION *************************/
+	/*********************************$$$*********************** COLLISION ****************************************************/
 	
+	/* Checking */
+	
+	/**
+	 * Checks if this object collides with any other impassable object
+	 * 
+	 * @return
+	 */
 	public boolean doesCollide(){
-		return this.getWorld().objectCollides(this);
-
+		World world = this.getWorld();
 		
-		/* Onderstaande is nu geimplementeerd in World, maar eigenlijk is die objectCollides(this) toch nie echt mooi */
+		// Check collision with tiles
+		int[][] tiles = world.getTilePositionsIn(	getRoundedPositionX(), 
+													getRoundedPositionY(),
+													getRoundedPositionX() + getWidth(), 
+													getRoundedPositionY() + getHeight());
+		for(int[] tile : tiles){
+			// Check if that tile is passable 
+			// and if the given object collides with a tile...
+			if( world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1])) == Terrain.SOLID){
+				if(doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
+					return true;
+				}
+			}
+		}		
 		
-//		// Check colision with tiles
-//		int[][] tiles = this.getWorld().getTilePositionsIn(	this.getRoundedPositionX(), 
-//															this.getRoundedPositionY(),
-//															this.getRoundedPositionX() + this.getWidth(), 
-//															this.getRoundedPositionY() + this.getHeight());
-//		for(int[] tile : tiles){
-//			
-//			if(this.getWorld().getGeologicalFeature(this.getWorld().getPositionOfTileX(tile[0]), this.getWorld().getPositionOfTileY(tile[1])) == 1 &&					
-//					this.doesCollideWith(this.getWorld().getPositionOfTileX(tile[0]), 
-//										this.getWorld().getPositionOfTileY(tile[1]), 
-//										this.getWorld().getTileLength(), 
-//										this.getWorld().getTileLength())){
-//				//System.out.println(this.getRoundedPositionX()+ " " + this.getRoundedPositionY());
-//				//System.out.println(this.getWorld().getPositionOfTileX(tile[0]) + " "+this.getWorld().getPositionOfTileY(tile[1]) );
-//				return true;
-//			}	
-//		}
-//		
-//		return false;
-		
-	}
+		return false;
+	}	
 	
+	/**
+	 * Checks if this object collides with (another) given object
+	 * @param other
+	 * @return
+	 */
 	public boolean doesCollideWith(GameObject other){
-//		return (this.getPositionX() + ( this.getWidth() - 1) <  other.getPositionX()) 
-//				|| ( other.getPositionX() + (other.getWidth() - 1) < this.getPositionX())
-//				|| ( this.getPositionY() + (this.getHeight() - 1 ) < other.getPositionY())
-//				|| (other.getPositionY() + (other.getHeight() - 1) < this.getPositionY() )
-		
 		return doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
 	}
 	
+	/**
+	 * Checks if this object collides with the given region
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @return
+	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
 		return ! ( 
 				   (this.getPositionX() + ( this.getWidth() - 2) <  x) 
@@ -913,4 +969,90 @@ public abstract class GameObject {
 				);
 	}
 
+	/* Processing */
+	
+	/**
+	 * Checks the colliding tiles and objects and processes it
+	 * 
+	 */
+	public void processCollision(){
+		
+		// Process tiles
+		processTileCollision();
+		
+		// Process gameobjects 
+		processGameObjectCollision();
+	}
+	
+	public void processTileCollision(){
+		Set<Terrain> collisionTileTypes = getColissionTileTypes();
+		
+		for(Terrain terrain : collisionTileTypes){
+			
+		}
+	}
+	
+	public void processWaterCollision(){
+		
+	}
+		
+	public void processMagmaCollision(){
+		
+	}
+	
+	public void processGameObjectCollision(){
+		World world = this.getWorld();
+		
+		for(Plant plant :  world.getAllPlants()){
+			if(this.doesCollideWith(plant)){
+				processPlantCollision(plant);
+			}
+		}
+		
+//		for(Shark shark :  world.getAllSharks()){
+//			if(this.doesCollideWith(shark)){
+//				processSharkCollision(shark);
+//			}
+//		}
+//		
+		//.. slimes...
+		
+	}
+	
+	public void processPlantCollision(Plant plant){
+		
+	}
+	
+	public void processSharkCollision(Shark shark){
+		
+	}
+	
+	public void processSlimeCollision(){
+		
+	}
+
+
+	
+	/** 
+	 * Returns a set containing the colliding tiletypes 
+	 * */
+	public Set<Terrain> getColissionTileTypes(){
+		World world = this.getWorld();
+		
+		Set<Terrain> colissionTileTypes = new HashSet<Terrain>();
+		
+		// Check collision with tiles
+		int[][] tiles = world.getTilePositionsIn(	getRoundedPositionX(), 
+													getRoundedPositionY(),
+													getRoundedPositionX() + getWidth(), 
+													getRoundedPositionY() + getHeight()  );
+		
+		for(int[] tile : tiles){
+			if(doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
+				colissionTileTypes.add(world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1])));	
+			}
+		}
+		
+		return colissionTileTypes;
+	}
 }
