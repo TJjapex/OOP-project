@@ -86,15 +86,17 @@ public abstract class GameObject {
 	void kill(){
 		this.killed = true;
 	}
+	
 	public boolean isKilled(){
 		return this.killed;
 	}
+	
 	private boolean killed = false;
 	
 	// Will remove object from world
 	protected void terminate(){
-		getWorld().removeGameObject(this);
-		setWorld(null);
+		this.getWorld().removeGameObject(this);
+		this.setWorld(null);
 		
 		this.terminated = true;
 	}
@@ -899,15 +901,16 @@ public abstract class GameObject {
 		World world = this.getWorld();
 		
 		// Check collision with tiles
-		int[][] tiles = world.getTilePositionsIn(	getRoundedPositionX(), 
-													getRoundedPositionY(),
-													getRoundedPositionX() + getWidth(), 
-													getRoundedPositionY() + getHeight());
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
+													this.getRoundedPositionY(),
+													this.getRoundedPositionX() + this.getWidth(), 
+													this.getRoundedPositionY() + this.getHeight());
+
 		for(int[] tile : tiles){
 			// Check if that tile is passable 
 			// and if the given object collides with a tile...
 			if( world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1])) == Terrain.SOLID){
-				if(doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
+				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
 					return true;
 				}
 			}
@@ -922,7 +925,7 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(GameObject other){
-		return doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
 	}
 	
 	/**
@@ -952,10 +955,10 @@ public abstract class GameObject {
 	public void processCollision(){
 		
 		// Process tiles
-		processTileCollision();
+		this.processTileCollision();
 		
 		// Process gameobjects 
-		processGameObjectCollision();
+		this.processGameObjectCollision();
 	}
 	
 	public void processTileCollision(){
@@ -967,7 +970,7 @@ public abstract class GameObject {
 		
 		for(Plant plant :  world.getAllPlants()){
 			if(this.doesCollideWith(plant)){
-				processPlantCollision(plant);
+				this.processPlantCollision(plant);
 			}
 		}
 		
@@ -1006,13 +1009,13 @@ public abstract class GameObject {
 		Set<Terrain> colissionTileTypes = new HashSet<Terrain>();
 		
 		// Check collision with tiles
-		int[][] tiles = world.getTilePositionsIn(	getRoundedPositionX(), 
-													getRoundedPositionY(),
-													getRoundedPositionX() + getWidth(), 
-													getRoundedPositionY() + getHeight()  );
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
+													this.getRoundedPositionY(),
+													this.getRoundedPositionX() + this.getWidth(), 
+													this.getRoundedPositionY() + this.getHeight()  );
 		
 		for(int[] tile : tiles){
-			if(doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
+			if(this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
 				colissionTileTypes.add(world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1])));	
 			}
 		}

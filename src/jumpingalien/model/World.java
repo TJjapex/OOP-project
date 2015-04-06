@@ -2,9 +2,11 @@ package jumpingalien.model;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -57,7 +59,7 @@ public class World {
 	
 	/* world dimensions */
 	public int getWorldWidth() {
-		return ( this.getNbTilesX() + 1 ) * getTileLength();
+		return ( this.getNbTilesX() + 1 ) * getTileLength(); // waarom die +1?
 	}
 	
 	public int getWorldHeight() {
@@ -243,7 +245,7 @@ public class World {
 		//int[][] positions = new int[nbPositions][2];
 		
 		/* Loop trough all positions inside the rectangle */
-		for(int row = getTileX(pixelBottom); row <= getTileX(pixelTop); row++){
+		for(int row = getTileY(pixelBottom); row <= getTileY(pixelTop); row++){
 			for(int col = getTileX(pixelLeft); col <= getTileX(pixelRight); col++){ // <= of < ?
 				//positions[nbCols * row + col] = new int[] {col, row};
 				
@@ -253,7 +255,7 @@ public class World {
 		}
 		
 		// Om array te printen; Arrays.deepToString(theArray)
-		// System.out.println(Arrays.deepToString(positions));
+		// System.out.println(Arrays.deepToString(positions.toArray(new int[positions.size()][2])));
 		
 		//return positions;
 		
@@ -494,7 +496,7 @@ public class World {
 		
 	}
 	
-	private HashMap<VectorInt, Terrain> geologicalFeatures = new HashMap<VectorInt, Terrain>();
+	private Map<VectorInt, Terrain> geologicalFeatures = new HashMap<VectorInt, Terrain>();
 	
 	/********************************************* RELATIONS *****************************************/
 	
@@ -569,8 +571,8 @@ public class World {
 	}
 	
 	public Set<GameObject> getAllEnemies(){
-		Set<GameObject> allEnemies = new HashSet<GameObject>(getAllPlants());
-		return allEnemies; // + nog sharks toevogen enzo
+		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
+		return allEnemies; // + nog sharks toevogen enzo, behoren plants tot enemies?
 	}
 
 	public Set<Plant> getAllPlants(){

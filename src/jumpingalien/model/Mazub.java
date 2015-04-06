@@ -18,7 +18,7 @@ import jumpingalien.model.helper.Orientation;
 // All aspects shall be specified both formally and informally.
 
 /**
- * A class of Mazubs, characters for a 2D platform game with several properwwssqz					 ties. This class has been worked out
+ * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
  *
  *
@@ -296,7 +296,7 @@ public class Mazub extends GameObject{
 	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_RUNNING
 	 * @post	The ducking status of Mazub is false.
 	 * 			| new.isDucking() == false
-	 * @post	If Mazub is moving, set the acceleration to the default value
+	 * @post	If Mazub is moving, set the acceleration to the default value.
 	 * 			| new.getAccelerationX() == this.getOrientation().getSign() * ACCELERATION_X
 	 * @throws	IllegalStateException
 	 * 				Mazub is not ducking.
@@ -458,14 +458,14 @@ public class Mazub extends GameObject{
 		/* Timers */
 		
 		if(!this.isMoving())
-			getTimer().increaseSinceLastMove(dt);
+			this.getTimer().increaseSinceLastMove(dt);
 		
 		// Sprites
-		getTimer().increaseSinceLastSprite(dt);
-		getAnimation().updateAnimationIndex(this.getTimer());
+		this.getTimer().increaseSinceLastSprite(dt);
+		this.getAnimation().updateAnimationIndex(this.getTimer());
 		
 		// Other
-		getTimer().increaseSinceLastCollision(dt);
+		this.getTimer().increaseSinceLastCollision(dt);
 		
 		
 		
@@ -520,18 +520,17 @@ public class Mazub extends GameObject{
 	}
 
 	
-	
 	/************************************************************* COLLISION *************************************************/
 	
 	
 	public void processTileCollision(){
-		Set<Terrain> collisionTileTypes = getColissionTileTypes();
+		Set<Terrain> collisionTileTypes = this.getColissionTileTypes();
 		
 		for(Terrain terrain : collisionTileTypes){
 			if( terrain.getDamage() != 0 ){
-				if( getTimer().getSinceLastCollision(terrain) > terrain.getDamageTime() ){ // > of >=? fuzzy?
-					increaseNbHitPoints(-terrain.getDamage());
-					getTimer().setSinceLastCollision(terrain, 0);
+				if( this.getTimer().getSinceLastCollision(terrain) > terrain.getDamageTime() ){ // > of >=? fuzzy?
+					this.increaseNbHitPoints(-terrain.getDamage());
+					this.getTimer().setSinceLastCollision(terrain, 0);
 				}
 			}
 		}
@@ -539,10 +538,11 @@ public class Mazub extends GameObject{
 	
 	public void processPlantCollision(Plant plant){
 		if(!plant.isKilled()){
-			increaseNbHitPoints(50);
+			this.increaseNbHitPoints(50);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
+	
 	
 	public void processSharkCollision(Shark shark){
 		

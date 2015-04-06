@@ -31,6 +31,7 @@ public class Plant extends GameObject {
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1);
+		this.startMove(Orientation.RIGHT);
 
 	}	
 	
@@ -63,25 +64,50 @@ public class Plant extends GameObject {
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
 		if( isTerminated() )
-			throw new IllegalStateException("Object terminated!");
+			throw new IllegalStateException("Object terminated!");	
 		
 		// Killed
-		if(this.isKilled() && !isTerminated()){
-			if(getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
+		if(this.isKilled() && !this.isTerminated()){
+			if(this.getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
 				this.terminate();
 			}else{
-				getTimer().increaseSinceKilled(dt);
+				this.getTimer().increaseSinceKilled(dt);
 			}
 			
 		}
 		
-		// NEEDS RANDOMIZED MOVEMENT
+		// Timers
 		
-		// Update horizontal position
-		this.updatePositionX(dt);
+		if(!this.isMoving())
+			this.getTimer().increaseSinceLastMove(dt);
 		
+		this.getTimer().increaseSinceLastPeriod(dt);
 		
+		// Alternating movement
+		
+		if (!this.isKilled()){
+			if (this.getTimer().getSinceLastPeriod() > 0.5){
+				if (this.getOrientation() == Orientation.RIGHT){
+					this.endMove(Orientation.RIGHT);
+					this.startMove(Orientation.LEFT);
+				}
+				else {
+					this.endMove(Orientation.LEFT);
+					this.startMove(Orientation.RIGHT);
+				}
+				this.getTimer().setSinceLastPeriod(0);
+			}
+				
+			double oldPositionX = this.getPositionX();
 			
+			// Update horizontal position
+			this.updatePositionX(dt);
+			
+			// this.processCollision(); -> niet echt nodig bij plants?
+			
+			if( this.doesCollide() ) 
+				this.setPositionX(oldPositionX);
+		}
 	}
 	
 }

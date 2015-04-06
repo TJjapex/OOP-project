@@ -301,7 +301,6 @@ public class Facade implements IFacadePart2 {
 	public int[][] getTilePositionsIn(World world, int pixelLeft,
 			int pixelBottom, int pixelRight, int pixelTop) {
 		return world.getTilePositionsIn(pixelLeft, pixelBottom, pixelRight, pixelTop);
-		//return null;
 	}
 
 	@Override

@@ -24,6 +24,7 @@ public class Timer {
 	public Timer(){
 		this.setSinceLastMove(Double.POSITIVE_INFINITY);
 		this.setSinceLastSprite(0);
+		this.setSinceLastPeriod(0);
 		
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
 			// Eventueel check om alleen impassable tiles hier toe te veogen
@@ -52,8 +53,8 @@ public class Timer {
 	 * 			| new.getSinceLastMove() == sinceLastMove
 	 */
 	@Basic
-	public void setSinceLastMove(double sinceLastMove) {
-		this.sinceLastMove = sinceLastMove;
+	public void setSinceLastMove(double dt) {
+		this.sinceLastMove = dt;
 	}
 	
 	/**
@@ -97,8 +98,8 @@ public class Timer {
 	 * 			| new.getSinceLastSprite() == sinceLastSprite
 	 */
 	@Basic
-	public void setSinceLastSprite(double sinceLastSprite) {
-		this.sinceLastSprite = sinceLastSprite;
+	public void setSinceLastSprite(double dt) {
+		this.sinceLastSprite = dt;
 	}
 	
 	/**
@@ -125,8 +126,8 @@ public class Timer {
 		return sinceKilled;
 	}
 
-	public void setSinceKilled(double sinceKilled) {
-		this.sinceKilled = sinceKilled;
+	public void setSinceKilled(double dt) {
+		this.sinceKilled = dt;
 	}
 	
 	public void increaseSinceKilled(double dt){
@@ -143,8 +144,8 @@ public class Timer {
 		return this.sinceLastCollision.get(terrain);
 	}
 	
-	public double setSinceLastCollision(Terrain terrain, double dt){
-		return this.sinceLastCollision.put(terrain, dt);
+	public void setSinceLastCollision(Terrain terrain, double dt){
+		this.sinceLastCollision.put(terrain, dt);
 	}
 	
 	// Increasees all 
@@ -156,6 +157,19 @@ public class Timer {
 	
 	private Map<Terrain, Double> sinceLastCollision = new HashMap<Terrain, Double>();
 	
+	public double getSinceLastPeriod() {
+		return this.sinceLastPeriod;
+	}
+	
+	public void setSinceLastPeriod(double dt) {
+		this.sinceLastPeriod = dt;
+	}
+	
+	public void increaseSinceLastPeriod(double dt){
+		this.setSinceLastPeriod(this.getSinceLastPeriod()+dt);
+	}
+	
+	private double sinceLastPeriod;
 	
 	
 }
