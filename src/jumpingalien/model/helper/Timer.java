@@ -2,6 +2,7 @@ package jumpingalien.model.helper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import be.kuleuven.cs.som.annotate.*;
 
@@ -170,6 +171,11 @@ public class Timer {
 	}
 	
 	private double sinceLastPeriod;
+	
+	public double getRandomPeriodTime(double min, double max){
+		Random random = new Random();
+		return min + (max - min)*random.nextDouble();
+	}
 	
 	
 }

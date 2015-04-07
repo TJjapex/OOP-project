@@ -1,5 +1,7 @@
 package jumpingalien.model;
 
+import java.util.Random;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -26,8 +28,11 @@ import jumpingalien.util.Util;
 public class Slime extends GameObject {
 	
 	/************************************************** GENERAL ***********************************************/
-
 	
+	public static final double MIN_PERIOD_TIME = 2.0;
+	public static final double MAX_PERIOD_TIME = 6.0;
+	
+	private double currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -37,11 +42,12 @@ public class Slime extends GameObject {
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, nbHitPoints, 100);
+		this.startMove(this.getRandomOrientation());
 		
 	}
 	
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
+	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
 		this(pixelLeftX, pixelBottomY, sprites, 100);
 	}
 	
@@ -82,22 +88,65 @@ public class Slime extends GameObject {
 	public void advanceTime(double dt) throws IllegalArgumentException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
+		if( !hasProperWorld())
+			throw new IllegalStateException(" This Slime is not in world!");
+
+		Orientation currentOrientation;
 		
-		// NEEDS RANDOMIZED MOVEMENT
+		// Timers
 		
-		// Update horizontal position
-		this.updatePositionX(dt);
+		this.getTimer().increaseSinceLastPeriod(dt);
+		
+		// Randomized movement
+		
+		if (!this.isKilled()){
+			if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 				
-		// Update vertical position
-		this.updatePositionY(dt);
+				this.endMove(this.getOrientation());
+				this.startMove(this.getRandomOrientation());
 				
-		// Update horizontal velocity
-		this.updateVelocityX(dt);
-		
-		// Update vertical velocity
-		this.updateVelocityY(dt);
-		
-		// COLLIDES WITH
+				this.getTimer().setSinceLastPeriod(0);
+				
+				currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
+			}
+				
+			double oldPositionX = this.getPositionX();
+			double oldPositionY = this.getPositionY();
+			
+			// Update horizontal position
+			this.updatePositionX(dt);
+			
+			// Update horizontal velocity
+			this.updateVelocityX(dt);
+			
+			// this.processCollision(); 
+			
+			if( this.doesCollide() ) {
+				this.setPositionX(oldPositionX);
+				currentOrientation = this.getOrientation();
+				this.endMove(currentOrientation);
+				if (currentOrientation != Orientation.RIGHT){
+					this.startMove(Orientation.RIGHT);
+				}
+				else {
+					this.startMove(Orientation.LEFT);
+				}
+			}
+			
+			// Update vertical position
+			this.updatePositionY(dt);
+			
+			// Update vertical velocity
+			this.updateVelocityY(dt);
+			
+			// this.processCollision(); 
+			
+			if( this.doesCollide() ) {
+				this.setPositionY(oldPositionY);
+				this.stopFall();
+			}
+				
+		}
 		
 	}
 

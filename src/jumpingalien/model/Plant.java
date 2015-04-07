@@ -86,7 +86,7 @@ public class Plant extends GameObject {
 		// Alternating movement
 		
 		if (!this.isKilled()){
-			if (this.getTimer().getSinceLastPeriod() > 0.5){
+			if (this.getTimer().getSinceLastPeriod() >= 0.5){ // fuzzy?
 				if (this.getOrientation() == Orientation.RIGHT){
 					this.endMove(Orientation.RIGHT);
 					this.startMove(Orientation.LEFT);

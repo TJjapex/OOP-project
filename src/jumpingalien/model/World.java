@@ -547,11 +547,21 @@ public class World {
 	 */
 	public void addAsMazub(Mazub alien){
 		alien.setWorld(this);
-		addMazub(alien);
+		mazubs.add(alien);
 	}
 	
 	public void removeAsMazub(Mazub alien){
 		// TODO Auto-generated method stub
+	}
+	
+	public void addAsPlant(Plant plant){
+		plant.setWorld(this);
+		plants.add(plant);
+	}
+	
+	public void addAsSlime(Slime slime){
+		slime.setWorld(this);
+		slimes.add(slime);
 	}
 	
 	public void addAsGameObject(GameObject gameObject){
@@ -572,33 +582,23 @@ public class World {
 	
 	public Set<GameObject> getAllEnemies(){
 		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
-		return allEnemies; // + nog sharks toevogen enzo, behoren plants tot enemies?
+		allEnemies.addAll(this.getAllSlimes());
+		return allEnemies; // + nog sharks toevoegen enzo, behoren plants tot enemies?
 	}
 
 	public Set<Plant> getAllPlants(){
 		Set<Plant> newPlants =  new HashSet<Plant>(this.plants);
 		return newPlants;
 	}
+	
 //	public Set<Shark> getAllSharks(){
 //		return this.sharks;
 //	}
-//	
-//	public Set<Slime> getAllSlimes(){
-//		return this.slimes;
-//	}
-//	
 	
-	
-	// Setters
-	
-	public void addMazub(Mazub alien){
-		alien.setWorld(this);
-		mazubs.add(alien);
+	public Set<Slime> getAllSlimes(){
+		return this.slimes;
 	}
-	public void addPlant(Plant plant){
-		plant.setWorld(this);
-		plants.add(plant);
-	}
+	
 	
 	// Count
 	
@@ -617,10 +617,10 @@ public class World {
 //	public int getNbSharks(){
 //		return sharks.size();
 //	}
-//	
-//	public int getNbSlimes(){
-//		return slimes.size();
-//	}
+	
+	public int getNbSlimes(){
+		return slimes.size();
+	}
 
 	// removers
 	
@@ -630,7 +630,7 @@ public class World {
 		mazubs.remove(gameObject);
 		plants.remove(gameObject);
 //		sharks.remove(gameObject);
-//		slimes.remove(gameObject);
+		slimes.remove(gameObject);
 	}
 	
 	// Vars
@@ -638,7 +638,7 @@ public class World {
 	public Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
 	public Set<Plant> plants = new HashSet<Plant>();
 //	public Set<Shark> sharks = new HashSet<Shark>();
-//	public Set<Slime> slimes = new HashSet<Slime>();
+	public Set<Slime> slimes = new HashSet<Slime>();
 	
 	
 	

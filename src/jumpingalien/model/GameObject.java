@@ -1,6 +1,7 @@
 package jumpingalien.model;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import jumpingalien.model.exceptions.IllegalHeightException;
@@ -55,8 +56,8 @@ public abstract class GameObject {
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
 		
-		setSprites(sprites);
-		setTimer(new Timer());
+		this.setSprites(sprites);
+		this.setTimer(new Timer());
 		
 	}
 
@@ -745,6 +746,15 @@ public abstract class GameObject {
 	 */
 	public static boolean isValidOrientation(Orientation orientation) {
 		return (orientation == Orientation.LEFT) || (orientation == Orientation.RIGHT);
+	}
+	
+	public Orientation getRandomOrientation(){
+		Random random = new Random();
+		if (random.nextBoolean())
+			return Orientation.RIGHT;
+		else {
+			return Orientation.LEFT;
+		}
 	}
 
 	/**
