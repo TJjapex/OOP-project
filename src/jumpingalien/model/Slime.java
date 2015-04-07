@@ -145,6 +145,11 @@ public class Slime extends GameObject {
 				this.setPositionY(oldPositionY);
 				this.stopFall();
 			}
+//			else{
+//				
+//				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
+//				this.setAccelerationY(-10);
+//			}
 				
 		}
 		
