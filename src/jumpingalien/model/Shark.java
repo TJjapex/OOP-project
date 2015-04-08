@@ -1,5 +1,7 @@
 package jumpingalien.model;
 
+import java.util.Random;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -20,7 +22,18 @@ public class Shark extends GameObject{
 	
 	/************************************************** GENERAL ***********************************************/
 	
+	public static final double MIN_PERIOD_TIME = 1.0;
+	public static final double MAX_PERIOD_TIME = 4.0;
 	
+	private double currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
+	
+	private int nbNonJumpingPeriods = 4;
+	Random random = new Random();
+	
+	public static final double ACCELERATION_DIVING = -2.0;
+	public static final double ACCELERATION_RISING = 2.0;
+	
+	private double randomAcceleration;
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -33,6 +46,8 @@ public class Shark extends GameObject{
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX,pixelBottomY, 1.0, 2.0, 4.0, 1.5, sprites, nbHitPoints, 100);
+		this.startMove(this.getRandomOrientation());
+		this.startDiveRise();
 		
 	}
 	
@@ -68,11 +83,14 @@ public class Shark extends GameObject{
 	//															  movement period
 	
 	public void startDiveRise(){
-		// TO DO
+		randomAcceleration = ACCELERATION_DIVING + (ACCELERATION_RISING - ACCELERATION_DIVING)*random.nextDouble();
+		this.setVelocityY( Math.signum(randomAcceleration)*this.getVelocityYInit() );
+		this.setAccelerationY( randomAcceleration); 
 	}
 	
 	public void endDiveRise(){
-		// TO DO
+		this.setVelocityY(0);
+		this.setAccelerationY(0);
 	}
 	
 	/************************************************ CHARACTERISTICS *****************************************/
@@ -106,21 +124,84 @@ public class Shark extends GameObject{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
 		
-		// NEEDS RANDOMIZED MOVEMENT
+		Orientation currentOrientation;
 		
-		// Update horizontal position
-		this.updatePositionX(dt);
+		// Timers
+		
+		this.getTimer().increaseSinceLastPeriod(dt);
+		
+		// Randomized movement
+		
+		if (!this.isKilled()){
+			if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 				
-		// Update vertical position
-		this.updatePositionY(dt);
+				this.endMove(this.getOrientation());
 				
-		// Update horizontal velocity
-		this.updateVelocityX(dt);
-		
-		// Update vertical velocity
-		this.updateVelocityY(dt);
-		
-		// COLLIDES WITH
+				if (this.isJumping()){
+					this.endJump();
+					this.stopFall();
+				} else {
+					nbNonJumpingPeriods += 1;
+					this.endDiveRise();
+				}	
+				
+				this.startMove(this.getRandomOrientation());
+				
+				if ((nbNonJumpingPeriods >= 4) && random.nextBoolean()){
+					this.startJump();
+					nbNonJumpingPeriods = 0;
+				} else {
+					this.startDiveRise();
+				}
+						
+				this.getTimer().setSinceLastPeriod(0);
+						
+				currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
+			}
+						
+			double oldPositionX = this.getPositionX();
+			double oldPositionY = this.getPositionY();
+					
+			// Update horizontal position
+			this.updatePositionX(dt);
+					
+			// Update horizontal velocity
+			this.updateVelocityX(dt);
+					
+			// this.processCollision(); 
+					
+			if( this.doesCollide() ) {
+				this.setPositionX(oldPositionX);
+				currentOrientation = this.getOrientation();
+				this.endMove(currentOrientation);
+				if (currentOrientation != Orientation.RIGHT){
+					this.startMove(Orientation.RIGHT);
+					this.startDiveRise();
+				} else {
+					this.startMove(Orientation.LEFT);
+					this.startDiveRise();
+				}
+			}
+					
+			// Update vertical position
+			this.updatePositionY(dt);
+					
+			// Update vertical velocity
+			this.updateVelocityY(dt);
+					
+			// this.processCollision(); 
+					
+			if( this.doesCollide() ) {
+				this.setPositionY(oldPositionY);
+				this.stopFall();
+			}
+//			else{
+//						
+//				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
+//				this.setAccelerationY(-10);
+//			}
+						
+		}
 		
 	}
 	

@@ -315,7 +315,7 @@ public abstract class GameObject {
 		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
 			this.setVelocityY(0);
 		}else{
-			throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
+			// throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
 		}
 	}
 

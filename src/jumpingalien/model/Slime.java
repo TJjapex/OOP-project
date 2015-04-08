@@ -127,8 +127,7 @@ public class Slime extends GameObject {
 				this.endMove(currentOrientation);
 				if (currentOrientation != Orientation.RIGHT){
 					this.startMove(Orientation.RIGHT);
-				}
-				else {
+				} else {
 					this.startMove(Orientation.LEFT);
 				}
 			}

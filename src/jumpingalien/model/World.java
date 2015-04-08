@@ -564,6 +564,11 @@ public class World {
 		slimes.add(slime);
 	}
 	
+	public void addAsShark(Shark shark){
+		shark.setWorld(this);
+		sharks.add(shark);
+	}
+	
 	public void addAsGameObject(GameObject gameObject){
 		// TODO Auto-generated method stub
 	}
@@ -583,6 +588,7 @@ public class World {
 	public Set<GameObject> getAllEnemies(){
 		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
 		allEnemies.addAll(this.getAllSlimes());
+		allEnemies.addAll(this.getAllSharks());
 		return allEnemies; // + nog sharks toevoegen enzo, behoren plants tot enemies?
 	}
 
@@ -591,9 +597,9 @@ public class World {
 		return newPlants;
 	}
 	
-//	public Set<Shark> getAllSharks(){
-//		return this.sharks;
-//	}
+	public Set<Shark> getAllSharks(){
+		return this.sharks;
+	}
 	
 	public Set<Slime> getAllSlimes(){
 		return this.slimes;
@@ -614,9 +620,9 @@ public class World {
 		return plants.size();
 	}	
 		
-//	public int getNbSharks(){
-//		return sharks.size();
-//	}
+	public int getNbSharks(){
+		return sharks.size();
+	}
 	
 	public int getNbSlimes(){
 		return slimes.size();
@@ -629,7 +635,7 @@ public class World {
 		// Ugly & tricky maar werkt... of isinstance gebruiken...
 		mazubs.remove(gameObject);
 		plants.remove(gameObject);
-//		sharks.remove(gameObject);
+		sharks.remove(gameObject);
 		slimes.remove(gameObject);
 	}
 	
@@ -637,7 +643,7 @@ public class World {
 	
 	public Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
 	public Set<Plant> plants = new HashSet<Plant>();
-//	public Set<Shark> sharks = new HashSet<Shark>();
+	public Set<Shark> sharks = new HashSet<Shark>();
 	public Set<Slime> slimes = new HashSet<Slime>();
 	
 	
