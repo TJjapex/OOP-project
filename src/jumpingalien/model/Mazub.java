@@ -486,7 +486,7 @@ public class Mazub extends GameObject{
 		// Update horizontal velocity
 		this.updateVelocityX(dt);
 		
-		this.processCollision();
+		this.processOverlap();
 		
 		if( this.doesCollide() ){
 			this.setPositionX(oldPositionX);
@@ -499,8 +499,8 @@ public class Mazub extends GameObject{
 		
 		// Update vertical velocity
 		this.updateVelocityY(dt);
-		
-		this.processCollision();
+	
+		this.processOverlap();
 		
 		if( this.doesCollide() ) {
 			this.setPositionY(oldPositionY);
@@ -529,21 +529,21 @@ public class Mazub extends GameObject{
 	
 	/************************************************************* COLLISION *************************************************/
 	
-	public void processPlantCollision(Plant plant){
+	public void processPlantOverlap(Plant plant){
 		if(!plant.isKilled()){
 			this.increaseNbHitPoints(50);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
 	
-	public void processSharkCollision(Shark shark){
+	public void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.increaseNbHitPoints(-50);
 			getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
-	public void processSlimeCollision(Slime slime){
+	public void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.increaseNbHitPoints(-50);
 			getTimer().setSinceEnemyCollision(0);

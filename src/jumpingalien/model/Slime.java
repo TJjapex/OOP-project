@@ -122,7 +122,7 @@ public class Slime extends GameObject {
 			// Update horizontal velocity
 			this.updateVelocityX(dt);
 			
-			this.processCollision(); 
+			this.processOverlap(); 
 			
 			if( this.doesCollide() ) {
 				this.setPositionX(oldPositionX);
@@ -141,7 +141,7 @@ public class Slime extends GameObject {
 			// Update vertical velocity
 			this.updateVelocityY(dt);
 			
-			this.processCollision(); 
+			this.processOverlap(); 
 			
 			if( this.doesCollide() ) {
 				this.setPositionY(oldPositionY);

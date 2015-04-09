@@ -983,7 +983,7 @@ public abstract class GameObject {
 	}	
 	
 	/**
-	 * Checks if this object collides with (another) given gameobject
+	 * Checks if this object collides with given gameobject
 	 * @param other
 	 * @return
 	 */
@@ -1000,12 +1000,39 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
-		// TODO dit klopt volgens mij niet echt met die perimeter...
+		return ! ( // Dus geeft true als elke deelexpressie false geeft
+				   (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
+				|| (x + (width - 2) < this.getRoundedPositionX())
+				|| ( this.getRoundedPositionY() + (this.getHeight() - 2) < y) // top
+				|| (y + (height - 2) < this.getRoundedPositionY() ) //bottom
+				
+				);
+	}
+	
+	/**
+	 * Checks if this object overlaps with given gameobject
+	 * @param other
+	 * @return
+	 */
+	public boolean doesOverlapWith(GameObject other){
+		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+	}
+	
+	/**
+	 * Checks if this object overlaps with the given region
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	public boolean doesOverlapWith(int x, int y, int width, int height){
+		// return this.doesCollideWith(x+1, y+1, width-2, height -2) zou ook moeten werken (rekenkundig hetzelfde), minder redundant. Niet getest. TODO
 		return ! ( 
-				   (this.getRoundedPositionX() + ( this.getWidth() -1) <  x) 
-				|| (x + (width -1 ) < this.getRoundedPositionX())
-				|| ( this.getRoundedPositionY() + (this.getHeight() - 1 ) <= y) // top
-				|| (y + (height - 1) <= this.getRoundedPositionY() ) // Bottom // TODO geen idee warom hier <= maar anders geeft die direct een collision error en ik vind de oorzaak niet :/
+				   (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x) 
+				|| (x + (width -1) < this.getRoundedPositionX())
+				|| ( this.getRoundedPositionY() + (this.getHeight() - 1) < y) // top
+				|| (y + (height -1 ) < this.getRoundedPositionY() ) // Bottom
 				
 				);
 	}
@@ -1016,16 +1043,16 @@ public abstract class GameObject {
 	 * Checks the colliding tiles and objects and processes it
 	 * 
 	 */
-	public void processCollision(){
+	public void processOverlap(){
 		
 		// Process tiles
-		this.processTileCollision();
+		this.processTileOverlap();
 		
 		// Process gameobjects 
-		this.processGameObjectCollision();
+		this.processGameObjectOverlap();
 	}
 
-	public void processTileCollision(){
+	public void processTileOverlap(){
 		Set<Terrain> collisionTileTypes = this.getColissionTileTypes();
 		
 		for(Terrain collisionTerrain : collisionTileTypes){
@@ -1038,24 +1065,24 @@ public abstract class GameObject {
 		}
 	}	
 	
-	public void processGameObjectCollision(){
+	public void processGameObjectOverlap(){
 		World world = this.getWorld();
 		
 		for(Mazub alien:  world.getAllMazubs()){
-			if(this.doesCollideWith(alien)){
-				this.processMazubCollision(alien);
+			if(this.doesOverlapWith(alien)){
+				this.processMazubOverlap(alien);
 			}
 		}
 		
 		for(Plant plant :  world.getAllPlants()){
-			if(this.doesCollideWith(plant)){
-				this.processPlantCollision(plant);
+			if(this.doesOverlapWith(plant)){
+				this.processPlantOverlap(plant);
 			}
 		}
 		
 		for(Shark shark :  world.getAllSharks()){
-			if(this.doesCollideWith(shark)){
-				processSharkCollision(shark);
+			if(this.doesOverlapWith(shark)){
+				processSharkOverlap(shark);
 			}
 		}
 		
@@ -1065,19 +1092,19 @@ public abstract class GameObject {
 	
 	// TODO Onderstaande methodes worden nu uitgewerkt in de subklasses, dus misschien abstract maken. 
 	// Misschien is het beter om da samen te voegen ofzo zoals bij die tiles
-	public void processMazubCollision(Mazub alien){
+	public void processMazubOverlap(Mazub alien){
 		
 	}
 	
-	public void processPlantCollision(Plant plant){
+	public void processPlantOverlap(Plant plant){
 		
 	}
 	
-	public void processSharkCollision(Shark shark){
+	public void processSharkOverlap(Shark shark){
 		
 	}
 	
-	public void processSlimeCollision(Slime slime){
+	public void processSlimeOverlap(Slime slime){
 		
 	}
 

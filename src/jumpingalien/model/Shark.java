@@ -198,7 +198,7 @@ public class Shark extends GameObject{
 			// Update horizontal velocity
 			this.updateVelocityX(dt);
 					
-			this.processCollision(); 
+			this.processOverlap(); 
 					
 			if( this.doesCollide() ) {
 				this.setPositionX(oldPositionX);
@@ -219,7 +219,7 @@ public class Shark extends GameObject{
 			// Update vertical velocity
 			this.updateVelocityY(dt);
 					
-			this.processCollision(); 
+			this.processOverlap(); 
 					
 			if( this.doesCollide() ) {
 				this.setPositionY(oldPositionY);
@@ -237,8 +237,9 @@ public class Shark extends GameObject{
 	
 	/*************************************************************** COLLISION ******************************************************/
 	@Override
-	public void processMazubCollision(Mazub alien) {
+	public void processMazubOverlap(Mazub alien) {
 		if(!alien.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+			System.out.println("deduced hitpoints");
 			this.increaseNbHitPoints(-50);
 			getTimer().setSinceEnemyCollision(0);
 		}
