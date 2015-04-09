@@ -7,6 +7,7 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
@@ -48,6 +49,11 @@ public class Shark extends GameObject{
 		super(pixelLeftX,pixelBottomY, 1.0, 2.0, 4.0, 1.5, sprites, nbHitPoints, 100);
 		this.startMove(this.getRandomOrientation());
 		this.startDiveRise();
+		
+		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2));
+		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2));
+		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2));
 		
 	}
 	
@@ -124,11 +130,32 @@ public class Shark extends GameObject{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
 		
+		// Killed
+		if(this.isKilled() && !this.isTerminated()){
+			if(this.getTimer().getSinceKilled() > 0.6){
+				this.terminate();
+			}else{
+				this.getTimer().increaseSinceKilled(dt);
+			}
+		}
+		
+		if(this.isKilled()){
+			return; // Don't execute other statements in advanceTime
+		}
+				
+		
+		// Check if still alive...
+		if(getNbHitPoints() == 0){
+			System.out.println("shark killed!");
+			this.kill();
+		}
+		
 		Orientation currentOrientation;
 		
 		// Timers
-		
+		this.getTimer().increaseSinceTerrainCollision(dt);
 		this.getTimer().increaseSinceLastPeriod(dt);
+		
 		
 		// Randomized movement
 		
@@ -168,7 +195,7 @@ public class Shark extends GameObject{
 			// Update horizontal velocity
 			this.updateVelocityX(dt);
 					
-			// this.processCollision(); 
+			this.processCollision(); 
 					
 			if( this.doesCollide() ) {
 				this.setPositionX(oldPositionX);
@@ -189,7 +216,7 @@ public class Shark extends GameObject{
 			// Update vertical velocity
 			this.updateVelocityY(dt);
 					
-			// this.processCollision(); 
+			this.processCollision(); 
 					
 			if( this.doesCollide() ) {
 				this.setPositionY(oldPositionY);

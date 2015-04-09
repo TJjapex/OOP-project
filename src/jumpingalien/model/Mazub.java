@@ -1,6 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.*;
@@ -149,6 +151,13 @@ public class Mazub extends GameObject{
 		VELOCITY_X_MAX_RUNNING = velocityXMaxRunning;
 		
 		this.setDucking(false);
+		
+		/* Setup terrain properties */
+		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		
 	}
 	
 	/**
@@ -458,15 +467,15 @@ public class Mazub extends GameObject{
 		/* Timers */
 		
 		if(!this.isMoving())
-			this.getTimer().increaseSinceLastMove(dt);
+			getTimer().increaseSinceLastMove(dt);
 		
 		// Sprites
-		this.getTimer().increaseSinceLastSprite(dt);
-		this.getAnimation().updateAnimationIndex(this.getTimer());
+		getTimer().increaseSinceLastSprite(dt);
+		getAnimation().updateAnimationIndex(this.getTimer());
 		
 		// Other
-		this.getTimer().increaseSinceLastCollision(dt);
-		
+		getTimer().increaseSinceTerrainCollision(dt);
+		getTimer().increaseSinceEnemyCollision(dt);
 		
 		
 		/* Position */
@@ -522,20 +531,6 @@ public class Mazub extends GameObject{
 	
 	/************************************************************* COLLISION *************************************************/
 	
-	
-	public void processTileCollision(){
-		Set<Terrain> collisionTileTypes = this.getColissionTileTypes();
-		
-		for(Terrain terrain : collisionTileTypes){
-			if( terrain.getDamage() != 0 ){
-				if( this.getTimer().getSinceLastCollision(terrain) > terrain.getDamageTime() ){ // > of >=? fuzzy?
-					this.increaseNbHitPoints(-terrain.getDamage());
-					this.getTimer().setSinceLastCollision(terrain, 0);
-				}
-			}
-		}
-	}	
-	
 	public void processPlantCollision(Plant plant){
 		if(!plant.isKilled()){
 			this.increaseNbHitPoints(50);
@@ -543,13 +538,18 @@ public class Mazub extends GameObject{
 		}
 	}
 	
-	
 	public void processSharkCollision(Shark shark){
-		
+		if(!shark.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+			this.increaseNbHitPoints(-50);
+			getTimer().setSinceEnemyCollision(0);
+		}
 	}
 	
-	public void processSlimeCollision(){
-		
+	public void processSlimeCollision(Slime slime){
+		if(!slime.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+			this.increaseNbHitPoints(-50);
+			getTimer().setSinceEnemyCollision(0);
+		}
 	}	
 	
 	/**

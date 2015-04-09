@@ -16,24 +16,18 @@ import be.kuleuven.cs.som.annotate.Value;
 public enum Terrain {
 	
 	// Values
-	AIR		(0, true, 0, Double.POSITIVE_INFINITY),
-	SOLID	(1, false, 0, Double.POSITIVE_INFINITY),
-	WATER	(2, true, 2, 0.2),
-	MAGMA	(3, true, 50, 0.2);
+	AIR		(0),
+	SOLID	(1),
+	WATER	(2),
+	MAGMA	(3);
 	
 	
 	// Variables
 	private final int id;
-	private final boolean passable;
-	private final int damage;
-	private final double damageTime;
 	
 	// Constructor
-	private Terrain(int id, boolean passable, int damage, double damageTime) {
+	private Terrain(int id) {
 		this.id = id;
-		this.passable = passable;
-		this.damage = damage;
-		this.damageTime = damageTime;
 	}
 	
 	
@@ -42,21 +36,8 @@ public enum Terrain {
 		return this.id;
 	}
 	
-	public boolean isPassable(){
-		return this.passable;
-	}
-	
-	public int getDamage(){
-		return this.damage;
-	}
-	
-	public double getDamageTime(){
-		return this.damageTime;
-	}
-	
 	/* Returns all terrain types */
 	public static List<Terrain> getAllTerrainTypes(){
 		return new ArrayList<Terrain>(EnumSet.allOf(Terrain.class));
 	}
-	
 }

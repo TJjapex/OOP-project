@@ -5,6 +5,7 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
@@ -32,6 +33,12 @@ public class Plant extends GameObject {
 		
 		super(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1);
 		this.startMove(Orientation.RIGHT);
+		
+		
+		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
 
 	}	
 	

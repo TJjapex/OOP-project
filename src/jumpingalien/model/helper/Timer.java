@@ -29,8 +29,10 @@ public class Timer {
 		
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
 			// Eventueel check om alleen impassable tiles hier toe te veogen
-			this.sinceLastCollision.put(terrain, Double.POSITIVE_INFINITY);
+			this.sinceLastTerrainCollision.put(terrain, Double.POSITIVE_INFINITY);
 		}
+		
+		this.setSinceEnemyCollision(Double.POSITIVE_INFINITY);
 	}
 	
 	// Last move
@@ -138,25 +140,43 @@ public class Timer {
 	private double sinceKilled;
 	
 	
-	// Colission
-	public double getSinceLastCollision(Terrain terrain){
-		if(!this.sinceLastCollision.containsKey(terrain))
+	/* Terrain Collision */
+	private Map<Terrain, Double> sinceLastTerrainCollision = new HashMap<Terrain, Double>();
+	
+	public double getSinceTerrainCollision(Terrain terrain){
+		if(!this.sinceLastTerrainCollision.containsKey(terrain))
 			throw new IllegalArgumentException("Terrain not in collision map!");
-		return this.sinceLastCollision.get(terrain);
+		return this.sinceLastTerrainCollision.get(terrain);
 	}
 	
-	public void setSinceLastCollision(Terrain terrain, double dt){
-		this.sinceLastCollision.put(terrain, dt);
+	public void setSinceTerrainCollision(Terrain terrain, double dt){
+		this.sinceLastTerrainCollision.put(terrain, dt);
 	}
 	
-	// Increasees all 
-	public void increaseSinceLastCollision(double dt){
-		for(Terrain terrain : this.sinceLastCollision.keySet()){
-			setSinceLastCollision(terrain, getSinceLastCollision(terrain) + dt);
+	/** Increases all **/ 
+	public void increaseSinceTerrainCollision(double dt){
+		for(Terrain terrain : this.sinceLastTerrainCollision.keySet()){
+			setSinceTerrainCollision(terrain, getSinceTerrainCollision(terrain) + dt);
 		}
 	}
 	
-	private Map<Terrain, Double> sinceLastCollision = new HashMap<Terrain, Double>();
+	/* Enemy Collision */
+	private double sinceEnemyCollision;
+	
+	public double getSinceEnemyCollision() {
+		return sinceEnemyCollision;
+	}
+
+	public void setSinceEnemyCollision(double sinceEnemyCollision) {
+		this.sinceEnemyCollision = sinceEnemyCollision;
+	}
+	
+	public void increaseSinceEnemyCollision(double dt){
+		this.setSinceEnemyCollision( this.getSinceEnemyCollision() + dt);
+	}
+	
+
+	/* Shark movement */
 	
 	public double getSinceLastPeriod() {
 		return this.sinceLastPeriod;
@@ -176,6 +196,9 @@ public class Timer {
 		Random random = new Random();
 		return min + (max - min)*random.nextDouble();
 	}
+
+
+	
 	
 	
 }

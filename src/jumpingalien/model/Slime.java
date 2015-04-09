@@ -7,6 +7,7 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
@@ -44,6 +45,10 @@ public class Slime extends GameObject {
 		super(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, nbHitPoints, 100);
 		this.startMove(this.getRandomOrientation());
 		
+		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
 	}
 	
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites)

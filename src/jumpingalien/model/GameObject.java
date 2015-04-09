@@ -1,6 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -34,7 +36,8 @@ public abstract class GameObject {
 	
 	public static final int GAME_WIDTH = 1024;
 	public static final int GAME_HEIGHT = 768;
-
+	
+	
 	/************************************************ CONSTRUCTOR *********************************************/
 
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
@@ -108,6 +111,8 @@ public abstract class GameObject {
 	
 	private boolean terminated = false;
 	
+	
+	
 	/************************************************* HELPER CLASSES *****************************************/
 
 	/**
@@ -140,6 +145,25 @@ public abstract class GameObject {
 
 	protected Timer timer;	
 
+	/************************************************ TERRAIN *************************************************/
+	public Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
+	
+	public Map<Terrain, TerrainProperties> getAllTerrainProperties() {
+		return allTerrainProperties;
+	}
+	
+	public TerrainProperties getTerrainPropertiesOf(Terrain terrain) {
+		return allTerrainProperties.get(terrain);
+	}
+	
+	public void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
+		allTerrainProperties.put(terrain, terrainProperties);
+	}
+	
+	public boolean hasTerrainPropertiesOf(Terrain terrain){
+		return allTerrainProperties.containsKey(terrain);
+	}
+	
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
 	/**
@@ -919,7 +943,8 @@ public abstract class GameObject {
 		for(int[] tile : tiles){
 			// Check if that tile is passable 
 			// and if the given object collides with a tile...
-			if( world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1])) == Terrain.SOLID){
+			Terrain terrain = world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]));
+			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
 				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
 					return true;
 				}
@@ -970,10 +995,19 @@ public abstract class GameObject {
 		// Process gameobjects 
 		this.processGameObjectCollision();
 	}
-	
+
 	public void processTileCollision(){
-		// UItgewerkt in subklasse
-	}
+		Set<Terrain> collisionTileTypes = this.getColissionTileTypes();
+		
+		for(Terrain collisionTerrain : collisionTileTypes){
+			if( hasTerrainPropertiesOf(collisionTerrain) && getTerrainPropertiesOf(collisionTerrain).getDamage() != 0 ){
+				if( this.getTimer().getSinceTerrainCollision(collisionTerrain) > getTerrainPropertiesOf(collisionTerrain).getDamageTime() ){ // > of >=? fuzzy?
+					this.increaseNbHitPoints(-getTerrainPropertiesOf(collisionTerrain).getDamage());
+					this.getTimer().setSinceTerrainCollision(collisionTerrain, 0);
+				}
+			}
+		}
+	}	
 	
 	public void processGameObjectCollision(){
 		World world = this.getWorld();
@@ -984,12 +1018,12 @@ public abstract class GameObject {
 			}
 		}
 		
-//		for(Shark shark :  world.getAllSharks()){
-//			if(this.doesCollideWith(shark)){
-//				processSharkCollision(shark);
-//			}
-//		}
-//		
+		for(Shark shark :  world.getAllSharks()){
+			if(this.doesCollideWith(shark)){
+				processSharkCollision(shark);
+			}
+		}
+		
 		//.. slimes...
 		
 	}
@@ -1032,4 +1066,8 @@ public abstract class GameObject {
 		
 		return colissionTileTypes;
 	}
+//	
+//	public int getCollisionDamage(GameObject other){
+//		
+//	}
 }

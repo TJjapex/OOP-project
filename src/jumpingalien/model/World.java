@@ -59,11 +59,11 @@ public class World {
 	
 	/* world dimensions */
 	public int getWorldWidth() {
-		return ( this.getNbTilesX() + 1 ) * getTileLength(); // waarom die +1?
+		return ( this.getNbTilesX()) * getTileLength(); // waarom die +1?
 	}
 	
 	public int getWorldHeight() {
-		return ( this.getNbTilesY() + 1 ) * getTileLength();
+		return ( this.getNbTilesY()) * getTileLength();
 	}
 	
 	/*********************************************** DISPLAY WINDOW *******************************************/	
@@ -92,16 +92,64 @@ public class World {
 	
 	private final int displayHeight;
 	
-	//  * inspect position (bottom-left corner) of the display window
+	/* inspect position (bottom-left corner) of the display window */	
+	
+	// X
 	public int getDisplayPositionX(){
-		// TODO Dit implementeren
-		return 0;
+		return this.displayPositionX;
 	}
 	
-	public int getDisplayPositionY(){
-		return 0;
+	public void setDisplayPositionX(int displayPositionX) {
+		this.displayPositionX = displayPositionX;
 	}
+	
+	public void updateDisplayPositionX(){
+		// TODO getters en setters implementeren + opschonenen, die ifs kunnen eventueel met min/max
+		if(displayPositionX + getDisplayWidth() - 200 < this.mainMazub.getRoundedPositionX()){
+			this.displayPositionX = this.mainMazub.getRoundedPositionX() + 200 - getDisplayWidth(); 
+		}
+		
+		if(displayPositionX + 200 > this.mainMazub.getRoundedPositionX()){
+			this.displayPositionX = this.mainMazub.getRoundedPositionX() - 200; 
+		}
+		
+		displayPositionX = Math.max(0, displayPositionX);
+		displayPositionX = Math.min(getWorldWidth() - getDisplayWidth(), displayPositionX);
+	}
+	
+	private int displayPositionX = 0;
 
+	// Y
+
+	public int getDisplayPositionY(){
+		return this.displayPositionY;
+	}
+	
+	public void setDisplayPositionY(int displayPositionY) {
+		this.displayPositionY = displayPositionY;
+	}
+	
+	public void updateDisplayPositionY(){
+		if(displayPositionY + getDisplayHeight() - 200 < this.mainMazub.getRoundedPositionY()){
+			this.displayPositionY = this.mainMazub.getRoundedPositionY() + 200 - getDisplayHeight(); 
+		}
+		
+		if(displayPositionY + 200 > this.mainMazub.getRoundedPositionY()){
+			this.displayPositionY = this.mainMazub.getRoundedPositionY() - 200; 
+		}
+		
+		displayPositionY = Math.max(0, displayPositionY);
+		displayPositionY = Math.min(getWorldHeight() - getDisplayHeight(), displayPositionY);
+		
+	}
+	
+	public void updateDisplayPosition(){
+		updateDisplayPositionX();
+		updateDisplayPositionY();
+	}
+	
+	private int displayPositionY = 0;
+	
 	
 	/*************************************************** TILES ************************************************/
 
@@ -280,7 +328,6 @@ public class World {
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
 	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
 	public void advanceTime( double dt) {
-		
 		double minDt;
 		
 		for(Mazub alien: this.getAllMazubs()){
@@ -304,6 +351,8 @@ public class World {
 				object.advanceTime(minDt);
 	        }
 		}
+		
+		updateDisplayPosition();
 		
 	}
 
@@ -548,7 +597,10 @@ public class World {
 	public void addAsMazub(Mazub alien){
 		alien.setWorld(this);
 		mazubs.add(alien);
+		this.mainMazub = alien;
 	}
+	
+	private Mazub mainMazub = null;
 	
 	public void removeAsMazub(Mazub alien){
 		// TODO Auto-generated method stub
