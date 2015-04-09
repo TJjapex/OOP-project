@@ -811,7 +811,24 @@ public abstract class GameObject {
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
 	// TODO Eventueel een versie van advanceTime hier uitwerken die dingen doet die alle mazubs/plants/sharks nodig hebben en dan doorlinken naar advanceTime2 die dan gedefinieerd is in de subklassen
-	abstract public void advanceTime(double dt);
+	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
+			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
+	
+		if(this.isTerminated()){ 
+			// Dit is noodzakelijk, want soms wordt advanceTime nog door World uitgevoerd door die minDt gedoe (stel dat in de eerste
+			// uitvoer van advanceTime het object geterminate wordt dan blijft die nog effe doorgaan
+			return;
+		}
+		
+		if( !hasProperWorld())
+			throw new IllegalStateException(" This object is not in world!");
+		
+		
+		advanceTime2(dt);
+	}
+	
+	public abstract void advanceTime2(double dt); // Moet nog een andere naam krijgen, of mss die advanceTime nog opsplitsen in meer subfuncties
 	
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
@@ -932,6 +949,7 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollide(){
+//		System.out.println("doesCollide()"+this);
 		World world = this.getWorld();
 		
 		// Check collision with tiles
@@ -950,6 +968,16 @@ public abstract class GameObject {
 				}
 			}
 		}		
+		
+		// Check colission with gameObjects
+		for(GameObject object : world.getAllNonPassableGameObjects()){
+			//System.out.println(object);
+			if(object != this && doesCollideWith(object)){
+//				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
+//				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
+				return true;
+			}
+		}
 		
 		return false;
 	}	
@@ -972,11 +1000,12 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
+		// TODO dit klopt volgens mij niet echt met die perimeter...
 		return ! ( 
-				   (this.getPositionX() + ( this.getWidth() - 1) <  x) 
-				|| (x + (width - 1) < this.getPositionX())
-				|| ( this.getPositionY() + (this.getHeight() - 1 ) < y)
-				|| (y + (height - 1) <= this.getPositionY() ) // TODO geen idee warom hier <= maar anders geeft die direct een collision error en ik vind de oorzaak niet :/
+				   (this.getRoundedPositionX() + ( this.getWidth() -1) <  x) 
+				|| (x + (width -1 ) < this.getRoundedPositionX())
+				|| ( this.getRoundedPositionY() + (this.getHeight() - 1 ) <= y) // top
+				|| (y + (height - 1) <= this.getRoundedPositionY() ) // Bottom // TODO geen idee warom hier <= maar anders geeft die direct een collision error en ik vind de oorzaak niet :/
 				
 				);
 	}
@@ -1012,6 +1041,12 @@ public abstract class GameObject {
 	public void processGameObjectCollision(){
 		World world = this.getWorld();
 		
+		for(Mazub alien:  world.getAllMazubs()){
+			if(this.doesCollideWith(alien)){
+				this.processMazubCollision(alien);
+			}
+		}
+		
 		for(Plant plant :  world.getAllPlants()){
 			if(this.doesCollideWith(plant)){
 				this.processPlantCollision(plant);
@@ -1030,6 +1065,10 @@ public abstract class GameObject {
 	
 	// TODO Onderstaande methodes worden nu uitgewerkt in de subklasses, dus misschien abstract maken. 
 	// Misschien is het beter om da samen te voegen ofzo zoals bij die tiles
+	public void processMazubCollision(Mazub alien){
+		
+	}
+	
 	public void processPlantCollision(Plant plant){
 		
 	}

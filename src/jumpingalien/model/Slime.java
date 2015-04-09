@@ -90,12 +90,10 @@ public class Slime extends GameObject {
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Slimes
 	
-	public void advanceTime(double dt) throws IllegalArgumentException{
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-		if( !hasProperWorld())
-			throw new IllegalStateException(" This Slime is not in world!");
-
+	public void advanceTime2(double dt){
+		if( this.doesCollide())
+			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
+		
 		Orientation currentOrientation;
 		
 		// Timers
@@ -124,7 +122,7 @@ public class Slime extends GameObject {
 			// Update horizontal velocity
 			this.updateVelocityX(dt);
 			
-			// this.processCollision(); 
+			this.processCollision(); 
 			
 			if( this.doesCollide() ) {
 				this.setPositionX(oldPositionX);
@@ -143,7 +141,7 @@ public class Slime extends GameObject {
 			// Update vertical velocity
 			this.updateVelocityY(dt);
 			
-			// this.processCollision(); 
+			this.processCollision(); 
 			
 			if( this.doesCollide() ) {
 				this.setPositionY(oldPositionY);

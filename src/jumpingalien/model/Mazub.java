@@ -456,11 +456,7 @@ public class Mazub extends GameObject{
 	 * 				The given time dt is either negative or greater than 0.2s.
 	 * 				| (dt > 0.2) || (dt < 0)
 	 */
-	public void advanceTime(double dt) throws IllegalArgumentException {
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-		if( !hasProperWorld())
-			throw new IllegalStateException(" This Mazub is not in world!");
+	public void advanceTime2(double dt) throws IllegalStateException {
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
 		
@@ -494,6 +490,7 @@ public class Mazub extends GameObject{
 		
 		if( this.doesCollide() ){
 			this.setPositionX(oldPositionX);
+			//System.out.println("xcolission" + getPositionX() + " "+oldPositionX);
 			this.endMove(this.getOrientation());
 		}
 				
@@ -503,11 +500,12 @@ public class Mazub extends GameObject{
 		// Update vertical velocity
 		this.updateVelocityY(dt);
 		
-		
 		this.processCollision();
 		
 		if( this.doesCollide() ) {
 			this.setPositionY(oldPositionY);
+			
+			//System.out.println("ycolission" +getPositionY() + " "+oldPositionY);
 			
 			if(this.getVelocityY() > 0){
 				this.endJump();

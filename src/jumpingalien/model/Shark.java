@@ -126,10 +126,12 @@ public class Shark extends GameObject{
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Sharks
 	
-	public void advanceTime(double dt) throws IllegalArgumentException{
+	public void advanceTime2(double dt) throws IllegalArgumentException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-		
+//		if( this.doesCollide())
+//			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
+//		
 		// Killed
 		if(this.isKilled() && !this.isTerminated()){
 			if(this.getTimer().getSinceKilled() > 0.6){
@@ -154,6 +156,7 @@ public class Shark extends GameObject{
 		
 		// Timers
 		this.getTimer().increaseSinceTerrainCollision(dt);
+		this.getTimer().increaseSinceEnemyCollision(dt);
 		this.getTimer().increaseSinceLastPeriod(dt);
 		
 		
@@ -230,6 +233,15 @@ public class Shark extends GameObject{
 						
 		}
 		
+	}
+	
+	/*************************************************************** COLLISION ******************************************************/
+	@Override
+	public void processMazubCollision(Mazub alien) {
+		if(!alien.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+			this.increaseNbHitPoints(-50);
+			getTimer().setSinceEnemyCollision(0);
+		}
 	}
 	
 }

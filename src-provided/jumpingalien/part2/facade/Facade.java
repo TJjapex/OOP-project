@@ -39,7 +39,7 @@ public class Facade implements IFacadePart2 {
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
-			return new Mazub(pixelLeftX, pixelBottomY, sprites);
+			return new Mazub(pixelLeftX, pixelBottomY+1, sprites);
 		}catch( IllegalPositionXException | IllegalPositionYException exc){
 			throw new ModelException("Invalid position given.");
 		}catch( IllegalWidthException | IllegalHeightException exc){
@@ -396,7 +396,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addSlime(World world, Slime slime) {
-		world.addAsSlime(slime);
+		//world.addAsSlime(slime);
 	}
 
 	@Override

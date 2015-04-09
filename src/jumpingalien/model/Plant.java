@@ -67,19 +67,14 @@ public class Plant extends GameObject {
 	// * isnt influenced by contact with other game objects or water/magma
 	// * alternate moving left and right with a constant horizontal velocity of 0.5 [m/s] for 0.5s
 	
-	public void advanceTime(double dt) throws IllegalArgumentException{
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-		if( isTerminated() )
-			throw new IllegalStateException("Object terminated!");	
-		
+	public void advanceTime2(double dt){
 		// Killed
 		if(this.isKilled() && !this.isTerminated()){
-			if(this.getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
+//			if(this.getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
 				this.terminate();
-			}else{
-				this.getTimer().increaseSinceKilled(dt);
-			}
+//			}else{
+//				this.getTimer().increaseSinceKilled(dt);
+//			}
 			
 		}
 		
@@ -105,15 +100,16 @@ public class Plant extends GameObject {
 				this.getTimer().setSinceLastPeriod(0);
 			}
 				
-			double oldPositionX = this.getPositionX();
+			//double oldPositionX = this.getPositionX();
 			
 			// Update horizontal position
 			this.updatePositionX(dt);
 			
-			// this.processCollision(); -> niet echt nodig bij plants?
+			//this.processCollision(); -> niet echt nodig bij plants?
 			
-			if( this.doesCollide() ) 
-				this.setPositionX(oldPositionX);
+			// Iedereen mag door plants dus in plants geen collision checken
+//			if( this.doesCollide() ) 
+//				this.setPositionX(oldPositionX);
 		}
 	}
 	

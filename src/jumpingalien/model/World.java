@@ -339,17 +339,18 @@ public class World {
 			for(int i=0; i<(dt/minDt); i++){
 				alien.advanceTime(minDt);
 	        }
+			alien.advanceTime(dt%minDt);
 		}
 		
-		for(GameObject object: this.getAllEnemies()){
-			
+		for(GameObject object: this.getAllEnemies()){			
 			// determine minDt			
 			minDt = Math.min( dt,  0.01 / ( object.getVelocityMagnitude() + object.getAccelerationMagnitude()* dt) );
 			
 			// iteratively advance time;
-			for(int i=0; i<(dt/minDt); i++){
+			for(int i=0; i<(dt/minDt); i++){				
 				object.advanceTime(minDt);
 	        }
+			object.advanceTime(dt%minDt);
 		}
 		
 		updateDisplayPosition();
@@ -600,7 +601,7 @@ public class World {
 		this.mainMazub = alien;
 	}
 	
-	private Mazub mainMazub = null;
+	public Mazub mainMazub = null;
 	
 	public void removeAsMazub(Mazub alien){
 		// TODO Auto-generated method stub
@@ -637,11 +638,27 @@ public class World {
 		return mazubsClone;
 	}
 	
+	public Set<GameObject> getAllGameObjects(){
+		Set<GameObject> allGameObjects= new HashSet<GameObject>(this.getAllMazubs());
+		allGameObjects.addAll(this.getAllPlants());
+		allGameObjects.addAll(this.getAllSlimes());
+		allGameObjects.addAll(this.getAllSharks());
+		return allGameObjects;
+	}
+	
+	public Set<GameObject> getAllNonPassableGameObjects(){
+		Set<GameObject> allNonPassableGameObjects= new HashSet<GameObject>(this.getAllMazubs());
+		allNonPassableGameObjects.addAll(this.getAllSlimes());
+		allNonPassableGameObjects.addAll(this.getAllSharks());
+		return allNonPassableGameObjects;
+	}
+
+	
 	public Set<GameObject> getAllEnemies(){
 		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
 		allEnemies.addAll(this.getAllSlimes());
 		allEnemies.addAll(this.getAllSharks());
-		return allEnemies; // + nog sharks toevoegen enzo, behoren plants tot enemies?
+		return allEnemies;
 	}
 
 	public Set<Plant> getAllPlants(){
@@ -661,7 +678,7 @@ public class World {
 	// Count
 	
 	public int getNbGameObjects(){
-		return getNbMazubs() + getNbPlants();
+		return getNbMazubs() + getNbPlants() + getNbSharks() + getNbSlimes();
 	}
 	
 	public int getNbMazubs(){
