@@ -105,12 +105,12 @@ public class World {
 	
 	public void updateDisplayPositionX(){
 		// TODO getters en setters implementeren + opschonenen, die ifs kunnen eventueel met min/max
-		if(displayPositionX + getDisplayWidth() - 200 < this.mainMazub.getRoundedPositionX()){
-			this.displayPositionX = this.mainMazub.getRoundedPositionX() + 200 - getDisplayWidth(); 
+		if(displayPositionX + getDisplayWidth() - 200 < getMazub().getRoundedPositionX()){
+			this.displayPositionX = getMazub().getRoundedPositionX() + 200 - getDisplayWidth(); 
 		}
 		
-		if(displayPositionX + 200 > this.mainMazub.getRoundedPositionX()){
-			this.displayPositionX = this.mainMazub.getRoundedPositionX() - 200; 
+		if(displayPositionX + 200 > getMazub().getRoundedPositionX()){
+			this.displayPositionX = getMazub().getRoundedPositionX() - 200; 
 		}
 		
 		displayPositionX = Math.max(0, displayPositionX);
@@ -130,12 +130,12 @@ public class World {
 	}
 	
 	public void updateDisplayPositionY(){
-		if(displayPositionY + getDisplayHeight() - 200 < this.mainMazub.getRoundedPositionY()){
-			this.displayPositionY = this.mainMazub.getRoundedPositionY() + 200 - getDisplayHeight(); 
+		if(displayPositionY + getDisplayHeight() - 200 < getMazub().getRoundedPositionY()){
+			this.displayPositionY = getMazub().getRoundedPositionY() + 200 - getDisplayHeight(); 
 		}
 		
-		if(displayPositionY + 200 > this.mainMazub.getRoundedPositionY()){
-			this.displayPositionY = this.mainMazub.getRoundedPositionY() - 200; 
+		if(displayPositionY + 200 > getMazub().getRoundedPositionY()){
+			this.displayPositionY = getMazub().getRoundedPositionY() - 200; 
 		}
 		
 		displayPositionY = Math.max(0, displayPositionY);
@@ -444,20 +444,14 @@ public class World {
 	//	* game terminates when Mazub is removed from the world or reaches a target tile
 	
 	//  * determine whose bottom-left pixel is positioned on a given position (constant time! -> Map(key,value) 
-//	public int getGameObjectOnPosition(int positionX, int positionY){
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-	// Volgens mij is dit wat er onder geological features wordt bedoeld.
 
 	public boolean isGameOver() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean didPlayerWin() {
-		// TODO Auto-generated method stub
-		return false;
+		return	getTileX(getMazub().getRoundedPositionX()) == this.getTargetTileX() && 
+				getTileY(getMazub().getRoundedPositionY()) == this.getTargetTileY();
 	}
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
@@ -598,10 +592,16 @@ public class World {
 	public void addAsMazub(Mazub alien){
 		alien.setWorld(this);
 		mazubs.add(alien);
-		this.mainMazub = alien;
 	}
 	
-	public Mazub mainMazub = null;
+	
+	// Tijdelijk? Ik begrijp trouwens niet echt hoe ge meerdere Mazubs kunt hebben en hoe ge dan moet weten welke ge moet besturen? :p
+	public Mazub getMazub(){
+		if(this.getNbMazubs() == 1){
+			return this.getAllMazubs().iterator().next();
+		}
+		return null;
+	}
 	
 	public void removeAsMazub(Mazub alien){
 		// TODO Auto-generated method stub

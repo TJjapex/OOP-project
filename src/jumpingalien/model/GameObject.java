@@ -1077,7 +1077,7 @@ public abstract class GameObject {
 		
 	}
 	
-	public void processSlimeCollision(){
+	public void processSlimeCollision(Slime slime){
 		
 	}
 
