@@ -35,10 +35,10 @@ public class Plant extends GameObject {
 		this.startMove(Orientation.RIGHT);
 		
 		
-		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
 
 	}	
 	
@@ -100,16 +100,16 @@ public class Plant extends GameObject {
 				this.getTimer().setSinceLastPeriod(0);
 			}
 				
-			//double oldPositionX = this.getPositionX();
+			double oldPositionX = this.getPositionX();
 			
 			// Update horizontal position
 			this.updatePositionX(dt);
 			
 			//this.processCollision(); -> niet echt nodig bij plants?
 			
-			// Iedereen mag door plants dus in plants geen collision checken
-//			if( this.doesCollide() ) 
-//				this.setPositionX(oldPositionX);
+			// Iedereen mag door plants dus in plants geen collision checken -> plants mogen niet door impassable terrain!
+			if( this.doesCollide() ) 
+				this.setPositionX(oldPositionX);
 		}
 	}
 	

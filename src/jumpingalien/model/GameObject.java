@@ -791,9 +791,9 @@ public abstract class GameObject {
 	
 	public Sprite getCurrentSprite(){
 		if(getOrientation() == Orientation.RIGHT){
-			return getSpriteAt(0);
-		}else{
 			return getSpriteAt(1);
+		}else{
+			return getSpriteAt(0);
 		}
 	};
 	
@@ -924,7 +924,11 @@ public abstract class GameObject {
 	}
 	
 	public void increaseNbHitPoints(int nbHitPoints){
-		setNbHitPoints(getNbHitPoints() + nbHitPoints);
+		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
+	}
+	
+	public void takeDamage(int damageAmount){
+		this.setNbHitPoints(this.getNbHitPoints() - damageAmount);
 	}
 
 	public boolean isValidNbHitPoints(int nbHitPoints) {
@@ -1056,9 +1060,9 @@ public abstract class GameObject {
 		Set<Terrain> collisionTileTypes = this.getColissionTileTypes();
 		
 		for(Terrain collisionTerrain : collisionTileTypes){
-			if( hasTerrainPropertiesOf(collisionTerrain) && getTerrainPropertiesOf(collisionTerrain).getDamage() != 0 ){
-				if( this.getTimer().getSinceTerrainCollision(collisionTerrain) > getTerrainPropertiesOf(collisionTerrain).getDamageTime() ){ // > of >=? fuzzy?
-					this.increaseNbHitPoints(-getTerrainPropertiesOf(collisionTerrain).getDamage());
+			if( this.hasTerrainPropertiesOf(collisionTerrain) && this.getTerrainPropertiesOf(collisionTerrain).getDamage() != 0 ){
+				if( this.getTimer().getSinceTerrainCollision(collisionTerrain) > this.getTerrainPropertiesOf(collisionTerrain).getDamageTime() ){ // > of >=? fuzzy?
+					this.takeDamage( this.getTerrainPropertiesOf(collisionTerrain).getDamage());
 					this.getTimer().setSinceTerrainCollision(collisionTerrain, 0);
 				}
 			}
@@ -1086,7 +1090,11 @@ public abstract class GameObject {
 			}
 		}
 		
-		//.. slimes...
+		for(Slime slime :  world.getAllSlimes()){
+			if(this.doesOverlapWith(slime)){
+				processSlimeOverlap(slime);
+			}
+		}
 		
 	}
 	
@@ -1132,8 +1140,19 @@ public abstract class GameObject {
 		
 		return colissionTileTypes;
 	}
+	
 //	
 //	public int getCollisionDamage(GameObject other){
 //		
 //	}
+	
+	public boolean isSubmergedIn(Terrain terrain){
+		
+		int tileX = world.getTileX(this.getRoundedPositionX() + this.getWidth()/2); // to avoid boundary condition mistakes
+		int tileY = world.getTileY(this.getRoundedPositionY() + this.getHeight());
+				
+		return world.getGeologicalFeature(world.getPositionOfTileX(tileX),world.getPositionOfTileY(tileY)) == terrain;
+	}
+	
+	
 }

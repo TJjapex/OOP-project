@@ -50,10 +50,10 @@ public class Shark extends GameObject{
 		this.startMove(this.getRandomOrientation());
 		this.startDiveRise();
 		
-		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2));
-		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2));
-		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2));
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2));
 		
 	}
 	
@@ -147,7 +147,7 @@ public class Shark extends GameObject{
 				
 		
 		// Check if still alive...
-		if(getNbHitPoints() == 0){
+		if(this.getNbHitPoints() == 0){
 			System.out.println("shark killed!");
 			this.kill();
 		}
@@ -180,7 +180,7 @@ public class Shark extends GameObject{
 				if ((nbNonJumpingPeriods >= 4) && random.nextBoolean()){
 					this.startJump();
 					nbNonJumpingPeriods = 0;
-				} else {
+				} else if (this.isSubmergedIn(Terrain.WATER)) {
 					this.startDiveRise();
 				}
 						
@@ -206,12 +206,17 @@ public class Shark extends GameObject{
 				this.endMove(currentOrientation);
 				if (currentOrientation != Orientation.RIGHT){
 					this.startMove(Orientation.RIGHT);
-					this.startDiveRise();
+					if (this.isSubmergedIn(Terrain.WATER))
+						this.startDiveRise();
 				} else {
 					this.startMove(Orientation.LEFT);
-					this.startDiveRise();
+					if (this.isSubmergedIn(Terrain.WATER))
+						this.startDiveRise();
 				}
 			}
+			
+			// TODO: the vertical acceleration of a non-jumping Shark shall be set to zero if the Shark's top or bottom perimeters are not overlapping with
+			//		  a water tile any more, and at the end of the movement period. -> requires change in definition of isJumping()
 					
 			// Update vertical position
 			this.updatePositionY(dt);
@@ -221,21 +226,21 @@ public class Shark extends GameObject{
 					
 			this.processOverlap(); 
 					
-			if( this.doesCollide() ) {
+			if( this.doesCollide()) {
 				this.setPositionY(oldPositionY);
 				this.stopFall();
+			}else if (! this.isSubmergedIn(Terrain.WATER)){
+						
+				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
+				this.setAccelerationY(-10);
 			}
-//			else{
-//						
-//				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
-//				this.setAccelerationY(-10);
-//			}
 						
 		}
 		
 	}
 	
 	/*************************************************************** COLLISION ******************************************************/
+	
 	@Override
 	public void processMazubOverlap(Mazub alien) {
 		if(!alien.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){

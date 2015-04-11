@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hamcrest.core.IsInstanceOf;
+import org.omg.CORBA.PRIVATE_MEMBER;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
@@ -446,12 +448,26 @@ public class World {
 	//  * determine whose bottom-left pixel is positioned on a given position (constant time! -> Map(key,value) 
 
 	public boolean isGameOver() {
-		return false;
+		return (this.getMazub().getNbHitPoints() == 0);
 	}
 
 	public boolean didPlayerWin() {
-		return	getTileX(getMazub().getRoundedPositionX()) == this.getTargetTileX() && 
-				getTileY(getMazub().getRoundedPositionY()) == this.getTargetTileY();
+			
+		return	this.getTileX(this.getMazub().getRoundedPositionX()) == this.getTargetTileX() && 
+					this.getTileY(this.getMazub().getRoundedPositionY()) == this.getTargetTileY();
+		
+//		for(int[] tile: this.getTilePositionsIn(this.getMazub().getRoundedPositionX(),
+//												this.getMazub().getRoundedPositionY(),
+//												this.getMazub().getRoundedPositionX() + this.getMazub().getWidth(),
+//												this.getMazub().getRoundedPositionY() + this.getMazub().getHeight())){
+//			
+//			if((tile[0] == this.getTargetTileX()) && (tile[1] == this.getTargetTileY()))
+//				return true;
+//			
+//		}
+//		
+//		return false;
+			
 	}
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	

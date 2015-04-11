@@ -383,13 +383,12 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public School createSchool() {
-		// TODO Auto-generated method stub
-		return null;
+		return new School();
 	}
 
 	@Override
 	public Slime createSlime(int x, int y, Sprite[] sprites, School school) {
-		return new Slime(x,y,sprites);
+		return new Slime(x,y,sprites,school);
 	}
 	
 	// Slimes
@@ -416,7 +415,6 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public School getSchool(Slime slime) {
-		// TODO Auto-generated method stub
-		return null;
+		return slime.getSchool();
 	}
 }

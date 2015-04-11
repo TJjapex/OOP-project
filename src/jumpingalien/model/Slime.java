@@ -39,21 +39,25 @@ public class Slime extends GameObject {
 	
 	// * possess 100 hit-points
 	
-	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, int nbHitPoints)
+	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school, int nbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, nbHitPoints, 100);
+		
+		if (this.canHaveAsSchool(school))
+			this.setSchool(school);
+		
 		this.startMove(this.getRandomOrientation());
 		
-		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
 	}
 	
-	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites)
+	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
-		this(pixelLeftX, pixelBottomY, sprites, 100);
+		this(pixelLeftX, pixelBottomY, sprites, school, 100);
 	}
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
@@ -81,6 +85,11 @@ public class Slime extends GameObject {
 	// * lose 50 hit-points when making contact with Mazub or Shark
 	// * Slimes lose hit-points upon touching water/magma (same as Mazub)
 	
+	@Override
+	public void takeDamage(int damageAmount){
+		this.setNbHitPoints(this.getNbHitPoints() - damageAmount);
+		this.getSchool().mutualDamage(this);
+	}
 	
 	
 	/**************************************************** MOVEMENT ********************************************/
@@ -93,7 +102,7 @@ public class Slime extends GameObject {
 	public void advanceTime2(double dt){
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
-		
+
 		Orientation currentOrientation;
 		
 		// Timers
@@ -146,12 +155,11 @@ public class Slime extends GameObject {
 			if( this.doesCollide() ) {
 				this.setPositionY(oldPositionY);
 				this.stopFall();
+			}else{
+				
+				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
+				this.setAccelerationY(-10);
 			}
-//			else{
-//				
-//				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
-//				this.setAccelerationY(-10);
-//			}
 				
 		}
 		
@@ -170,6 +178,40 @@ public class Slime extends GameObject {
 	//													   Slime of a larger school
 	//													 - no more than 10 schools in a game world
 	
+	public School getSchool() {
+		return this.school;
+	}
+
+	public boolean hasProperSchool(){
+		return this.getSchool() != null;
+	}
+
+	void setSchool(School school) {
+		this.school = school;
+	}
 	
+	public boolean canHaveAsSchool(School school){
+		// TODO Auto-generated method stub
+		return true;
+	}
+	
+	private School school;
+	
+	@Override
+	protected void terminate(){
+		this.getWorld().removeGameObject(this);
+		this.setWorld(null);
+		this.getSchool().removeAsSlime(this);
+		this.setSchool(null);
+		
+		this.terminated = true;
+	}
+	
+	@Override
+	public boolean isTerminated(){
+		return this.terminated;
+	}
+	
+	private boolean terminated = false;
 	
 }

@@ -153,10 +153,10 @@ public class Mazub extends GameObject{
 		this.setDucking(false);
 		
 		/* Setup terrain properties */
-		setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
 		
 	}
 	
@@ -538,15 +538,15 @@ public class Mazub extends GameObject{
 	
 	public void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
-			this.increaseNbHitPoints(-50);
-			getTimer().setSinceEnemyCollision(0);
+			this.takeDamage(50);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
 	public void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
-			this.increaseNbHitPoints(-50);
-			getTimer().setSinceEnemyCollision(0);
+			this.takeDamage(50);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}	
 	
