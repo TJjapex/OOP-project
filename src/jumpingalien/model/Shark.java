@@ -209,10 +209,17 @@ public class Shark extends GameObject{
 	
 	@Override
 	public void processMazubOverlap(Mazub alien) {
-		if(!alien.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+		if(!alien.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			System.out.println("deduced hitpoints");
-			this.increaseNbHitPoints(-50);
-			getTimer().setSinceEnemyCollision(0);
+			this.takeDamage(50);
+			this.getTimer().setSinceEnemyCollision(0);
+		}
+	}
+	
+	public void processSlimeOverlap(Slime slime){
+		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
+			this.takeDamage(50);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	

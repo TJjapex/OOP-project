@@ -525,14 +525,14 @@ public class Mazub extends GameObject{
 	}
 	
 	public void processSharkOverlap(Shark shark){
-		if(!shark.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
 	public void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}

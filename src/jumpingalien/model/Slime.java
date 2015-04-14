@@ -45,9 +45,9 @@ public class Slime extends GameObject {
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, nbHitPoints, 100);
-		
+
 		if (this.canHaveAsSchool(school))
-			this.setSchool(school);
+			school.addAsSlime(this);
 		
 		this.startMove(this.getRandomOrientation());
 		
@@ -89,9 +89,14 @@ public class Slime extends GameObject {
 	
 	@Override
 	public void takeDamage(int damageAmount){
+		this.decreaseNbHitPoints(damageAmount);
+		if ( this.getSchool() !=  null )
+			this.getSchool().mutualDamage(this);
+	}
+	
+	public void decreaseNbHitPoints(int damageAmount){
 		System.out.println("slime taking damage:"+damageAmount);
-		super.takeDamage(damageAmount);
-		this.getSchool().mutualDamage(this);
+		this.increaseNbHitPoints(-damageAmount);
 	}
 	
 	
@@ -198,9 +203,9 @@ public class Slime extends GameObject {
 	@Override
 	protected void terminate(){
 		this.getWorld().removeGameObject(this);
-		this.setWorld(null);
-		this.getSchool().removeAsSlime(this);
-		this.setSchool(null);
+		this.setWorld(null); // vervangen door method World removeAs?
+		if (this.getSchool() != null)
+			this.getSchool().removeAsSlime(this);
 		
 		this.terminated = true;
 	}
@@ -225,11 +230,26 @@ public class Slime extends GameObject {
 	}	
 	
 	public void processSlimeOverlap(Slime slime){
+
 		if(slime != this){
-			if(slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes()){
-				// Switch school
+			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
+				this.getSchool().switchSchool( this, slime.getSchool() );
+				System.out.println("Slime changed school!");
+			} else if ( slime.getSchool().getNbSlimes() < this.getSchool().getNbSlimes() ) {
+				slime.getSchool().switchSchool( slime, this.getSchool() );
+				System.out.println("Slime changed school!");
 			}
 		}
+		
+	}
+	
+	public void processSharkOverlap(Shark shark){
+		
+		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
+			this.takeDamage(50);
+			this.getTimer().setSinceEnemyCollision(0);
+		}
+		
 	}
 	
 }

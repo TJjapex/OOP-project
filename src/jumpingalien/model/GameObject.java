@@ -790,10 +790,10 @@ public abstract class GameObject {
 	/****************************************************** SPRITES *******************************************/
 	
 	public Sprite getCurrentSprite(){
-		if(getOrientation() == Orientation.RIGHT){
-			return getSpriteAt(1);
-		}else{
+		if(getOrientation() == Orientation.LEFT){
 			return getSpriteAt(0);
+		}else{
+			return getSpriteAt(1);
 		}
 	};
 	
@@ -957,7 +957,6 @@ public abstract class GameObject {
 	}
 	
 	public void takeDamage(int damageAmount){
-		//this.setNbHitPoints(this.getNbHitPoints() - damageAmount);
 		this.increaseNbHitPoints(-damageAmount);
 	}
 

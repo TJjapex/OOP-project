@@ -61,7 +61,7 @@ public class World {
 	
 	/* world dimensions */
 	public int getWorldWidth() {
-		return ( this.getNbTilesX()) * getTileLength(); // waarom die +1?
+		return ( this.getNbTilesX()) * getTileLength();
 	}
 	
 	public int getWorldHeight() {
@@ -106,17 +106,17 @@ public class World {
 	}
 	
 	public void updateDisplayPositionX(){
-		// TODO getters en setters implementeren + opschonenen, die ifs kunnen eventueel met min/max
-		if(displayPositionX + getDisplayWidth() - 200 < getMazub().getRoundedPositionX()){
-			this.displayPositionX = getMazub().getRoundedPositionX() + 200 - getDisplayWidth(); 
+		// ifs kunnen eventueel met min/max
+		if ( this.getDisplayPositionX() + this.getDisplayWidth() - 200 < this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() ){
+			this.setDisplayPositionX( this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() + 200 - this.getDisplayWidth() ); 
 		}
 		
-		if(displayPositionX + 200 > getMazub().getRoundedPositionX()){
-			this.displayPositionX = getMazub().getRoundedPositionX() - 200; 
+		if ( this.getDisplayPositionX() + 200 > this.getMazub().getRoundedPositionX() ){
+			this.setDisplayPositionX( this.getMazub().getRoundedPositionX() - 200 ); 
 		}
 		
-		displayPositionX = Math.max(0, displayPositionX);
-		displayPositionX = Math.min(getWorldWidth() - getDisplayWidth(), displayPositionX);
+		this.setDisplayPositionX( Math.max( 0, this.getDisplayPositionX() ) );
+		this.setDisplayPositionX( Math.min( this.getWorldWidth() - this.getDisplayWidth(), this.getDisplayPositionX() ) );
 	}
 	
 	private int displayPositionX = 0;
@@ -132,16 +132,16 @@ public class World {
 	}
 	
 	public void updateDisplayPositionY(){
-		if(displayPositionY + getDisplayHeight() - 200 < getMazub().getRoundedPositionY()){
-			this.displayPositionY = getMazub().getRoundedPositionY() + 200 - getDisplayHeight(); 
+		if ( this.getDisplayPositionY() + this.getDisplayHeight() - 200 < this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() ){
+			this.setDisplayPositionY( this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() + 200 - getDisplayHeight() ); 
 		}
 		
-		if(displayPositionY + 200 > getMazub().getRoundedPositionY()){
-			this.displayPositionY = getMazub().getRoundedPositionY() - 200; 
+		if ( this.getDisplayPositionY() + 200 > getMazub().getRoundedPositionY() ){
+			this.setDisplayPositionY( this.getMazub().getRoundedPositionY() - 200 ); 
 		}
 		
-		displayPositionY = Math.max(0, displayPositionY);
-		displayPositionY = Math.min(getWorldHeight() - getDisplayHeight(), displayPositionY);
+		this.setDisplayPositionY( Math.max( 0, this.getDisplayPositionY() ) );
+		this.setDisplayPositionY( Math.min( this.getWorldHeight() - this.getDisplayHeight(), this.getDisplayPositionY() ) );
 		
 	}
 	
@@ -694,23 +694,23 @@ public class World {
 	// Count
 	
 	public int getNbGameObjects(){
-		return getNbMazubs() + getNbPlants() + getNbSharks() + getNbSlimes();
+		return this.getNbMazubs() + this.getNbPlants() + this.getNbSharks() + this.getNbSlimes();
 	}
 	
 	public int getNbMazubs(){
-		return mazubs.size();
+		return this.getAllMazubs().size();
 	}
 	
 	public int getNbPlants(){
-		return plants.size();
+		return this.getAllPlants().size();
 	}	
 		
 	public int getNbSharks(){
-		return sharks.size();
+		return this.getAllSharks().size();
 	}
 	
 	public int getNbSlimes(){
-		return slimes.size();
+		return this.getAllSlimes().size();
 	}
 
 	// removers

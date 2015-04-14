@@ -37,18 +37,13 @@ public class School {
 		return (!(this.hasAsSlime(slime)) && (slime != null) && (!slime.isKilled()));
 	}
 	
-	
-	// TODO gaat onderstaande niet altijd false geven want als de slime in de groep zit geeft canHaveAsSlime false?
 	public boolean hasProperSlimes(){
-		for (Slime slime: this.getAllSlimes()){
-			if (!this.canHaveAsSlime(slime))
-				return false;
-		}
+		// in een set kunnen geen slimes zitten die equal zijn?
 		return true;
 	}
 	
 	public boolean hasAsSlime(Slime slime){
-		return slimes.contains(slime);
+		return this.getAllSlimes().contains(slime);
 	}
 	
 	public void addAsSlime(Slime slime){
@@ -69,30 +64,32 @@ public class School {
 	}
 	
 	public int getNbSlimes(){
-		return slimes.size();
+		return this.getAllSlimes().size();
 	}
 	
-	// Otherschool will be the new school
-	public void switchSchool(Slime switchedSlime, School otherSchool){
-		this.removeAsSlime(switchedSlime);
-		for (Slime slime: this.getAllSlimes()){
-			slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
-		}
-		switchedSlime.increaseNbHitPoints(-SWITCH_SCHOOL_DAMAGE * this.getNbSlimes());
+	public void switchSchool(Slime switchedSlime, School newSchool){
 		
-		for (Slime slime: otherSchool.getAllSlimes()){
-			//slime.takeDamage(SWITCH_SCHOOL_DAMAGE); // Volgens mij gaat dit zorgen dat ge extra veel levens verwijdert omdat dat weer doorgerekend wordt aan de andere schoolmembers?
-			slime.increaseNbHitPoints(-SWITCH_SCHOOL_DAMAGE);
+		if ( this != newSchool) {
+			this.removeAsSlime(switchedSlime);
+			for (Slime slime: this.getAllSlimes()){
+				slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
+			}
+			switchedSlime.decreaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * this.getNbSlimes() );
+			
+			for (Slime slime: newSchool.getAllSlimes()){
+				slime.decreaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
+			}
+			switchedSlime.increaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() );
+			
+			newSchool.addAsSlime(switchedSlime);
 		}
-		switchedSlime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE * otherSchool.getNbSlimes() );
-		
-		otherSchool.addAsSlime(switchedSlime);
+
 	}
 	
 	public void mutualDamage(Slime damagedSlime){
 		for (Slime slime: this.getAllSlimes()){
 			if (!slime.equals(damagedSlime))
-				slime.takeDamage(MUTUAL_SCHOOL_DAMAGE);
+				slime.decreaseNbHitPoints(MUTUAL_SCHOOL_DAMAGE);
 		}
 	}
 	
@@ -100,7 +97,7 @@ public class School {
 	
 	public void terminate(){
 
-		for (Slime slime: getAllSlimes()){
+		for (Slime slime: this.getAllSlimes()){
 			this.removeAsSlime(slime);
 		}
 		this.terminated = true;
