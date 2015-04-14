@@ -37,6 +37,8 @@ public class School {
 		return (!(this.hasAsSlime(slime)) && (slime != null) && (!slime.isKilled()));
 	}
 	
+	
+	// TODO gaat onderstaande niet altijd false geven want als de slime in de groep zit geeft canHaveAsSlime false?
 	public boolean hasProperSlimes(){
 		for (Slime slime: this.getAllSlimes()){
 			if (!this.canHaveAsSlime(slime))
@@ -70,19 +72,25 @@ public class School {
 		return slimes.size();
 	}
 	
+	// Otherschool will be the new school
 	public void switchSchool(Slime switchedSlime, School otherSchool){
 		this.removeAsSlime(switchedSlime);
-		for (Slime slime: slimes){
+		for (Slime slime: this.getAllSlimes()){
 			slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
 		}
+		switchedSlime.increaseNbHitPoints(-SWITCH_SCHOOL_DAMAGE * this.getNbSlimes());
+		
 		for (Slime slime: otherSchool.getAllSlimes()){
-			slime.takeDamage(SWITCH_SCHOOL_DAMAGE);
+			//slime.takeDamage(SWITCH_SCHOOL_DAMAGE); // Volgens mij gaat dit zorgen dat ge extra veel levens verwijdert omdat dat weer doorgerekend wordt aan de andere schoolmembers?
+			slime.increaseNbHitPoints(-SWITCH_SCHOOL_DAMAGE);
 		}
+		switchedSlime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE * otherSchool.getNbSlimes() );
+		
 		otherSchool.addAsSlime(switchedSlime);
 	}
 	
 	public void mutualDamage(Slime damagedSlime){
-		for (Slime slime: slimes){
+		for (Slime slime: this.getAllSlimes()){
 			if (!slime.equals(damagedSlime))
 				slime.takeDamage(MUTUAL_SCHOOL_DAMAGE);
 		}
@@ -92,7 +100,7 @@ public class School {
 	
 	public void terminate(){
 
-		for (Slime slime: slimes){
+		for (Slime slime: getAllSlimes()){
 			this.removeAsSlime(slime);
 		}
 		this.terminated = true;

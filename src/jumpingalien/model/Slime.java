@@ -2,6 +2,8 @@ package jumpingalien.model;
 
 import java.util.Random;
 
+import javax.print.attribute.standard.MediaSize.Other;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -189,7 +191,7 @@ public class Slime extends GameObject {
 	public boolean canHaveAsSchool(School school){
 		// TODO Auto-generated method stub
 		return true;
-	}
+	}	
 	
 	private School school;
 	
@@ -211,6 +213,8 @@ public class Slime extends GameObject {
 	private boolean terminated = false;
 	
 	
+	
+	
 	/******************************************** Colission **********************************************/
 	public void processMazubOverlap(Mazub mazub){
 		System.out.println("slime colission with mazub");
@@ -219,5 +223,13 @@ public class Slime extends GameObject {
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}	
+	
+	public void processSlimeOverlap(Slime slime){
+		if(slime != this){
+			if(slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes()){
+				// Switch school
+			}
+		}
+	}
 	
 }
