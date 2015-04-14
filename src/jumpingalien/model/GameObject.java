@@ -810,25 +810,54 @@ public abstract class GameObject {
 	
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
-	// TODO Eventueel een versie van advanceTime hier uitwerken die dingen doet die alle mazubs/plants/sharks nodig hebben en dan doorlinken naar advanceTime2 die dan gedefinieerd is in de subklassen
 	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-	
-		if(this.isTerminated()){ 
+			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
+		
+		
+		processKilledButNotTerminated_NameMustBeChanged(dt);
+				
+		if(this.isKilled()){ // Als het geterminate is is het sowieso gekilled...
 			// Dit is noodzakelijk, want soms wordt advanceTime nog door World uitgevoerd door die minDt gedoe (stel dat in de eerste
 			// uitvoer van advanceTime het object geterminate wordt dan blijft die nog effe doorgaan
 			return;
 		}
 		
-		if( !hasProperWorld())
-			throw new IllegalStateException(" This object is not in world!");
+		if( !hasProperWorld()) // Dit moet na de de check of dit object al geterminate is want bij het terminaten is z'n wereld null
+			throw new IllegalStateException("This object is not in a proper world!");
 		
+		// Check if still alive...
+		if(this.getNbHitPoints() == 0){
+			this.kill();
+		}		
 		
-		advanceTime2(dt);
+		updateTimers(dt);
+		doMove(dt);
+	}
+
+	protected void processKilledButNotTerminated_NameMustBeChanged(double dt) {
+		if(this.isKilled() && !this.isTerminated()){
+			if(this.getTimer().getSinceKilled() > 0.6){
+				this.terminate();
+			}else{
+				this.getTimer().increaseSinceKilled(dt);
+			}
+		}
 	}
 	
-	public abstract void advanceTime2(double dt); // Moet nog een andere naam krijgen, of mss die advanceTime nog opsplitsen in meer subfuncties
+	public abstract void doMove(double dt);
+	
+	public void updateTimers(double dt){
+		if(!this.isMoving())
+			this.getTimer().increaseSinceLastMove(dt);
+		
+		// Sprites
+		getTimer().increaseSinceLastSprite(dt);
+		
+		this.getTimer().increaseSinceTerrainCollision(dt);
+		this.getTimer().increaseSinceEnemyCollision(dt);
+		this.getTimer().increaseSinceLastPeriod(dt);
+	}
 	
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
@@ -960,7 +989,7 @@ public abstract class GameObject {
 		// Check collision with tiles
 		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
 													this.getRoundedPositionY(),
-													this.getRoundedPositionX() + this.getWidth(), 
+			 										this.getRoundedPositionX() + this.getWidth(), 
 													this.getRoundedPositionY() + this.getHeight());
 
 		for(int[] tile : tiles){

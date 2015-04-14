@@ -98,42 +98,12 @@ public class Slime extends GameObject {
 	// * move randomly to the left or right
 	// * movement periods have a duration of 2s to 6s
 	// * do not attack each other but block each others' movement
-	// * Plants do not block Slimes
-	
-	public void advanceTime2(double dt){
+	// * Plants do not block Slimes	
+	public void doMove(double dt){
 		if( this.doesCollide())
-			throw new IllegalStateException(" Colission before movement! "); // May not happen
-
+			throw new IllegalStateException(" Colission before movement! ");	
+		
 		Orientation currentOrientation;
-		
-		// Killed
-		if(this.isKilled() && !this.isTerminated()){
-			if(this.getTimer().getSinceKilled() > 0.6){
-				this.terminate();
-			}else{
-				this.getTimer().increaseSinceKilled(dt);
-			}
-		}
-		
-		if(this.isKilled()){
-			return; // Don't execute other statements in advanceTime
-		}
-				
-		// Check if still alive...
-		if(this.getNbHitPoints() == 0){
-			System.out.println("slime killed!");
-			this.kill();
-		}		
-		
-		// Timers
-		
-		this.getTimer().increaseSinceLastPeriod(dt);
-		
-		// Other
-		getTimer().increaseSinceTerrainCollision(dt); // Geen idee of deze nodig is
-		getTimer().increaseSinceEnemyCollision(dt);
-		
-		
 		
 		// Randomized movement
 		

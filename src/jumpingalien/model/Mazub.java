@@ -456,30 +456,20 @@ public class Mazub extends GameObject{
 	 * 				The given time dt is either negative or greater than 0.2s.
 	 * 				| (dt > 0.2) || (dt < 0)
 	 */
-	public void advanceTime2(double dt) throws IllegalStateException {
-		if( this.doesCollide())
-			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
+	
+	public void updateTimers(double dt){
+		super.updateTimers(dt);
 		
-		/* Timers */
-		
-		if(!this.isMoving())
-			getTimer().increaseSinceLastMove(dt);
-		
-		// Sprites
-		getTimer().increaseSinceLastSprite(dt);
 		getAnimation().updateAnimationIndex(this.getTimer());
-		
-		// Other
-		getTimer().increaseSinceTerrainCollision(dt);
-		getTimer().increaseSinceEnemyCollision(dt);
-		
-		
-		/* Position */
-		
+	}
+
+	public void doMove(double dt) throws IllegalStateException {
+		if( this.doesCollide())
+			throw new IllegalStateException(" Colission before movement! ");	
+	
 		double oldPositionX = this.getPositionX();
 		double oldPositionY = this.getPositionY();
 		
-	
 		// Update horizontal position
 		this.updatePositionX(dt);
 		
@@ -525,8 +515,6 @@ public class Mazub extends GameObject{
 		}
 		
 	}
-
-	
 	/************************************************************* COLLISION *************************************************/
 	
 	public void processPlantOverlap(Plant plant){

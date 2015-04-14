@@ -67,8 +67,7 @@ public class Plant extends GameObject {
 	// * isnt influenced by contact with other game objects or water/magma
 	// * alternate moving left and right with a constant horizontal velocity of 0.5 [m/s] for 0.5s
 	
-	public void advanceTime2(double dt){
-		// Killed
+	protected void processKilledButNotTerminated_NameMustBeChanged(double dt){
 		if(this.isKilled() && !this.isTerminated()){
 //			if(this.getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
 				this.terminate();
@@ -77,40 +76,40 @@ public class Plant extends GameObject {
 //			}
 			
 		}
-		
-		// Timers
-		
-		if(!this.isMoving())
-			this.getTimer().increaseSinceLastMove(dt);
-		
-		this.getTimer().increaseSinceLastPeriod(dt);
-		
-		// Alternating movement
-		
-		if (!this.isKilled()){
-			if (this.getTimer().getSinceLastPeriod() >= 0.5){ // fuzzy?
-				if (this.getOrientation() == Orientation.RIGHT){
-					this.endMove(Orientation.RIGHT);
-					this.startMove(Orientation.LEFT);
-				}
-				else {
-					this.endMove(Orientation.LEFT);
-					this.startMove(Orientation.RIGHT);
-				}
-				this.getTimer().setSinceLastPeriod(0);
-			}
-				
-			double oldPositionX = this.getPositionX();
-			
-			// Update horizontal position
-			this.updatePositionX(dt);
-			
-			//this.processCollision(); -> niet echt nodig bij plants?
-			
-			// Iedereen mag door plants dus in plants geen collision checken -> plants mogen niet door impassable terrain!
-			if( this.doesCollide() ) 
-				this.setPositionX(oldPositionX);
-		}
 	}
 	
+	public void doMove(double dt){		
+		//if( this.doesCollide())
+		//	throw new IllegalStateException(" Colission before movement! ");	
+		
+		if (this.getTimer().getSinceLastPeriod() >= 0.5){ // fuzzy?
+			if (this.getOrientation() == Orientation.RIGHT){
+				this.endMove(Orientation.RIGHT);
+				this.startMove(Orientation.LEFT);
+			}
+			else {
+				this.endMove(Orientation.LEFT);
+				this.startMove(Orientation.RIGHT);
+			}
+			this.getTimer().setSinceLastPeriod(0);
+		}
+			
+		double oldPositionX = this.getPositionX();
+		
+		// Update horizontal position
+		this.updatePositionX(dt);
+		
+		//this.processOverlap();// -> niet echt nodig bij plants?
+		
+		// Iedereen mag door plants dus in plants geen collision checken -> plants mogen niet door impassable terrain!
+		if( this.doesCollide() ) 
+			this.setPositionX(oldPositionX);
+	}
+	
+	/******************************************* COLISSION ********************************************/
+//	public void processMazubOverlap(Mazub alien){
+//		if(!alien.isKilled()){
+//			this.kill();
+//		}
+//	}
 }

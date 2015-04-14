@@ -125,118 +125,84 @@ public class Shark extends GameObject{
 	//   of the next one
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Sharks
-	
-	public void advanceTime2(double dt) throws IllegalArgumentException{
-		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
-			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");
-//		if( this.doesCollide())
-//			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
-//		
-		// Killed
-		if(this.isKilled() && !this.isTerminated()){
-			if(this.getTimer().getSinceKilled() > 0.6){
-				this.terminate();
-			}else{
-				this.getTimer().increaseSinceKilled(dt);
-			}
-		}
-		
-		if(this.isKilled()){
-			return; // Don't execute other statements in advanceTime
-		}
-				
-		
-		// Check if still alive...
-		if(this.getNbHitPoints() == 0){
-			System.out.println("shark killed!");
-			this.kill();
-		}
+	public void doMove(double dt){
+		if( this.doesCollide())
+			throw new IllegalStateException(" Colission before movement! ");	
 		
 		Orientation currentOrientation;
 		
-		// Timers
-		this.getTimer().increaseSinceTerrainCollision(dt);
-		this.getTimer().increaseSinceEnemyCollision(dt);
-		this.getTimer().increaseSinceLastPeriod(dt);
-		
-		
 		// Randomized movement
-		
-		if (!this.isKilled()){
-			if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
-				
-				this.endMove(this.getOrientation());
-				
-				if (this.isJumping()){
-					this.endJump();
-					this.stopFall();
-				} else {
-					nbNonJumpingPeriods += 1;
-					this.endDiveRise();
-				}	
-				
-				this.startMove(this.getRandomOrientation());
-				
-				if ((nbNonJumpingPeriods >= 4) && random.nextBoolean()){
-					this.startJump();
-					nbNonJumpingPeriods = 0;
-				} else if (this.isSubmergedIn(Terrain.WATER)) {
-					this.startDiveRise();
-				}
-						
-				this.getTimer().setSinceLastPeriod(0);
-						
-				currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
-			}
-						
-			double oldPositionX = this.getPositionX();
-			double oldPositionY = this.getPositionY();
-					
-			// Update horizontal position
-			this.updatePositionX(dt);
-					
-			// Update horizontal velocity
-			this.updateVelocityX(dt);
-					
-			this.processOverlap(); 
-					
-			if( this.doesCollide() ) {
-				this.setPositionX(oldPositionX);
-				currentOrientation = this.getOrientation();
-				this.endMove(currentOrientation);
-				if (currentOrientation != Orientation.RIGHT){
-					this.startMove(Orientation.RIGHT);
-					if (this.isSubmergedIn(Terrain.WATER))
-						this.startDiveRise();
-				} else {
-					this.startMove(Orientation.LEFT);
-					if (this.isSubmergedIn(Terrain.WATER))
-						this.startDiveRise();
-				}
-			}
+		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
-			// TODO: the vertical acceleration of a non-jumping Shark shall be set to zero if the Shark's top or bottom perimeters are not overlapping with
-			//		  a water tile any more, and at the end of the movement period. -> requires change in definition of isJumping()
-					
-			// Update vertical position
-			this.updatePositionY(dt);
-					
-			// Update vertical velocity
-			this.updateVelocityY(dt);
-					
-			this.processOverlap(); 
-					
-			if( this.doesCollide()) {
-				this.setPositionY(oldPositionY);
+			this.endMove(this.getOrientation());
+			
+			if (this.isJumping()){
+				this.endJump();
 				this.stopFall();
-			}else if (! this.isSubmergedIn(Terrain.WATER)){
-						
-				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
-				this.setAccelerationY(-10);
+			} else {
+				nbNonJumpingPeriods += 1;
+				this.endDiveRise();
+			}	
+			
+			this.startMove(this.getRandomOrientation());
+			
+			if ((nbNonJumpingPeriods >= 4) && random.nextBoolean()){
+				this.startJump();
+				nbNonJumpingPeriods = 0;
+			} else if (this.isSubmergedIn(Terrain.WATER)) {
+				this.startDiveRise();
 			}
-						
+					
+			this.getTimer().setSinceLastPeriod(0);
+					
+			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
+		}
+				
+		double oldPositionX = this.getPositionX();
+		double oldPositionY = this.getPositionY();
+				
+		// Update horizontal position
+		this.updatePositionX(dt);
+				
+		// Update horizontal velocity
+		this.updateVelocityX(dt);
+				
+		this.processOverlap(); 
+				
+		if( this.doesCollide() ) {
+			this.setPositionX(oldPositionX);
+			currentOrientation = this.getOrientation();
+			this.endMove(currentOrientation);
+			if (currentOrientation != Orientation.RIGHT){
+				this.startMove(Orientation.RIGHT);
+				if (this.isSubmergedIn(Terrain.WATER))
+					this.startDiveRise();
+			} else {
+				this.startMove(Orientation.LEFT);
+				if (this.isSubmergedIn(Terrain.WATER))
+					this.startDiveRise();
+			}
 		}
 		
+		// TODO: the vertical acceleration of a non-jumping Shark shall be set to zero if the Shark's top or bottom perimeters are not overlapping with
+		//		  a water tile any more, and at the end of the movement period. -> requires change in definition of isJumping()
+				
+		// Update vertical position
+		this.updatePositionY(dt);
+				
+		// Update vertical velocity
+		this.updateVelocityY(dt);
+				
+		this.processOverlap(); 
+				
+		if( this.doesCollide()) {
+			this.setPositionY(oldPositionY);
+			this.stopFall();
+		}else if (! this.isSubmergedIn(Terrain.WATER)){
+					
+			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
+			this.setAccelerationY(-10);
+		}		
 	}
 	
 	/*************************************************************** COLLISION ******************************************************/
