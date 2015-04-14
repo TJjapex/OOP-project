@@ -87,7 +87,8 @@ public class Slime extends GameObject {
 	
 	@Override
 	public void takeDamage(int damageAmount){
-		this.setNbHitPoints(this.getNbHitPoints() - damageAmount);
+		System.out.println("slime taking damage:"+damageAmount);
+		super.takeDamage(damageAmount);
 		this.getSchool().mutualDamage(this);
 	}
 	
@@ -101,13 +102,38 @@ public class Slime extends GameObject {
 	
 	public void advanceTime2(double dt){
 		if( this.doesCollide())
-			throw new IllegalStateException(" Colission before movement! "); // May NOT happen
+			throw new IllegalStateException(" Colission before movement! "); // May not happen
 
 		Orientation currentOrientation;
+		
+		// Killed
+		if(this.isKilled() && !this.isTerminated()){
+			if(this.getTimer().getSinceKilled() > 0.6){
+				this.terminate();
+			}else{
+				this.getTimer().increaseSinceKilled(dt);
+			}
+		}
+		
+		if(this.isKilled()){
+			return; // Don't execute other statements in advanceTime
+		}
+				
+		// Check if still alive...
+		if(this.getNbHitPoints() == 0){
+			System.out.println("slime killed!");
+			this.kill();
+		}		
 		
 		// Timers
 		
 		this.getTimer().increaseSinceLastPeriod(dt);
+		
+		// Other
+		getTimer().increaseSinceTerrainCollision(dt); // Geen idee of deze nodig is
+		getTimer().increaseSinceEnemyCollision(dt);
+		
+		
 		
 		// Randomized movement
 		
@@ -213,5 +239,15 @@ public class Slime extends GameObject {
 	}
 	
 	private boolean terminated = false;
+	
+	
+	/******************************************** Colission **********************************************/
+	public void processMazubOverlap(Mazub mazub){
+		System.out.println("slime colission with mazub");
+		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
+			this.takeDamage(50);
+			this.getTimer().setSinceEnemyCollision(0);
+		}
+	}	
 	
 }

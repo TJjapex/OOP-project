@@ -928,7 +928,8 @@ public abstract class GameObject {
 	}
 	
 	public void takeDamage(int damageAmount){
-		this.setNbHitPoints(this.getNbHitPoints() - damageAmount);
+		//this.setNbHitPoints(this.getNbHitPoints() - damageAmount);
+		this.increaseNbHitPoints(-damageAmount);
 	}
 
 	public boolean isValidNbHitPoints(int nbHitPoints) {
@@ -1062,7 +1063,7 @@ public abstract class GameObject {
 		for(Terrain collisionTerrain : collisionTileTypes){
 			if( this.hasTerrainPropertiesOf(collisionTerrain) && this.getTerrainPropertiesOf(collisionTerrain).getDamage() != 0 ){
 				if( this.getTimer().getSinceTerrainCollision(collisionTerrain) > this.getTerrainPropertiesOf(collisionTerrain).getDamageTime() ){ // > of >=? fuzzy?
-					this.takeDamage( this.getTerrainPropertiesOf(collisionTerrain).getDamage());
+					this.takeDamage( this.getTerrainPropertiesOf(collisionTerrain).getDamage() );
 					this.getTimer().setSinceTerrainCollision(collisionTerrain, 0);
 				}
 			}
@@ -1140,11 +1141,10 @@ public abstract class GameObject {
 		
 		return colissionTileTypes;
 	}
+
 	
-//	
-//	public int getCollisionDamage(GameObject other){
-//		
-//	}
+	
+	
 	
 	public boolean isSubmergedIn(Terrain terrain){
 		
