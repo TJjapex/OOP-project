@@ -93,13 +93,7 @@ public class Slime extends GameObject {
 		if ( this.getSchool() !=  null )
 			this.getSchool().mutualDamage(this);
 	}
-	
-	public void decreaseNbHitPoints(int damageAmount){
-		System.out.println("slime taking damage:"+damageAmount);
-		this.increaseNbHitPoints(-damageAmount);
-	}
-	
-	
+		
 	/**************************************************** MOVEMENT ********************************************/
 	
 	// * move randomly to the left or right
@@ -113,7 +107,7 @@ public class Slime extends GameObject {
 		Orientation currentOrientation;
 		
 		// Randomized movement
-		
+
 		if (!this.isKilled()){
 			if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 				
@@ -138,13 +132,15 @@ public class Slime extends GameObject {
 			
 			if( this.doesCollide() ) {
 				this.setPositionX(oldPositionX);
-				currentOrientation = this.getOrientation();
+				
+				currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
 				this.endMove(currentOrientation);
 				if (currentOrientation != Orientation.RIGHT){
 					this.startMove(Orientation.RIGHT);
 				} else {
 					this.startMove(Orientation.LEFT);
 				}
+				
 			}
 			
 			// Update vertical position

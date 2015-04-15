@@ -81,7 +81,7 @@ public class Plant extends GameObject {
 	public void doMove(double dt){		
 		//if( this.doesCollide())
 		//	throw new IllegalStateException(" Colission before movement! ");	
-		
+
 		if (this.getTimer().getSinceLastPeriod() >= 0.5){ // fuzzy?
 			if (this.getOrientation() == Orientation.RIGHT){
 				this.endMove(Orientation.RIGHT);

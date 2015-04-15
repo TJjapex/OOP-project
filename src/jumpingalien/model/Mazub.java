@@ -483,7 +483,7 @@ public class Mazub extends GameObject{
 			//System.out.println("xcolission" + getPositionX() + " "+oldPositionX);
 			this.endMove(this.getOrientation());
 		}
-				
+		
 		// Update vertical position
 		this.updatePositionY(dt);		
 		
@@ -504,10 +504,17 @@ public class Mazub extends GameObject{
 			}
 			
 		}else{
-			
+
 			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
 			this.setAccelerationY(-10);
 		}
+		
+//		if (this.doesCollide()){
+//			this.setPositionY(oldPositionY);
+//			
+//			
+//			
+//		}
 		
 		// Ducking
 		if(this.shouldEndDucking()){

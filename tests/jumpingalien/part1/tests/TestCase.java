@@ -338,7 +338,7 @@ public class TestCase {
 		}
 		
 		assertEquals(0, facade.getVelocity(alien_0_0)[0], Util.DEFAULT_EPSILON);	
-		assert alien_0_0.isJumping();
+		assert !alien_0_0.isOnGround();
 	}
 	
 	/********************************************* DUCKING ****************************************/

@@ -333,23 +333,23 @@ public class World {
 		double minDt;
 		
 		for(Mazub alien: this.getAllMazubs()){
-			
+			System.out.println(this.getMazub().isOnGround());
 			// determine minDt			
 			minDt = Math.min( dt,  0.01 / (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );
 			
 			// iteratively advance time;
-			for(int i=0; i<(dt/minDt); i++){
+			for(int i=1; i<(dt/minDt); i++){
 				alien.advanceTime(minDt);
 	        }
 			alien.advanceTime(dt%minDt);
 		}
-		
+
 		for(GameObject object: this.getAllEnemies()){			
 			// determine minDt			
 			minDt = Math.min( dt,  0.01 / ( object.getVelocityMagnitude() + object.getAccelerationMagnitude()* dt) );
 			
 			// iteratively advance time;
-			for(int i=0; i<(dt/minDt); i++){				
+			for(int i=1; i<(dt/minDt); i++){				
 				object.advanceTime(minDt);
 	        }
 			object.advanceTime(dt%minDt);
@@ -678,16 +678,18 @@ public class World {
 	}
 
 	public Set<Plant> getAllPlants(){
-		Set<Plant> newPlants =  new HashSet<Plant>(this.plants);
-		return newPlants;
+		Set<Plant> plantsClone =  new HashSet<Plant>(this.plants);
+		return plantsClone;
 	}
 	
 	public Set<Shark> getAllSharks(){
-		return this.sharks;
+		Set<Shark> sharksClone =  new HashSet<Shark>(this.sharks);
+		return sharksClone;
 	}
 	
 	public Set<Slime> getAllSlimes(){
-		return this.slimes;
+		Set<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
+		return slimesClone;
 	}
 	
 	

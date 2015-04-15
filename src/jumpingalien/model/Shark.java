@@ -136,7 +136,7 @@ public class Shark extends GameObject{
 			
 			this.endMove(this.getOrientation());
 			
-			if (this.isJumping()){
+			if (!this.isOnGround()){
 				this.endJump();
 				this.stopFall();
 			} else {
@@ -171,7 +171,8 @@ public class Shark extends GameObject{
 				
 		if( this.doesCollide() ) {
 			this.setPositionX(oldPositionX);
-			currentOrientation = this.getOrientation();
+			
+			currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
 			this.endMove(currentOrientation);
 			if (currentOrientation != Orientation.RIGHT){
 				this.startMove(Orientation.RIGHT);
@@ -182,6 +183,7 @@ public class Shark extends GameObject{
 				if (this.isSubmergedIn(Terrain.WATER))
 					this.startDiveRise();
 			}
+			
 		}
 		
 		// TODO: the vertical acceleration of a non-jumping Shark shall be set to zero if the Shark's top or bottom perimeters are not overlapping with

@@ -113,7 +113,7 @@ public class Animation {
 			}
 			
 		}else{ // MOVING
-			if(alien.isJumping()){
+			if(!alien.isOnGround()){
 				if(!alien.isDucking()){
 					if(alien.getOrientation() == Orientation.RIGHT){
 						index = 4;
@@ -130,7 +130,7 @@ public class Animation {
 					index = 7;
 				}
 			}
-			if(!alien.isDucking() && !alien.isJumping()){
+			if(!alien.isDucking() && alien.isOnGround()){
 				if(alien.getOrientation() == Orientation.RIGHT){
 					index = 8 + this.getAnimationIndex();
 				}else{ // LEFT

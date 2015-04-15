@@ -55,6 +55,11 @@ public enum Orientation {
 		public int getSign(){
 			return -1;
 		}
+	},
+	ALL{
+		public int getSign(){
+			return 1;
+		}
 	};
 	
 	/**

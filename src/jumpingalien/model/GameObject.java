@@ -34,10 +34,6 @@ public abstract class GameObject {
 	 */
 	public static final double ACCELERATION_Y = -10.0;
 	
-	public static final int GAME_WIDTH = 1024;
-	public static final int GAME_HEIGHT = 768;
-	
-	
 	/************************************************ CONSTRUCTOR *********************************************/
 
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
@@ -317,9 +313,10 @@ public abstract class GameObject {
 	
 	// TODO update docs because now it checks if mazub is not already jumping
 	public void startJump() {
-		if(!isJumping()){
+		if(this.isOnGround()){
 			this.setVelocityY( this.getVelocityYInit() );
 			this.setAccelerationY( ACCELERATION_Y ); 
+			this.setOnGround(false);
 		}
 		
 	}
@@ -349,7 +346,7 @@ public abstract class GameObject {
 	 * @return	True if and only if the vertical position of Mazub is equal to 0. (up to a certain epsilon)
 	 * 			| result == ( this.getPositionY() == 0 )
 	 */
-	public boolean isJumping() {
+	public boolean isOnGround() {
 		//return !Util.fuzzyEquals(this.getPositionY(), 0);
 		
 		//if(!hasProperWorld())
@@ -357,7 +354,11 @@ public abstract class GameObject {
 		//return getWorld().collidesWith(this).contains(Orientation.BOTTOM);
 		
 		// TODO: zou nog beter zijn als we hier checken of onder mazub een tile is. Deze check is eigenlijk niet voldoende
-		return (this.getVelocityY() != 0);
+		//return (this.getVelocityY() != 0);
+		
+		// return !(this.doesOverlap(Orientation.BOTTOM));
+		
+		return this.onGround;
 	}
 	
 
@@ -373,7 +374,14 @@ public abstract class GameObject {
 	protected void stopFall() {
 		this.setVelocityY( 0 );
 		this.setAccelerationY( 0 );
+		this.setOnGround(true);
 	}
+	
+	public void setOnGround(boolean isOnGround){
+		this.onGround = isOnGround;
+	}
+	
+	private boolean onGround;
 
 	/************************************************ CHARACTERISTICS *****************************************/
 	
@@ -810,6 +818,7 @@ public abstract class GameObject {
 	
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
+	
 	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
@@ -852,7 +861,7 @@ public abstract class GameObject {
 			this.getTimer().increaseSinceLastMove(dt);
 		
 		// Sprites
-		getTimer().increaseSinceLastSprite(dt);
+		this.getTimer().increaseSinceLastSprite(dt);
 		
 		this.getTimer().increaseSinceTerrainCollision(dt);
 		this.getTimer().increaseSinceEnemyCollision(dt);
@@ -956,6 +965,10 @@ public abstract class GameObject {
 		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
 	}
 	
+	public void decreaseNbHitPoints(int nbHitPoints){
+		this.setNbHitPoints(this.getNbHitPoints() - nbHitPoints);
+	}
+	
 	public void takeDamage(int damageAmount){
 		this.increaseNbHitPoints(-damageAmount);
 	}
@@ -982,6 +995,10 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollide(){
+		return this.doesCollide(Orientation.ALL);
+	}
+	
+	public boolean doesCollide(Orientation orientation){
 //		System.out.println("doesCollide()"+this);
 		World world = this.getWorld();
 		
@@ -996,7 +1013,7 @@ public abstract class GameObject {
 			// and if the given object collides with a tile...
 			Terrain terrain = world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]));
 			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
+				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
 					return true;
 				}
 			}
@@ -1005,7 +1022,7 @@ public abstract class GameObject {
 		// Check colission with gameObjects
 		for(GameObject object : world.getAllNonPassableGameObjects()){
 			//System.out.println(object);
-			if(object != this && doesCollideWith(object)){
+			if(object != this && doesCollideWith(object, orientation)){
 //				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
 //				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
 				return true;
@@ -1021,7 +1038,11 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(GameObject other){
-		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), Orientation.ALL);
+	}
+	
+	public boolean doesCollideWith(GameObject other, Orientation orientation){
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), orientation);
 	}
 	
 	/**
@@ -1033,14 +1054,68 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
-		return ! ( // Dus geeft true als elke deelexpressie false geeft
-				   (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
-				|| (x + (width - 2) < this.getRoundedPositionX())
-				|| ( this.getRoundedPositionY() + (this.getHeight() - 2) < y) // top
-				|| (y + (height - 2) < this.getRoundedPositionY() ) //bottom
-				
-				);
+		return this.doesCollideWith(x,y,width,height,Orientation.ALL);
 	}
+	
+	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
+		switch (orientation) {
+			case RIGHT: 
+				return ! (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x);
+			case LEFT:
+				return ! (x + (width - 2) < this.getRoundedPositionX());
+			case TOP:
+				return ! ( this.getRoundedPositionY() + (this.getHeight() - 2) < y);
+			case BOTTOM:
+				return ! (y + (height - 2) < this.getRoundedPositionY() );
+				
+			default:
+				return ! ( // Dus geeft true als elke deelexpressie false geeft
+						   (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
+						|| (x + (width - 2) < this.getRoundedPositionX())
+						|| ( this.getRoundedPositionY() + (this.getHeight() - 2) < y) // top
+						|| (y + (height - 2) < this.getRoundedPositionY() ) //bottom
+						
+						);
+		}
+	}
+	
+	public boolean doesOverlap(){
+		return this.doesOverlap(Orientation.ALL);
+	}
+	
+	public boolean doesOverlap(Orientation orientation){
+//		System.out.println("doesCollide()"+this);
+		World world = this.getWorld();
+		
+		// Check collision with tiles
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
+													this.getRoundedPositionY(),
+			 										this.getRoundedPositionX() + this.getWidth(), 
+													this.getRoundedPositionY() + this.getHeight());
+
+		for(int[] tile : tiles){
+			// Check if that tile is passable 
+			// and if the given object collides with a tile...
+			Terrain terrain = world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]));
+			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
+				if( this.doesOverlapWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
+					return true;
+				}
+			}
+		}		
+		
+		// Check colission with gameObjects
+		for(GameObject object : world.getAllNonPassableGameObjects()){
+			//System.out.println(object);
+			if(object != this && doesOverlapWith(object, orientation)){
+//				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
+//				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
+				return true;
+			}
+		}
+		
+		return false;
+	}	
 	
 	/**
 	 * Checks if this object overlaps with given gameobject
@@ -1049,6 +1124,10 @@ public abstract class GameObject {
 	 */
 	public boolean doesOverlapWith(GameObject other){
 		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+	}
+	
+	public boolean doesOverlapWith(GameObject other, Orientation orientation){
+		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), orientation);
 	}
 	
 	/**
@@ -1060,14 +1139,31 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesOverlapWith(int x, int y, int width, int height){
+		return this.doesOverlapWith(x,y,width,height,Orientation.ALL);
+	}
+	
+	public boolean doesOverlapWith(int x, int y, int width, int height, Orientation orientation){
 		// return this.doesCollideWith(x+1, y+1, width-2, height -2) zou ook moeten werken (rekenkundig hetzelfde), minder redundant. Niet getest. TODO
-		return ! ( 
-				   (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x) 
-				|| (x + (width -1) < this.getRoundedPositionX())
-				|| ( this.getRoundedPositionY() + (this.getHeight() - 1) < y) // top
-				|| (y + (height -1 ) < this.getRoundedPositionY() ) // Bottom
-				
-				);
+		
+		switch (orientation) {
+			case RIGHT: 
+				return ! (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x);
+			case LEFT:
+				return ! (x + (width - 1) < this.getRoundedPositionX());
+			case TOP:
+				return ! ( this.getRoundedPositionY() + (this.getHeight() - 1) < y);
+			case BOTTOM:
+				return ! (y + (height - 1) < this.getRoundedPositionY() );
+			
+			default:
+				return ! ( // Dus geeft true als elke deelexpressie false geeft
+						   (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x) 
+						|| (x + (width - 1) < this.getRoundedPositionX())
+						|| ( this.getRoundedPositionY() + (this.getHeight() - 1) < y) // top
+						|| (y + (height - 1) < this.getRoundedPositionY() ) //bottom
+					
+					);
+		}
 	}
 
 	/* Processing */
