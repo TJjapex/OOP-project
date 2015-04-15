@@ -49,6 +49,7 @@ public abstract class GameObject {
 		this.setVelocityXMax(velocityXMax);
 		
 		this.accelerationXInit = accelerationXInit;
+		this.setAccelerationY( ACCELERATION_Y );
 		
 		this.setOrientation(Orientation.RIGHT);		
 		
@@ -315,7 +316,7 @@ public abstract class GameObject {
 	public void startJump() {
 		if(this.isOnGround()){
 			this.setVelocityY( this.getVelocityYInit() );
-			this.setAccelerationY( ACCELERATION_Y ); 
+			// this.setAccelerationY( ACCELERATION_Y ); 
 			this.setOnGround(false);
 		}
 		

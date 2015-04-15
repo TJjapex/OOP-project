@@ -492,29 +492,38 @@ public class Mazub extends GameObject{
 	
 		this.processOverlap();
 		
-		if( this.doesCollide() ) {
+//		if( this.doesCollide() ) {
+//			this.setPositionY(oldPositionY);
+//			
+//			//System.out.println("ycolission" +getPositionY() + " "+oldPositionY);
+//			
+//			if(this.getVelocityY() > 0){
+//				this.endJump();
+//			}else{
+//				this.stopFall();
+//			}
+//			
+//		}else{
+//
+//			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
+//			this.setAccelerationY(-10);
+//		}
+		
+		
+		
+		if (this.doesCollide()){
 			this.setPositionY(oldPositionY);
-			
-			//System.out.println("ycolission" +getPositionY() + " "+oldPositionY);
 			
 			if(this.getVelocityY() > 0){
 				this.endJump();
-			}else{
-				this.stopFall();
+			} else {
+				this.setVelocityY(0);
+				this.setOnGround(true);
 			}
 			
-		}else{
-
-			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
-			this.setAccelerationY(-10);
+		} else {
+			this.setOnGround(false);
 		}
-		
-//		if (this.doesCollide()){
-//			this.setPositionY(oldPositionY);
-//			
-//			
-//			
-//		}
 		
 		// Ducking
 		if(this.shouldEndDucking()){
