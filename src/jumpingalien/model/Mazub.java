@@ -484,11 +484,24 @@ public class Mazub extends GameObject{
 			this.endMove(this.getOrientation());
 		}
 		
+		if(this.doesOverlap(Orientation.BOTTOM)){
+			this.setOnGround(true);
+			this.setAccelerationY(0);
+		}else{
+			this.setOnGround(false);
+			this.setAccelerationY(-10);
+		}
+		
+		
+		//System.out.println(this.getAccelerationY()+" "+dt);
+		//this.setPositionY(this.getPositionY() +1);
+		
 		// Update vertical position
 		this.updatePositionY(dt);		
 		
 		// Update vertical velocity
 		this.updateVelocityY(dt);
+		//System.out.println(this.getRoundedPositionY());
 	
 		this.processOverlap();
 		
@@ -509,20 +522,20 @@ public class Mazub extends GameObject{
 //			this.setAccelerationY(-10);
 //		}
 		
-		
-		
+		//System.out.println("overlapwithBOTTOM"+this.doesOverlap(Orientation.BOTTOM));
+
 		if (this.doesCollide()){
+			//System.out.println("colisison y");
 			this.setPositionY(oldPositionY);
 			
-			if(this.getVelocityY() > 0){
+			if(this.getVelocityY() > 0){ // Mazub is going up
 				this.endJump();
-			} else {
+			} else { // Mazub is going down
 				this.setVelocityY(0);
 				this.setOnGround(true);
+				this.stopFall();
 			}
 			
-		} else {
-			this.setOnGround(false);
 		}
 		
 		// Ducking

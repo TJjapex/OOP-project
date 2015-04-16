@@ -912,7 +912,11 @@ public abstract class GameObject {
 	@Model
 	protected void updatePositionY(double dt) {
 		try{
+			
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
+			if(this instanceof Mazub){
+				//System.out.println(dt);
+			}
 			this.setPositionY( this.getPositionY() + 100 * sy );
 		}catch( IllegalPositionYException exc){
 			if(exc.getPositionY() < 0 ){
@@ -1154,7 +1158,17 @@ public abstract class GameObject {
 			case TOP:
 				return ! ( this.getRoundedPositionY() + (this.getHeight() - 1) < y);
 			case BOTTOM:
-				return ! (y + (height - 1) < this.getRoundedPositionY() );
+				// return ! (y + (height - 1) < this.getRoundedPositionY() ); --> klopt niet?
+				
+				// IK heb dit gecopypaste van de world class en wat aangepast zodat het (trial and error) zou kloppen, geen idee of het echt correct is. 
+				return (getPositionY() > y &&
+					   (getPositionY() < y + height &&
+						 // check left-bottom pixel
+					   (((getPositionX()+1 > x) &&
+						 (getPositionX()+1 < x + width)) ||
+						 // check right-bottom pixel
+						((getPositionX() +(getWidth()-1)-1 > x)) &&
+						 (getPositionX() +(getWidth()-1)-1 < x + width))));
 			
 			default:
 				return ! ( // Dus geeft true als elke deelexpressie false geeft

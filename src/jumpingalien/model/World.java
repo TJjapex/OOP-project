@@ -334,14 +334,25 @@ public class World {
 		
 		for(Mazub alien: this.getAllMazubs()){
 			System.out.println(this.getMazub().isOnGround());
-			// determine minDt			
+			// determine minDt		
+			
 			minDt = Math.min( dt,  0.01 / (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );
 			
+			//System.out.println("dt"+dt+"mindt"+minDt+"verh"+dt/minDt);
+			
 			// iteratively advance time;
-			for(int i=1; i<(dt/minDt); i++){
+			double totalDt = dt;
+			while(totalDt > minDt){
 				alien.advanceTime(minDt);
-	        }
-			alien.advanceTime(dt%minDt);
+				totalDt -= minDt;
+			}
+			alien.advanceTime(totalDt);
+			
+//			for(int i=1; i<(dt/minDt); i++){
+//				System.out.println("dt"+minDt);
+//				
+//	        }
+//			
 		}
 
 		for(GameObject object: this.getAllEnemies()){			
