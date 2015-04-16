@@ -480,7 +480,6 @@ public class Mazub extends GameObject{
 		
 		if( this.doesCollide() ){
 			this.setPositionX(oldPositionX);
-			//System.out.println("xcolission" + getPositionX() + " "+oldPositionX);
 			this.endMove(this.getOrientation());
 		}
 		
@@ -492,9 +491,6 @@ public class Mazub extends GameObject{
 			this.setAccelerationY(-10);
 		}
 		
-		
-		//System.out.println(this.getAccelerationY()+" "+dt);
-		//this.setPositionY(this.getPositionY() +1);
 		
 		// Update vertical position
 		this.updatePositionY(dt);		

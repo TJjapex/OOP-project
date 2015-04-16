@@ -333,7 +333,7 @@ public class World {
 		double minDt;
 		
 		for(Mazub alien: this.getAllMazubs()){
-			System.out.println(this.getMazub().isOnGround());
+			//System.out.println(this.getMazub().isOnGround());
 			// determine minDt		
 			
 			minDt = Math.min( dt,  0.01 / (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );

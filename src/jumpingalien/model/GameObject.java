@@ -1028,8 +1028,8 @@ public abstract class GameObject {
 		for(GameObject object : world.getAllNonPassableGameObjects()){
 			//System.out.println(object);
 			if(object != this && doesCollideWith(object, orientation)){
-//				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
-//				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
+				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
+				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
 				return true;
 			}
 		}
@@ -1064,15 +1064,15 @@ public abstract class GameObject {
 	
 	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
 		switch (orientation) {
-			case RIGHT: 
-				return ! (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x);
-			case LEFT:
-				return ! (x + (width - 2) < this.getRoundedPositionX());
-			case TOP:
-				return ! ( this.getRoundedPositionY() + (this.getHeight() - 2) < y);
-			case BOTTOM:
-				return ! (y + (height - 2) < this.getRoundedPositionY() );
-				
+//			case RIGHT: 
+//				return ! (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x);
+//			case LEFT:
+//				return ! (x + (width - 2) < this.getRoundedPositionX());
+//			case TOP:
+//				return ! ( this.getRoundedPositionY() + (this.getHeight() - 2) < y);
+//			case BOTTOM:
+//				return ! (y + (height - 2) < this.getRoundedPositionY() );
+//				
 			default:
 				return ! ( // Dus geeft true als elke deelexpressie false geeft
 						   (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
@@ -1151,12 +1151,12 @@ public abstract class GameObject {
 		// return this.doesCollideWith(x+1, y+1, width-2, height -2) zou ook moeten werken (rekenkundig hetzelfde), minder redundant. Niet getest. TODO
 		
 		switch (orientation) {
-			case RIGHT: 
-				return ! (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x);
-			case LEFT:
-				return ! (x + (width - 1) < this.getRoundedPositionX());
-			case TOP:
-				return ! ( this.getRoundedPositionY() + (this.getHeight() - 1) < y);
+//			case RIGHT: 
+//				return ! (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x);
+//			case LEFT:
+//				return ! (x + (width - 1) < this.getRoundedPositionX());
+//			case TOP:
+//				return ! ( this.getRoundedPositionY() + (this.getHeight() - 1) < y);
 			case BOTTOM:
 				// return ! (y + (height - 1) < this.getRoundedPositionY() ); --> klopt niet?
 				

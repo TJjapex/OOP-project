@@ -55,6 +55,8 @@ public class Slime extends GameObject {
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
 		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
 		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		
+		this.setAccelerationY(ACCELERATION_Y);
 	}
 	
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
@@ -143,6 +145,14 @@ public class Slime extends GameObject {
 				
 			}
 			
+			if(this.doesOverlap(Orientation.BOTTOM)){
+				this.setOnGround(true);
+				this.setAccelerationY(0);
+			}else{
+				this.setOnGround(false);
+				this.setAccelerationY(-10);
+			}
+			
 			// Update vertical position
 			this.updatePositionY(dt);
 			
@@ -152,12 +162,9 @@ public class Slime extends GameObject {
 			this.processOverlap(); 
 			
 			if( this.doesCollide() ) {
-				this.setPositionY(oldPositionY);
+				System.out.println("slimes collide with y:"+this.getPositionY()+" will be resetted to:"+oldPositionY);
+				this.setPositionY(oldPositionY+1);
 				this.stopFall();
-			}else{
-				
-				// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
-				this.setAccelerationY(-10);
 			}
 				
 		}
@@ -218,7 +225,7 @@ public class Slime extends GameObject {
 	
 	/******************************************** Colission **********************************************/
 	public void processMazubOverlap(Mazub mazub){
-		System.out.println("slime colission with mazub");
+		//System.out.println("slime overlap with mazub");
 		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
