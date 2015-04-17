@@ -131,8 +131,6 @@ public class Shark extends GameObject{
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! ");	
 		
-		Orientation currentOrientation;
-		
 		// Randomized movement
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
@@ -160,7 +158,6 @@ public class Shark extends GameObject{
 			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 		}
 				
-		double oldPositionX = this.getPositionX();
 		double oldPositionY = this.getPositionY();
 				
 		// Update horizontal position
@@ -168,25 +165,6 @@ public class Shark extends GameObject{
 				
 		// Update horizontal velocity
 		this.updateVelocityX(dt);
-				
-		this.processOverlap(); 
-				
-		if( this.doesCollide() ) {
-			this.setPositionX(oldPositionX);
-			
-			currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
-			this.endMove(currentOrientation);
-			if (currentOrientation != Orientation.RIGHT){
-				this.startMove(Orientation.RIGHT);
-				if (this.isSubmergedIn(Terrain.WATER))
-					this.startDiveRise();
-			} else {
-				this.startMove(Orientation.LEFT);
-				if (this.isSubmergedIn(Terrain.WATER))
-					this.startDiveRise();
-			}
-			
-		}
 		
 		// TODO: the vertical acceleration of a non-jumping Shark shall be set to zero if the Shark's top or bottom perimeters are not overlapping with
 		//		  a water tile any more, and at the end of the movement period. -> requires change in definition of isJumping()
@@ -199,14 +177,31 @@ public class Shark extends GameObject{
 				
 		this.processOverlap(); 
 				
-		if( this.doesCollide()) {
-			this.setPositionY(oldPositionY);
-			this.stopFall();
-		}else if (! this.isSubmergedIn(Terrain.WATER)){
+		if (! this.isSubmergedIn(Terrain.WATER)){
 			this.setAccelerationY(-10);
 		}		
 	}
 	
+	
+	public void processHorizontalCollision() {
+		Orientation currentOrientation = this.getOrientation();
+		this.endMove(currentOrientation);
+		if (currentOrientation != Orientation.RIGHT){
+			this.startMove(Orientation.RIGHT);
+			if (this.isSubmergedIn(Terrain.WATER))
+				this.startDiveRise();
+		} else {
+			this.startMove(Orientation.LEFT);
+			if (this.isSubmergedIn(Terrain.WATER))
+				this.startDiveRise();
+		}
+	};
+	
+	@Override
+	public void processVerticalCollision() {
+		// TODO Auto-generated method stub
+		super.processVerticalCollision();
+	}
 	/****************************************************************** ACCELERATION Y *****************************************************/
 	
 	/**

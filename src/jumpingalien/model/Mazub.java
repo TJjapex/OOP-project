@@ -463,49 +463,19 @@ public class Mazub extends GameObject{
 		getAnimation().updateAnimationIndex(this.getTimer());
 	}
 
-	public void doMove(double dt) throws IllegalStateException {
-		if( this.doesCollide())
-			throw new IllegalStateException(" Colission before movement! ");	
-	
-		/* X position */
-		double oldPositionX = this.getPositionX();
-		
+	public void doMove(double dt) throws IllegalStateException {		
 		// Update horizontal position
 		this.updatePositionX(dt);
 		
 		// Update horizontal velocity
-		this.updateVelocityX(dt);
+		this.updateVelocityX(dt);		
 		
-		if( this.doesCollide() ){
-			this.setPositionX(oldPositionX);
-			this.endMove(this.getOrientation());
-		}
-		
-		this.processOverlap();
-		
-		
-		/* Y position */
-		double oldPositionY = this.getPositionY();
-		
+		/* Y position */		
 		// Update vertical position
 		this.updatePositionY(dt);		
 		
 		// Update vertical velocity
-		this.updateVelocityY(dt);
-		
-		if (this.doesCollide()){
-			this.setPositionY(oldPositionY);
-			
-			if(this.getVelocityY() > 0){ // Mazub is going up
-				this.endJump();
-			} else { // Mazub is going down
-				this.setVelocityY(0);
-				this.stopFall();
-			}
-			
-		}
-		
-		
+		this.updateVelocityY(dt);		
 		
 		// Ducking
 		if(this.shouldEndDucking()){
@@ -514,9 +484,23 @@ public class Mazub extends GameObject{
 		
 		// Update sprite
 		this.getAnimation().updateSpriteIndex(this);
-		
 	}
-	/************************************************************* COLLISION *************************************************/
+	
+	
+	
+	/************************************************************* COLLISION *************************************************/	
+	@Override
+	public void processVerticalCollision() {
+		if(this.getVelocityY() > 0){ // is going up
+			this.endJump();
+		} else { // is going down
+			this.setVelocityY(0);
+			this.stopFall();
+		}
+	}
+	
+	
+	/* Collision with game objects */
 	
 	public void processPlantOverlap(Plant plant){
 		if(!plant.isKilled()){

@@ -40,9 +40,12 @@ public abstract class GameObject {
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
 					  int maxNbHitPoints)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
-		this.setPositionX(pixelLeftX);
-		this.setPositionY(pixelBottomY);
+	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
+		this.setSprites(sprites);
+		this.setTimer(new Timer());	
+		
+		this.positionX = pixelLeftX;
+		this.positionY = pixelBottomY;
 
 		this.velocityXInit = velocityXInit;
 		this.velocityYInit = velocityYInit;
@@ -56,8 +59,7 @@ public abstract class GameObject {
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
 		
-		this.setSprites(sprites);
-		this.setTimer(new Timer());
+
 		
 	}
 
@@ -345,18 +347,7 @@ public abstract class GameObject {
 	 * @return	True if and only if the vertical position of Mazub is equal to 0. (up to a certain epsilon)
 	 * 			| result == ( this.getPositionY() == 0 )
 	 */
-	public boolean isOnGround() {
-		//return !Util.fuzzyEquals(this.getPositionY(), 0);
-		
-		//if(!hasProperWorld())
-		//	return false;		
-		//return getWorld().collidesWith(this).contains(Orientation.BOTTOM);
-		
-		// TODO: zou nog beter zijn als we hier checken of onder mazub een tile is. Deze check is eigenlijk niet voldoende
-		//return (this.getVelocityY() != 0);
-		
-		// return !(this.doesOverlap(Orientation.BOTTOM));
-		
+	public boolean isOnGround() {		
 		if(this.doesOverlap(Orientation.BOTTOM)){
 			return true;
 		}else{
@@ -417,12 +408,20 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	protected void setPositionX(double positionX)
-			throws IllegalPositionXException {
-				if( !canHaveAsPositionX(positionX)) 
-					throw new IllegalPositionXException(positionX);
-
-				this.positionX = positionX;
+	protected void setPositionX(double positionX) throws IllegalPositionXException, CollisionException {
+			if( !canHaveAsPositionX(positionX)) 
+				throw new IllegalPositionXException(positionX);
+			if( this.doesCollide())
+				throw new IllegalStateException("Collision before updating position");
+				
+			double oldPositionX = this.positionX;
+			this.positionX = positionX;
+			
+			if(this.doesCollide()){
+				this.positionX = oldPositionX;
+				throw new CollisionException();
+			}
+				
 		}
 
 	/**
@@ -442,7 +441,14 @@ public abstract class GameObject {
 			throws IllegalPositionYException {
 				if( !canHaveAsPositionY(positionY)) 
 					throw new IllegalPositionYException(positionY);
+
+				double oldPositionY = this.positionY;
 				this.positionY = positionY;
+				
+				if(this.doesCollide()){
+					this.positionY = oldPositionY;
+					throw new CollisionException();
+				}
 			}
 
 //	/**
@@ -773,12 +779,16 @@ public abstract class GameObject {
 	/****************************************************** SPRITES *******************************************/
 	
 	public Sprite getCurrentSprite(){
-		//if(getOrientation() == Orientation.LEFT){
-			return getSpriteAt(0);
-		//}else{
-		//	return getSpriteAt(1);
-		//}
-	};
+		return getSpriteAt(this.getSpriteIndex());
+	}
+	
+	public void updateSpriteIndex(){
+		if(this.getOrientation() == Orientation.RIGHT){
+			this.setSpriteIndex(0);
+		}else{
+			this.setSpriteIndex(1);
+		}
+	}
 	
 	private Sprite getSpriteAt(int index){
 		return this.sprites[index];
@@ -787,6 +797,17 @@ public abstract class GameObject {
 	protected void setSprites(Sprite[] sprites){
 		this.sprites = sprites;
 	}
+	
+	
+	public int getSpriteIndex() {
+		return spriteIndex;
+	}
+
+	public void setSpriteIndex(int spriteIndex) {
+		this.spriteIndex = spriteIndex;
+	}
+
+	private int spriteIndex;
 	
 	private Sprite[] sprites;
 
@@ -830,6 +851,7 @@ public abstract class GameObject {
 		
 		updateTimers(dt);
 		doMove(dt);
+		updateSpriteIndex();
 	}
 
 	protected void processKilledButNotTerminated_NameMustBeChanged(double dt) {
@@ -873,11 +895,15 @@ public abstract class GameObject {
 		try{
 			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
 			this.setPositionX( this.getPositionX() + 100 * sx );
+			this.processOverlap();
 		}catch( IllegalPositionXException exc){
 			this.kill();
+		}catch( CollisionException exc ){
+			processHorizontalCollision();
 		}
 	}
 
+	
 	/**
 	 * Update Mazub's vertical position according to the given dt.
 	 * 
@@ -895,10 +921,14 @@ public abstract class GameObject {
 		try{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
 			this.setPositionY( this.getPositionY() + 100 * sy );
+			this.processOverlap();
 		}catch( IllegalPositionYException exc){
 			this.kill();
+		}catch( CollisionException exc){
+			processVerticalCollision();
 		}
 	}
+	
 
 	/**
 	 * Update Mazub's horizontal velocity according to the given dt.
@@ -1261,5 +1291,12 @@ public abstract class GameObject {
 		return world.getGeologicalFeature(world.getPositionOfTileX(tileX),world.getPositionOfTileY(tileY)) == terrain;
 	}
 	
+	
+	public void processHorizontalCollision(){
+		this.endMove(this.getOrientation());
+	}
+	public void processVerticalCollision(){
+		this.stopFall();
+	}
 	
 }

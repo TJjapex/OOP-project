@@ -91,17 +91,11 @@ public class Plant extends GameObject {
 			}
 			this.getTimer().setSinceLastPeriod(0);
 		}
-			
-		double oldPositionX = this.getPositionX();
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
 		
 		//this.processOverlap();// -> niet echt nodig bij plants?
-		
-		// Iedereen mag door plants dus in plants geen collision checken -> plants mogen niet door impassable terrain!
-		if( this.doesCollide() ) 
-			this.setPositionX(oldPositionX);
 	}
 	
 	/******************************************* COLISSION ********************************************/

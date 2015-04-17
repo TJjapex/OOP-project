@@ -104,58 +104,41 @@ public class Slime extends GameObject {
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! ");	
 		
-		Orientation currentOrientation;
-		
-		// Randomized movement
 
-		if (!this.isKilled()){
-			if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
-				
-				this.endMove(this.getOrientation());
-				this.startMove(this.getRandomOrientation());
-				
-				this.getTimer().setSinceLastPeriod(0);
-				
-				currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
-			}
-				
-			double oldPositionX = this.getPositionX();
-			double oldPositionY = this.getPositionY();
+		// Randomized movement
+		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
-			// Update horizontal position
-			this.updatePositionX(dt);
+			this.endMove(this.getOrientation());
+			this.startMove(this.getRandomOrientation());
 			
-			// Update horizontal velocity
-			this.updateVelocityX(dt);
+			this.getTimer().setSinceLastPeriod(0);
 			
-			this.processOverlap(); 
-			
-			if( this.doesCollide() ) {
-				this.setPositionX(oldPositionX);
-				
-				currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
-				this.endMove(currentOrientation);
-				if (currentOrientation != Orientation.RIGHT){
-					this.startMove(Orientation.RIGHT);
-				} else {
-					this.startMove(Orientation.LEFT);
-				}
-				
-			}
-			
-			// Update vertical position
-			this.updatePositionY(dt);
-			
-			// Update vertical velocity
-			this.updateVelocityY(dt);
-			
-			this.processOverlap(); 
-			
-			if( this.doesCollide() ) {
-				this.setPositionY(oldPositionY);
-				this.stopFall();
-			}			
-		}	
+			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
+		}
+		
+		
+		// Update horizontal position
+		this.updatePositionX(dt);
+		
+		// Update horizontal velocity
+		this.updateVelocityX(dt);
+
+		// Update vertical position
+		this.updatePositionY(dt);
+		
+		// Update vertical velocity
+		this.updateVelocityY(dt);			
+	}
+	
+	@Override
+	public void processHorizontalCollision() {		
+		Orientation currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
+		this.endMove(currentOrientation);
+		if (currentOrientation != Orientation.RIGHT){
+			this.startMove(Orientation.RIGHT);
+		} else {
+			this.startMove(Orientation.LEFT);
+		}
 	}
 
 	/***************************************************** SCHOOL *********************************************/
