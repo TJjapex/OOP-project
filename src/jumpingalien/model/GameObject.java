@@ -804,27 +804,24 @@ public abstract class GameObject {
 				break;
 			}
 			minDt = Math.min( dt,  0.01 / (getVelocityMagnitude() + getAccelerationMagnitude()* dt) );
-			if(minDt > 0){
-				advanceTimeOnce(minDt);
-				dt -= minDt;
-			}	
+			advanceTimeOnce(minDt);
+			dt -= minDt;	
 		}
 	}
 	
 	public void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
-		if(!this.isTerminated() && !hasProperWorld())
+		if(!this.isTerminated() && !this.hasProperWorld())
 			throw new IllegalStateException("This object is not in a proper world!");
+		
 		processKilledButNotTerminated_NameMustBeChanged(dt);
 				
 		if(this.isKilled()){ // Als het geterminate is is het sowieso gekilled...
 			// Dit is noodzakelijk, want soms wordt advanceTime nog door World uitgevoerd door die minDt gedoe (stel dat in de eerste
 			// uitvoer van advanceTime het object geterminate wordt dan blijft die nog effe doorgaan
-			return;
+			return; // Zo gewoon return doen is nie echt proper
 		}
-		
-
 		
 		// Check if still alive...
 		if(this.getNbHitPoints() == 0){
