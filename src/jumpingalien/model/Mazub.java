@@ -539,6 +539,14 @@ public class Mazub extends GameObject{
 			this.endDuck();
 		}
 		
+		
+		int currentIndex = this.getAnimation().getSpriteIndex();
+		this.getAnimation().updateSpriteIndex(this);
+		
+		if(this.doesCollide()){
+			this.getAnimation().setSpriteIndex(currentIndex);
+		}
+		
 	}
 	/************************************************************* COLLISION *************************************************/
 	

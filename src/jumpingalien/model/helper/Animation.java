@@ -57,6 +57,7 @@ public class Animation {
 		}
 		
 		this.sprites = sprites;
+		this.setSpriteIndex(0);
 		this.setAnimationIndex(0);
 	}
 	
@@ -85,11 +86,13 @@ public class Animation {
 	 * 						Mazub is neither ducking nor jumping and moving to the left.
 	 * @note	No formal documentation was required for this method.
 	 */
-	public Sprite getCurrentSprite(Mazub alien){
-		int index = 0;	// Default
-		
+	public Sprite getCurrentSprite(Mazub alien){		
+		return this.getSpriteAt(this.getSpriteIndex());
+	}	
+	
+	public void updateSpriteIndex(Mazub alien){
+		int index = 0;
 		if(!alien.isMoving()){
-			
 			if(!alien.hasMovedInLastSecond()){
 				if(!alien.isDucking()){
 					index = 0;
@@ -138,10 +141,8 @@ public class Animation {
 				}
 			}
 		}
-
-		return this.getSpriteAt(index);
-	}	
-	
+		this.setSpriteIndex(index);
+	}
 	/**
 	 * Return the sprites of this animation class.
 	 * 
@@ -200,6 +201,19 @@ public class Animation {
 		return this.animationIndex;
 	}
 	
+	
+	public int getSpriteIndex() {
+		return spriteIndex;
+	}
+
+	public void setSpriteIndex(int spriteIndex) {
+		this.spriteIndex = spriteIndex;
+	}
+	
+	private int spriteIndex;
+	
+	
+	
 	/**
 	 * Set the animation index, which is the number of the sprite in an animated sequence.
 	 * 
@@ -249,7 +263,7 @@ public class Animation {
 			timer.increaseSinceLastSprite(-0.075);
 		}
 	}
-	
+
 	/**
 	 * Variable registering the current index of the Animation.
 	 */
