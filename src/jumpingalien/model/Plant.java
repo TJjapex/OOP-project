@@ -98,10 +98,16 @@ public class Plant extends GameObject {
 		//this.processOverlap();// -> niet echt nodig bij plants?
 	}
 	
+	
 	/******************************************* COLISSION ********************************************/
 //	public void processMazubOverlap(Mazub alien){
 //		if(!alien.isKilled()){
 //			this.kill();
 //		}
 //	}
+	
+	@Override
+	public boolean doesCollide() {
+		return doesCollideWithTiles();
+	}
 }

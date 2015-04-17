@@ -650,7 +650,7 @@ public class World {
 		Set<GameObject> allNonPassableGameObjects= new HashSet<GameObject>(this.getAllMazubs());
 		allNonPassableGameObjects.addAll(this.getAllSlimes());
 		allNonPassableGameObjects.addAll(this.getAllSharks());
-	//	allNonPassableGameObjects.addAll(this.getAllPlants());
+		//allNonPassableGameObjects.addAll(this.getAllPlants());
 		return allNonPassableGameObjects;
 	}
 

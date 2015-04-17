@@ -329,7 +329,11 @@ public class Mazub extends GameObject{
 		this.setShouldEndDucking(false);
 		this.setDucking(false);
 		
-		if(this.doesCollide()){
+		
+		Sprite oldSprite = this.getCurrentSprite();
+		this.getAnimation().updateSpriteIndex();
+		
+		if(oldSprite == this.getCurrentSprite()){ // if sprite didn't change, a collision prevented the change
 			this.setDucking(true);
 			this.setShouldEndDucking(true);
 		}

@@ -448,11 +448,12 @@ public abstract class GameObject {
 			if( !canHaveAsPositionX(positionX)) 
 				throw new IllegalPositionXException(positionX);
 			if( this.doesCollide())
-				throw new IllegalStateException("Collision before updating position");
+				throw new IllegalStateException("Collision before updating position"+this.getPositionX() + " y" + this.getPositionY());
 				
 			double oldPositionX = this.positionX;
 			this.positionX = positionX;
 			
+			this.getAnimation().updateSpriteIndex();
 			if(this.doesCollide()){
 				this.positionX = oldPositionX;
 				throw new CollisionException();
@@ -473,19 +474,19 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	protected void setPositionY(double positionY)
-			throws IllegalPositionYException {
-				if( !canHaveAsPositionY(positionY)) 
-					throw new IllegalPositionYException(positionY);
+	protected void setPositionY(double positionY) throws IllegalPositionYException {
+		if( !canHaveAsPositionY(positionY)) 
+			throw new IllegalPositionYException(positionY);
 
-				double oldPositionY = this.positionY;
-				this.positionY = positionY;
-				
-				if(this.doesCollide()){
-					this.positionY = oldPositionY;
-					throw new CollisionException();
-				}
-			}
+		double oldPositionY = this.positionY;
+		this.positionY = positionY;
+		
+		this.getAnimation().updateSpriteIndex();
+		if(this.doesCollide()){
+			this.positionY = oldPositionY;
+			throw new CollisionException();
+		}
+	}
 
 //	/**
 //	 * Check whether the given X position is a valid horizontal position.
@@ -952,7 +953,6 @@ public abstract class GameObject {
 
 	/**
 	 * Update Mazub's vertical velocity according to the given dt.
-	 * 
 	 * @param dt
 	 * 			A double that represents the elapsed time.
 	 * @post	The vertical velocity of Mazub is equal to the previous horizontal velocity incremented 
@@ -1012,7 +1012,10 @@ public abstract class GameObject {
 	}
 	
 	public boolean doesCollide(Orientation orientation){
-//		System.out.println("doesCollide()"+this);
+		return doesCollideWithTiles() || doesCollideWithGameObjects();
+	}	
+	
+	public boolean doesCollideWithTiles(){
 		World world = this.getWorld();
 		
 		// Check collision with tiles
@@ -1030,20 +1033,20 @@ public abstract class GameObject {
 					return true;
 				}
 			}
-		}		
-		
+		}
+		return false;
+	}
+	
+	public boolean doesCollideWithGameObjects(){
 		// Check colission with gameObjects
 		for(GameObject object : world.getAllNonPassableGameObjects()){
-			//System.out.println(object);
 			if(object != this && doesCollideWith(object, orientation)){
-				//System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
-				//System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
 				return true;
 			}
 		}
 		
 		return false;
-	}	
+	}
 	
 	/**
 	 * Checks if this object collides with given gameobject

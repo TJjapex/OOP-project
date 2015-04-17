@@ -92,6 +92,8 @@ public class MazubAnimation extends Animation {
 	@Override
 	public void updateSpriteIndex(){
 		int currentIndex = this.getSpriteIndex();
+		System.out.println(gameObject.getOrientation());
+		System.out.println("ducking"+gameObject.isDucking());
 		
 		int index = 0;
 		if(!getGameObject().isMoving()){
@@ -159,7 +161,7 @@ public class MazubAnimation extends Animation {
 	 */
 	@Basic @Immutable
 	public int getNbFrames(){
-		return ( this.getNbSprites() - 8) / 2;
+		return ( this.getNbSprites() - 8) / 2; // TODO die -8 dmv een constante
 	}	
 	
 	
