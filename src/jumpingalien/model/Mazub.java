@@ -13,6 +13,7 @@ import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
+import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
@@ -152,6 +153,8 @@ public class Mazub extends GameObject{
 		
 		this.setDucking(false);
 		
+		this.setAnimation(new MazubAnimation(this, sprites));
+		
 		/* Setup terrain properties */
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
@@ -198,7 +201,7 @@ public class Mazub extends GameObject{
 	 * 			| new.getAnimation() == animation
 	 */
 	@Basic
-	protected void setAnimation(Animation animation) {
+	protected void setAnimation(MazubAnimation animation) {
 		assert animation != null;
 		
 		this.animation = animation;
@@ -211,15 +214,14 @@ public class Mazub extends GameObject{
 	 */
 	@Basic
 	@Raw
-	public Animation getAnimation() {
+	public MazubAnimation getAnimation() {
 		return this.animation;
 	}
 	
 	/**
 	 * Variable registering the animation of this Mazub.
 	 */
-	private Animation animation;
-	
+	private MazubAnimation animation;
 	
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
@@ -415,15 +417,8 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	public Sprite getCurrentSprite() {
-		return this.getAnimation().getCurrentSprite(this);	
-	}
-	
-	@Override
-	protected void setSprites(Sprite[] sprites){
-		
-		this.setAnimation(new Animation(sprites));
-	}
-	
+		return this.getAnimation().getCurrentSprite();	
+	}	
 	
 	/************************************************ ADVANCE TIME ********************************************/
 	
@@ -483,7 +478,7 @@ public class Mazub extends GameObject{
 		}
 		
 		// Update sprite
-		this.getAnimation().updateSpriteIndex(this);
+		this.getAnimation().updateSpriteIndex();
 	}
 	
 	

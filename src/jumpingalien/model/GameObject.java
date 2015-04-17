@@ -11,6 +11,7 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
+import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
@@ -41,8 +42,8 @@ public abstract class GameObject {
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
 					  int maxNbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
-		this.setSprites(sprites);
 		this.setTimer(new Timer());	
+		this.setAnimation(new Animation(this, sprites));
 		
 		this.positionX = pixelLeftX;
 		this.positionY = pixelBottomY;
@@ -62,6 +63,41 @@ public abstract class GameObject {
 
 		
 	}
+
+	/************************************************* HELPER CLASSES *****************************************/
+	
+	/**
+	 * Set the animation object for Mazub.
+	 * 
+	 * @pre		The given animation object is not null.
+	 * 			| animation != null
+	 * @param 	animation
+	 * 				An animation that consists of consecutive sprites.
+	 * @post	The new animation for Mazub is equal to the given animation.
+	 * 			| new.getAnimation() == animation
+	 */
+	@Basic
+	protected void setAnimation(Animation animation) {
+		assert animation != null;
+		
+		this.animation = animation;
+	}
+
+	/**
+	 * Return the animation object for Mazub.
+	 * 
+	 * @return	An animation that consists of consecutive sprites.
+	 */
+	@Basic
+	@Raw
+	public Animation getAnimation() {
+		return this.animation;
+	}
+	
+	/**
+	 * Variable registering the animation of this Mazub.
+	 */
+	private Animation animation;
 
 	
 	/************************************************ WORLD RELATION *****************************************/
@@ -779,38 +815,8 @@ public abstract class GameObject {
 	/****************************************************** SPRITES *******************************************/
 	
 	public Sprite getCurrentSprite(){
-		return getSpriteAt(this.getSpriteIndex());
+		return this.getAnimation().getCurrentSprite();
 	}
-	
-	public void updateSpriteIndex(){
-		if(this.getOrientation() == Orientation.RIGHT){
-			this.setSpriteIndex(0);
-		}else{
-			this.setSpriteIndex(1);
-		}
-	}
-	
-	private Sprite getSpriteAt(int index){
-		return this.sprites[index];
-	}
-	
-	protected void setSprites(Sprite[] sprites){
-		this.sprites = sprites;
-	}
-	
-	
-	public int getSpriteIndex() {
-		return spriteIndex;
-	}
-
-	public void setSpriteIndex(int spriteIndex) {
-		this.spriteIndex = spriteIndex;
-	}
-
-	private int spriteIndex;
-	
-	private Sprite[] sprites;
-
 	
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
@@ -851,7 +857,7 @@ public abstract class GameObject {
 		
 		updateTimers(dt);
 		doMove(dt);
-		updateSpriteIndex();
+		getAnimation().updateSpriteIndex();
 	}
 
 	protected void processKilledButNotTerminated_NameMustBeChanged(double dt) {
