@@ -799,11 +799,11 @@ public abstract class GameObject {
 	/****************************************************** SPRITES *******************************************/
 	
 	public Sprite getCurrentSprite(){
-		if(getOrientation() == Orientation.LEFT){
+		//if(getOrientation() == Orientation.LEFT){
 			return getSpriteAt(0);
-		}else{
-			return getSpriteAt(1);
-		}
+		//}else{
+		//	return getSpriteAt(1);
+		//}
 	};
 	
 	private Sprite getSpriteAt(int index){

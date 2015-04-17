@@ -163,12 +163,10 @@ public class Slime extends GameObject {
 			
 			if( this.doesCollide() ) {
 				System.out.println("slimes collide with y:"+this.getPositionY()+" will be resetted to:"+oldPositionY);
-				this.setPositionY(oldPositionY+1);
+				this.setPositionY(oldPositionY);
 				this.stopFall();
-			}
-				
-		}
-		
+			}			
+		}	
 	}
 
 	/***************************************************** SCHOOL *********************************************/

@@ -86,7 +86,7 @@ public class Animation {
 	 * 						Mazub is neither ducking nor jumping and moving to the left.
 	 * @note	No formal documentation was required for this method.
 	 */
-	public Sprite getCurrentSprite(Mazub alien){		
+	public Sprite getCurrentSprite(Mazub alien){
 		return this.getSpriteAt(this.getSpriteIndex());
 	}	
 	
