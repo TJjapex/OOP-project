@@ -22,8 +22,7 @@ import jumpingalien.model.exceptions.IllegalHeightException;
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
-public class MazubAnimation extends Animation {
-	
+public class MazubAnimation extends Animation {	
 	/**
 	 * Constructor for the class Animation.
 	 * 
@@ -92,9 +91,7 @@ public class MazubAnimation extends Animation {
 	@Override
 	public void updateSpriteIndex(){
 		int currentIndex = this.getSpriteIndex();
-		System.out.println(gameObject.getOrientation());
-		System.out.println("ducking"+gameObject.isDucking());
-		
+
 		int index = 0;
 		if(!getGameObject().isMoving()){
 			if(!getGameObject().hasMovedInLastSecond()){

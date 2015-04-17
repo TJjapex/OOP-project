@@ -462,7 +462,7 @@ public class Mazub extends GameObject{
 		getAnimation().updateAnimationIndex(this.getTimer());
 	}
 
-	public void doMove(double dt) throws IllegalStateException {		
+	public void doMove(double dt) {		
 		// Update horizontal position
 		this.updatePositionX(dt);
 		

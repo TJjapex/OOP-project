@@ -132,10 +132,6 @@ public class Animation {
 		this.spriteIndex = spriteIndex;
 	}
 	
-	private int spriteIndex;
-	
-	
-	
-	
+	private int spriteIndex;	
 	
 }

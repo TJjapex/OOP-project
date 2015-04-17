@@ -205,6 +205,7 @@ public class Slime extends GameObject {
 	public void processSlimeOverlap(Slime slime){
 
 		if(slime != this){
+			System.out.println("this school:"+this.getSchool()+" other school:"+slime.getSchool());
 			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
 				this.getSchool().switchSchool( this, slime.getSchool() );
 				System.out.println("Slime changed school!");

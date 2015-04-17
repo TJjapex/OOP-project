@@ -445,21 +445,20 @@ public abstract class GameObject {
 	@Basic
 	@Raw
 	protected void setPositionX(double positionX) throws IllegalPositionXException, CollisionException {
-			if( !canHaveAsPositionX(positionX)) 
-				throw new IllegalPositionXException(positionX);
-			if( this.doesCollide())
-				throw new IllegalStateException("Collision before updating position"+this.getPositionX() + " y" + this.getPositionY());
-				
-			double oldPositionX = this.positionX;
-			this.positionX = positionX;
+		if( !canHaveAsPositionX(positionX)) 
+			throw new IllegalPositionXException(positionX);
+		if( this.doesCollide())
+			throw new IllegalStateException("Collision before updating x position");
 			
-			this.getAnimation().updateSpriteIndex();
-			if(this.doesCollide()){
-				this.positionX = oldPositionX;
-				throw new CollisionException();
-			}
-				
-		}
+		double oldPositionX = this.positionX;
+		this.positionX = positionX;
+		
+		this.getAnimation().updateSpriteIndex();
+		if(this.doesCollide()){
+			this.positionX = oldPositionX;
+			throw new CollisionException();
+		}	
+	}
 
 	/**
 	 * Set the y-location of Mazub's bottom left pixel.
@@ -474,10 +473,12 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	protected void setPositionY(double positionY) throws IllegalPositionYException {
+	protected void setPositionY(double positionY) throws IllegalPositionYException, CollisionException {
 		if( !canHaveAsPositionY(positionY)) 
 			throw new IllegalPositionYException(positionY);
-
+		if( this.doesCollide())
+			throw new IllegalStateException("Collision before updating y position");
+		
 		double oldPositionY = this.positionY;
 		this.positionY = positionY;
 		
@@ -498,9 +499,6 @@ public abstract class GameObject {
 //	 * 			GAME_WIDTH.
 //	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
 //	 */
-//	public static boolean isValidPositionX(double positionX) {
-//		return isValidRoundedPositionX((int) Math.floor(positionX));
-//	}
 	public boolean canHaveAsPositionX(double positionX) {
 		return canHaveAsPositionX((int) Math.floor(positionX));
 	}
