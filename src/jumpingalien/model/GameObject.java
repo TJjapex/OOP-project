@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import jumpingalien.model.exceptions.CollisionException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -49,7 +50,6 @@ public abstract class GameObject {
 		this.setVelocityXMax(velocityXMax);
 		
 		this.accelerationXInit = accelerationXInit;
-		this.setAccelerationY( ACCELERATION_Y );
 		
 		this.setOrientation(Orientation.RIGHT);		
 		
@@ -317,9 +317,7 @@ public abstract class GameObject {
 		if(this.isOnGround()){
 			this.setVelocityY( this.getVelocityYInit() );
 			// this.setAccelerationY( ACCELERATION_Y ); 
-			this.setOnGround(false);
-		}
-		
+		}		
 	}
 
 	/**
@@ -359,7 +357,11 @@ public abstract class GameObject {
 		
 		// return !(this.doesOverlap(Orientation.BOTTOM));
 		
-		return this.onGround;
+		if(this.doesOverlap(Orientation.BOTTOM)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 
@@ -374,15 +376,7 @@ public abstract class GameObject {
 	@Raw
 	protected void stopFall() {
 		this.setVelocityY( 0 );
-		this.setAccelerationY( 0 );
-		this.setOnGround(true);
 	}
-	
-	public void setOnGround(boolean isOnGround){
-		this.onGround = isOnGround;
-	}
-	
-	private boolean onGround;
 
 	/************************************************ CHARACTERISTICS *****************************************/
 	
@@ -427,8 +421,9 @@ public abstract class GameObject {
 			throws IllegalPositionXException {
 				if( !canHaveAsPositionX(positionX)) 
 					throw new IllegalPositionXException(positionX);
+
 				this.positionX = positionX;
-			}
+		}
 
 	/**
 	 * Set the y-location of Mazub's bottom left pixel.
@@ -673,7 +668,11 @@ public abstract class GameObject {
 	@Raw
 	@Immutable
 	public double getAccelerationY() {
-		return this.accelerationY;
+		if(this.isOnGround()){
+			return 0;
+		}else{
+			return ACCELERATION_Y;
+		}
 	}
 
 	/**
@@ -707,34 +706,9 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the vertical acceleration of Mazub.
-	 * 
-	 * @param 	accelerationY
-	 * 				A double that represents the desired vertical acceleration of Mazub.
-	 * @post	The vertical acceleration is equal to accelerationY. However, if accelerationY is equal
-	 * 			to NaN, the vertical acceleration is set to 0 instead.
-	 * 			| if ( Double.isNaN(accelerationY) )
-	 * 			| 	then new.getAccelerationY() == 0
-	 * 			| else
-	 * 			| 	new.getAccelerationY() == accelerationY
-	 */
-	@Basic
-	@Raw
-	protected void setAccelerationY(double accelerationY) {
-		if (Double.isNaN(accelerationY)){
-			this.accelerationY = 0;
-		} else
-			this.accelerationY = accelerationY;
-	}
-
-	/**
 	 * Variable registering the horizontal acceleration of this Mazub.
 	 */
 	private double accelerationX;
-	/**
-	 * Variable registering the vertical acceleration of this Mazub.
-	 */
-	private double accelerationY;
 
 	public double getAccelerationXInit() {
 		return this.accelerationXInit;
@@ -820,11 +794,28 @@ public abstract class GameObject {
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
 	
-	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
+	public void advanceTime(double dt){
+		// determine minDt		
+		double minDt;
+		
+		// iteratively advance time;
+		while(!Util.fuzzyGreaterThanOrEqualTo(0, dt)){
+			if(this.isTerminated()){
+				break;
+			}
+			minDt = Math.min( dt,  0.01 / (getVelocityMagnitude() + getAccelerationMagnitude()* dt) );
+			if(minDt > 0){
+				advanceTimeOnce(minDt);
+				dt -= minDt;
+			}	
+		}
+	}
+	
+	public void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
-		
-		
+		if(!this.isTerminated() && !hasProperWorld())
+			throw new IllegalStateException("This object is not in a proper world!");
 		processKilledButNotTerminated_NameMustBeChanged(dt);
 				
 		if(this.isKilled()){ // Als het geterminate is is het sowieso gekilled...
@@ -833,8 +824,7 @@ public abstract class GameObject {
 			return;
 		}
 		
-		if( !hasProperWorld()) // Dit moet na de de check of dit object al geterminate is want bij het terminaten is z'n wereld null
-			throw new IllegalStateException("This object is not in a proper world!");
+
 		
 		// Check if still alive...
 		if(this.getNbHitPoints() == 0){
@@ -887,13 +877,7 @@ public abstract class GameObject {
 			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
 			this.setPositionX( this.getPositionX() + 100 * sx );
 		}catch( IllegalPositionXException exc){
-			if(exc.getPositionX() < 0 ){
-				this.setPositionX( 0 );
-				endMove(Orientation.LEFT);
-			}else{ // > GAME_WIDTH - 1 
-				this.setPositionX( world.getWorldWidth() - 1 );
-				endMove(Orientation.RIGHT);
-			}
+			this.kill();
 		}
 	}
 
@@ -912,19 +896,10 @@ public abstract class GameObject {
 	@Model
 	protected void updatePositionY(double dt) {
 		try{
-			
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
-			if(this instanceof Mazub){
-				//System.out.println(dt);
-			}
 			this.setPositionY( this.getPositionY() + 100 * sy );
 		}catch( IllegalPositionYException exc){
-			if(exc.getPositionY() < 0 ){
-				this.setPositionY(0);
-				this.stopFall();
-			}else{ // > GAME_HEIGHT - 1 
-				this.setPositionY( getWorld().getWorldHeight() - 1);
-			}
+			this.kill();
 		}
 	}
 
@@ -1028,8 +1003,8 @@ public abstract class GameObject {
 		for(GameObject object : world.getAllNonPassableGameObjects()){
 			//System.out.println(object);
 			if(object != this && doesCollideWith(object, orientation)){
-				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
-				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
+				//System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
+				//System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
 				return true;
 			}
 		}
@@ -1089,7 +1064,6 @@ public abstract class GameObject {
 	}
 	
 	public boolean doesOverlap(Orientation orientation){
-//		System.out.println("doesCollide()"+this);
 		World world = this.getWorld();
 		
 		// Check collision with tiles
@@ -1111,10 +1085,7 @@ public abstract class GameObject {
 		
 		// Check colission with gameObjects
 		for(GameObject object : world.getAllNonPassableGameObjects()){
-			//System.out.println(object);
 			if(object != this && doesOverlapWith(object, orientation)){
-//				System.out.println("this"+ this.getPositionX()+" "+this.getPositionY() + " "+this.getWidth() + " "+this.getHeight());
-//				System.out.println("other"+ object.getPositionX()+" "+object.getPositionY() + " "+object.getWidth() + " "+object.getHeight());
 				return true;
 			}
 		}

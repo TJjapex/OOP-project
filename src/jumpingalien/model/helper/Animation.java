@@ -91,6 +91,8 @@ public class Animation {
 	}	
 	
 	public void updateSpriteIndex(Mazub alien){
+		int currentIndex = this.getSpriteIndex();
+		
 		int index = 0;
 		if(!alien.isMoving()){
 			if(!alien.hasMovedInLastSecond()){
@@ -141,7 +143,13 @@ public class Animation {
 				}
 			}
 		}
+		
+		
 		this.setSpriteIndex(index);
+		
+		if(alien.doesCollide()){
+			this.setSpriteIndex(currentIndex); // undo changes
+		}
 	}
 	/**
 	 * Return the sprites of this animation class.

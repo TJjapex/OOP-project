@@ -313,7 +313,7 @@ public class Facade implements IFacadePart2 {
 	@Override
 	public void setGeologicalFeature(World world, int tileX, int tileY,
 			int tileType) {
-		world.setGeologicalFeature(tileX, tileY,  world.tileTypeIndexToType(tileType));		
+		world.setGeologicalFeature(tileX, tileY,  World.tileTypeIndexToType(tileType));		
 	}
 
 	@Override

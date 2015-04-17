@@ -55,8 +55,6 @@ public class Slime extends GameObject {
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
 		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
 		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
-		
-		this.setAccelerationY(ACCELERATION_Y);
 	}
 	
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
@@ -145,14 +143,6 @@ public class Slime extends GameObject {
 				
 			}
 			
-			if(this.doesOverlap(Orientation.BOTTOM)){
-				this.setOnGround(true);
-				this.setAccelerationY(0);
-			}else{
-				this.setOnGround(false);
-				this.setAccelerationY(-10);
-			}
-			
 			// Update vertical position
 			this.updatePositionY(dt);
 			
@@ -162,7 +152,6 @@ public class Slime extends GameObject {
 			this.processOverlap(); 
 			
 			if( this.doesCollide() ) {
-				System.out.println("slimes collide with y:"+this.getPositionY()+" will be resetted to:"+oldPositionY);
 				this.setPositionY(oldPositionY);
 				this.stopFall();
 			}			

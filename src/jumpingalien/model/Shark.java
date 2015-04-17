@@ -2,6 +2,9 @@ package jumpingalien.model;
 
 import java.util.Random;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.Raw;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -9,7 +12,6 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
 
@@ -201,11 +203,49 @@ public class Shark extends GameObject{
 			this.setPositionY(oldPositionY);
 			this.stopFall();
 		}else if (! this.isSubmergedIn(Terrain.WATER)){
-					
-			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
 			this.setAccelerationY(-10);
 		}		
 	}
+	
+	/****************************************************************** ACCELERATION Y *****************************************************/
+	
+	/**
+	 * Return the vertical acceleration of Mazub.
+	 * 
+	 * @return	A double that represents the vertical acceleration of Mazub.
+	 */
+	@Basic
+	@Raw
+	@Immutable
+	public double getAccelerationY() {
+		return this.accelerationY;
+	}
+	
+	/**
+	 * Set the vertical acceleration of Mazub.
+	 * 
+	 * @param 	accelerationY
+	 * 				A double that represents the desired vertical acceleration of Mazub.
+	 * @post	The vertical acceleration is equal to accelerationY. However, if accelerationY is equal
+	 * 			to NaN, the vertical acceleration is set to 0 instead.
+	 * 			| if ( Double.isNaN(accelerationY) )
+	 * 			| 	then new.getAccelerationY() == 0
+	 * 			| else
+	 * 			| 	new.getAccelerationY() == accelerationY
+	 */
+	@Basic
+	@Raw
+	protected void setAccelerationY(double accelerationY) {
+		if (Double.isNaN(accelerationY)){
+			this.accelerationY = 0;
+		} else
+			this.accelerationY = accelerationY;
+	}
+	
+	/**
+	 * Variable registering the vertical acceleration of this Mazub.
+	 */
+	private double accelerationY;
 	
 	/*************************************************************** COLLISION ******************************************************/
 	

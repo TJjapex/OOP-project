@@ -7,8 +7,6 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
-
 // All aspects shall ONLY be specified in a formal way.
 
 /**

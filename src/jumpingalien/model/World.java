@@ -42,6 +42,7 @@ public class World {
 	public World(int tileSize, int nbTilesX, int nbTilesY,
 			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
 			int targetTileY) {
+		
 		this.tileLength = tileSize;
 		this.nbTilesX = nbTilesX;
 		this.nbTilesY = nbTilesY;
@@ -330,44 +331,16 @@ public class World {
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
 	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
 	public void advanceTime( double dt) {
-		double minDt;
-		
+
 		for(Mazub alien: this.getAllMazubs()){
-			//System.out.println(this.getMazub().isOnGround());
-			// determine minDt		
-			
-			minDt = Math.min( dt,  0.01 / (alien.getVelocityMagnitude() + alien.getAccelerationMagnitude()* dt) );
-			
-			//System.out.println("dt"+dt+"mindt"+minDt+"verh"+dt/minDt);
-			
-			// iteratively advance time;
-			double totalDt = dt;
-			while(totalDt > minDt){
-				alien.advanceTime(minDt);
-				totalDt -= minDt;
-			}
-			alien.advanceTime(totalDt);
-			
-//			for(int i=1; i<(dt/minDt); i++){
-//				System.out.println("dt"+minDt);
-//				
-//	        }
-//			
+			alien.advanceTime(dt);						
 		}
 
-		for(GameObject object: this.getAllEnemies()){			
-			// determine minDt			
-			minDt = Math.min( dt,  0.01 / ( object.getVelocityMagnitude() + object.getAccelerationMagnitude()* dt) );
-			
-			// iteratively advance time;
-			for(int i=1; i<(dt/minDt); i++){				
-				object.advanceTime(minDt);
-	        }
-			object.advanceTime(dt%minDt);
+		for(GameObject object: this.getAllEnemies()){	
+			object.advanceTime(dt);
 		}
 		
 		updateDisplayPosition();
-		
 	}
 
 // Nog effe houden, misschien moeten we later nog voor iets weten aan welke kant er collision was
@@ -463,21 +436,21 @@ public class World {
 	}
 
 	public boolean didPlayerWin() {
-			
-		return	this.getTileX(this.getMazub().getRoundedPositionX()) == this.getTargetTileX() && 
-					this.getTileY(this.getMazub().getRoundedPositionY()) == this.getTargetTileY();
+		System.out.println("yes");
+		//return	this.getTileX(this.getMazub().getRoundedPositionX()) == this.getTargetTileX() && 
+		//			this.getTileY(this.getMazub().getRoundedPositionY()) == this.getTargetTileY();
 		
-//		for(int[] tile: this.getTilePositionsIn(this.getMazub().getRoundedPositionX(),
-//												this.getMazub().getRoundedPositionY(),
-//												this.getMazub().getRoundedPositionX() + this.getMazub().getWidth(),
-//												this.getMazub().getRoundedPositionY() + this.getMazub().getHeight())){
-//			
-//			if((tile[0] == this.getTargetTileX()) && (tile[1] == this.getTargetTileY()))
-//				return true;
-//			
-//		}
-//		
-//		return false;
+		for(int[] tile: this.getTilePositionsIn(this.getMazub().getRoundedPositionX(),
+												this.getMazub().getRoundedPositionY(),
+												this.getMazub().getRoundedPositionX() + this.getMazub().getWidth(),
+												this.getMazub().getRoundedPositionY() + this.getMazub().getHeight())){
+			
+			if((tile[0] == this.getTargetTileX()) && (tile[1] == this.getTargetTileY()))
+				return true;
+			
+		}
+		
+		return false;
 			
 	}
 	

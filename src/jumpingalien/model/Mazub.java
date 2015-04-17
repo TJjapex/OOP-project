@@ -467,8 +467,8 @@ public class Mazub extends GameObject{
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! ");	
 	
+		/* X position */
 		double oldPositionX = this.getPositionX();
-		double oldPositionY = this.getPositionY();
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
@@ -476,76 +476,44 @@ public class Mazub extends GameObject{
 		// Update horizontal velocity
 		this.updateVelocityX(dt);
 		
-		this.processOverlap();
-		
 		if( this.doesCollide() ){
 			this.setPositionX(oldPositionX);
 			this.endMove(this.getOrientation());
 		}
 		
-		if(this.doesOverlap(Orientation.BOTTOM)){
-			this.setOnGround(true);
-			this.setAccelerationY(0);
-		}else{
-			this.setOnGround(false);
-			this.setAccelerationY(-10);
-		}
+		this.processOverlap();
 		
+		
+		/* Y position */
+		double oldPositionY = this.getPositionY();
 		
 		// Update vertical position
 		this.updatePositionY(dt);		
 		
 		// Update vertical velocity
 		this.updateVelocityY(dt);
-		//System.out.println(this.getRoundedPositionY());
-	
-		this.processOverlap();
 		
-//		if( this.doesCollide() ) {
-//			this.setPositionY(oldPositionY);
-//			
-//			//System.out.println("ycolission" +getPositionY() + " "+oldPositionY);
-//			
-//			if(this.getVelocityY() > 0){
-//				this.endJump();
-//			}else{
-//				this.stopFall();
-//			}
-//			
-//		}else{
-//
-//			// Ugly... TODO: de acceleratie verspringt nu heel snel als mazub op de grond staat (check game met debug options) -> moet beter gefixt worden
-//			this.setAccelerationY(-10);
-//		}
-		
-		//System.out.println("overlapwithBOTTOM"+this.doesOverlap(Orientation.BOTTOM));
-
 		if (this.doesCollide()){
-			//System.out.println("colisison y");
 			this.setPositionY(oldPositionY);
 			
 			if(this.getVelocityY() > 0){ // Mazub is going up
 				this.endJump();
 			} else { // Mazub is going down
 				this.setVelocityY(0);
-				this.setOnGround(true);
 				this.stopFall();
 			}
 			
 		}
+		
+		
 		
 		// Ducking
 		if(this.shouldEndDucking()){
 			this.endDuck();
 		}
 		
-		
-		int currentIndex = this.getAnimation().getSpriteIndex();
+		// Update sprite
 		this.getAnimation().updateSpriteIndex(this);
-		
-		if(this.doesCollide()){
-			this.getAnimation().setSpriteIndex(currentIndex);
-		}
 		
 	}
 	/************************************************************* COLLISION *************************************************/
