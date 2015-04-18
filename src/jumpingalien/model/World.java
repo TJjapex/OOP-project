@@ -432,26 +432,11 @@ public class World {
 	//  * determine whose bottom-left pixel is positioned on a given position (constant time! -> Map(key,value) 
 
 	public boolean isGameOver() {
-		return (this.getMazub().getNbHitPoints() == 0);
+		return (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() );
 	}
 
-	public boolean didPlayerWin() {
-		System.out.println("yes");
-		//return	this.getTileX(this.getMazub().getRoundedPositionX()) == this.getTargetTileX() && 
-		//			this.getTileY(this.getMazub().getRoundedPositionY()) == this.getTargetTileY();
-		
-		for(int[] tile: this.getTilePositionsIn(this.getMazub().getRoundedPositionX(),
-												this.getMazub().getRoundedPositionY(),
-												this.getMazub().getRoundedPositionX() + this.getMazub().getWidth(),
-												this.getMazub().getRoundedPositionY() + this.getMazub().getHeight())){
-			
-			if((tile[0] == this.getTargetTileX()) && (tile[1] == this.getTargetTileY()))
-				return true;
-			
-		}
-		
-		return false;
-			
+	public boolean didPlayerWin() {	
+		return this.getMazub().isOnTargetTile();	
 	}
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	

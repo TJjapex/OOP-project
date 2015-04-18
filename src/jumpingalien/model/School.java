@@ -22,8 +22,7 @@ public class School {
 	
 	/************************************************** GENERAL ***********************************************/
 	
-	public static final int MUTUAL_SCHOOL_DAMAGE = 1;
-	public static final int SWITCH_SCHOOL_DAMAGE = 1;
+
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -34,7 +33,7 @@ public class School {
 	/************************************************** RELATIONS **********************************************/
 	
 	public boolean canHaveAsSlime(Slime slime){
-		return (!(this.hasAsSlime(slime)) && (slime != null) && (!slime.isKilled()));
+		return (!(this.hasAsSlime(slime)) && (slime != null) && (!slime.isTerminated()));
 	}
 	
 	public boolean hasProperSlimes(){
@@ -65,32 +64,6 @@ public class School {
 	
 	public int getNbSlimes(){
 		return this.getAllSlimes().size();
-	}
-	
-	public void switchSchool(Slime switchedSlime, School newSchool){
-		
-		if ( this != newSchool) {
-			this.removeAsSlime(switchedSlime);
-			for (Slime slime: this.getAllSlimes()){
-				slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
-			}
-			switchedSlime.decreaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * this.getNbSlimes() );
-			
-			for (Slime slime: newSchool.getAllSlimes()){
-				slime.decreaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
-			}
-			switchedSlime.increaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() );
-			
-			newSchool.addAsSlime(switchedSlime);
-		}
-
-	}
-	
-	public void mutualDamage(Slime damagedSlime){
-		for (Slime slime: this.getAllSlimes()){
-			if (!slime.equals(damagedSlime))
-				slime.decreaseNbHitPoints(MUTUAL_SCHOOL_DAMAGE);
-		}
 	}
 	
 	public Set<Slime> slimes = new HashSet<Slime>();

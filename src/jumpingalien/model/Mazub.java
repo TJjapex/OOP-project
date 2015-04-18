@@ -143,7 +143,7 @@ public class Mazub extends GameObject{
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
-				 Sprite[] sprites, int nbHitPoints)
+				 Sprite[] sprites, int nbHitPoints, boolean immunity)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints, 500);
 		
@@ -154,6 +154,8 @@ public class Mazub extends GameObject{
 		this.setDucking(false);
 		
 		this.setAnimation(new MazubAnimation(this, sprites));
+		
+		this.setImmune(immunity);
 		
 		/* Setup terrain properties */
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
@@ -185,7 +187,7 @@ public class Mazub extends GameObject{
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException,
 				IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100);
+		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100, false);
 	}
 	
 	/************************************************* HELPER CLASSES *****************************************/
@@ -462,7 +464,10 @@ public class Mazub extends GameObject{
 		getAnimation().updateAnimationIndex(this.getTimer());
 	}
 
-	public void doMove(double dt) {		
+	public void doMove(double dt) {	
+		
+		System.out.println(this.doesOverlap(Orientation.TOP));
+		
 		// Update horizontal position
 		this.updatePositionX(dt);
 		
@@ -502,21 +507,21 @@ public class Mazub extends GameObject{
 	/* Collision with game objects */
 	
 	public void processPlantOverlap(Plant plant){
-		if(!plant.isKilled()){
+		if(!plant.isKilled() && !this.isFullHitPoints() && !this.isImmune()){
 			this.increaseNbHitPoints(50);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
 	
 	public void processSharkOverlap(Shark shark){
-		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
+		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6 && !this.isImmune()){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
 	public void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
+		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6 && !this.isImmune()){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
@@ -532,6 +537,35 @@ public class Mazub extends GameObject{
 	 *         there are no interactions between the alien and enemy objects).
 	 */
 	public boolean isImmune() {
+		return this.immune;
+	}
+	
+	public void setImmune( boolean immune ){
+		this.immune = immune;
+	}
+	
+	private boolean immune;
+	
+	public boolean isOnTargetTile(){
+		
+		for(int[] tile: this.getWorld().getTilePositionsIn(this.getRoundedPositionX(),
+				this.getRoundedPositionY(),
+				this.getRoundedPositionX() + this.getWidth(),
+				this.getRoundedPositionY() + this.getHeight())){
+
+		if((tile[0] == this.getWorld().getTargetTileX()) && (tile[1] == this.getWorld().getTargetTileY()))
+			return true;
+
+		}
+		
 		return false;
+		
+	}
+	
+	@Override
+	public void processTileOverlap(){
+		if (!this.isImmune()){
+			super.processTileOverlap();
+		}
 	}
 }

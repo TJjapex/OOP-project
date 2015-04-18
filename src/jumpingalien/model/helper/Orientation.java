@@ -2,15 +2,13 @@ package jumpingalien.model.helper;
 import be.kuleuven.cs.som.annotate.Value;
 
 /**
- * An enumeration of directions. The direction can be left or right.
+ * An enumeration of orientations.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
 @Value
 public enum Orientation {
-
-	// Implementation as seen in the course:
 
 	LEFT {
 		/**
@@ -57,6 +55,12 @@ public enum Orientation {
 		}
 	},
 	ALL{
+		/**
+		 * Return the sign of all orientations.
+		 * 
+		 * @return	All directions
+		 * 			| 1
+		 */
 		public int getSign(){
 			return 1;
 		}
@@ -70,18 +74,4 @@ public enum Orientation {
 	 */
 	public abstract int getSign();
 	
-	
-	// Another possible implementation:
-
-	//	LEFT(-1), RIGHT(1);
-	//	private int sign;
-	//
-	//	private Orientation(int sign) {
-	//		this.sign = sign;
-	//	}
-	//	
-	//	public int getSign(){
-	//		return this.sign;
-	//	}
-	//	
 }

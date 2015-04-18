@@ -37,6 +37,9 @@ public class Slime extends GameObject {
 	
 	private double currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 	
+	public static final int MUTUAL_SCHOOL_DAMAGE = 1;
+	public static final int SWITCH_SCHOOL_DAMAGE = 1;
+	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
 	// * possess 100 hit-points
@@ -91,7 +94,14 @@ public class Slime extends GameObject {
 	public void takeDamage(int damageAmount){
 		this.decreaseNbHitPoints(damageAmount);
 		if ( this.getSchool() !=  null )
-			this.getSchool().mutualDamage(this);
+			this.mutualDamage();
+	}
+	
+	public void mutualDamage(){
+		for (Slime slime: this.getSchool().getAllSlimes()){
+			if (!slime.equals(this))
+				slime.decreaseNbHitPoints(MUTUAL_SCHOOL_DAMAGE);
+		}
 	}
 		
 	/**************************************************** MOVEMENT ********************************************/
@@ -171,6 +181,26 @@ public class Slime extends GameObject {
 		return true;
 	}	
 	
+	public void switchSchool(School newSchool){
+		
+		if ( this.getSchool() != newSchool) {
+			
+			for (Slime slime: this.getSchool().getAllSlimes()){
+				slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
+			}
+			this.decreaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * this.getSchool().getNbSlimes() );
+			this.getSchool().removeAsSlime(this);
+			
+			for (Slime slime: newSchool.getAllSlimes()){
+				slime.decreaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
+			}
+			this.increaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() );
+			
+			newSchool.addAsSlime(this);
+		}
+
+	}
+	
 	private School school;
 	
 	@Override
@@ -191,8 +221,6 @@ public class Slime extends GameObject {
 	private boolean terminated = false;
 	
 	
-	
-	
 	/******************************************** Colission **********************************************/
 	public void processMazubOverlap(Mazub mazub){
 		//System.out.println("slime overlap with mazub");
@@ -205,12 +233,12 @@ public class Slime extends GameObject {
 	public void processSlimeOverlap(Slime slime){
 
 		if(slime != this){
-			System.out.println("this school:"+this.getSchool()+" other school:"+slime.getSchool());
+			// System.out.println("this school:"+this.getSchool()+" other school:"+slime.getSchool());
 			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
-				this.getSchool().switchSchool( this, slime.getSchool() );
+				this.switchSchool( slime.getSchool() );
 				System.out.println("Slime changed school!");
 			} else if ( slime.getSchool().getNbSlimes() < this.getSchool().getNbSlimes() ) {
-				slime.getSchool().switchSchool( slime, this.getSchool() );
+				slime.switchSchool( this.getSchool() );
 				System.out.println("Slime changed school!");
 			}
 		}

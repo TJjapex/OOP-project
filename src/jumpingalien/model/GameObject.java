@@ -996,6 +996,10 @@ public abstract class GameObject {
 	
 	protected final int maxNbHitPoints;
 	
+	public boolean isFullHitPoints(){
+		return ( this.getNbHitPoints() == this.getMaxNbHitPoints() );
+	}
+	
 	/********************************************************** COLLISION ****************************************************/
 	
 	/* Checking */
@@ -1027,7 +1031,7 @@ public abstract class GameObject {
 			// and if the given object collides with a tile...
 			Terrain terrain = world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]));
 			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
+				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
 					return true;
 				}
 			}
@@ -1038,7 +1042,7 @@ public abstract class GameObject {
 	public boolean doesCollideWithGameObjects(){
 		// Check colission with gameObjects
 		for(GameObject object : world.getAllNonPassableGameObjects()){
-			if(object != this && doesCollideWith(object, orientation)){
+			if(object != this && doesCollideWith(object)){
 				return true;
 			}
 		}
@@ -1052,11 +1056,7 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(GameObject other){
-		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), Orientation.ALL);
-	}
-	
-	public boolean doesCollideWith(GameObject other, Orientation orientation){
-		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), orientation);
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
 	}
 	
 	/**
@@ -1068,29 +1068,15 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
-		return this.doesCollideWith(x,y,width,height,Orientation.ALL);
-	}
-	
-	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
-		switch (orientation) {
-//			case RIGHT: 
-//				return ! (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x);
-//			case LEFT:
-//				return ! (x + (width - 2) < this.getRoundedPositionX());
-//			case TOP:
-//				return ! ( this.getRoundedPositionY() + (this.getHeight() - 2) < y);
-//			case BOTTOM:
-//				return ! (y + (height - 2) < this.getRoundedPositionY() );
-//				
-			default:
-				return ! ( // Dus geeft true als elke deelexpressie false geeft
-						   (this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
-						|| (x + (width - 2) < this.getRoundedPositionX())
-						|| ( this.getRoundedPositionY() + (this.getHeight() - 2) < y) // top
-						|| (y + (height - 2) < this.getRoundedPositionY() ) //bottom
+		
+		return ! ( // Dus geeft true als elke deelexpressie false geeft
+					(this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
+				 || (x + (width - 2) < this.getRoundedPositionX())
+				 || ( this.getRoundedPositionY() + (this.getHeight() - 2) < y) // top
+				 || (y + (height - 2) < this.getRoundedPositionY() ) //bottom
 						
-						);
-		}
+				);
+		
 	}
 	
 	public boolean doesOverlap(){
@@ -1156,24 +1142,30 @@ public abstract class GameObject {
 		// return this.doesCollideWith(x+1, y+1, width-2, height -2) zou ook moeten werken (rekenkundig hetzelfde), minder redundant. Niet getest. TODO
 		
 		switch (orientation) {
-//			case RIGHT: 
-//				return ! (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x);
-//			case LEFT:
-//				return ! (x + (width - 1) < this.getRoundedPositionX());
-//			case TOP:
-//				return ! ( this.getRoundedPositionY() + (this.getHeight() - 1) < y);
-			case BOTTOM:
-				// return ! (y + (height - 1) < this.getRoundedPositionY() ); --> klopt niet?
+		
+			case RIGHT: 
 				
-				// IK heb dit gecopypaste van de world class en wat aangepast zodat het (trial and error) zou kloppen, geen idee of het echt correct is. 
-				return (getPositionY() > y &&
-					   (getPositionY() < y + height &&
-						 // check left-bottom pixel
-					   (((getPositionX()+1 > x) &&
-						 (getPositionX()+1 < x + width)) ||
-						 // check right-bottom pixel
-						((getPositionX() +(getWidth()-1)-1 > x)) &&
-						 (getPositionX() +(getWidth()-1)-1 < x + width))));
+				return  this.getPositionX() + this.getWidth() > x &&
+						this.getPositionX() + this.getWidth() < x + width &&
+						this.getYOverlap(y, height);
+				
+			case LEFT:
+				
+				return  this.getPositionX() > x &&
+						this.getPositionX() < x + width &&
+						this.getYOverlap(y, height);
+				
+			case TOP:
+		
+				return 	this.getPositionY() + this.getHeight() > y && 
+						this.getPositionY() + this.getHeight() < y + height &&
+						this.getXOverlap(x, width);
+								
+			case BOTTOM:
+ 
+				return 	this.getPositionY() > y &&
+						this.getPositionY() < y + height &&
+						this.getXOverlap(x, width);
 			
 			default:
 				return ! ( // Dus geeft true als elke deelexpressie false geeft
@@ -1185,7 +1177,21 @@ public abstract class GameObject {
 					);
 		}
 	}
-
+	
+	public boolean getXOverlap(int x, int width){
+		
+		return  ( (this.getPositionX() + 1 > x) && (this.getPositionX() + 1 < x + width) ) ||
+				( (this.getPositionX() + (this.getWidth() - 1) - 1 > x) && (this.getPositionX() + (this.getWidth() - 1) - 1 < x + width));
+		
+	}
+	
+	public boolean getYOverlap(int y, int height){
+		
+		return	( (this.getPositionY() + 1 > y) && (this.getPositionY() + 1 < y + height) ) ||
+				( (this.getPositionY() + (this.getHeight() - 1) - 1 > y) && (this.getPositionY() + (this.getHeight() - 1) - 1 < y + height));
+		
+	}
+	
 	/* Processing */
 	
 	/**
