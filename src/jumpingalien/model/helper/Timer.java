@@ -25,10 +25,9 @@ public class Timer {
 	public Timer(){
 		this.setSinceLastMove(Double.POSITIVE_INFINITY);
 		this.setSinceLastSprite(0);
-		this.setSinceLastPeriod(0);
+		this.setSinceLastPeriod(Double.POSITIVE_INFINITY);
 		
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
-			// Eventueel check om alleen impassable tiles hier toe te veogen
 			this.sinceLastTerrainCollision.put(terrain, Double.POSITIVE_INFINITY);
 		}
 		
@@ -140,10 +139,10 @@ public class Timer {
 	private double sinceKilled;
 	
 	
-	/* Terrain Collision */
+	// Terrain Collision
 	private Map<Terrain, Double> sinceLastTerrainCollision = new HashMap<Terrain, Double>();
 	
-	public double getSinceTerrainCollision(Terrain terrain){
+	public double getSinceTerrainCollision(Terrain terrain) throws IllegalArgumentException{
 		if(!this.sinceLastTerrainCollision.containsKey(terrain))
 			throw new IllegalArgumentException("Terrain not in collision map!");
 		return this.sinceLastTerrainCollision.get(terrain);
@@ -160,7 +159,7 @@ public class Timer {
 		}
 	}
 	
-	/* Enemy Collision */
+	// Enemy Collision
 	private double sinceEnemyCollision;
 	
 	public double getSinceEnemyCollision() {
@@ -176,8 +175,7 @@ public class Timer {
 	}
 	
 
-	/* Shark movement */
-	
+	// Shark movement
 	public double getSinceLastPeriod() {
 		return this.sinceLastPeriod;
 	}

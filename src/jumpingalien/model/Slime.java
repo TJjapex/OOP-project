@@ -1,9 +1,5 @@
 package jumpingalien.model;
 
-import java.util.Random;
-
-import javax.print.attribute.standard.MediaSize.Other;
-
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -11,16 +7,8 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
-
-/*
- * Algemene uitwerking:
- * 
- * schools:
- * 	Extra klasse die dan een variabele heeft 'member'. Als 
- */
 
 /**
  * A class of Slimes, enemy characters in the game world of Mazub.
@@ -44,10 +32,11 @@ public class Slime extends GameObject {
 	
 	// * possess 100 hit-points
 	
-	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school, int nbHitPoints)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+		  	double velocityXMax, double accelerationXInit, Sprite[] sprites, School school, int nbHitPoints)
+		  			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
-		super(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, nbHitPoints, 100);
+		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, 100);
 
 		if (this.canHaveAsSchool(school))
 			school.addAsSlime(this);
@@ -62,7 +51,7 @@ public class Slime extends GameObject {
 	
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
-		this(pixelLeftX, pixelBottomY, sprites, school, 100);
+		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100);
 	}
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
@@ -177,8 +166,8 @@ public class Slime extends GameObject {
 	}
 	
 	public boolean canHaveAsSchool(School school){
-		// TODO Auto-generated method stub
-		return true;
+		// TODO checken of dit volledig is
+		return school.canHaveAsSlime(this);
 	}	
 	
 	public void switchSchool(School newSchool){
@@ -207,7 +196,7 @@ public class Slime extends GameObject {
 	protected void terminate(){
 		this.getWorld().removeGameObject(this);
 		this.setWorld(null); // vervangen door method World removeAs?
-		if (this.getSchool() != null)
+		if (this.hasProperSchool())
 			this.getSchool().removeAsSlime(this);
 		
 		this.terminated = true;
@@ -221,9 +210,8 @@ public class Slime extends GameObject {
 	private boolean terminated = false;
 	
 	
-	/******************************************** Colission **********************************************/
+	/****************************************************** OVERLAP PROCESSING *************************************************************/
 	public void processMazubOverlap(Mazub mazub){
-		//System.out.println("slime overlap with mazub");
 		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
@@ -231,9 +219,7 @@ public class Slime extends GameObject {
 	}	
 	
 	public void processSlimeOverlap(Slime slime){
-
 		if(slime != this){
-			// System.out.println("this school:"+this.getSchool()+" other school:"+slime.getSchool());
 			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
 				this.switchSchool( slime.getSchool() );
 				System.out.println("Slime changed school!");
@@ -242,15 +228,16 @@ public class Slime extends GameObject {
 				System.out.println("Slime changed school!");
 			}
 		}
-		
 	}
 	
 	public void processSharkOverlap(Shark shark){
-		
 		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
+	}
+
+	protected void processPlantOverlap(Plant plant) {
 		
 	}
 	

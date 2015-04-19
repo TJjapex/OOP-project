@@ -2,21 +2,11 @@ package jumpingalien.model;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import org.hamcrest.core.IsInstanceOf;
-import org.omg.CORBA.PRIVATE_MEMBER;
-import org.omg.CORBA.PUBLIC_MEMBER;
-
-import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
-import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
 
@@ -222,7 +212,7 @@ public class World {
 	 * @param tileX
 	 * @return
 	 */
-	public int getPositionOfTileX(int tileX){
+	public int getPositionXOfTile(int tileX){
 		return tileX * getTileLength();
 	}
 
@@ -231,7 +221,7 @@ public class World {
 	 * @param tileY
 	 * @return
 	 */
-	public int getPositionOfTileY(int tileY){
+	public int getPositionYOfTile(int tileY){
 		return tileY * getTileLength();
 	}	
 	
@@ -441,8 +431,8 @@ public class World {
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
 	
-	public static Terrain tileTypeIndexToType(int tileTypeIndex){ // Slechte naam	
-		switch(tileTypeIndex){
+	public static Terrain terrainTypeIndexToType(int terrainTypeIndex){ // Slechte naam	
+		switch(terrainTypeIndex){
 			case 0:
 				return Terrain.AIR;
 			case 1:
@@ -473,15 +463,15 @@ public class World {
 	 * @param tileY
 	 *            The y-position y_T of the tile for which the type needs to be
 	 *            modified
-	 * @param tileType
+	 * @param terrainType
 	 *            The new type for the given tile, where:
 	 *            	- the value 0 is returned for an air tile
 	 *         		- the value 1 is returned for a solid ground tile
 	 *         		- the value 2 is returned for a water tile
 	 *         		- the value 3 is returned for a magma tile
 	 */
-	public void setGeologicalFeature(int tileX, int tileY, Terrain tileType) {
-		geologicalFeatures.put(new VectorInt(tileX,  tileY), tileType);
+	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) {
+		geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
 	}
 	
 	/**
@@ -508,15 +498,12 @@ public class World {
 	 *        bottom left pixel of a tile.
 	 */
 	public Terrain getGeologicalFeature(int pixelX, int pixelY) {
-		
 		// Checken of gegeven pixel in game-world ligt?
 		
 		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0){
 			throw new IllegalArgumentException("Given position does not correspond to the bottom left pixel of a tile");
 		}
 		
-		// Opmerking: map.get() geeft null als de key niet bestaat, dus misschien kan dat ook gebruikt worden ipv containsKey. (efficienter) Maar bij
-		// int value = this.gameObjects.get(... ), kan value nooit null worden want das geen geldige integer.
 		if(this.geologicalFeatures.containsKey( new VectorInt(getTileX(pixelX), getTileY(pixelY)))){
 			return this.geologicalFeatures.get( new VectorInt(getTileX(pixelX), getTileY(pixelY)));
 		}else{
@@ -574,7 +561,7 @@ public class World {
 	 * @param alien
 	 *            The alien to be set as the player's character.
 	 */
-	public void addAsMazub(Mazub alien){
+	public void addMazub(Mazub alien){
 		alien.setWorld(this);
 		mazubs.add(alien);
 	}
@@ -592,17 +579,17 @@ public class World {
 		// TODO Auto-generated method stub
 	}
 	
-	public void addAsPlant(Plant plant){
+	public void addPlant(Plant plant){
 		plant.setWorld(this);
 		plants.add(plant);
 	}
 	
-	public void addAsSlime(Slime slime){
+	public void addSlime(Slime slime){
 		slime.setWorld(this);
 		slimes.add(slime);
 	}
 	
-	public void addAsShark(Shark shark){
+	public void addShark(Shark shark){
 		shark.setWorld(this);
 		sharks.add(shark);
 	}
@@ -702,8 +689,6 @@ public class World {
 	public Set<Plant> plants = new HashSet<Plant>();
 	public Set<Shark> sharks = new HashSet<Shark>();
 	public Set<Slime> slimes = new HashSet<Slime>();
-	
-	
 	
 	
 	// Termination

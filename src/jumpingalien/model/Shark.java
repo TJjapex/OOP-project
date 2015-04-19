@@ -48,13 +48,15 @@ public class Shark extends GameObject{
 	// * maximal horizontal velocity is equal to 4 [m/s]
 	// * initial vertical velocity is equal to 2 [m/s]
 	
-	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites, int nbHitPoints)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	public Shark(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+			  	double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints)
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
-		super(pixelLeftX,pixelBottomY, 1.0, 2.0, 4.0, 1.5, sprites, nbHitPoints, 100);
+		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, 100);
 		this.startMove(this.getRandomOrientation());
 		this.startDiveRise();
 		
+		// Configure terrain
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2));
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
 		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2));
@@ -63,8 +65,8 @@ public class Shark extends GameObject{
 	}
 	
 	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
-		this(pixelLeftX, pixelBottomY, sprites, 100);
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
+		this(pixelLeftX, pixelBottomY, 1.0, 2.0, 4.0, 1.5, sprites, 100);
 	}
 	
 	/******************************************** SIZE AND POSITIONING ****************************************/
@@ -85,9 +87,11 @@ public class Shark extends GameObject{
 		return this.jumping;
 	}
 	
-	public void setJumping(boolean jumping){
+	private void setJumping(boolean jumping){
 		this.jumping = jumping;
 	}
+	
+	private boolean jumping = false;
 	
 	@Override
 	public void startJump() {
@@ -101,9 +105,7 @@ public class Shark extends GameObject{
 			this.setVelocityY(0);
 		}
 		this.setJumping(false);
-	}
-	
-	private boolean jumping = false;
+	}	
 	
 	/*********************************************** DIVING AND RISING ****************************************/
 	
@@ -118,12 +120,20 @@ public class Shark extends GameObject{
 	public void startDiveRise(){
 		randomAcceleration = ACCELERATION_DIVING + (ACCELERATION_RISING - ACCELERATION_DIVING)*random.nextDouble();
 		this.setVelocityY( Math.signum(randomAcceleration)*this.getVelocityYInit() );
-		this.setAccelerationY( randomAcceleration); 
+		this.setAccelerationY( randomAcceleration ); 
 	}
 	
 	public void endDiveRise(){
 		this.setVelocityY(0);
 		this.setAccelerationY(0);
+	}
+	
+	public boolean getHasBeenOutWater(){
+		return this.hasBeenOutWater;
+	}
+	
+	private void setHasBeenOutWater(boolean hasBeenOutWater){
+		this.hasBeenOutWater = hasBeenOutWater;
 	}
 	
 	/************************************************ CHARACTERISTICS *****************************************/
@@ -152,9 +162,9 @@ public class Shark extends GameObject{
 	//   of the next one
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Sharks
-	public void doMove(double dt){
-		if( this.doesCollide())
-			throw new IllegalStateException(" Colission before movement! ");	
+	public void doMove(double dt){		
+		//System.out.println("acc x"+this.getAccelerationX()+" y "+this.getAccelerationY());
+		//System.out.println("vel x"+this.getVelocityX() + " y "+this.getVelocityY());
 		
 		// Randomized movement
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
@@ -190,31 +200,17 @@ public class Shark extends GameObject{
 			this.endDiveRise();
 			this.setHasBeenOutWater(false);
 		}
-				
-		double oldPositionY = this.getPositionY();
 		
-		// Update horizontal position
+		/* Horizontal */
 		this.updatePositionX(dt);
-				
-		// Update horizontal velocity
 		this.updateVelocityX(dt);
 				
-		// Update vertical position
+		/* Vertical */
 		this.updatePositionY(dt);
-				
-		// Update vertical velocity
 		this.updateVelocityY(dt);
-		
-		// reset Y position if shark rises out of the water
-		if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping()){
-			this.setPositionY(oldPositionY);
-			this.endDiveRise();
-		}
-				
-		this.processOverlap();
-		
 	}
 	
+	@Override
 	public void processHorizontalCollision() {
 		Orientation currentOrientation = this.getOrientation();
 		this.endMove(currentOrientation);
@@ -230,17 +226,20 @@ public class Shark extends GameObject{
 	}
 	
 	@Override
+	public void updatePositionY(double dt){
+		double oldPositionY = this.getPositionY();
+		super.updatePositionY(dt);
+		
+		// reset Y position if shark rises out of the water
+		if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping()){
+			this.setPositionY(oldPositionY);
+			this.endDiveRise();
+		}
+	}
+	
+	@Override
 	public void processVerticalCollision() {
-		// TODO Auto-generated method stub
 		super.processVerticalCollision();
-	}
-	
-	public boolean getHasBeenOutWater(){
-		return this.hasBeenOutWater;
-	}
-	
-	public void setHasBeenOutWater(boolean hasBeenOutWater){
-		this.hasBeenOutWater = hasBeenOutWater;
 	}
 	
 	/****************************************************************** ACCELERATION Y *****************************************************/
@@ -284,12 +283,10 @@ public class Shark extends GameObject{
 	private double accelerationY;
 	
 	
-	/*************************************************************** COLLISION ******************************************************/
+	/*************************************************************** OVERLAP PROCESSING ******************************************************/
 	
-	@Override
 	public void processMazubOverlap(Mazub alien) {
 		if(!alien.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
-		//	System.out.println("deduced hitpoints");
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
@@ -300,6 +297,14 @@ public class Shark extends GameObject{
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
+	}
+	
+	public void processSharkOverlap(Shark shark){
+		
+	}
+
+	public void processPlantOverlap(Plant plant) {
+
 	}
 	
 }

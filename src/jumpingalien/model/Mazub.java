@@ -1,10 +1,5 @@
 package jumpingalien.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -12,11 +7,8 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Terrain;
-import jumpingalien.model.helper.Timer;
-import jumpingalien.model.helper.Orientation;
 
 // All aspects shall be specified both formally and informally.
 
@@ -465,26 +457,20 @@ public class Mazub extends GameObject{
 	}
 
 	public void doMove(double dt) {	
-		
-		// Update horizontal position
+		/* Horizontal */
 		this.updatePositionX(dt);
-		
-		// Update horizontal velocity
 		this.updateVelocityX(dt);		
 		
-		/* Y position */		
-		// Update vertical position
+		/* Vertical */		
 		this.updatePositionY(dt);		
-		
-		// Update vertical velocity
 		this.updateVelocityY(dt);		
 		
-		// Ducking
+		/* Ducking */
 		if(this.shouldEndDucking()){
 			this.endDuck();
 		}
 		
-		// Update sprite
+		/* Update sprite */
 		this.getAnimation().updateSpriteIndex();
 	}
 	
@@ -502,28 +488,43 @@ public class Mazub extends GameObject{
 	}
 	
 	
-	/* Collision with game objects */
+	/********************************************************* OVERLAP PROCESSING *********************************************/
+	protected void processMazubOverlap(Mazub alien){
+		
+	}
 	
-	public void processPlantOverlap(Plant plant){
+	protected void processPlantOverlap(Plant plant){
 		if(!plant.isKilled() && !this.isFullHitPoints() && !this.isImmune()){
 			this.increaseNbHitPoints(50);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
 	
-	public void processSharkOverlap(Shark shark){
+	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6 && !this.isImmune()){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
-	public void processSlimeOverlap(Slime slime){
+	protected void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6 && !this.isImmune()){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}	
+	
+	@Override
+	public void processTileOverlap(){
+		if (!this.isImmune()){
+			super.processTileOverlap();
+		}
+	}
+	
+	
+	
+	
+	
 	
 	/**
 	 * Returns whether the given alien is currently immune against enemies (see
@@ -544,6 +545,15 @@ public class Mazub extends GameObject{
 	
 	private boolean immune;
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public boolean isOnTargetTile(){
 		
 		for(int[] tile: this.getWorld().getTilePositionsIn(this.getRoundedPositionX(),
@@ -560,10 +570,5 @@ public class Mazub extends GameObject{
 		
 	}
 	
-	@Override
-	public void processTileOverlap(){
-		if (!this.isImmune()){
-			super.processTileOverlap();
-		}
-	}
+
 }

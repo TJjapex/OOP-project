@@ -1,7 +1,6 @@
 package jumpingalien.model.helper;
 
 import be.kuleuven.cs.som.annotate.*;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;

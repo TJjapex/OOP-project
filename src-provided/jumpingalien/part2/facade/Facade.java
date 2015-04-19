@@ -39,7 +39,6 @@ public class Facade implements IFacadePart2 {
 	 */
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
-			//return new Mazub(2500, 80, sprites);
 			return new Mazub(pixelLeftX, pixelBottomY, sprites);
 		}catch( IllegalPositionXException | IllegalPositionYException exc){
 			throw new ModelException("Invalid position given.");
@@ -221,6 +220,8 @@ public class Facade implements IFacadePart2 {
 	 * 				The given dt is greater than 0.2 or smaller than 0
 	 * 				| dt < 0 || dt > 0.2
 	 */
+	
+	// TODO ik denk niet dat deze nog nodig is?
 	public void advanceTime(Mazub alien, double dt) throws ModelException{
 		try{
 			alien.advanceTime(dt);
@@ -230,12 +231,7 @@ public class Facade implements IFacadePart2 {
 		
 	}
 	
-	
-	
-	
 	/*************************************** PART 2 *****************************************/
-	
-	
 	
 	@Override
 	public int getNbHitPoints(Mazub alien) {
@@ -295,12 +291,11 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public int[] getBottomLeftPixelOfTile(World world, int tileX, int tileY) {
-		return new int[] { world.getPositionOfTileX(tileX), world.getPositionOfTileY(tileY) };
+		return new int[] { world.getPositionXOfTile(tileX), world.getPositionYOfTile(tileY) };
 	}
 
 	@Override
-	public int[][] getTilePositionsIn(World world, int pixelLeft,
-			int pixelBottom, int pixelRight, int pixelTop) {
+	public int[][] getTilePositionsIn(World world, int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
 		return world.getTilePositionsIn(pixelLeft, pixelBottom, pixelRight, pixelTop);
 	}
 
@@ -311,14 +306,13 @@ public class Facade implements IFacadePart2 {
 	}
 
 	@Override
-	public void setGeologicalFeature(World world, int tileX, int tileY,
-			int tileType) {
-		world.setGeologicalFeature(tileX, tileY,  World.tileTypeIndexToType(tileType));		
+	public void setGeologicalFeature(World world, int tileX, int tileY, int terrainType) {
+		world.setGeologicalFeature(tileX, tileY,  World.terrainTypeIndexToType(terrainType));		
 	}
 
 	@Override
 	public void setMazub(World world, Mazub alien) {
-		world.addAsMazub(alien);
+		world.addMazub(alien);
 	}
 
 	@Override
@@ -335,7 +329,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addPlant(World world, Plant plant) {
-		world.addAsPlant(plant);
+		world.addPlant(plant);
 	}
 
 	@Override
@@ -362,7 +356,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addShark(World world, Shark shark) {
-		world.addAsShark(shark);
+		world.addShark(shark);
 	}
 	
 	@Override
@@ -396,7 +390,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addSlime(World world, Slime slime) {
-		world.addAsSlime(slime);
+		world.addSlime(slime);
 	}
 
 	@Override

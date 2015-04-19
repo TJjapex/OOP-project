@@ -26,12 +26,11 @@ public class Plant extends GameObject {
 	// * possess 1 hit-point
 	// * destroyed upon contact with a hungry Mazub
 	
-	public Plant(int pixelLeftX, int pixelBottomY, Sprite[] sprites)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	public Plant(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+			  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
-		super(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1);
-		this.startMove(Orientation.RIGHT);
-		
+		super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, maxNbHitPoints);
 		
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
@@ -39,6 +38,11 @@ public class Plant extends GameObject {
 		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
 
 	}	
+	
+	public Plant(int pixelLeftX, int pixelBottomY, Sprite[] sprites){
+		this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1);
+	}
+	
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
@@ -77,8 +81,6 @@ public class Plant extends GameObject {
 	}
 	
 	public void doMove(double dt){		
-		//if( this.doesCollide())
-		//	throw new IllegalStateException(" Colission before movement! ");	
 
 		if (this.getTimer().getSinceLastPeriod() >= 0.5){ // fuzzy?
 			if (this.getOrientation() == Orientation.RIGHT){
@@ -94,8 +96,6 @@ public class Plant extends GameObject {
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
-		
-		//this.processOverlap();// -> niet echt nodig bij plants?
 	}
 	
 	
@@ -108,6 +108,22 @@ public class Plant extends GameObject {
 	
 	@Override
 	public boolean doesCollide() {
-		return doesCollideWithTiles();
+		return doesCollideWithTerrain();
+	}
+
+	public void processMazubOverlap(Mazub alien) {
+
+	}
+
+	public void processPlantOverlap(Plant plant) {
+
+	}
+
+	public void processSharkOverlap(Shark shark) {
+
+	}
+
+	public void processSlimeOverlap(Slime slime) {
+
 	}
 }

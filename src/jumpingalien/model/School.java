@@ -12,12 +12,6 @@ import java.util.Set;
  * @version 1.0
  */
 
-/*
- * Uitwerking:
- * 
- * members = set of list of... van slimes?
- */
-
 public class School {
 	
 	/************************************************** GENERAL ***********************************************/

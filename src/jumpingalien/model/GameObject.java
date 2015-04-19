@@ -15,7 +15,6 @@ import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
-import jumpingalien.part2.internal.tmxfile.data.Tileset;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import be.kuleuven.cs.som.annotate.Basic;
@@ -39,14 +38,15 @@ public abstract class GameObject {
 	/************************************************ CONSTRUCTOR *********************************************/
 
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
-					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
-					  int maxNbHitPoints)
+					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
 		this.setTimer(new Timer());	
 		this.setAnimation(new Animation(this, sprites));
 		
 		this.positionX = pixelLeftX;
 		this.positionY = pixelBottomY;
+//		setPositionX(pixelLeftX);
+//		setPositionY(pixelBottomY);
 
 		this.velocityXInit = velocityXInit;
 		this.velocityYInit = velocityYInit;
@@ -349,8 +349,7 @@ public abstract class GameObject {
 	 * @post	The vertical acceleration of Mazub is equal to ACCELERATION_Y.
 	 * 			| new.getAccelerationY() == ACCELERATION_Y
 	 */
-	
-	// TODO update docs because now it checks if mazub is not already jumping
+
 	public void startJump() {
 		if(this.isOnGround()){
 			this.setVelocityY( this.getVelocityYInit() );
@@ -373,7 +372,7 @@ public abstract class GameObject {
 		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
 			this.setVelocityY(0);
 		}else{
-			// throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
+			throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
 		}
 	}
 
@@ -383,7 +382,10 @@ public abstract class GameObject {
 	 * @return	True if and only if the vertical position of Mazub is equal to 0. (up to a certain epsilon)
 	 * 			| result == ( this.getPositionY() == 0 )
 	 */
-	public boolean isOnGround() {		
+	public boolean isOnGround() throws IllegalStateException{		
+		if(! hasProperWorld())
+			throw new IllegalStateException("GameObject not in proper world!");
+		
 		if(this.doesOverlap(Orientation.BOTTOM)){
 			return true;
 		}else{
@@ -407,6 +409,7 @@ public abstract class GameObject {
 
 	/************************************************ CHARACTERISTICS *****************************************/
 	
+	/* Horizontal position */
 	/**
 	 * Return the x-location of Mazub's bottom left pixel.
 	 * 
@@ -419,18 +422,21 @@ public abstract class GameObject {
 		return this.positionX;
 	}
 
-	/**
-	 * Return the y-location of Mazub's bottom left pixel.
-	 * 
-	 * @return	A double that represents the y-coordinate of Mazub's
-	 * 			bottom left pixel in the world.
-	 */
-	@Basic
-	@Raw
-	public double getPositionY() {
-		return this.positionY;
+//	/**
+//	 * Check whether the given X position is a valid horizontal position.
+//	 * 
+//	 * @param 	positionX
+//	 * 				A double that represents an x-coordinate.
+//	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
+//	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
+//	 * 			GAME_WIDTH.
+//	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
+//	 */
+	public boolean canHaveAsPositionX(double positionX) {
+		return canHaveAsPositionX((int) Math.floor(positionX));
 	}
 
+	
 	/**
 	 * Set the x-location of Mazub's bottom left pixel.
 	 * 
@@ -444,7 +450,7 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	protected void setPositionX(double positionX) throws IllegalPositionXException, CollisionException {
+	protected void setPositionX(double positionX) throws IllegalStateException, IllegalPositionXException, CollisionException {
 		if( !canHaveAsPositionX(positionX)) 
 			throw new IllegalPositionXException(positionX);
 		if( this.doesCollide())
@@ -459,6 +465,41 @@ public abstract class GameObject {
 			throw new CollisionException();
 		}	
 	}
+	
+	/**
+	 * Variable registering the horizontal position of this Mazub.
+	 */
+	private double positionX;
+	
+	
+	/* Vertical position*/
+	
+	/**
+	 * Return the y-location of Mazub's bottom left pixel.
+	 * 
+	 * @return	A double that represents the y-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic
+	@Raw
+	public double getPositionY() {
+		return this.positionY;
+	}
+	
+//	/**
+//	 * Check whether the given Y position is a valid vertical position.
+//	 * 
+//	 * @param 	positionY
+//	 * 				A double that represents a y-coordinate.
+//	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
+//	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
+//	 * 			GAME_HEIGHT. 
+//	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
+//	 */
+	public boolean canHaveAsPositionY(double positionY) {
+		return canHaveAsPositionY((int) Math.floor(positionY));
+	}
+
 
 	/**
 	 * Set the y-location of Mazub's bottom left pixel.
@@ -488,44 +529,14 @@ public abstract class GameObject {
 			throw new CollisionException();
 		}
 	}
-
-//	/**
-//	 * Check whether the given X position is a valid horizontal position.
-//	 * 
-//	 * @param 	positionX
-//	 * 				A double that represents an x-coordinate.
-//	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
-//	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
-//	 * 			GAME_WIDTH.
-//	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
-//	 */
-	public boolean canHaveAsPositionX(double positionX) {
-		return canHaveAsPositionX((int) Math.floor(positionX));
-	}
-
-//	/**
-//	 * Check whether the given Y position is a valid vertical position.
-//	 * 
-//	 * @param 	positionY
-//	 * 				A double that represents a y-coordinate.
-//	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
-//	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
-//	 * 			GAME_HEIGHT. 
-//	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
-//	 */
-	public boolean canHaveAsPositionY(double positionY) {
-		return canHaveAsPositionY((int) Math.floor(positionY));
-	}
-
-	/**
-	 * Variable registering the horizontal position of this Mazub.
-	 */
-	private double positionX;
+	
 	/**
 	 * Variable registering the vertical position of this Mazub.
 	 */
 	private double positionY;
 
+	
+	/* Horizontal velocity */
 	/**
 	 * Return the horizontal velocity of Mazub.
 	 * 
@@ -536,16 +547,18 @@ public abstract class GameObject {
 	public double getVelocityX() {
 		return this.velocityX;
 	}
-
+	
 	/**
-	 * Return the vertical velocity of Mazub.
+	 * Checks whether the horizontal velocity of Mazub is a valid velocity.
 	 * 
-	 * @return	A double that represents the vertical velocity of Mazub.
+	 * @param 	velocityX
+	 * 				A double that represents the horizontal velocity of Mazub.
+	 * @return	True if and only if the absolute value of the given horizontal velocity is smaller or equal to
+	 *  		the maximal horizontal velocity.
+	 * 			| result == ( Math.abs(velocityX) <= this.getVelocityXMax() )
 	 */
-	@Basic
-	@Raw
-	public double getVelocityY() {
-		return this.velocityY;
+	public boolean isValidVelocityX(double velocityX) {
+		return Math.abs(velocityX) <= this.getVelocityXMax();
 	}
 
 	/**
@@ -573,6 +586,24 @@ public abstract class GameObject {
 			
 		this.velocityX = Math.max( Math.min( velocityX , this.getVelocityXMax()), -this.getVelocityXMax());
 	}
+	
+	/**
+	 * Variable registering the horizontal velocity of this Mazub.
+	 */
+	private double velocityX;
+	
+	/* Vertical velocity */
+	
+	/**
+	 * Return the vertical velocity of Mazub.
+	 * 
+	 * @return	A double that represents the vertical velocity of Mazub.
+	 */
+	@Basic
+	@Raw
+	public double getVelocityY() {
+		return this.velocityY;
+	}
 
 	/**
 	 * Set the vertical velocity of this object.
@@ -589,6 +620,13 @@ public abstract class GameObject {
 	}
 	
 	/**
+	 * Variable registering the vertical velocity of this Mazub.
+	 */
+	private double velocityY;
+	
+	/* Velocity maginutde */
+	
+	/**
 	 * Returns the magnitude of the velocity of this object.
 	 * @return
 	 * 		the magnitude of the velocity of this object
@@ -597,28 +635,7 @@ public abstract class GameObject {
 		return Math.sqrt( Math.pow(this.getVelocityX(), 2) + Math.sqrt( Math.pow(this.getVelocityY(), 2)));
 	}
 
-	/**
-	 * Checks whether the horizontal velocity of Mazub is a valid velocity.
-	 * 
-	 * @param 	velocityX
-	 * 				A double that represents the horizontal velocity of Mazub.
-	 * @return	True if and only if the absolute value of the given horizontal velocity is smaller or equal to
-	 *  		the maximal horizontal velocity.
-	 * 			| result == ( Math.abs(velocityX) <= this.getVelocityXMax() )
-	 */
-	public boolean isValidVelocityX(double velocityX) {
-		return Math.abs(velocityX) <= this.getVelocityXMax();
-	}
-
-	/**
-	 * Variable registering the horizontal velocity of this Mazub.
-	 */
-	private double velocityX;
-	/**
-	 * Variable registering the vertical velocity of this Mazub.
-	 */
-	private double velocityY;
-
+	/* Initial velocity */ 
 	/**
 	 * Return the initial horizontal velocity of Mazub. The initial horizontal velocity is used when Mazub
 	 * starts walking.
@@ -689,6 +706,9 @@ public abstract class GameObject {
 	 */
 	private double velocityXMax;
 
+	
+	/* Horizontal acceleration */
+	
 	/**
 	 * Return the horizontal acceleration of Mazub.
 	 * 
@@ -698,22 +718,6 @@ public abstract class GameObject {
 	@Raw
 	public double getAccelerationX() {
 		return this.accelerationX;
-	}
-
-	/**
-	 * Return the vertical acceleration of Mazub.
-	 * 
-	 * @return	A double that represents the vertical acceleration of Mazub.
-	 */
-	@Basic
-	@Raw
-	@Immutable
-	public double getAccelerationY() {
-		if(this.isOnGround()){
-			return 0;
-		}else{
-			return ACCELERATION_Y;
-		}
 	}
 
 	/**
@@ -738,6 +742,30 @@ public abstract class GameObject {
 	}
 	
 	/**
+	 * Variable registering the horizontal acceleration of this Mazub.
+	 */
+	private double accelerationX;
+	
+	/* Vertical acceleration */
+	/**
+	 * Return the vertical acceleration of Mazub.
+	 * 
+	 * @return	A double that represents the vertical acceleration of Mazub.
+	 */
+	@Basic
+	@Raw
+	@Immutable
+	public double getAccelerationY() {
+		if(this.isOnGround()){
+			return 0;
+		}else{
+			return ACCELERATION_Y;
+		}
+	}
+
+	/* Acceleration magnitude */ 
+	
+	/**
 	 * Returns the magnitude of the acceleration of this object.
 	 * @return
 	 * 		the magnitude of the acceleration of this object
@@ -745,11 +773,8 @@ public abstract class GameObject {
 	protected double getAccelerationMagnitude(){
 		 return Math.sqrt( Math.pow(this.getAccelerationX(), 2) + Math.sqrt( Math.pow(this.getAccelerationY(), 2)));
 	}
-
-	/**
-	 * Variable registering the horizontal acceleration of this Mazub.
-	 */
-	private double accelerationX;
+	
+	/* Initial acceleration */
 
 	public double getAccelerationXInit() {
 		return this.accelerationXInit;
@@ -757,6 +782,7 @@ public abstract class GameObject {
 	
 	protected final double accelerationXInit;
 
+	/* Orientation */
 	
 	/**
 	 * Return the orientation of Mazub.
@@ -819,7 +845,6 @@ public abstract class GameObject {
 	
 	
 	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
-	
 	public void advanceTime(double dt){
 		// determine minDt		
 		double minDt;
@@ -871,17 +896,25 @@ public abstract class GameObject {
 	
 	public abstract void doMove(double dt);
 	
+	
+	/**
+	 * Increase the timers of this gameobject with the given dt
+	 * 
+	 * @param dt
+	 * 		
+	 */
 	public void updateTimers(double dt){
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);
 		
-		// Sprites
 		this.getTimer().increaseSinceLastSprite(dt);
-		
 		this.getTimer().increaseSinceTerrainCollision(dt);
 		this.getTimer().increaseSinceEnemyCollision(dt);
 		this.getTimer().increaseSinceLastPeriod(dt);
 	}
+	
+	
+	/* Horizontal */
 	
 	/**
 	 * Update Mazub's horizontal position according to the given dt.
@@ -907,7 +940,26 @@ public abstract class GameObject {
 			processHorizontalCollision();
 		}
 	}
+	
+	/**
+	 * Update Mazub's horizontal velocity according to the given dt.
+	 * 
+	 * @param dt
+	 * 			A double that represents the elapsed time.
+	 * @post	The horizontal velocity of Mazub is equal to the previous horizontal velocity incremented 
+	 * 			with the product of the horizontal acceleration and dt
+	 * 			| new.getVelocityX() == this.getVelocityX() + this.getAccelerationX() * dt
+	 */
+	protected void updateVelocityX(double dt) {
+		double newVx = this.getVelocityX() + this.getAccelerationX() * dt;
+		this.setVelocityX( newVx );
+	}
 
+	public void processHorizontalCollision(){
+		this.endMove(this.getOrientation());
+	}
+	
+	/* Vertical */
 	
 	/**
 	 * Update Mazub's vertical position according to the given dt.
@@ -933,21 +985,6 @@ public abstract class GameObject {
 			processVerticalCollision();
 		}
 	}
-	
-
-	/**
-	 * Update Mazub's horizontal velocity according to the given dt.
-	 * 
-	 * @param dt
-	 * 			A double that represents the elapsed time.
-	 * @post	The horizontal velocity of Mazub is equal to the previous horizontal velocity incremented 
-	 * 			with the product of the horizontal acceleration and dt
-	 * 			| new.getVelocityX() == this.getVelocityX() + this.getAccelerationX() * dt
-	 */
-	protected void updateVelocityX(double dt) {
-		double newVx = this.getVelocityX() + this.getAccelerationX() * dt;
-		this.setVelocityX( newVx );
-	}
 
 	/**
 	 * Update Mazub's vertical velocity according to the given dt.
@@ -962,6 +999,11 @@ public abstract class GameObject {
 		this.setVelocityY( newVy );
 	}
 
+	public void processVerticalCollision(){
+		this.stopFall();
+	}
+	
+	
 	/*************************************************** HIT-POINTS *******************************************/
 	
 	public int getNbHitPoints() {
@@ -1000,24 +1042,38 @@ public abstract class GameObject {
 		return ( this.getNbHitPoints() == this.getMaxNbHitPoints() );
 	}
 	
-	/********************************************************** COLLISION ****************************************************/
-	
-	/* Checking */
+	/************************************************************ COLLISION *************************************************************/
 	
 	/**
-	 * Checks if this object collides with any other impassable object
+	 * Checks if this object collides with impassable terrain or any other impassable object.
 	 * 
 	 * @return
+	 * 		True if and only if this object collides with impassable terrain or an impassable object.
 	 */
 	public boolean doesCollide(){
-		return this.doesCollide(Orientation.ALL);
+		return doesCollideWithTerrain() || doesCollideWithGameObjects();
 	}
 	
-	public boolean doesCollide(Orientation orientation){
-		return doesCollideWithTiles() || doesCollideWithGameObjects();
-	}	
+// 	Niet meer nodig
+//	/**
+//	 * Checks if this object collides in the given direction with impassable terrain or any other impassable object
+//	 * 
+//	 * @param orientation
+//	 * 		The orientation that needs to be checked
+//	 * @return
+//	 * 		True if and only if this object collides with impassable terrain or an impassable object in the given direciton.
+//	 */
+//	public boolean doesCollide(Orientation orientation){
+//		return doesCollideWithTerrain() || doesCollideWithGameObjects();
+//	}	
 	
-	public boolean doesCollideWithTiles(){
+	/**
+	 * Checks if this object collides in the given direction with impassable terrain.
+	 * 
+	 * @return
+	 * 		True if and only if this object collides with impassable terrain.
+	 */
+	public boolean doesCollideWithTerrain(){
 		World world = this.getWorld();
 		
 		// Check collision with tiles
@@ -1029,9 +1085,9 @@ public abstract class GameObject {
 		for(int[] tile : tiles){
 			// Check if that tile is passable 
 			// and if the given object collides with a tile...
-			Terrain terrain = world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]));
+			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
 			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				if( this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
+				if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength())){
 					return true;
 				}
 			}
@@ -1039,32 +1095,44 @@ public abstract class GameObject {
 		return false;
 	}
 	
+	/**
+	 * Checks if this object collides in the given direction with any other impassable game object.
+	 * 
+	 * @return
+	 * 		True if and only if this object collides with an impassable object.
+	 */
 	public boolean doesCollideWithGameObjects(){
-		// Check colission with gameObjects
 		for(GameObject object : world.getAllNonPassableGameObjects()){
 			if(object != this && doesCollideWith(object)){
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	
 	/**
-	 * Checks if this object collides with given gameobject
+	 * Checks if this object collides with a given gameobject.
+	 * 
 	 * @param other
+	 * 		An instance of GameObject to check collision with
 	 * @return
+	 * 		True if and only if this object and the given gameobject collides.
 	 */
 	public boolean doesCollideWith(GameObject other){
 		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
 	}
 	
 	/**
-	 * Checks if this object collides with the given region
+	 * Checks if this object collides with the given region.
+	 * 
 	 * @param x
+	 * 		The horizontal position of the left bottom corner of the region
 	 * @param y
+	 * 		The vertical position of the left bottom corner of the region
 	 * @param width
+	 * 		The width of the region
 	 * @param height
+	 * 		The height of the region
 	 * @return
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height){
@@ -1078,6 +1146,8 @@ public abstract class GameObject {
 				);
 		
 	}
+	
+	/************************************************************ OVERLAP **********************************************************/
 	
 	public boolean doesOverlap(){
 		return this.doesOverlap(Orientation.ALL);
@@ -1095,9 +1165,9 @@ public abstract class GameObject {
 		for(int[] tile : tiles){
 			// Check if that tile is passable 
 			// and if the given object collides with a tile...
-			Terrain terrain = world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]));
+			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
 			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				if( this.doesOverlapWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
+				if( this.doesOverlapWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
 					return true;
 				}
 			}
@@ -1114,12 +1184,12 @@ public abstract class GameObject {
 	}	
 	
 	/**
-	 * Checks if this object overlaps with given gameobject
+	 * Checks if this object overlaps with the given gameobject
 	 * @param other
 	 * @return
 	 */
 	public boolean doesOverlapWith(GameObject other){
-		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+		return this.doesOverlapWith(other, Orientation.ALL);
 	}
 	
 	public boolean doesOverlapWith(GameObject other, Orientation orientation){
@@ -1127,7 +1197,7 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this object overlaps with the given region
+	 * Checks if this object overlaps with the given region.
 	 * @param x
 	 * @param y
 	 * @param width
@@ -1138,6 +1208,15 @@ public abstract class GameObject {
 		return this.doesOverlapWith(x,y,width,height,Orientation.ALL);
 	}
 	
+	/**
+	 * Checks if this object overlaps in the given direction with the given object.
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param orientation
+	 * @return
+	 */
 	public boolean doesOverlapWith(int x, int y, int width, int height, Orientation orientation){
 		// return this.doesCollideWith(x+1, y+1, width-2, height -2) zou ook moeten werken (rekenkundig hetzelfde), minder redundant. Niet getest. TODO
 		
@@ -1192,29 +1271,43 @@ public abstract class GameObject {
 		
 	}
 	
-	/* Processing */
-	
-	/**
-	 * Checks the colliding tiles and objects and processes it
-	 * 
+	/** 
+	 * Returns a set containing the overlapping terrain types 
 	 */
+	public Set<Terrain> getOverlappingTerrainTypes(){
+		World world = this.getWorld();
+		
+		Set<Terrain> overlappingTerrainTypes = new HashSet<Terrain>();
+		
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
+													this.getRoundedPositionY(),
+													this.getRoundedPositionX() + this.getWidth(), 
+													this.getRoundedPositionY() + this.getHeight()  );
+		
+		for(int[] tile : tiles){
+			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength())){
+				overlappingTerrainTypes.add(world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])));	
+			}
+		}
+		
+		return overlappingTerrainTypes;
+	}
+	
+	/****************************************************** OVERLAP PROCESSING ****************************************************/
+	
 	public void processOverlap(){
-		
-		// Process tiles
 		this.processTileOverlap();
-		
-		// Process gameobjects 
 		this.processGameObjectOverlap();
 	}
 
 	public void processTileOverlap(){
-		Set<Terrain> collisionTileTypes = this.getColissionTileTypes();
+		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		
-		for(Terrain collisionTerrain : collisionTileTypes){
-			if( this.hasTerrainPropertiesOf(collisionTerrain) && this.getTerrainPropertiesOf(collisionTerrain).getDamage() != 0 ){
-				if( this.getTimer().getSinceTerrainCollision(collisionTerrain) > this.getTerrainPropertiesOf(collisionTerrain).getDamageTime() ){ // > of >=? fuzzy?
-					this.takeDamage( this.getTerrainPropertiesOf(collisionTerrain).getDamage() );
-					this.getTimer().setSinceTerrainCollision(collisionTerrain, 0);
+		for(Terrain overlappingTerrain : overlappingTerrainTypes){
+			if( this.hasTerrainPropertiesOf(overlappingTerrain) && this.getTerrainPropertiesOf(overlappingTerrain).getDamage() != 0 ){
+				if( this.getTimer().getSinceTerrainCollision(overlappingTerrain) > this.getTerrainPropertiesOf(overlappingTerrain).getDamageTime() ){ // > of >=? fuzzy?
+					this.takeDamage( this.getTerrainPropertiesOf(overlappingTerrain).getDamage() );
+					this.getTimer().setSinceTerrainCollision(overlappingTerrain, 0);
 				}
 			}
 		}
@@ -1249,63 +1342,21 @@ public abstract class GameObject {
 		
 	}
 	
-	// TODO Onderstaande methodes worden nu uitgewerkt in de subklasses, dus misschien abstract maken. 
-	// Misschien is het beter om da samen te voegen ofzo zoals bij die tiles
-	public void processMazubOverlap(Mazub alien){
-		
-	}
-	
-	public void processPlantOverlap(Plant plant){
-		
-	}
-	
-	public void processSharkOverlap(Shark shark){
-		
-	}
-	
-	public void processSlimeOverlap(Slime slime){
-		
-	}
+	protected abstract void processMazubOverlap(Mazub alien);
+	protected abstract void processPlantOverlap(Plant plant);
+	protected abstract void processSharkOverlap(Shark shark);
+	protected abstract void processSlimeOverlap(Slime slime);
 
-
-	
-	/** 
-	 * Returns a set containing the colliding terrain types 
-	 * */
-	public Set<Terrain> getColissionTileTypes(){
-		World world = this.getWorld();
-		
-		Set<Terrain> colissionTileTypes = new HashSet<Terrain>();
-		
-		// Check collision with tiles
-		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
-													this.getRoundedPositionY(),
-													this.getRoundedPositionX() + this.getWidth(), 
-													this.getRoundedPositionY() + this.getHeight()  );
-		
-		for(int[] tile : tiles){
-			if(this.doesCollideWith(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1]), world.getTileLength(), world.getTileLength())){
-				colissionTileTypes.add(world.getGeologicalFeature(world.getPositionOfTileX(tile[0]), world.getPositionOfTileY(tile[1])));	
-			}
-		}
-		
-		return colissionTileTypes;
-	}
 	
 	public boolean isSubmergedIn(Terrain terrain){
 		
 		int tileX = world.getTileX(this.getRoundedPositionX() + this.getWidth()/2); // to avoid boundary condition mistakes
 		int tileY = world.getTileY(this.getRoundedPositionY() + this.getHeight());
 
-		return world.getGeologicalFeature(world.getPositionOfTileX(tileX),world.getPositionOfTileY(tileY)) == terrain;
+		return world.getGeologicalFeature(world.getPositionXOfTile(tileX),world.getPositionYOfTile(tileY)) == terrain;
 		
 	}
 	
-	public void processHorizontalCollision(){
-		this.endMove(this.getOrientation());
-	}
-	public void processVerticalCollision(){
-		this.stopFall();
-	}
+
 	
 }
