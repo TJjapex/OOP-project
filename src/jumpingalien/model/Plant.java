@@ -19,7 +19,14 @@ public class Plant extends GameObject {
 	
 	/************************************************** GENERAL ***********************************************/
 
-	
+	public void configureTerrain(){
+		
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		
+	}
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -32,10 +39,7 @@ public class Plant extends GameObject {
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, maxNbHitPoints);
 		
-		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		this.configureTerrain();
 
 	}	
 	
@@ -82,20 +86,28 @@ public class Plant extends GameObject {
 	
 	public void doMove(double dt){		
 
-		if (this.getTimer().getSinceLastPeriod() >= 0.5){ // fuzzy?
-			if (this.getOrientation() == Orientation.RIGHT){
-				this.endMove(Orientation.RIGHT);
-				this.startMove(Orientation.LEFT);
-			}
-			else {
-				this.endMove(Orientation.LEFT);
-				this.startMove(Orientation.RIGHT);
-			}
+		if (this.getTimer().getSinceLastPeriod() >= 0.5){ 
+			
+			this.periodMovement();
+			
 			this.getTimer().setSinceLastPeriod(0);
 		}
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
+	}
+	
+	public void periodMovement(){
+		
+		if (this.getOrientation() == Orientation.RIGHT){
+			this.endMove(Orientation.RIGHT);
+			this.startMove(Orientation.LEFT);
+		}
+		else {
+			this.endMove(Orientation.LEFT);
+			this.startMove(Orientation.RIGHT);
+		}
+		
 	}
 	
 	

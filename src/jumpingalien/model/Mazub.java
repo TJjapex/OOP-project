@@ -78,6 +78,15 @@ public class Mazub extends GameObject{
 	 * @return	The maximal horizontal velocity of Mazubs when running.
 	 */
 	private static double VELOCITY_X_MAX_RUNNING;
+	
+	public void configureTerrain(){
+		
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		
+	}
 		
 	/************************************************ CONSTRUCTOR *********************************************/
 
@@ -149,12 +158,8 @@ public class Mazub extends GameObject{
 		
 		this.setImmune(immunity);
 		
-		/* Setup terrain properties */
-		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
-		
+		this.configureTerrain();
+			
 	}
 	
 	/**
@@ -457,6 +462,7 @@ public class Mazub extends GameObject{
 	}
 
 	public void doMove(double dt) {	
+		
 		/* Horizontal */
 		this.updatePositionX(dt);
 		this.updateVelocityX(dt);		

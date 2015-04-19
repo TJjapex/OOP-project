@@ -37,9 +37,14 @@ public class Shark extends GameObject{
 	public static final double ACCELERATION_DIVING = - 0.2;
 	public static final double ACCELERATION_RISING = 0.2;
 	
-	private double randomAcceleration;
-	
-	private boolean hasBeenOutWater = false;
+	public void configureTerrain(){
+		
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2));
+		
+	}
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -55,12 +60,8 @@ public class Shark extends GameObject{
 		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, 100);
 		this.startMove(this.getRandomOrientation());
 		this.startDiveRise();
-		
-		// Configure terrain
-		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2));
-		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2));
+	
+		this.configureTerrain();
 		
 	}
 	
@@ -136,6 +137,8 @@ public class Shark extends GameObject{
 		this.hasBeenOutWater = hasBeenOutWater;
 	}
 	
+	private boolean hasBeenOutWater = false;
+	
 	/************************************************ CHARACTERISTICS *****************************************/
 
 	
@@ -165,30 +168,13 @@ public class Shark extends GameObject{
 	public void doMove(double dt){		
 		//System.out.println("acc x"+this.getAccelerationX()+" y "+this.getAccelerationY());
 		//System.out.println("vel x"+this.getVelocityX() + " y "+this.getVelocityY());
-		
+
 		// Randomized movement
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
-			this.endMove(this.getOrientation());
-			
-			if (this.isJumping()){
-				this.endJump();
-			} else {
-				nbNonJumpingPeriods += 1;
-				this.endDiveRise();
-			}	
-			
-			this.startMove(this.getRandomOrientation());
-			
-			if ((nbNonJumpingPeriods >= 4) && random.nextBoolean()){
-				this.startJump();
-				nbNonJumpingPeriods = 0;
-			} else if (this.isSubmergedIn(Terrain.WATER)) {
-				this.startDiveRise();
-			}
+			this.periodMovement();
 					
-			this.getTimer().setSinceLastPeriod(0);
-					
+			this.getTimer().setSinceLastPeriod(0);		
 			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 		}
 		
@@ -242,6 +228,28 @@ public class Shark extends GameObject{
 		super.processVerticalCollision();
 	}
 	
+	public void periodMovement(){
+		
+		this.endMove(this.getOrientation());
+		
+		if (this.isJumping()){
+			this.endJump();
+		} else {
+			nbNonJumpingPeriods += 1;
+			this.endDiveRise();
+		}	
+		
+		this.startMove(this.getRandomOrientation());
+		
+		if ((nbNonJumpingPeriods >= 4) && random.nextBoolean()){
+			this.startJump();
+			nbNonJumpingPeriods = 0;
+		} else if (this.isSubmergedIn(Terrain.WATER)) {
+			this.startDiveRise();
+		}
+		
+	}
+	
 	/****************************************************************** ACCELERATION Y *****************************************************/
 	
 	/**
@@ -281,6 +289,8 @@ public class Shark extends GameObject{
 	 * Variable registering the vertical acceleration of this Mazub.
 	 */
 	private double accelerationY;
+	
+	private double randomAcceleration;
 	
 	
 	/*************************************************************** OVERLAP PROCESSING ******************************************************/

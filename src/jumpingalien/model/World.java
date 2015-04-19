@@ -16,6 +16,34 @@ import jumpingalien.model.helper.Terrain;
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
+
+/**
+ * 
+ *		QUESTIONS:
+ *
+ *			It isn’t clear to us if game objects other than Mazub should be immune for 0.6s after they’ve taken damage due to contact with another game object.
+ *
+ *			Should Plants be removed directly from the World or only after a 0.6s delay?
+ *
+ *			Should Plants be considered as impassable for a Mazub?
+ *
+ *			Do we already need to consider the creation of multiple Mazubs? If so, how should we derive which Mazub is controllable by the player and which ones are not?
+ *
+ * 			Are Plants impassable for other Plants?
+ * 
+ *			In the assignment is stated the following: Contact with other game objects or terrain features has no impact on the duration of random actions performed by a game object. 
+ *			This leads to rather odd behavior of the game objects (e.g. Slimes tend to flock together and remain still for a considerable amount of time). Are we free to change this and
+ *			have the game objects change direction every time they make contact with other game objects or terrain features?
+ *
+ *			Are killed game objects impassable or not?
+ *
+ *			Can an immune Mazub still eat Plants?
+ *
+ *			Do we have to use the tag @Override for methods of a class that are abstract in their superclass?
+ *
+ */
+
+
 public class World {
 
 /************************************************** GENERAL ***********************************************/

@@ -35,6 +35,8 @@ public abstract class GameObject {
 	 */
 	public static final double ACCELERATION_Y = -10.0;
 	
+	protected abstract void configureTerrain();
+	
 	/************************************************ CONSTRUCTOR *********************************************/
 
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
@@ -1350,10 +1352,25 @@ public abstract class GameObject {
 	
 	public boolean isSubmergedIn(Terrain terrain){
 		
-		int tileX = world.getTileX(this.getRoundedPositionX() + this.getWidth()/2); // to avoid boundary condition mistakes
-		int tileY = world.getTileY(this.getRoundedPositionY() + this.getHeight());
-
-		return world.getGeologicalFeature(world.getPositionXOfTile(tileX),world.getPositionYOfTile(tileY)) == terrain;
+//		int tileX = world.getTileX(this.getRoundedPositionX() + this.getWidth()/2); // to avoid boundary condition mistakes
+//		int tileY = world.getTileY(this.getRoundedPositionY() + this.getHeight());
+//
+//		return world.getGeologicalFeature(world.getPositionXOfTile(tileX),world.getPositionYOfTile(tileY)) == terrain;
+		
+		World world = this.getWorld();
+		
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX() + 1, 						// overlap left
+													this.getRoundedPositionY() + 1,							// overlap bottom
+													this.getRoundedPositionX() + (this.getWidth() - 1) - 1, // overlap right
+													this.getRoundedPositionY() + (this.getHeight() - 1) );	// may not overlap top (otherwise sharks take damage while submerged in water)
+		
+		for(int[] tile : tiles){
+			if( world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])) != terrain){
+				return false;	
+			}
+		}
+		
+		return true;
 		
 	}
 	

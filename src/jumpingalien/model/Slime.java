@@ -28,6 +28,15 @@ public class Slime extends GameObject {
 	public static final int MUTUAL_SCHOOL_DAMAGE = 1;
 	public static final int SWITCH_SCHOOL_DAMAGE = 1;
 	
+	public void configureTerrain(){
+		
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		
+	}
+	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
 	// * possess 100 hit-points
@@ -43,10 +52,8 @@ public class Slime extends GameObject {
 		
 		this.startMove(this.getRandomOrientation());
 		
-		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		this.configureTerrain();
+		
 	}
 	
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
@@ -107,11 +114,9 @@ public class Slime extends GameObject {
 		// Randomized movement
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
-			this.endMove(this.getOrientation());
-			this.startMove(this.getRandomOrientation());
+			this.periodMovement();
 			
 			this.getTimer().setSinceLastPeriod(0);
-			
 			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 		}
 		
@@ -138,6 +143,13 @@ public class Slime extends GameObject {
 		} else {
 			this.startMove(Orientation.LEFT);
 		}
+	}
+	
+	public void periodMovement(){
+		
+		this.endMove(this.getOrientation());
+		this.startMove(this.getRandomOrientation());
+		
 	}
 
 	/***************************************************** SCHOOL *********************************************/
@@ -195,7 +207,7 @@ public class Slime extends GameObject {
 	@Override
 	protected void terminate(){
 		this.getWorld().removeGameObject(this);
-		this.setWorld(null); // vervangen door method World removeAs?
+		this.setWorld(null); // TODO: vervangen door method World removeAs?
 		if (this.hasProperSchool())
 			this.getSchool().removeAsSlime(this);
 		
