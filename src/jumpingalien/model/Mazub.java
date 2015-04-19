@@ -466,8 +466,6 @@ public class Mazub extends GameObject{
 
 	public void doMove(double dt) {	
 		
-		System.out.println(this.doesOverlap(Orientation.TOP));
-		
 		// Update horizontal position
 		this.updatePositionX(dt);
 		

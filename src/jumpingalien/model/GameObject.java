@@ -1291,19 +1291,15 @@ public abstract class GameObject {
 		
 		return colissionTileTypes;
 	}
-
-	
-	
-	
 	
 	public boolean isSubmergedIn(Terrain terrain){
 		
 		int tileX = world.getTileX(this.getRoundedPositionX() + this.getWidth()/2); // to avoid boundary condition mistakes
 		int tileY = world.getTileY(this.getRoundedPositionY() + this.getHeight());
-				
+
 		return world.getGeologicalFeature(world.getPositionOfTileX(tileX),world.getPositionOfTileY(tileY)) == terrain;
+		
 	}
-	
 	
 	public void processHorizontalCollision(){
 		this.endMove(this.getOrientation());

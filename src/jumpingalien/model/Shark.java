@@ -12,6 +12,7 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
+import jumpingalien.util.Util;
 
 // All aspects shall ONLY be specified in a formal way.
 
@@ -33,10 +34,12 @@ public class Shark extends GameObject{
 	private int nbNonJumpingPeriods = 4;
 	Random random = new Random();
 	
-	public static final double ACCELERATION_DIVING = -2.0;
-	public static final double ACCELERATION_RISING = 2.0;
+	public static final double ACCELERATION_DIVING = - 0.2;
+	public static final double ACCELERATION_RISING = 0.2;
 	
 	private double randomAcceleration;
+	
+	private boolean hasBeenOutWater = false;
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -78,7 +81,29 @@ public class Shark extends GameObject{
 	// * Sharks fall while their bottom perimeter is not overlapping with impassable terrain or other game objects
 	// * Sharks stop falling as soon as they are submerged in water (top perimeter is overlapping with a water tile)
 	
+	public boolean isJumping(){
+		return this.jumping;
+	}
 	
+	public void setJumping(boolean jumping){
+		this.jumping = jumping;
+	}
+	
+	@Override
+	public void startJump() {
+		this.setVelocityY( this.getVelocityYInit() );
+		this.setJumping(true);
+	}
+	
+	@Override
+	public void endJump(){
+		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
+			this.setVelocityY(0);
+		}
+		this.setJumping(false);
+	}
+	
+	private boolean jumping = false;
 	
 	/*********************************************** DIVING AND RISING ****************************************/
 	
@@ -136,9 +161,8 @@ public class Shark extends GameObject{
 			
 			this.endMove(this.getOrientation());
 			
-			if (!this.isOnGround()){
+			if (this.isJumping()){
 				this.endJump();
-				this.stopFall();
 			} else {
 				nbNonJumpingPeriods += 1;
 				this.endDiveRise();
@@ -157,31 +181,39 @@ public class Shark extends GameObject{
 					
 			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 		}
+		
+		// gravitational acceleration if shark jumped out of the water or reset acceleration when he jumped back in
+		if (!this.isSubmergedIn(Terrain.WATER)){
+			this.setAccelerationY(ACCELERATION_Y);
+			this.setHasBeenOutWater(true);
+		} else if (this.isSubmergedIn(Terrain.WATER) && this.getHasBeenOutWater() ){
+			this.endDiveRise();
+			this.setHasBeenOutWater(false);
+		}
 				
 		double oldPositionY = this.getPositionY();
-				
+		
 		// Update horizontal position
 		this.updatePositionX(dt);
 				
 		// Update horizontal velocity
 		this.updateVelocityX(dt);
-		
-		// TODO: the vertical acceleration of a non-jumping Shark shall be set to zero if the Shark's top or bottom perimeters are not overlapping with
-		//		  a water tile any more, and at the end of the movement period. -> requires change in definition of isJumping()
 				
 		// Update vertical position
 		this.updatePositionY(dt);
 				
 		// Update vertical velocity
 		this.updateVelocityY(dt);
+		
+		// reset Y position if shark rises out of the water
+		if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping()){
+			this.setPositionY(oldPositionY);
+			this.endDiveRise();
+		}
 				
-		this.processOverlap(); 
-				
-		if (! this.isSubmergedIn(Terrain.WATER)){
-			this.setAccelerationY(-10);
-		}		
+		this.processOverlap();
+		
 	}
-	
 	
 	public void processHorizontalCollision() {
 		Orientation currentOrientation = this.getOrientation();
@@ -195,13 +227,22 @@ public class Shark extends GameObject{
 			if (this.isSubmergedIn(Terrain.WATER))
 				this.startDiveRise();
 		}
-	};
+	}
 	
 	@Override
 	public void processVerticalCollision() {
 		// TODO Auto-generated method stub
 		super.processVerticalCollision();
 	}
+	
+	public boolean getHasBeenOutWater(){
+		return this.hasBeenOutWater;
+	}
+	
+	public void setHasBeenOutWater(boolean hasBeenOutWater){
+		this.hasBeenOutWater = hasBeenOutWater;
+	}
+	
 	/****************************************************************** ACCELERATION Y *****************************************************/
 	
 	/**
@@ -241,6 +282,7 @@ public class Shark extends GameObject{
 	 * Variable registering the vertical acceleration of this Mazub.
 	 */
 	private double accelerationY;
+	
 	
 	/*************************************************************** COLLISION ******************************************************/
 	
