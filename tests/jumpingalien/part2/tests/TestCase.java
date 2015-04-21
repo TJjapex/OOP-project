@@ -79,6 +79,10 @@ public class TestCase {
 				Util.DEFAULT_EPSILON);
 	}
 
+	/********************************************* TILES ******************************************************/
+	
+	/* getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop)  */
+	
 	@Test
 	public void testTilesInRegion() {
 		IFacadePart2 facade = new Facade();
@@ -92,6 +96,127 @@ public class TestCase {
 		assertArrayEquals(expectedTiles, actualTiles);
 	}
 
+	// right edge
+	@Test
+	public void testTilesInRegion_rightEdge() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 20, 20, 100, 105);
+		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 },
+				{ 1, 1 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	@Test
+	public void testTilesInRegion_rightEdge2() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 20, 20, 80, 105);
+		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 0, 1 },
+				{ 1, 1 }, { 0, 2 }, { 1, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	// top edge
+	@Test
+	public void testTilesInRegion_topEdge() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 20, 20, 105, 100);
+		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 },
+				{ 1, 1 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	@Test
+	public void testTilesInRegion_topEdge2() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 20, 20, 105, 99);
+		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 },
+				{ 1, 1 }, { 2, 1 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	// bottom edge
+	@Test
+	public void testTilesInRegion_bottomEdge() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 20, 49, 105, 105);
+		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 },
+				{ 1, 1 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	@Test
+	public void testTilesInRegion_bottomEdge2() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 20, 50, 105, 105);
+		int[][] expectedTiles = { { 0, 1 },
+				{ 1, 1 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	// left edge
+	@Test
+	public void testTilesInRegion_leftEdge() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 49, 20, 105, 105);
+		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 },
+				{ 1, 1 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	@Test
+	public void testTilesInRegion_leftEdge2() {
+		IFacadePart2 facade = new Facade();
+
+		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
+
+		int[][] actualTiles = facade
+				.getTilePositionsIn(world, 50, 20, 105, 105);
+		int[][] expectedTiles = { { 1, 0 }, { 2, 0 },
+				{ 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } };
+		assertArrayEquals(expectedTiles, actualTiles);
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Test
 	public void startMoveRightCorrect() {
 		IFacadePart2 facade = new Facade();
