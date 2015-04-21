@@ -1,6 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
@@ -37,6 +39,7 @@ public class Shark extends GameObject{
 	public static final double ACCELERATION_DIVING = - 0.2;
 	public static final double ACCELERATION_RISING = 0.2;
 	
+	@Override
 	public void configureTerrain(){
 		
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2, false));
@@ -165,6 +168,8 @@ public class Shark extends GameObject{
 	//   of the next one
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Sharks
+	
+	@Override
 	public void doMove(double dt){		
 		//System.out.println("acc x"+this.getAccelerationX()+" y "+this.getAccelerationY());
 		//System.out.println("vel x"+this.getVelocityX() + " y "+this.getVelocityY());
@@ -295,6 +300,7 @@ public class Shark extends GameObject{
 	
 	/*************************************************************** OVERLAP PROCESSING ******************************************************/
 	
+	@Override
 	public void processMazubOverlap(Mazub alien) {
 		if(!alien.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
@@ -302,6 +308,7 @@ public class Shark extends GameObject{
 		}
 	}
 	
+	@Override
 	public void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
@@ -309,12 +316,23 @@ public class Shark extends GameObject{
 		}
 	}
 	
+	@Override
 	public void processSharkOverlap(Shark shark){
 		
 	}
-
+	
+	@Override
 	public void processPlantOverlap(Plant plant) {
 
+	}
+	
+	
+	@Override
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
+		return allImpassableGameObjects;
 	}
 	
 }

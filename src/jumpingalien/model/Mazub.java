@@ -1,5 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.xml.stream.events.StartDocument;
 
 import be.kuleuven.cs.som.annotate.*;
@@ -82,6 +85,7 @@ public class Mazub extends GameObject{
 	 */
 	private static double VELOCITY_X_MAX_RUNNING;
 	
+	@Override
 	public void configureTerrain(){
 		
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
@@ -147,7 +151,7 @@ public class Mazub extends GameObject{
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
-				 Sprite[] sprites, int nbHitPoints, boolean immunity)
+				 Sprite[] sprites, int nbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints, 500);
 		
@@ -158,8 +162,6 @@ public class Mazub extends GameObject{
 		this.setDucking(false);
 		
 		this.setAnimation(new MazubAnimation(this, sprites));
-		
-		this.setImmune(immunity);
 		
 		this.configureTerrain();
 			
@@ -187,7 +189,7 @@ public class Mazub extends GameObject{
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException,
 				IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100, false);
+		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100);
 	}
 	
 	/************************************************* HELPER CLASSES *****************************************/
@@ -494,12 +496,14 @@ public class Mazub extends GameObject{
 	 * 				| (dt > 0.2) || (dt < 0)
 	 */
 	
+	@Override
 	protected void updateTimers(double dt){
 		super.updateTimers(dt);
 		
 		getAnimation().updateAnimationIndex(this.getTimer());
 	}
 
+	@Override
 	public void doMove(double dt) {	
 		
 		/* Horizontal */
@@ -559,70 +563,41 @@ public class Mazub extends GameObject{
 	
 	
 	/********************************************************* OVERLAP PROCESSING *********************************************/
+	
+	@Override
 	protected void processMazubOverlap(Mazub alien){
 		
 	}
 	
+	@Override
 	protected void processPlantOverlap(Plant plant){
-		if(!plant.isKilled() && !this.isFullHitPoints() && !this.isImmune()){
+		if(!plant.isKilled() && !this.isFullHitPoints()){
 			this.increaseNbHitPoints(50);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
 	
+	@Override
 	protected void processSharkOverlap(Shark shark){
-		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6 && !this.isImmune()){
+		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
+			this.setImmune(true);
 		}
 	}
 	
+	@Override
 	protected void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6 && !this.isImmune()){
+		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
+			this.setImmune(true);
 		}
-	}	
-	
-//	@Override
-//	protected void processTileOverlap(){
-//		if (!this.isImmune()){
-//			super.processTileOverlap();
-//		}
-//	}
-	
-	
-	
-	
-	
-	
-	/**
-	 * Returns whether the given alien is currently immune against enemies (see
-	 * section 1.2.5 of the assignment).
-	 * 
-	 * @param alien
-	 *            The alien for which to retrieve the immunity status.
-	 * @return True if the given alien is immune against other enemies (i.e.,
-	 *         there are no interactions between the alien and enemy objects).
-	 */
-	public boolean isImmune() {
-		return this.immune;
 	}
 	
-	private void setImmune( boolean immune ){
-		this.immune = immune;
-	}
+
 	
-	private boolean immune;
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	public boolean isOnTargetTile(){
 		
@@ -638,6 +613,17 @@ public class Mazub extends GameObject{
 		
 		return false;
 		
+	}
+	
+	
+	
+	@Override
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
+		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
+		return allImpassableGameObjects;
 	}
 	
 

@@ -944,9 +944,14 @@ public abstract class GameObject {
 		}
 		
 		// Check if still alive...
-		if(this.getNbHitPoints() == 0){
+		if (this.getNbHitPoints() == 0){
 			this.kill();
-		}		
+		}
+		
+		// Check last enemy collision and reset immunity status if needed
+		if (this.getTimer().getSinceEnemyCollision() > 0.6 && this.isImmune()){
+			this.setImmune(false);
+		}
 		
 		updateTimers(dt);
 		doMove(dt);
@@ -1103,6 +1108,7 @@ public abstract class GameObject {
 	}
 	
 	// TODO zouden we dit wel doen? Extra "redundantie"? Mss beter gewoon in de comment bij de increase  method zetten dat nbHitPoints ook negatief mag zijn dan
+	// -> of een betere naam die beiden verondersteld: modifyNbHitPoints ?
 	protected void decreaseNbHitPoints(int nbHitPoints){
 		this.setNbHitPoints(this.getNbHitPoints() - nbHitPoints);
 	}
@@ -1174,8 +1180,8 @@ public abstract class GameObject {
 	 * 		True if and only if this object collides with an impassable object.
 	 */
 	public boolean doesCollideWithGameObjects(){
-		for(GameObject object : world.getAllImpassableGameObjects()){
-			if(object != this && doesCollideWith(object)){
+		for(GameObject object : this.getAllImpassableGameObjects()){
+			if(object != this && this.doesCollideWith(object)){
 				return true;
 			}
 		}
@@ -1254,7 +1260,7 @@ public abstract class GameObject {
 	
 	public boolean doesOverlapWithGameObjects(Orientation orientation){
 		// Check overlap with gameObjects
-		for(GameObject object : world.getAllImpassableGameObjects()){
+		for(GameObject object : this.getAllImpassableGameObjects()){
 			if(object != this && doesOverlapWith(object, orientation)){
 				return true;
 			}
@@ -1415,7 +1421,7 @@ public abstract class GameObject {
 		World world = this.getWorld();
 		
 		for(Mazub alien:  world.getAllMazubs()){
-			if(this.doesOverlapWith(alien)){
+			if(this.doesOverlapWith(alien) && !this.isImmune()){
 				this.processMazubOverlap(alien);
 			}
 		}
@@ -1427,13 +1433,13 @@ public abstract class GameObject {
 		}
 		
 		for(Shark shark :  world.getAllSharks()){
-			if(this.doesOverlapWith(shark)){
+			if(this.doesOverlapWith(shark) && !this.isImmune()){
 				processSharkOverlap(shark);
 			}
 		}
 		
 		for(Slime slime :  world.getAllSlimes()){
-			if(this.doesOverlapWith(slime)){
+			if(this.doesOverlapWith(slime) && !this.isImmune()){
 				processSlimeOverlap(slime);
 			}
 		}
@@ -1464,6 +1470,25 @@ public abstract class GameObject {
 		
 	}
 	
-
+	/**
+	 * Returns whether the given alien is currently immune against enemies (see
+	 * section 1.2.5 of the assignment).
+	 * 
+	 * @param alien
+	 *            The alien for which to retrieve the immunity status.
+	 * @return True if the given alien is immune against other enemies (i.e.,
+	 *         there are no interactions between the alien and enemy objects).
+	 */
+	public boolean isImmune() {
+		return this.immune;
+	}
+	
+	protected void setImmune( boolean immune ){
+		this.immune = immune;
+	}
+	
+	protected boolean immune;
+	
+	protected abstract Set<GameObject> getAllImpassableGameObjects();
 	
 }
