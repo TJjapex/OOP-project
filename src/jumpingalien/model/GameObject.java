@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import jumpingalien.model.exceptions.CollisionException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -303,11 +305,21 @@ public abstract class GameObject {
 	 */
 	public void startMove(Orientation orientation) {		
 		assert (this.getOrientation() != null);
+		assert isValidOrientation(orientation);
 		
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
 		this.setAccelerationX( orientation.getSign() * accelerationXInit);
+		
+		if(orientation == Orientation.LEFT){
+			moveLeft = true;
+		}else{
+			moveRight = true;
+		}
 	}
+	
+	boolean moveLeft = false;
+	boolean moveRight = false;
 
 	/**
 	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
@@ -322,11 +334,24 @@ public abstract class GameObject {
 	 */
 	public void endMove(Orientation orientation) {
 		assert (this.getOrientation() != null);
+		assert isValidOrientation(orientation);
 		
 		if(orientation == this.getOrientation()){
 			this.setVelocityX(0);
 			this.setAccelerationX(0);
 			this.getTimer().setSinceLastMove(0);
+		}	
+		
+		if(orientation == Orientation.LEFT){
+			moveLeft = false;
+			if(moveRight && getOrientation() != Orientation.RIGHT){
+				startMove(Orientation.RIGHT);
+			}
+		}else{
+			moveRight = false;
+			if(moveLeft && getOrientation() != Orientation.LEFT){
+				startMove(Orientation.LEFT);
+			}
 		}
 	}
 
@@ -371,11 +396,10 @@ public abstract class GameObject {
 	 * 				| this.getVelocityY() < 0
 	 */
 	public void endJump() throws IllegalStateException {
-		if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )){
-			this.setVelocityY(0);
-		}else{
+		if(! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 ))
 			throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
-		}
+		
+		this.setVelocityY(0);
 	}
 
 	/**
@@ -1308,10 +1332,24 @@ public abstract class GameObject {
 		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		
 		for(Terrain overlappingTerrain : overlappingTerrainTypes){
-			if( this.hasTerrainPropertiesOf(overlappingTerrain) && this.getTerrainPropertiesOf(overlappingTerrain).getDamage() != 0 ){
-				if( this.getTimer().getSinceTerrainCollision(overlappingTerrain) > this.getTerrainPropertiesOf(overlappingTerrain).getDamageTime() ){ // > of >=? fuzzy?
-					this.takeDamage( this.getTerrainPropertiesOf(overlappingTerrain).getDamage() );
+			
+			if(!this.hasTerrainPropertiesOf(overlappingTerrain)){
+				break;
+			}
+			
+			TerrainProperties terrainProperties = this.getTerrainPropertiesOf(overlappingTerrain);
+			if(  terrainProperties.getDamage() != 0 ){
+				if( this.getTimer().getSinceTerrainCollision(overlappingTerrain) > terrainProperties.getDamageTime() ){ // > of >=? fuzzy?
+					
+					if(!terrainProperties.isInstantDamage()){
+						this.takeDamage( terrainProperties.getDamage() );
+					}
+					
 					this.getTimer().setSinceTerrainCollision(overlappingTerrain, 0);
+				}
+				
+				if(getTimer().getSinceTerrainCollision(overlappingTerrain) == 0){
+					this.takeDamage( terrainProperties.getDamage() );
 				}
 			}
 		}

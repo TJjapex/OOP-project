@@ -84,10 +84,10 @@ public class Mazub extends GameObject{
 	
 	public void configureTerrain(){
 		
-		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0));
-		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2));
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2, false));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true));
 		
 	}
 		
