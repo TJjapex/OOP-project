@@ -72,6 +72,26 @@ public class Shark extends GameObject{
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
 		this(pixelLeftX, pixelBottomY, 1.0, 2.0, 4.0, 1.5, sprites, 100);
 	}
+	/********************************************** WORLD RELATION ********************************************/
+	@Override
+	public void setWorldTo(World world){
+		if(!this.canHaveAsWorld(world))
+			throw new IllegalArgumentException("This shark cannot have given world as world!");
+		if(!world.canHaveAsGameObject(this))
+			throw new IllegalArgumentException("Given world cannot have this shark as shark!");
+		
+		setWorld(world);
+		world.addAsShark(this);
+	}
+	
+	@Override
+	protected void unsetWorld() {
+		if(this.hasWorld()){
+			World formerWorld = this.getWorld();
+			this.setWorld(null);
+			formerWorld.removeAsShark(this);
+		}
+	}
 	
 	/******************************************** SIZE AND POSITIONING ****************************************/
 	

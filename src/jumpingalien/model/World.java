@@ -557,39 +557,44 @@ public class World {
 
 	
 	public boolean canHaveAsGameObject(GameObject gameObject){
-		// TODO Auto-generated method stub
-		return false;
+		return this.canAddGameObject() && gameObject != null;
 	}
 	
 	public boolean canHaveAsMazub(Mazub mazub){
-		// TODO Auto-generated method stub
-		return false;
+		return this.canHaveAsGameObject(mazub);
 	}
 	
 	public boolean canHaveAsShark(Shark shark){
-		// TODO Auto-generated method stub
-		return false;
+		return this.canHaveAsGameObject(shark);
 	}
 	
 	public boolean canHaveAsSlime(Slime slime){
-		// TODO Auto-generated method stub
-		return false;
+		return this.canHaveAsGameObject(slime);
 	}
 	
 	public boolean canHaveAsPlant(Plant plant){
-		// TODO Auto-generated method stub
-		return false;
+		return this.canHaveAsGameObject(plant);
 	}
 	
 	public boolean hasProperGameObjects(){
-		// TODO Auto-generated method stub
-		return false;
+		if(getNbGameObjects() > 100){
+			return false;
+		}
+		
+		for(GameObject object : getAllGameObjects()){
+			if(object.getWorld() != this){
+				return false;
+			}
+		}
+		return true;
 	}
-	
-	public boolean hasAsGameObject(GameObject gameObject){
-		// TODO Auto-generated method stub
-		return false;
-	}
+
+// 	Waar komt deze methode vandaan? Auto generated?
+//
+//	public boolean hasAsGameObject(GameObject gameObject){
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 	
 	/**
 	 * Sets the given alien as the player's character in the given world.
@@ -599,62 +604,55 @@ public class World {
 	 * @param alien
 	 *            The alien to be set as the player's character.
 	 */
-	public void addMazub(Mazub alien) throws IllegalStateException{
+	void addAsMazub(Mazub alien) throws IllegalStateException{
+//		
+//		if (this.hasStarted){
+//			throw new IllegalStateException("World already started!");
+//		}
+		assert canHaveAsMazub(alien);
+		// assert slime.canHaveAsWorld(this); met deze assert werkt het niet omdat die checkt of world null is (beetje zoals die TA zei)
+		assert alien.getWorld() == this;
 		
-		if (this.hasStarted){
-			throw new IllegalStateException("World already started!");
-		}
-		
-		alien.setWorld(this);
 		mazubs.add(alien);
 		
 	}
 	
-	
-	// Tijdelijk? Ik begrijp trouwens niet echt hoe ge meerdere Mazubs kunt hebben en hoe ge dan moet weten welke ge moet besturen? :p
 	public Mazub getMazub(){
 		if(this.getNbMazubs() == 1){
 			return this.getAllMazubs().iterator().next();
+		}else{
+			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
 		}
-		return null;
 	}
 	
-	public void removeAsMazub(Mazub alien){
-		// TODO Auto-generated method stub
-	}
-	
-	public void addPlant(Plant plant) throws IllegalStateException{
+	void addAsPlant(Plant plant) throws IllegalStateException{
+		assert canHaveAsPlant(plant);		
+		assert plant.getWorld() == this;
 		
-		if (this.hasStarted){
-			throw new IllegalStateException("World already started!");
-		}
-		
-		plant.setWorld(this);
-		plants.add(plant);
+		plants.add(plant);	
 		
 	}
 	
-	public void addSlime(Slime slime) throws IllegalStateException{
+	void addAsSlime(Slime slime) throws IllegalStateException, IllegalArgumentException{;
+		assert canHaveAsSlime(slime);
+		// assert slime.canHaveAsWorld(this); met deze assert werkt het niet omdat die checkt of world null is (beetje zoals die TA zei)
+		assert slime.getWorld() == this;
 		
-		if (this.hasStarted){
-			throw new IllegalStateException("World already started!");
-		}
-		
-		slime.setWorld(this);
-		slimes.add(slime);
+		slimes.add(slime);	
 		
 	}
 	
-	public void addShark(Shark shark) throws IllegalStateException{
+	void addAsShark(Shark shark) throws IllegalStateException{
+		assert canHaveAsShark(shark);
+		// assert slime.canHaveAsWorld(this); met deze assert werkt het niet omdat die checkt of world null is (beetje zoals die TA zei)
+		assert shark.getWorld() == this;
 		
-		if (this.hasStarted){
-			throw new IllegalStateException("World already started!");
-		}
-		
-		shark.setWorld(this);
-		sharks.add(shark);
+		sharks.add(shark);	
 	
 	}
+	
+	
+	
 	
 	public void addAsGameObject(GameObject gameObject){
 		// TODO Auto-generated method stub
@@ -710,7 +708,23 @@ public class World {
 		Set<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
 		return slimesClone;
 	}
+	// checkers
 	
+	public boolean hasAsMazub(Mazub mazub){
+		return this.mazubs.contains(mazub);
+	}
+	
+	public boolean hasAsPlant(Plant plant){
+		return this.plants.contains(plant);
+	}
+	
+	public boolean hasAsShark(Shark shark){
+		return this.sharks.contains(shark);
+	}
+	
+	public boolean hasAsSlime(Slime slime){
+		return this.slimes.contains(slime);
+	}
 	
 	// Count
 	
@@ -735,7 +749,37 @@ public class World {
 	}
 
 	// removers
+	public void removeAsMazub(Mazub mazub) {
+		assert mazub != null && !mazub.hasWorld();
+		assert hasAsMazub(mazub);
+		
+		mazubs.remove(mazub);
+	}
 	
+	public void removeAsPlant(Plant plant) {
+		assert plant != null && !plant.hasWorld();
+		assert hasAsPlant(plant);
+		
+		plants.remove(plant);
+	}
+	
+	public void removeAsShark(Shark shark) {
+		assert shark != null && !shark.hasWorld();
+		assert hasAsShark(shark);
+		
+		sharks.remove(shark);
+	}
+	
+	public void removeAsSlime(Slime slime) {
+		assert slime != null && !slime.hasWorld();
+		assert hasAsSlime(slime);
+		
+		slimes.remove(slime);
+	}
+	
+	
+	
+	// Niet meer nodig dnek ik
 	public void removeGameObject(GameObject gameObject){
 		
 		// Ugly & tricky maar werkt... of isinstance gebruiken... of aparte methods voor elk type instance
@@ -757,6 +801,14 @@ public class World {
 	
 	public void terminate(){
 		this.terminated = true;
+	}
+	
+	public boolean isTerminated(){
+		return this.terminated;
+	}
+	
+	public boolean canAddGameObject(){
+		return !this.hasStarted() && !this.isTerminated(); 
 	}
 	
 	private boolean terminated = false;

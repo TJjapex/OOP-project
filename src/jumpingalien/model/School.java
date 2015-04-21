@@ -30,7 +30,7 @@ public class School {
 	/************************************************** RELATIONS **********************************************/
 	
 	public boolean canHaveAsSlime(Slime slime){
-		return (!(this.hasAsSlime(slime)) && (slime != null) && (!this.isTerminated()) && (!slime.isTerminated()));
+		return slime != null  && !this.hasAsSlime(slime) && !this.isTerminated();
 	}
 	
 	public boolean hasProperSlimes(){
@@ -46,15 +46,16 @@ public class School {
 	}
 	
 	public void addAsSlime(Slime slime){
-		assert canHaveAsSlime(slime);		
-		assert (slime != null) && (slime.getSchool() == this);
-		assert !hasAsSlime(slime);
+		assert canHaveAsSlime(slime);
+		assert slime.getSchool() == this;
+
 		slimes.add(slime);
 	}
 	
 	public void removeAsSlime(Slime slime){
-		assert (slime != null) && (slime.getSchool() == null);
-		assert (hasAsSlime(slime));
+		assert slime != null && !slime.hasSchool();
+		assert hasAsSlime(slime);
+		
 		slimes.remove(slime);
 	}
 	

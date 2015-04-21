@@ -76,6 +76,26 @@ public class Slime extends GameObject {
 		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100);
 	}
 	
+	/********************************************** WORLD RELATION ********************************************/
+	@Override
+	public void setWorldTo(World world){
+		if(!this.canHaveAsWorld(world))
+			throw new IllegalArgumentException("This slime cannot have given world as world!");
+		if(!world.canHaveAsGameObject(this))
+			throw new IllegalArgumentException("Given world cannot have this slime as slime!");
+		
+		setWorld(world);
+		world.addAsSlime(this);
+	}
+	
+	@Override
+	protected void unsetWorld() {
+		if(this.hasWorld()){
+			World formerWorld = this.getWorld();
+			this.setWorld(null);
+			formerWorld.removeAsSlime(this);
+		}
+	}
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
 	
@@ -185,7 +205,7 @@ public class Slime extends GameObject {
 	}
 
 	public boolean hasProperSchool(){
-		return this.hasSchool();
+		return this.isTerminated() || this.hasSchool();
 	}
 	
 	public boolean hasSchool(){
@@ -198,10 +218,11 @@ public class Slime extends GameObject {
 	}
 	
 	private void setSchoolTo(School school) throws IllegalArgumentException, IllegalStateException { // In ownable voorbeeld public ?		
-		if (school == null || !school.canHaveAsSlime(this))
-			throw new IllegalArgumentException("bad school");
-		if (this.hasSchool())
-			throw new IllegalStateException("Already has school!");
+		if(!canHaveAsSchool(school))
+			throw new IllegalArgumentException("Cannot have given school as school!");
+		if (!school.canHaveAsSlime(this))
+			throw new IllegalArgumentException("Given school cannot have this slime as member!");
+		
 		setSchool(school);
 		school.addAsSlime(this);
 	}
@@ -215,7 +236,7 @@ public class Slime extends GameObject {
 	}
 	
 	public boolean canHaveAsSchool(School school){
-		return !this.hasSchool() && school.canHaveAsSlime(this) && !this.isTerminated();
+		return !this.hasSchool() && !this.isTerminated();
 	}	
 	
 	public void switchSchool(School newSchool){

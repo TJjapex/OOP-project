@@ -311,7 +311,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void setMazub(World world, Mazub alien) {
-		world.addMazub(alien);
+		alien.setWorldTo(world);
 	}
 
 	@Override
@@ -328,7 +328,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addPlant(World world, Plant plant) {
-		world.addPlant(plant);
+		plant.setWorldTo(world);
 	}
 
 	@Override
@@ -355,7 +355,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addShark(World world, Shark shark) {
-		world.addShark(shark);
+		shark.setWorldTo(world);
 	}
 	
 	@Override
@@ -389,7 +389,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void addSlime(World world, Slime slime) {
-		world.addSlime(slime);
+		slime.setWorldTo(world);
 	}
 
 	@Override

@@ -51,6 +51,26 @@ public class Plant extends GameObject {
 		this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1);
 	}
 	
+	/********************************************** WORLD RELATION ********************************************/
+	@Override
+	public void setWorldTo(World world){
+		if(!this.canHaveAsWorld(world))
+			throw new IllegalArgumentException("This plant cannot have given world as world!");
+		if(!world.canHaveAsGameObject(this))
+			throw new IllegalArgumentException("Given world cannot have this plant as plant!");
+		
+		setWorld(world);
+		world.addAsPlant(this);
+	}
+	
+	@Override
+	protected void unsetWorld() {
+		if(this.hasWorld()){
+			World formerWorld = this.getWorld();
+			this.setWorld(null);
+			formerWorld.removeAsPlant(this);
+		}
+	}
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	

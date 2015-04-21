@@ -108,19 +108,28 @@ public abstract class GameObject {
 	}
 
 	public boolean hasProperWorld(){
+		return this.hasWorld();
+	}
+	
+	public boolean hasWorld(){
 		return this.getWorld() != null;
 	}
+	
+	public abstract void setWorldTo(World world);
+	protected abstract void unsetWorld();
 
-	void setWorld(World world) {
+	protected void setWorld(World world) {
 		this.world = world;
 	}
 	
 	public boolean canHaveAsWorld(World world){
-		// TODO Auto-generated method stub
-		return false;
+		return world != null && !this.isTerminated() && !this.hasWorld();
 	}
 	
 	private World world;
+	
+	
+	
 	
 	// Invoked to remove object after 0.6s
 	void kill(){
