@@ -494,7 +494,7 @@ public class Mazub extends GameObject{
 	 * 				| (dt > 0.2) || (dt < 0)
 	 */
 	
-	public void updateTimers(double dt){
+	protected void updateTimers(double dt){
 		super.updateTimers(dt);
 		
 		getAnimation().updateAnimationIndex(this.getTimer());
@@ -535,7 +535,7 @@ public class Mazub extends GameObject{
 	/************************************************************* COLLISION *************************************************/	
 	
 	@Override
-	public void processHorizontalCollision(){
+	protected void processHorizontalCollision(){
 		this.endMove(this.getOrientation());
 		
 		if (this.getOrientation() == Orientation.RIGHT){
@@ -548,7 +548,7 @@ public class Mazub extends GameObject{
 	}
 	
 	@Override
-	public void processVerticalCollision() {
+	protected void processVerticalCollision() {
 		if(this.getVelocityY() > 0){ // is going up
 			this.endJump();
 		} else { // is going down
@@ -584,12 +584,12 @@ public class Mazub extends GameObject{
 		}
 	}	
 	
-	@Override
-	public void processTileOverlap(){
-		if (!this.isImmune()){
-			super.processTileOverlap();
-		}
-	}
+//	@Override
+//	protected void processTileOverlap(){
+//		if (!this.isImmune()){
+//			super.processTileOverlap();
+//		}
+//	}
 	
 	
 	
@@ -609,7 +609,7 @@ public class Mazub extends GameObject{
 		return this.immune;
 	}
 	
-	public void setImmune( boolean immune ){
+	private void setImmune( boolean immune ){
 		this.immune = immune;
 	}
 	

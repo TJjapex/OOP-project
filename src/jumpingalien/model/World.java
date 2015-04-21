@@ -744,7 +744,7 @@ public class World {
 	
 	public void removeGameObject(GameObject gameObject){
 		
-		// Ugly & tricky maar werkt... of isinstance gebruiken...
+		// Ugly & tricky maar werkt... of isinstance gebruiken... of aparte methods voor elk type instance
 		mazubs.remove(gameObject);
 		plants.remove(gameObject);
 		sharks.remove(gameObject);

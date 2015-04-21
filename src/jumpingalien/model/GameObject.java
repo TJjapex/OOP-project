@@ -37,13 +37,12 @@ public abstract class GameObject {
 	 */
 	public static final double ACCELERATION_Y = -10.0;
 	
-	protected abstract void configureTerrain();
-	
 	/************************************************ CONSTRUCTOR *********************************************/
 
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
+					throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
+		
 		this.setTimer(new Timer());	
 		this.setAnimation(new Animation(this, sprites));
 		
@@ -195,13 +194,15 @@ public abstract class GameObject {
 		return allTerrainProperties.get(terrain);
 	}
 	
-	public void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
+	protected void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
 		allTerrainProperties.put(terrain, terrainProperties);
 	}
 	
 	public boolean hasTerrainPropertiesOf(Terrain terrain){
 		return allTerrainProperties.containsKey(terrain);
 	}
+	
+	protected abstract void configureTerrain();
 	
 	/********************************************* SIZE AND POSITIONING ***************************************/
 	
@@ -303,10 +304,25 @@ public abstract class GameObject {
 	 * 			| else if (this.getOrientation() == LEFT)
 	 * 			| 	then new.getAccelerationX() == -this.ACCELERATION_X
 	 */
-	public void startMove(Orientation orientation) {		
-		assert (this.getOrientation() != null);
-		assert isValidOrientation(orientation);
-		
+//	public void startMove(Orientation orientation) {		
+//		assert (this.getOrientation() != null);
+//		assert isValidOrientation(orientation);
+//		
+//		this.setOrientation(orientation);
+//		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
+//		this.setAccelerationX( orientation.getSign() * accelerationXInit);
+//		
+//		if(orientation == Orientation.LEFT){
+//			moveLeft = true;
+//		}else{
+//			moveRight = true;
+//		}
+//	}
+	
+	boolean moveLeft = false;
+	boolean moveRight = false;
+	
+	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
 		this.setAccelerationX( orientation.getSign() * accelerationXInit);
@@ -318,9 +334,43 @@ public abstract class GameObject {
 		}
 	}
 	
-	boolean moveLeft = false;
-	boolean moveRight = false;
-
+	public void endMove(Orientation orientation){
+		if(orientation == Orientation.LEFT){
+			moveLeft = false;
+		}else{
+			moveRight = false;
+		}
+		
+		if(!moveLeft && !moveRight){
+			this.setVelocityX(0);
+			this.setAccelerationX(0);
+			this.getTimer().setSinceLastMove(0);
+		}
+		
+		if(moveLeft && getOrientation() != Orientation.LEFT){
+			startMove(Orientation.LEFT);
+		}else
+		if(moveRight && getOrientation() != Orientation.RIGHT){
+			startMove(Orientation.RIGHT);
+		}
+	}
+	
+//	public void startMoveLeft(){
+//		
+//	}
+//	
+//	public void startMoveRight(){
+//		
+//	}
+//	
+//	public void endMoveLeft(){
+//		
+//	}
+//	
+//	public void endMoveRight(){
+//		
+//	}
+	
 	/**
 	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
 	 * @pre		The given orientation is not null.
@@ -332,28 +382,28 @@ public abstract class GameObject {
 	 * @post	The time since the last move was made is reset to 0.
 	 *			| (new timer).getSinceLastMove() == 0
 	 */
-	public void endMove(Orientation orientation) {
-		assert (this.getOrientation() != null);
-		assert isValidOrientation(orientation);
-		
-		if(orientation == this.getOrientation()){
-			this.setVelocityX(0);
-			this.setAccelerationX(0);
-			this.getTimer().setSinceLastMove(0);
-		}	
-		
-		if(orientation == Orientation.LEFT){
-			moveLeft = false;
-			if(moveRight && getOrientation() != Orientation.RIGHT){
-				startMove(Orientation.RIGHT);
-			}
-		}else{
-			moveRight = false;
-			if(moveLeft && getOrientation() != Orientation.LEFT){
-				startMove(Orientation.LEFT);
-			}
-		}
-	}
+//	public void endMove(Orientation orientation) {
+//		assert (this.getOrientation() != null);
+//		assert isValidOrientation(orientation);
+//		
+//		if(orientation == this.getOrientation()){
+//			this.setVelocityX(0);
+//			this.setAccelerationX(0);
+//			this.getTimer().setSinceLastMove(0);
+//		}	
+//		
+//		if(orientation == Orientation.LEFT){
+//			moveLeft = false;
+//			if(moveRight && getOrientation() != Orientation.RIGHT){
+//				startMove(Orientation.RIGHT);
+//			}
+//		}else{
+//			moveRight = false;
+//			if(moveLeft && getOrientation() != Orientation.LEFT){
+//				startMove(Orientation.LEFT);
+//			}
+//		}
+//	}
 
 	/**
 	 * Checks whether Mazub is moving.
@@ -886,7 +936,7 @@ public abstract class GameObject {
 		}
 	}
 	
-	public void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
+	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		if(!this.isTerminated() && !this.hasProperWorld())
@@ -929,14 +979,28 @@ public abstract class GameObject {
 	 * @param dt
 	 * 		
 	 */
-	public void updateTimers(double dt){
+	protected void updateTimers(double dt){
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);
 		
 		this.getTimer().increaseSinceLastSprite(dt);
-		this.getTimer().increaseSinceTerrainCollision(dt);
+		this.getTimer().increaseTerrainOverlapDuration(dt);
+		this.getTimer().increaseSinceLastTerrainDamage(dt);
 		this.getTimer().increaseSinceEnemyCollision(dt);
 		this.getTimer().increaseSinceLastPeriod(dt);
+		
+		
+		resetTerrainOverlapDuration();
+	}
+	
+	private void resetTerrainOverlapDuration(){
+		// If character does not collide with terrain type, set the overlapping duration with the terrain type to 0
+		Set<Terrain> overlappingTerrainTypes = getOverlappingTerrainTypes();
+		for(Terrain terrain : Terrain.getAllTerrainTypes()){
+			if(!overlappingTerrainTypes.contains(terrain)){
+				getTimer().setTerrainOverlapDuration(terrain, 0);
+			}
+		}
 	}
 	
 	
@@ -981,8 +1045,7 @@ public abstract class GameObject {
 		this.setVelocityX( newVx );
 	}
 
-	public void processHorizontalCollision(){
-		
+	protected void processHorizontalCollision(){
 		this.endMove(this.getOrientation());
 		
 	}
@@ -1027,7 +1090,7 @@ public abstract class GameObject {
 		this.setVelocityY( newVy );
 	}
 
-	public void processVerticalCollision(){
+	protected void processVerticalCollision(){
 		this.stopFall();
 	}
 	
@@ -1038,19 +1101,20 @@ public abstract class GameObject {
 		return this.nbHitPoints;
 	}
 
-	public void setNbHitPoints(int nbHitPoints) {
+	protected void setNbHitPoints(int nbHitPoints) {
 		this.nbHitPoints = Math.max( Math.min(nbHitPoints, getMaxNbHitPoints()), 0);
 	}
 	
-	public void increaseNbHitPoints(int nbHitPoints){
+	protected void increaseNbHitPoints(int nbHitPoints){
 		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
 	}
 	
-	public void decreaseNbHitPoints(int nbHitPoints){
+	// TODO zouden we dit wel doen? Extra "redundantie"? Mss beter gewoon in de comment bij de increase  method zetten dat nbHitPoints ook negatief mag zijn dan
+	protected void decreaseNbHitPoints(int nbHitPoints){
 		this.setNbHitPoints(this.getNbHitPoints() - nbHitPoints);
 	}
 	
-	public void takeDamage(int damageAmount){
+	protected void takeDamage(int damageAmount){
 		this.increaseNbHitPoints(-damageAmount);
 	}
 
@@ -1323,39 +1387,42 @@ public abstract class GameObject {
 	
 	/****************************************************** OVERLAP PROCESSING ****************************************************/
 	
-	public void processOverlap(){
+	protected void processOverlap(){
 		this.processTileOverlap();
 		this.processGameObjectOverlap();
 	}
 
-	public void processTileOverlap(){
+	protected void processTileOverlap(){
 		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		
+		// Check all terrain types that are overlapping
 		for(Terrain overlappingTerrain : overlappingTerrainTypes){
 			
+			// If this terrain type isn't configured, don't care
 			if(!this.hasTerrainPropertiesOf(overlappingTerrain)){
 				break;
 			}
 			
+			// Get configuration for this overlapping terrain type
 			TerrainProperties terrainProperties = this.getTerrainPropertiesOf(overlappingTerrain);
-			if(  terrainProperties.getDamage() != 0 ){
-				if( this.getTimer().getSinceTerrainCollision(overlappingTerrain) > terrainProperties.getDamageTime() ){ // > of >=? fuzzy?
+			
+			// if the gameobject can lose hit-points due to contact with this terrain type
+			if(  terrainProperties.getDamage() != 0 ){ 
+				// If the time since the last hitpoints detection is greater than the configured damage time
+				if( getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
 					
-					if(!terrainProperties.isInstantDamage()){
+					// Do damage if the terrain should do damage immediately after contact (for example, magma) 
+					// or if the overlapping duration is longer than the configured damage time
+					if(terrainProperties.isInstantDamage() || getTimer().getTerrainOverlapDuration(overlappingTerrain) > terrainProperties.getDamageTime() ){
 						this.takeDamage( terrainProperties.getDamage() );
+						getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0);
 					}
-					
-					this.getTimer().setSinceTerrainCollision(overlappingTerrain, 0);
-				}
-				
-				if(getTimer().getSinceTerrainCollision(overlappingTerrain) == 0){
-					this.takeDamage( terrainProperties.getDamage() );
 				}
 			}
 		}
 	}	
 	
-	public void processGameObjectOverlap(){
+	protected void processGameObjectOverlap(){
 		World world = this.getWorld();
 		
 		for(Mazub alien:  world.getAllMazubs()){

@@ -28,7 +28,11 @@ public class Timer {
 		this.setSinceLastPeriod(Double.POSITIVE_INFINITY);
 		
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
-			this.sinceLastTerrainCollision.put(terrain, Double.POSITIVE_INFINITY);
+			setTerrainOverlapDuration(terrain, 0.0);
+		}
+		
+		for(Terrain terrain : Terrain.getAllTerrainTypes()){
+			setSinceLastTerrainDamage(terrain, Double.POSITIVE_INFINITY);
 		}
 		
 		this.setSinceEnemyCollision(Double.POSITIVE_INFINITY);
@@ -139,23 +143,45 @@ public class Timer {
 	private double sinceKilled;
 	
 	
-	// Terrain Collision
-	private Map<Terrain, Double> sinceLastTerrainCollision = new HashMap<Terrain, Double>();
+	// Terrain overlap duration
+	private Map<Terrain, Double> terrainOverlapDuration = new HashMap<Terrain, Double>();
 	
-	public double getSinceTerrainCollision(Terrain terrain) throws IllegalArgumentException{
-		if(!this.sinceLastTerrainCollision.containsKey(terrain))
+	public double getTerrainOverlapDuration(Terrain terrain) throws IllegalArgumentException{
+		if(!this.terrainOverlapDuration.containsKey(terrain))
 			throw new IllegalArgumentException("Terrain not in collision map!");
-		return this.sinceLastTerrainCollision.get(terrain);
+		
+		return this.terrainOverlapDuration.get(terrain);
 	}
 	
-	public void setSinceTerrainCollision(Terrain terrain, double dt){
-		this.sinceLastTerrainCollision.put(terrain, dt);
+	public void setTerrainOverlapDuration(Terrain terrain, double dt){
+		this.terrainOverlapDuration.put(terrain, dt);
 	}
 	
 	/** Increases all **/ 
-	public void increaseSinceTerrainCollision(double dt){
-		for(Terrain terrain : this.sinceLastTerrainCollision.keySet()){
-			setSinceTerrainCollision(terrain, getSinceTerrainCollision(terrain) + dt);
+	public void increaseTerrainOverlapDuration(double dt){
+		for(Terrain terrain : this.terrainOverlapDuration.keySet()){
+			setTerrainOverlapDuration(terrain, getTerrainOverlapDuration(terrain) + dt);
+		}
+	}
+		
+	// Terrain overlap damage
+	private Map<Terrain, Double> sinceLastTerrainDamage = new HashMap<Terrain, Double>();
+	
+	public double getSinceLastTerrainDamage(Terrain terrain) throws IllegalArgumentException{
+		if(!this.sinceLastTerrainDamage.containsKey(terrain))
+			throw new IllegalArgumentException("Terrain not in collision map!");
+		
+		return this.sinceLastTerrainDamage.get(terrain);
+	}
+	
+	public void setSinceLastTerrainDamage(Terrain terrain, double dt){
+		this.sinceLastTerrainDamage.put(terrain, dt);
+	}
+	
+	/** Increases all **/ 
+	public void increaseSinceLastTerrainDamage(double dt){
+		for(Terrain terrain : this.sinceLastTerrainDamage.keySet()){
+			setSinceLastTerrainDamage(terrain, getSinceLastTerrainDamage(terrain) + dt);
 		}
 	}
 	

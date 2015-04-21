@@ -87,13 +87,13 @@ public class Slime extends GameObject {
 	// * Slimes lose hit-points upon touching water/magma (same as Mazub)
 	
 	@Override
-	public void takeDamage(int damageAmount){
+	protected void takeDamage(int damageAmount){
 		this.decreaseNbHitPoints(damageAmount);
 		if ( this.getSchool() !=  null )
 			this.mutualDamage();
 	}
 	
-	public void mutualDamage(){
+	protected void mutualDamage(){
 		for (Slime slime: this.getSchool().getAllSlimes()){
 			if (!slime.equals(this))
 				slime.decreaseNbHitPoints(MUTUAL_SCHOOL_DAMAGE);
@@ -135,7 +135,7 @@ public class Slime extends GameObject {
 	}
 	
 	@Override
-	public void processHorizontalCollision() {		
+	protected void processHorizontalCollision() {		
 		Orientation currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
 		this.endMove(currentOrientation);
 		if (currentOrientation != Orientation.RIGHT){
@@ -145,11 +145,9 @@ public class Slime extends GameObject {
 		}
 	}
 	
-	public void periodMovement(){
-		
+	private void periodMovement(){
 		this.endMove(this.getOrientation());
 		this.startMove(this.getRandomOrientation());
-		
 	}
 
 	/***************************************************** SCHOOL *********************************************/
@@ -223,14 +221,14 @@ public class Slime extends GameObject {
 	
 	
 	/****************************************************** OVERLAP PROCESSING *************************************************************/
-	public void processMazubOverlap(Mazub mazub){
+	protected void processMazubOverlap(Mazub mazub){
 		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}	
 	
-	public void processSlimeOverlap(Slime slime){
+	protected void processSlimeOverlap(Slime slime){
 		if(slime != this){
 			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
 				this.switchSchool( slime.getSchool() );
@@ -242,7 +240,7 @@ public class Slime extends GameObject {
 		}
 	}
 	
-	public void processSharkOverlap(Shark shark){
+	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
