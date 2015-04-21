@@ -259,8 +259,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void startGame(World world) {
-		// TODO Auto-generated method stub
-		
+		world.start();
 	}
 
 	@Override

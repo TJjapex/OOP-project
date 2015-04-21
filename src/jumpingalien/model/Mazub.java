@@ -287,11 +287,11 @@ public class Mazub extends GameObject{
 		return this.shouldMoveLeft;
 	}
 	
-	public void setShouldMoveRight(boolean shouldMoveRight){
+	private void setShouldMoveRight(boolean shouldMoveRight){
 		this.shouldMoveRight = shouldMoveRight;
 	}
 	
-	public void setShouldMoveLeft(boolean shouldMoveLeft){
+	private void setShouldMoveLeft(boolean shouldMoveLeft){
 		this.shouldMoveLeft = shouldMoveLeft;
 	}
 	
@@ -310,7 +310,7 @@ public class Mazub extends GameObject{
 	// * as Mazub stands on impassable terrain or another game object, the vertical acceleration shall be
 	//	 set to zero
 	
-	
+
 	
 	/*************************************************** DUCKING **********************************************/
 	
@@ -510,12 +510,14 @@ public class Mazub extends GameObject{
 		this.updatePositionY(dt);		
 		this.updateVelocityY(dt);		
 		
-		/* Ducking */
+		/* Prolonged movement */
+		
+		// Ducking
 		if(this.shouldEndDucking()){
 			this.endDuck();
 		}
 		
-		/* Moving */
+		// Moving
 		if(this.shouldMoveRight() && !this.doesOverlap(Orientation.RIGHT)){
 			this.startMove(Orientation.RIGHT);
 			this.setShouldMoveRight(false);

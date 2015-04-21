@@ -48,6 +48,15 @@ public class World {
 
 /************************************************** GENERAL ***********************************************/
 
+	private boolean hasStarted(){
+		return this.hasStarted;
+	}
+	
+	public void start(){
+		this.hasStarted = true;
+	}
+	
+	private boolean hasStarted = false;
 	
 	/************************************************ CONSTRUCTOR *********************************************/
 	
@@ -499,7 +508,12 @@ public class World {
 	 *         		- the value 3 is returned for a magma tile
 	 */
 	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) {
-		geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
+		if (!this.hasStarted){
+			geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
+		} else {
+			System.out.println("World already started!");
+			// misschien een exception throwen?
+		}
 	}
 	
 	/**
@@ -589,9 +603,14 @@ public class World {
 	 * @param alien
 	 *            The alien to be set as the player's character.
 	 */
-	public void addMazub(Mazub alien){
-		alien.setWorld(this);
-		mazubs.add(alien);
+	public void addMazub(Mazub alien){	
+		if (!this.hasStarted){
+			alien.setWorld(this);
+			mazubs.add(alien);
+		} else {
+			System.out.println("World already started!");
+			// misschien een exception throwen?
+		}
 	}
 	
 	
@@ -608,18 +627,33 @@ public class World {
 	}
 	
 	public void addPlant(Plant plant){
-		plant.setWorld(this);
-		plants.add(plant);
+		if (!this.hasStarted){
+			plant.setWorld(this);
+			plants.add(plant);
+		} else {
+			System.out.println("World already started!");
+			// misschien een exception throwen?
+		}
 	}
 	
 	public void addSlime(Slime slime){
-		slime.setWorld(this);
-		slimes.add(slime);
+		if (!this.hasStarted){
+			slime.setWorld(this);
+			slimes.add(slime);
+		} else {
+			System.out.println("World already started!");
+			// misschien een exception throwen?
+		}
 	}
 	
 	public void addShark(Shark shark){
-		shark.setWorld(this);
-		sharks.add(shark);
+		if (!this.hasStarted){
+			shark.setWorld(this);
+			sharks.add(shark);
+		} else {
+			System.out.println("World already started!");
+			// misschien een exception throwen?
+		}
 	}
 	
 	public void addAsGameObject(GameObject gameObject){
