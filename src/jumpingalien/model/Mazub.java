@@ -1,5 +1,7 @@
 package jumpingalien.model;
 
+import javax.xml.stream.events.StartDocument;
+
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -8,6 +10,7 @@ import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.MazubAnimation;
+import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 
 // All aspects shall be specified both formally and informally.
@@ -247,6 +250,23 @@ public class Mazub extends GameObject{
 	// * if there are multiple ongoing movements at the same time, the horizontal velocity shall not be set
 	//	 to zero before all ongoing movements are terminated
 	
+	@Override
+	public void endMove(Orientation orientation) {
+		assert (this.getOrientation() != null);
+		
+		if(orientation == this.getOrientation()){
+			this.setVelocityX(0);
+			this.setAccelerationX(0);
+			this.getTimer().setSinceLastMove(0);
+		}
+		
+		if (orientation == Orientation.RIGHT){
+			this.setShouldMoveRight(false);
+		} else {
+			this.setShouldMoveLeft(false);
+		}
+	}
+	
 	/**
 	 * Checks whether Mazub has moved in the last second.
 	 * 
@@ -258,6 +278,25 @@ public class Mazub extends GameObject{
 	public boolean hasMovedInLastSecond(){
 		return Util.fuzzyLessThanOrEqualTo(this.getTimer().getSinceLastMove(), 1.0);
 	}
+	
+	public boolean shouldMoveRight(){
+		return this.shouldMoveRight;
+	}
+	
+	public boolean shouldMoveLeft(){
+		return this.shouldMoveLeft;
+	}
+	
+	public void setShouldMoveRight(boolean shouldMoveRight){
+		this.shouldMoveRight = shouldMoveRight;
+	}
+	
+	public void setShouldMoveLeft(boolean shouldMoveLeft){
+		this.shouldMoveLeft = shouldMoveLeft;
+	}
+	
+	private boolean shouldMoveRight;
+	private boolean shouldMoveLeft;
 	
 	/********************************************* JUMPING AND FALLING ****************************************/
 	
@@ -476,6 +515,15 @@ public class Mazub extends GameObject{
 			this.endDuck();
 		}
 		
+		/* Moving */
+		if(this.shouldMoveRight() && !this.doesOverlap(Orientation.RIGHT)){
+			this.startMove(Orientation.RIGHT);
+			this.setShouldMoveRight(false);
+		} else if (this.shouldMoveLeft() && !this.doesOverlap(Orientation.LEFT)) {
+			this.startMove(Orientation.LEFT);
+			this.setShouldMoveLeft(false);
+		}
+		
 		/* Update sprite */
 		this.getAnimation().updateSpriteIndex();
 	}
@@ -483,6 +531,20 @@ public class Mazub extends GameObject{
 	
 	
 	/************************************************************* COLLISION *************************************************/	
+	
+	@Override
+	public void processHorizontalCollision(){
+		this.endMove(this.getOrientation());
+		
+		if (this.getOrientation() == Orientation.RIGHT){
+			this.setShouldMoveRight(true);
+		} else {
+			this.setShouldMoveLeft(true);
+		}
+		
+		
+	}
+	
 	@Override
 	public void processVerticalCollision() {
 		if(this.getVelocityY() > 0){ // is going up

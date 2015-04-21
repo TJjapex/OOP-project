@@ -958,7 +958,9 @@ public abstract class GameObject {
 	}
 
 	public void processHorizontalCollision(){
+		
 		this.endMove(this.getOrientation());
+		
 	}
 	
 	/* Vertical */
