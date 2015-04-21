@@ -151,7 +151,7 @@ public class Mazub extends GameObject{
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
-				 Sprite[] sprites, int nbHitPoints, boolean immunity)
+				 Sprite[] sprites, int nbHitPoints)
 	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints, 500);
 		
@@ -162,8 +162,6 @@ public class Mazub extends GameObject{
 		this.setDucking(false);
 		
 		this.setAnimation(new MazubAnimation(this, sprites));
-		
-		this.setImmune(true);
 		
 		this.configureTerrain();
 			
@@ -191,7 +189,7 @@ public class Mazub extends GameObject{
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException,
 				IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100, false);
+		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100);
 	}
 	
 	/************************************************* HELPER CLASSES *****************************************/
