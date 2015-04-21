@@ -1,5 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -19,6 +22,7 @@ public class Plant extends GameObject {
 	
 	/************************************************** GENERAL ***********************************************/
 
+	@Override
 	public void configureTerrain(){
 		
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
@@ -75,15 +79,15 @@ public class Plant extends GameObject {
 	
 	protected void processKilledButNotTerminated_NameMustBeChanged(double dt){
 		if(this.isKilled() && !this.isTerminated()){
-//			if(this.getTimer().getSinceKilled() > 0){ // Niet echt duidelijk of die nu direct moet verdwijnen of na 0.6 sec
+			if(this.getTimer().getSinceKilled() > 0.6){ 
 				this.terminate();
-//			}else{
-//				this.getTimer().increaseSinceKilled(dt);
-//			}
-			
+			}else{
+				this.getTimer().increaseSinceKilled(dt);
+			}	
 		}
 	}
 	
+	@Override
 	public void doMove(double dt){		
 
 		if (this.getTimer().getSinceLastPeriod() >= 0.5){ 
@@ -110,6 +114,19 @@ public class Plant extends GameObject {
 		
 	}
 	
+	// OPTIONAL IMPLEMENTATION: Plant verandert van richting als hij collide met een andere plant of de muur, ik weet niet of dit beter is..
+	
+	@Override
+	protected void processHorizontalCollision() {		
+		Orientation currentOrientation = this.getOrientation();
+		this.endMove(currentOrientation);
+		if (currentOrientation != Orientation.RIGHT){
+			this.startMove(Orientation.RIGHT);
+		} else {
+			this.startMove(Orientation.LEFT);
+		}
+	}
+	
 	
 	/******************************************* COLISSION ********************************************/
 //	public void processMazubOverlap(Mazub alien){
@@ -119,23 +136,31 @@ public class Plant extends GameObject {
 //	}
 	
 	@Override
-	public boolean doesCollide() {
-		return doesCollideWithTerrain();
-	}
-
 	public void processMazubOverlap(Mazub alien) {
 
 	}
 
+	@Override
 	public void processPlantOverlap(Plant plant) {
 
 	}
 
+	@Override
 	public void processSharkOverlap(Shark shark) {
 
 	}
 
+	@Override
 	public void processSlimeOverlap(Slime slime) {
 
 	}
+	
+	
+	@Override
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
+		return allImpassableGameObjects;
+	}
+	
 }

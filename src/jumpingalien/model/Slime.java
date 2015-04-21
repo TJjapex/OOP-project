@@ -1,5 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -28,6 +31,7 @@ public class Slime extends GameObject {
 	public static final int MUTUAL_SCHOOL_DAMAGE = 1;
 	public static final int SWITCH_SCHOOL_DAMAGE = 1;
 	
+	@Override
 	public void configureTerrain(){
 		
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
@@ -106,6 +110,8 @@ public class Slime extends GameObject {
 	// * movement periods have a duration of 2s to 6s
 	// * do not attack each other but block each others' movement
 	// * Plants do not block Slimes	
+	
+	@Override
 	public void doMove(double dt){
 		if( this.doesCollide())
 			throw new IllegalStateException(" Colission before movement! ");	
@@ -221,6 +227,8 @@ public class Slime extends GameObject {
 	
 	
 	/****************************************************** OVERLAP PROCESSING *************************************************************/
+	
+	@Override
 	protected void processMazubOverlap(Mazub mazub){
 		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
@@ -228,27 +236,36 @@ public class Slime extends GameObject {
 		}
 	}	
 	
+	@Override
 	protected void processSlimeOverlap(Slime slime){
 		if(slime != this){
 			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
 				this.switchSchool( slime.getSchool() );
-				System.out.println("Slime changed school!");
 			} else if ( slime.getSchool().getNbSlimes() < this.getSchool().getNbSlimes() ) {
 				slime.switchSchool( this.getSchool() );
-				System.out.println("Slime changed school!");
 			}
 		}
 	}
 	
+	@Override
 	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
-
+	
+	@Override
 	protected void processPlantOverlap(Plant plant) {
 		
+	}
+	
+	@Override
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
+		return allImpassableGameObjects;
 	}
 	
 }

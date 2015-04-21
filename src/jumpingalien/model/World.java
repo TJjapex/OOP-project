@@ -680,13 +680,13 @@ public class World {
 		return allGameObjects;
 	}
 	
-	public Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allNonPassableGameObjects= new HashSet<GameObject>(this.getAllMazubs());
-		allNonPassableGameObjects.addAll(this.getAllSlimes());
-		allNonPassableGameObjects.addAll(this.getAllSharks());
-		//allNonPassableGameObjects.addAll(this.getAllPlants());
-		return allNonPassableGameObjects;
-	}
+//	public Set<GameObject> getAllImpassableGameObjects(){
+//		Set<GameObject> allNonPassableGameObjects= new HashSet<GameObject>(this.getAllMazubs());
+//		allNonPassableGameObjects.addAll(this.getAllSlimes());
+//		allNonPassableGameObjects.addAll(this.getAllSharks());
+//		//allNonPassableGameObjects.addAll(this.getAllPlants());
+//		return allNonPassableGameObjects;
+//	}
 
 	
 	public Set<GameObject> getAllEnemies(){
