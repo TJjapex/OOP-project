@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.hamcrest.core.IsInstanceOf;
-
 import jumpingalien.model.exceptions.CollisionException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -430,7 +428,6 @@ public abstract class GameObject {
 	public void startJump() {
 		if(this.isOnGround()){
 			this.setVelocityY( this.getVelocityYInit() );
-			// this.setAccelerationY( ACCELERATION_Y ); 
 		}		
 	}
 
@@ -462,11 +459,7 @@ public abstract class GameObject {
 		if(! hasProperWorld())
 			throw new IllegalStateException("GameObject not in proper world!");
 		
-		if(this.doesOverlap(Orientation.BOTTOM)){
-			return true;
-		}else{
-			return false;
-		}
+		return this.doesOverlap(Orientation.BOTTOM);
 	}
 	
 
@@ -1146,19 +1139,6 @@ public abstract class GameObject {
 		return doesCollideWithTerrain() || doesCollideWithGameObjects();
 	}
 	
-// 	Niet meer nodig
-//	/**
-//	 * Checks if this object collides in the given direction with impassable terrain or any other impassable object
-//	 * 
-//	 * @param orientation
-//	 * 		The orientation that needs to be checked
-//	 * @return
-//	 * 		True if and only if this object collides with impassable terrain or an impassable object in the given direciton.
-//	 */
-//	public boolean doesCollide(Orientation orientation){
-//		return doesCollideWithTerrain() || doesCollideWithGameObjects();
-//	}	
-	
 	/**
 	 * Checks if this object collides in the given direction with impassable terrain.
 	 * 
@@ -1194,7 +1174,7 @@ public abstract class GameObject {
 	 * 		True if and only if this object collides with an impassable object.
 	 */
 	public boolean doesCollideWithGameObjects(){
-		for(GameObject object : world.getAllNonPassableGameObjects()){
+		for(GameObject object : world.getAllImpassableGameObjects()){
 			if(object != this && doesCollideWith(object)){
 				return true;
 			}
@@ -1246,9 +1226,13 @@ public abstract class GameObject {
 	}
 	
 	public boolean doesOverlap(Orientation orientation){
+		return doesOverlapWithTerrain(orientation) || doesOverlapWithGameObjects(orientation);
+	}	
+	
+	public boolean doesOverlapWithTerrain(Orientation orientation){
 		World world = this.getWorld();
 		
-		// Check collision with tiles
+		// Check overlap with tiles
 		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
 													this.getRoundedPositionY(),
 			 										this.getRoundedPositionX() + this.getWidth(), 
@@ -1263,17 +1247,22 @@ public abstract class GameObject {
 					return true;
 				}
 			}
-		}		
+		}
 		
-		// Check colission with gameObjects
-		for(GameObject object : world.getAllNonPassableGameObjects()){
+		return false;
+	}
+	
+	public boolean doesOverlapWithGameObjects(Orientation orientation){
+		// Check overlap with gameObjects
+		for(GameObject object : world.getAllImpassableGameObjects()){
 			if(object != this && doesOverlapWith(object, orientation)){
 				return true;
 			}
 		}
 		
 		return false;
-	}	
+	}
+	
 	
 	/**
 	 * Checks if this object overlaps with the given gameobject
@@ -1457,13 +1446,7 @@ public abstract class GameObject {
 	protected abstract void processSlimeOverlap(Slime slime);
 
 	
-	public boolean isSubmergedIn(Terrain terrain){
-		
-//		int tileX = world.getTileX(this.getRoundedPositionX() + this.getWidth()/2); // to avoid boundary condition mistakes
-//		int tileY = world.getTileY(this.getRoundedPositionY() + this.getHeight());
-//
-//		return world.getGeologicalFeature(world.getPositionXOfTile(tileX),world.getPositionYOfTile(tileY)) == terrain;
-		
+	public boolean isSubmergedIn(Terrain terrain){		
 		World world = this.getWorld();
 		
 		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX() + 1, 						// overlap left

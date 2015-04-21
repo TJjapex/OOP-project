@@ -42,6 +42,9 @@ import jumpingalien.model.helper.Terrain;
  *
  *			Do we have to use the tag @Override for methods of a class that are abstract in their superclass?
  *
+ *			( startGame? )
+ *			( check if slime is in two schools? )
+ *
  */
 
 
@@ -135,15 +138,21 @@ public class World {
 	}
 	
 	public void updateDisplayPositionX(){
+		// TODO beter / compacter uitwerken
+		
 		// ifs kunnen eventueel met min/max
+		
+		// Check right side of game window
 		if ( this.getDisplayPositionX() + this.getDisplayWidth() - 200 < this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() ){
 			this.setDisplayPositionX( this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() + 200 - this.getDisplayWidth() ); 
 		}
 		
+		// Check left side of game window
 		if ( this.getDisplayPositionX() + 200 > this.getMazub().getRoundedPositionX() ){
 			this.setDisplayPositionX( this.getMazub().getRoundedPositionX() - 200 ); 
 		}
 		
+		// Check borders of gameworld 
 		this.setDisplayPositionX( Math.max( 0, this.getDisplayPositionX() ) );
 		this.setDisplayPositionX( Math.min( this.getWorldWidth() - this.getDisplayWidth(), this.getDisplayPositionX() ) );
 	}
@@ -161,6 +170,8 @@ public class World {
 	}
 	
 	public void updateDisplayPositionY(){
+		// TODO beter uitwerken
+		
 		if ( this.getDisplayPositionY() + this.getDisplayHeight() - 200 < this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() ){
 			this.setDisplayPositionY( this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() + 200 - getDisplayHeight() ); 
 		}
@@ -310,35 +321,18 @@ public class World {
 	 */
 	
 	// Bij deze methode moet nog eens goed nagedacht worden over de randgevallen (zie opmerking <= of <). Of misschien moet getTileX(pixelTop - 1 ) ipv getTileX(pixelTop)
-	// dat ga ik later eens checken
 	
 	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
 
 		ArrayList<int[]> positions = new ArrayList<int[]>(); 
-		// In plaats van het aantal elementen op voorhand te bepalen kan dit ook met een ArrayList, ik weet nogn iet wat het beste is dus effe in comments laten staan
-
-		//int nbCols = getTileX(pixelRight) - getTileX(pixelLeft)   + 2 ;
-		//int nbRows = getTileY(pixelTop)   - getTileY(pixelBottom) + 2 ;
-		//int nbPositions = nbRows * nbCols + 1;
-		
-		//int[][] positions = new int[nbPositions][2];
 		
 		/* Loop trough all positions inside the rectangle */
 		for(int row = getTileY(pixelBottom); row <= getTileY(pixelTop); row++){
 			for(int col = getTileX(pixelLeft); col <= getTileX(pixelRight); col++){ // <= of < ?
-				//positions[nbCols * row + col] = new int[] {col, row};
-				
-				// Voor arrayList
 				positions.add(new int[]{ col, row} );
 			}
 		}
-		
-		// Om array te printen; Arrays.deepToString(theArray)
-		// System.out.println(Arrays.deepToString(positions.toArray(new int[positions.size()][2])));
-		
-		//return positions;
-		
-		// Voor arrayList -> omzetten naar gewone array
+
 		return  positions.toArray(new int[positions.size()][2]);
 	}
 
@@ -469,7 +463,7 @@ public class World {
 	
 	/********************************************* GEOLOGICAL FEATURES *****************************************/	
 	
-	public static Terrain terrainTypeIndexToType(int terrainTypeIndex){ // Slechte naam	
+	public static Terrain terrainIndexToType(int terrainTypeIndex){ // Slechte naam	
 		switch(terrainTypeIndex){
 			case 0:
 				return Terrain.AIR;
@@ -686,7 +680,7 @@ public class World {
 		return allGameObjects;
 	}
 	
-	public Set<GameObject> getAllNonPassableGameObjects(){
+	public Set<GameObject> getAllImpassableGameObjects(){
 		Set<GameObject> allNonPassableGameObjects= new HashSet<GameObject>(this.getAllMazubs());
 		allNonPassableGameObjects.addAll(this.getAllSlimes());
 		allNonPassableGameObjects.addAll(this.getAllSharks());
