@@ -10,6 +10,9 @@ import java.util.Set;
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
+ * 
+ * @invar
+ * 			| hasProperSlimes()
  */
 
 public class School {
@@ -27,11 +30,14 @@ public class School {
 	/************************************************** RELATIONS **********************************************/
 	
 	public boolean canHaveAsSlime(Slime slime){
-		return (!(this.hasAsSlime(slime)) && (slime != null) && (!slime.isTerminated()));
+		return (!(this.hasAsSlime(slime)) && (slime != null) && (!this.isTerminated()) && (!slime.isTerminated()));
 	}
 	
 	public boolean hasProperSlimes(){
-		// in een set kunnen geen slimes zitten die equal zijn?
+		for(Slime slime: this.slimes){
+			if(slime.getSchool() != this)
+				return false;
+		}
 		return true;
 	}
 	
@@ -40,14 +46,15 @@ public class School {
 	}
 	
 	public void addAsSlime(Slime slime){
-		if (canHaveAsSlime(slime)){
-			slime.setSchool(this);
-			slimes.add(slime);
-		}
+		assert canHaveAsSlime(slime);		
+		assert (slime != null) && (slime.getSchool() == this);
+		assert !hasAsSlime(slime);
+		slimes.add(slime);
 	}
 	
 	public void removeAsSlime(Slime slime){
-		slime.setSchool(null);
+		assert (slime != null) && (slime.getSchool() == null);
+		assert (hasAsSlime(slime));
 		slimes.remove(slime);
 	}
 	
@@ -62,12 +69,14 @@ public class School {
 	
 	public Set<Slime> slimes = new HashSet<Slime>();
 	
-	public void terminate(){
-
-		for (Slime slime: this.getAllSlimes()){
-			this.removeAsSlime(slime);
-		}
+	public void terminate() throws IllegalStateException{
+		if(this.getNbSlimes() > 0)
+			throw new IllegalStateException("School still has slimes!");
 		this.terminated = true;
+	}
+	
+	public boolean isTerminated(){
+		return this.terminated;
 	}
 	
 	private boolean terminated = false;

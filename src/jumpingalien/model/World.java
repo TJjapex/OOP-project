@@ -78,7 +78,7 @@ public class World {
 		this.nbTilesX = nbTilesX;
 		this.nbTilesY = nbTilesY;
 		
-		// Asserts staan hier maar tijdelijk =)
+		// Asserts staan hier maar tijdelijk =) of toch niet...
 		assert canHaveAsDisplayWidth(visibleWindowWidth);
 		assert canHaveAsDisplayHeight(visibleWindowHeight);
 		

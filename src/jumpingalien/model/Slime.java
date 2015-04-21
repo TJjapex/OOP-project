@@ -1,5 +1,7 @@
 package jumpingalien.model;
 
+
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +20,15 @@ import jumpingalien.util.Sprite;
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
+ * 
+ * 
+ * 
+ * @invar
+ * 			| hasProperSchool()
  */
+
+
+
 public class Slime extends GameObject {
 	
 	/************************************************** GENERAL ***********************************************/
@@ -51,8 +61,9 @@ public class Slime extends GameObject {
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, 100);
 
-		if (this.canHaveAsSchool(school))
-			school.addAsSlime(this);
+//		if (this.canHaveAsSchool(school))
+//			school.addAsSlime(this);
+		this.setSchoolTo(school);
 		
 		this.startMove(this.getRandomOrientation());
 		
@@ -174,16 +185,37 @@ public class Slime extends GameObject {
 	}
 
 	public boolean hasProperSchool(){
+		return this.hasSchool();
+	}
+	
+	public boolean hasSchool(){
 		return this.getSchool() != null;
 	}
 
-	void setSchool(School school) {
+	private void setSchool(School school) {
+		assert canHaveAsSchool(school);
 		this.school = school;
 	}
 	
+	private void setSchoolTo(School school) throws IllegalArgumentException, IllegalStateException { // In ownable voorbeeld public ?		
+		if (school == null || !school.canHaveAsSlime(this))
+			throw new IllegalArgumentException("bad school");
+		if (this.hasSchool())
+			throw new IllegalStateException("Already has school!");
+		setSchool(school);
+		school.addAsSlime(this);
+	}
+	
+	private void unsetSchool(){
+		if(this.hasSchool()){
+			School formerSchool = this.getSchool();
+			this.school = null;
+			formerSchool.removeAsSlime(this);
+		}
+	}
+	
 	public boolean canHaveAsSchool(School school){
-		// TODO checken of dit volledig is
-		return school.canHaveAsSlime(this);
+		return !this.hasSchool() && school.canHaveAsSlime(this) && !this.isTerminated();
 	}	
 	
 	public void switchSchool(School newSchool){
@@ -194,14 +226,15 @@ public class Slime extends GameObject {
 				slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
 			}
 			this.decreaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * this.getSchool().getNbSlimes() );
-			this.getSchool().removeAsSlime(this);
+			
+			this.unsetSchool();
 			
 			for (Slime slime: newSchool.getAllSlimes()){
 				slime.decreaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
 			}
 			this.increaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() );
 			
-			newSchool.addAsSlime(this);
+			this.setSchoolTo(newSchool);
 		}
 
 	}
@@ -212,8 +245,8 @@ public class Slime extends GameObject {
 	protected void terminate(){
 		this.getWorld().removeGameObject(this);
 		this.setWorld(null); // TODO: vervangen door method World removeAs?
-		if (this.hasProperSchool())
-			this.getSchool().removeAsSlime(this);
+
+		this.unsetSchool();
 		
 		this.terminated = true;
 	}
