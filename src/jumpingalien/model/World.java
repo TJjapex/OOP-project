@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import jumpingalien.model.helper.Terrain;
 
 // All aspects shall ONLY be specified in a formal way.
@@ -507,13 +508,14 @@ public class World {
 	 *         		- the value 2 is returned for a water tile
 	 *         		- the value 3 is returned for a magma tile
 	 */
-	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) {
-		if (!this.hasStarted){
-			geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
-		} else {
-			System.out.println("World already started!");
-			// misschien een exception throwen?
+	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) throws IllegalStateException{
+		
+		if (this.hasStarted){
+			throw new IllegalStateException("World already started!");
 		}
+		
+			geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
+		
 	}
 	
 	/**
@@ -603,14 +605,15 @@ public class World {
 	 * @param alien
 	 *            The alien to be set as the player's character.
 	 */
-	public void addMazub(Mazub alien){	
-		if (!this.hasStarted){
-			alien.setWorld(this);
-			mazubs.add(alien);
-		} else {
-			System.out.println("World already started!");
-			// misschien een exception throwen?
+	public void addMazub(Mazub alien) throws IllegalStateException{
+		
+		if (this.hasStarted){
+			throw new IllegalStateException("World already started!");
 		}
+		
+		alien.setWorld(this);
+		mazubs.add(alien);
+		
 	}
 	
 	
@@ -626,34 +629,37 @@ public class World {
 		// TODO Auto-generated method stub
 	}
 	
-	public void addPlant(Plant plant){
-		if (!this.hasStarted){
-			plant.setWorld(this);
-			plants.add(plant);
-		} else {
-			System.out.println("World already started!");
-			// misschien een exception throwen?
+	public void addPlant(Plant plant) throws IllegalStateException{
+		
+		if (this.hasStarted){
+			throw new IllegalStateException("World already started!");
 		}
+		
+		plant.setWorld(this);
+		plants.add(plant);
+		
 	}
 	
-	public void addSlime(Slime slime){
-		if (!this.hasStarted){
-			slime.setWorld(this);
-			slimes.add(slime);
-		} else {
-			System.out.println("World already started!");
-			// misschien een exception throwen?
+	public void addSlime(Slime slime) throws IllegalStateException{
+		
+		if (this.hasStarted){
+			throw new IllegalStateException("World already started!");
 		}
+		
+		slime.setWorld(this);
+		slimes.add(slime);
+		
 	}
 	
-	public void addShark(Shark shark){
-		if (!this.hasStarted){
-			shark.setWorld(this);
-			sharks.add(shark);
-		} else {
-			System.out.println("World already started!");
-			// misschien een exception throwen?
+	public void addShark(Shark shark) throws IllegalStateException{
+		
+		if (this.hasStarted){
+			throw new IllegalStateException("World already started!");
 		}
+		
+		shark.setWorld(this);
+		sharks.add(shark);
+	
 	}
 	
 	public void addAsGameObject(GameObject gameObject){
