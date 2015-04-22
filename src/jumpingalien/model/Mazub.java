@@ -60,9 +60,9 @@ import jumpingalien.model.helper.Terrain;
  * 			|	this.getOrientation() != null
  * @invar	The current orientation is valid.
  * 			|	isValidOrientation( this.getOrientation() )
- * @invar	The current number of Mazub's hit-points is valid.
+ * @invar	The current number of Mazub's hit points is valid.
  * 			|	isValidNbHitPoints( this.getNbHitPoints() )
- * 
+ *
  * @version 2.0
  */
 public class Mazub extends GameObject{
@@ -111,7 +111,7 @@ public class Mazub extends GameObject{
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
 	 * @param	hitPoints
-	 * 				The number of Mazub's hit-points.
+	 * 				The number of Mazub's hit points.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0) 
 	 * @post	The initial ducking status of Mazub is equal to false.
@@ -132,7 +132,7 @@ public class Mazub extends GameObject{
 	 * 			| new.getAnimation() != null
 	 * @post	The timer is initiated.
 	 * 			| new.getTimer() != null
-	 * @effect	If nbHitPoints is smaller or equal to MAX_NB_HITPOINTS, the number of Mazub's hit-points is equal
+	 * @effect	If nbHitPoints is smaller or equal to MAX_NB_HITPOINTS, the number of Mazub's hit points is equal
 	 * 		 	to nbHitPoints. Otherwise, it's equal to MAX_NB_HITPOINTS.
 	 * 			| setNbHitPoints(nbHitPoints)
 	 * @throws	IllegalPositionXException
@@ -593,13 +593,13 @@ public class Mazub extends GameObject{
 	protected void processPlantOverlap(Plant plant){
 		if(!plant.isKilled() && !this.isFullHitPoints()){
 			this.increaseNbHitPoints(50);
-			// plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
+			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
 	
 	@Override
 	protected void processSharkOverlap(Shark shark){
-		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
+		if(!shark.isKilled()){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
@@ -608,7 +608,7 @@ public class Mazub extends GameObject{
 	
 	@Override
 	protected void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
+		if(!slime.isKilled()){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);

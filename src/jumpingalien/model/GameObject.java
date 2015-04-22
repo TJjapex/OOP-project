@@ -133,14 +133,12 @@ public abstract class GameObject {
 	
 	// Invoked to remove object after 0.6s
 	void kill(){
-		this.killed = true;
+		this.setNbHitPoints(0);;
 	}
 	
 	public boolean isKilled(){
-		return this.killed;
+		return this.getNbHitPoints() == 0;
 	}
-	
-	private boolean killed = false;
 	
 	// Will remove object from world
 	protected void terminate(){
@@ -1102,7 +1100,7 @@ public abstract class GameObject {
 	}
 	
 	
-	/*************************************************** HIT-POINTS *******************************************/
+	/*************************************************** HIT POINTS *******************************************/
 	
 	public int getNbHitPoints() {
 		return this.nbHitPoints;
@@ -1410,7 +1408,7 @@ public abstract class GameObject {
 			// Get configuration for this overlapping terrain type
 			TerrainProperties terrainProperties = this.getTerrainPropertiesOf(overlappingTerrain);
 			
-			// if the gameobject can lose hit-points due to contact with this terrain type
+			// if the gameobject can lose hit points due to contact with this terrain type
 			if(  terrainProperties.getDamage() != 0 ){ 
 				// If the time since the last hitpoints detection is greater than the configured damage time
 				if( getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
