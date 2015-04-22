@@ -1,7 +1,5 @@
 package jumpingalien.model;
 
-
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,11 +7,8 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
-
-// All aspects shall ONLY be specified in a formal way.
 
 /**
  * A class of Slimes, enemy characters in the game world of Mazub.
@@ -21,26 +16,139 @@ import jumpingalien.util.Sprite;
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  * 
- * 
- * 
- * @invar
- * 			| hasProperSchool()
+ * @invar	| hasProperSchool()
  */
-
-
 
 public class Slime extends GameObject {
 	
-	/************************************************** GENERAL ***********************************************/
+	/******************************************************* GENERAL ***************************************************/
 	
+	/**
+	 * Constant reflecting the minimal period time for a periodic movement of a Slime.
+	 * 
+	 * @return	| result == 2.0
+	 */
 	public static final double MIN_PERIOD_TIME = 2.0;
+	
+	/**
+	 * Constant reflecting the maximal period time for a periodic movement of a Slime.
+	 * 
+	 * @return	| result == 6.0
+	 */
 	public static final double MAX_PERIOD_TIME = 6.0;
 	
-	private double currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
-	
+	/**
+	 * Constant reflecting the mutual school damage of a Slime in a school.
+	 * 
+	 * @return	| result == 1
+	 */
 	public static final int MUTUAL_SCHOOL_DAMAGE = 1;
+	
+	/**
+	 * Constant reflecting the damage that a Slime takes upon switching schools per Slime member of his old School
+	 * and gives to each Slime member of his new School.
+	 * 
+	 * @return	| result == 1
+	 */
 	public static final int SWITCH_SCHOOL_DAMAGE = 1;
 	
+	/***************************************************** CONSTRUCTOR *************************************************/
+	
+	/**
+	 * Constructor for the class Slime.
+	 * 
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Slime's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Slime's bottom left pixel.
+	 * @param 	velocityXInit
+	 * 				The initial horizontal velocity of a Slime.
+	 * @param 	velocityYInit
+	 * 				The initial vertical velocity of a Slime.
+	 * @param 	velocityXMax
+	 * 				The maximal horizontal velocity of a Slime.
+	 * @param 	accelerationXInit
+	 * 				The initial horizontal acceleration of a Slime.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Slime.
+	 * @param 	school
+	 * 				The school to which the Slime belongs upon initialization.
+	 * @param 	nbHitPoints
+	 * 				The number of hit points of a Slime.
+	 * @param	maxNbHitPoints
+	 * 				The maximal number of hit points of a Slime.
+	 * @pre		| Array.getLength(sprites) == 2
+	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
+	 * 					sprites,nbHitPoints, maxNbHitPoints)
+	 * @effect	| setSchoolTo(school)
+	 * @effect	| startMove( this.getRandomOrientation() )
+	 * @effect 	| configureTerrain()
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 */
+	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+		  		 double velocityXMax, double accelerationXInit, Sprite[] sprites, School school,
+		  		 int nbHitPoints, int maxNbHitPoints)
+		  	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+		
+		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites,
+			  nbHitPoints, maxNbHitPoints);
+
+		this.setSchoolTo(school);
+		
+		this.startMove(this.getRandomOrientation());
+		
+		this.configureTerrain();
+		
+	}
+	
+	/**
+	 * Initialize a Slime with default initial horizontal velocity, initial vertical velocity, maximal horizontal
+	 * velocity, initial horizontal acceleration, number of hit points and maximal number of hit points.
+	 * 
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Slime's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Slime's bottom left pixel.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Slime.
+	 * @param 	school
+	 * 				The school to which the Slime belongs upon initialization.
+	 * @pre		| Array.getLength(sprites) == 2
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 */
+	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
+	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
+		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100, 100);
+	}
+	
+	/******************************************************* TERRAIN ***************************************************/
+	
+	/**
+	 * Configure the terrain properties for a Slime.
+	 * 
+	 * @effect 	| setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false))
+	 * @effect 	| setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false))
+	 * @effect 	| setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2, false))
+	 * @effect 	| setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true))
+	 */
 	@Override
 	public void configureTerrain(){
 		
@@ -51,112 +159,205 @@ public class Slime extends GameObject {
 		
 	}
 	
-	/************************************************ CONSTRUCTOR *********************************************/
+	/****************************************************** HIT POINTS *************************************************/
 	
-	// * possess 100 hit-points
-	
-	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
-		  	double velocityXMax, double accelerationXInit, Sprite[] sprites, School school, int nbHitPoints)
-		  			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		
-		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites, nbHitPoints, 100);
-
-//		if (this.canHaveAsSchool(school))
-//			school.addAsSlime(this);
-		this.setSchoolTo(school);
-		
-		this.startMove(this.getRandomOrientation());
-		
-		this.configureTerrain();
-		
-	}
-	
-	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
-		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100);
-	}
-	
-	/********************************************** WORLD RELATION ********************************************/
-	@Override
-	public void setWorldTo(World world){
-		if(!this.canHaveAsWorld(world))
-			throw new IllegalArgumentException("This slime cannot have given world as world!");
-		if(!world.canHaveAsGameObject(this))
-			throw new IllegalArgumentException("Given world cannot have this slime as slime!");
-		
-		setWorld(world);
-		world.addAsSlime(this);
-	}
-	
-	@Override
-	protected void unsetWorld() {
-		if(this.hasWorld()){
-			World formerWorld = this.getWorld();
-			this.setWorld(null);
-			formerWorld.removeAsSlime(this);
-		}
-	}
-	/********************************************* SIZE AND POSITIONING ***************************************/
-	
-	
-	
-	/*************************************************** MOVING ***********************************************/
-	
-	
-	
-	/*************************************************** FALLING **********************************************/
-	
-	
-	
-	/************************************************ CHARACTERISTICS *****************************************/
-	
-	
-	
-	/*************************************************** ANIMATION ********************************************/
-	
-	
-	
-	/*************************************************** HIT-POINTS *******************************************/
-	
-	// * lose 50 hit-points when making contact with Mazub or Shark
-	// * Slimes lose hit-points upon touching water/magma (same as Mazub)
-	
+	/**
+	 * Make a Slime take damage.
+	 * 
+	 * @param	damageAmount
+	 * 				The amount of damage that a Slime needs to take.
+	 * @effect	| modifyNbHitPoints( - damageAmount)
+	 * @effect	| if ( this.getSchool() != null)
+	 * 			|	then this.mutualDamage()
+	 */
 	@Override
 	protected void takeDamage(int damageAmount){
-		this.decreaseNbHitPoints(damageAmount);
-		if ( this.getSchool() !=  null )
-			this.mutualDamage();
+		this.modifyNbHitPoints( - damageAmount );
+		this.mutualDamage();
 	}
 	
+	/**
+	 * Make the other Slimes of a school take mutual damage because one Slime in the School took some damage.
+	 * 
+	 * @effect	| for Slime in this.getSchool().getAllSlimes()
+	 * 			|	if ( ! slime.equals(this) )
+	 * 			| 		then slime.modifyNbHitPoints( - MUTUAL_SCHOOL_DAMAGE )
+	 */
 	protected void mutualDamage(){
 		for (Slime slime: this.getSchool().getAllSlimes()){
 			if (!slime.equals(this))
-				slime.decreaseNbHitPoints(MUTUAL_SCHOOL_DAMAGE);
+				slime.modifyNbHitPoints( - MUTUAL_SCHOOL_DAMAGE );
 		}
 	}
-		
-	/**************************************************** MOVEMENT ********************************************/
 	
-	// * move randomly to the left or right
-	// * movement periods have a duration of 2s to 6s
-	// * do not attack each other but block each others' movement
-	// * Plants do not block Slimes	
+	/***************************************************** SCHOOL *********************************************/
 	
-	@Override
-	public void doMove(double dt){
-		if( this.doesCollide())
-			throw new IllegalStateException(" Colission before movement! ");	
-		
+	/**
+	 * Return the School of a Slime.
+	 * 
+	 * @return	The School to which a Slime belongs.
+	 */
+	public School getSchool() {
+		return this.school;
+	}
 
-		// Randomized movement
+	/**
+	 * Checks if a Slime belongs to a proper School.
+	 * 
+	 * @return 	result == ( this.isTerminated() || this.hasSchool() )
+	 */
+	public boolean hasProperSchool(){
+		return this.isTerminated() || this.hasSchool();
+	}
+	
+	/**
+	 * Checks if a Slime belongs to a School.
+	 * 
+	 * @return 	result == ( this.getSchool() != null )
+	 */
+	public boolean hasSchool(){
+		return this.getSchool() != null;
+	}
+
+	/**
+	 * Set the School of a Slime.
+	 * 
+	 * @param 	school
+	 * 				The School to which a Slime must belong.
+	 * @post	new.getSchool() == school
+	 */
+	private void setSchool(School school) {
+		this.school = school;
+	}
+	
+	/**
+	 * Make a relation between a Slime and the desired School.
+	 * 
+	 * @param 	school
+	 * 				The School to which a Slime must belong.
+	 * @throws 	IllegalArgumentException
+	 * 				| ( ! canHaveAsSchool(school) ) || ( ! school.canHaveAsSlime(this) )
+	 * @effect	| setSchool(school)
+	 * @effect	| school.addAsSlime(this)
+	 */
+	private void setSchoolTo(School school) throws IllegalArgumentException{ // In ownable voorbeeld public ?	
+		
+		if(!canHaveAsSchool(school))
+			throw new IllegalArgumentException("Cannot have given school as school!");
+		if (!school.canHaveAsSlime(this))
+			throw new IllegalArgumentException("Given school cannot have this slime as member!");
+		
+		this.setSchool(school);
+		school.addAsSlime(this);
+	}
+	
+	/**
+	 * Tear down the relation between a Slime and his School.
+	 * 
+	 * @effect	| if (this.hasSchool())
+	 * 			|	then this.getSchool().removeAsSlime(this)
+	 * @effect	| if (this.hasSchool())
+	 * 			|	then this.setSchool(null)
+	 */
+	private void unsetSchool(){
+		if(this.hasSchool()){
+			this.getSchool().removeAsSlime(this);
+			this.setSchool(null);	
+		}
+	}
+	
+	/**
+	 * Checks whether or not a Slime can have school as his School.
+	 * 
+	 * @param 	school
+	 * 				The School to check.
+	 * @return 	result == ( ! this.hasSchool() ) && ( ! this.isTerminated() ) 
+	 */
+	public boolean canHaveAsSchool(School school){
+		return !this.hasSchool() && !this.isTerminated();
+	}	
+	
+	/**
+	 * Switch a Slime to a new School.
+	 * 
+	 * @param 	newSchool
+	 * 				The new School to which a Slime must belong.
+	 * @effect	| if (this.getSchool() != newSchool)
+	 * 			| 	then for slime in this.getSchool().getAllSlimes()
+	 * 			|			if (!slime.equals(this)
+	 * 			|				then slime.modifyNbHitPoints(SWITCH_SCHOOL_DAMAGE)
+	 * @effect	| if (this.getSchool() != newSchool)
+	 * 			| 	then this.modifyNbHitPoints( - SWITCH_SCHOOL_DAMAGE * this.getSchool().getNbSlimes()
+	 * 			|								 + SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() )
+	 * @effect	| if (this.getSchool() != newSchool)
+	 * 			|	then this.unsetSchool()
+	 * @effect	| if (this.getSchool() != newSchool)
+	 * 			|	then for slime in newSchool.getAllSlimes()
+	 * 			|			slime.modifyNbHitPoints( - SWITCH_SCHOOL_DAMAGE )
+	 * @effect	| if (this.getSchool() != newSchool)
+	 * 			|	then this.setSchoolTo(newSchool)
+	 */
+	public void switchSchool(School newSchool){
+		
+		if ( this.getSchool() != newSchool) {
+			
+			for (Slime slime: this.getSchool().getAllSlimes()){
+				if (!slime.equals(this))
+					slime.modifyNbHitPoints(SWITCH_SCHOOL_DAMAGE);
+			}
+			this.modifyNbHitPoints( - SWITCH_SCHOOL_DAMAGE * this.getSchool().getNbSlimes() );
+			
+			this.unsetSchool();
+			
+			for (Slime slime: newSchool.getAllSlimes()){
+				slime.modifyNbHitPoints( - SWITCH_SCHOOL_DAMAGE );
+			}
+			this.modifyNbHitPoints( SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() );
+			
+			this.setSchoolTo(newSchool);
+		}
+
+	}
+	
+	/**
+	 * Variable registering the School to which a Slime belongs at the moment.
+	 */
+	private School school;
+	
+	/******************************************************* MOVEMENT **************************************************/
+	
+	/**
+	 * Initiate a new periodic movement, if needed, and update the Slime's horizontal and vertical position and velocity
+	 * for the given time interval.
+	 * 
+	 * @param	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * 			|	then this.periodMovement();
+	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * 			|	then this.getTimer().setSinceLastPeriod(0)
+	 * @effect 	TODO: hoe dit in commentaar schrijven?
+	 * @effect	| updatePositionX(dt)
+	 * @effect	| updateVelocityX(dt)
+	 * @effect	| updatePositionY(dt)
+	 * @effect	| updateVelocityY(dt)
+	 * @throws	IllegalStateException
+	 * 				| this.doesCollide()
+	 */
+	@Override
+	public void doMove(double dt) throws IllegalStateException{
+		
+		if( this.doesCollide())
+			throw new IllegalStateException(" Collision before movement! ");	
+
+		// Initiate periodic movement
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
-			this.periodMovement();
+			this.periodicMovement();
 			
 			this.getTimer().setSinceLastPeriod(0);
 			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 		}
-		
 		
 		// Update horizontal position
 		this.updatePositionX(dt);
@@ -171,117 +372,58 @@ public class Slime extends GameObject {
 		this.updateVelocityY(dt);			
 	}
 	
-	@Override
-	protected void processHorizontalCollision() {		
-		Orientation currentOrientation = this.getOrientation();		// dit gedeelte is eigenlijk niet gevraagd in de opdracht maar maakt de bewegingen wel logischer
-		this.endMove(currentOrientation);
-		if (currentOrientation != Orientation.RIGHT){
-			this.startMove(Orientation.RIGHT);
-		} else {
-			this.startMove(Orientation.LEFT);
-		}
-	}
+	/**
+	 * Variable registering the current random period time.
+	 */
+	private double currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 	
-	private void periodMovement(){
+	/**
+	 * Start the periodic movement of a Plant.
+	 * 
+	 * @effect	| endMove(this.getOrientation())
+	 * @effect	| startMove(this.getRandomOrientation())
+	 */
+	private void periodicMovement(){
 		this.endMove(this.getOrientation());
 		this.startMove(this.getRandomOrientation());
 	}
-
-	/***************************************************** SCHOOL *********************************************/
 	
-	// * Slimes are organised in groups, called schools: - each Slime belongs to exactly one school
-	// 													 - Slimes may switch from one school to another
-	//													 - when a Slime loses hit-points, all other Slimes of that
-	//													   school lose 1 hit-point
-	//													 - upon switching from school a Slime hands over 1 hit-point
-	//													   to every Slime of the old school and every Slime of the 
-	//													   new school hands over 1 hit-point to the joining Slime
-	//													 - Slimes switch from school when they collide with a 
-	//													   Slime of a larger school
-	//													 - no more than 10 schools in a game world
+	/****************************************************** COLLISION **************************************************/
 	
-	public School getSchool() {
-		return this.school;
-	}
-
-	public boolean hasProperSchool(){
-		return this.isTerminated() || this.hasSchool();
-	}
-	
-	public boolean hasSchool(){
-		return this.getSchool() != null;
-	}
-
-	private void setSchool(School school) {
-		assert canHaveAsSchool(school);
-		this.school = school;
-	}
-	
-	private void setSchoolTo(School school) throws IllegalArgumentException, IllegalStateException { // In ownable voorbeeld public ?		
-		if(!canHaveAsSchool(school))
-			throw new IllegalArgumentException("Cannot have given school as school!");
-		if (!school.canHaveAsSlime(this))
-			throw new IllegalArgumentException("Given school cannot have this slime as member!");
-		
-		setSchool(school);
-		school.addAsSlime(this);
-	}
-	
-	private void unsetSchool(){
-		if(this.hasSchool()){
-			School formerSchool = this.getSchool();
-			this.school = null;
-			formerSchool.removeAsSlime(this);
-		}
-	}
-	
-	public boolean canHaveAsSchool(School school){
-		return !this.hasSchool() && !this.isTerminated();
-	}	
-	
-	public void switchSchool(School newSchool){
-		
-		if ( this.getSchool() != newSchool) {
-			
-			for (Slime slime: this.getSchool().getAllSlimes()){
-				slime.increaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
-			}
-			this.decreaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * this.getSchool().getNbSlimes() );
-			
-			this.unsetSchool();
-			
-			for (Slime slime: newSchool.getAllSlimes()){
-				slime.decreaseNbHitPoints(SWITCH_SCHOOL_DAMAGE);
-			}
-			this.increaseNbHitPoints( SWITCH_SCHOOL_DAMAGE * newSchool.getNbSlimes() );
-			
-			this.setSchoolTo(newSchool);
-		}
-
-	}
-	
-	private School school;
-	
+	/**
+	 * Process the horizontal collision of a Slime.
+	 * 
+	 * @note	As an optional implementation, a Slime changes his direction when he collides.
+	 * 
+	 * @effect	changeDirection()
+	 */
 	@Override
-	protected void terminate(){
-		this.getWorld().removeGameObject(this);
-		this.setWorld(null); // TODO: vervangen door method World removeAs?
-
-		this.unsetSchool();
-		
-		this.terminated = true;
+	protected void processHorizontalCollision() {		
+		this.changeDirection();
 	}
 	
+	/**
+	 * Return all impassable Game objects for a Slime.
+	 * 
+	 * @return	A Hashset that contains all Mazubs, Slimes and Sharks in the Slime's world.
+	 */
 	@Override
-	public boolean isTerminated(){
-		return this.terminated;
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
+		return allImpassableGameObjects;
 	}
 	
-	private boolean terminated = false;
+	/******************************************************* OVERLAP **************************************************/
 	
-	
-	/****************************************************** OVERLAP PROCESSING *************************************************************/
-	
+	/**
+	 * Process an overlap of a Slime with a Mazub.
+	 * 
+	 * @param	mazub
+	 * 				The Mazub with whom this Slime overlaps.
+	 * @effect	TODO: final implementation
+	 */
 	@Override
 	protected void processMazubOverlap(Mazub mazub){
 		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
@@ -291,6 +433,13 @@ public class Slime extends GameObject {
 		}
 	}	
 	
+	/**
+	 * Process an overlap of a Slime with another Slime.
+	 * 
+	 * @param	slime
+	 * 				The other Slime with which this Slime overlaps.
+	 * @effect	TODO: final implementation
+	 */
 	@Override
 	protected void processSlimeOverlap(Slime slime){
 		if(slime != this){
@@ -302,6 +451,13 @@ public class Slime extends GameObject {
 		}
 	}
 	
+	/**
+	 * Process an overlap of a Slime with a Shark.
+	 * 
+	 * @param	shark
+	 * 				The Shark with which this Slime overlaps.
+	 * @effect	TODO: final implementation
+	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
@@ -311,17 +467,48 @@ public class Slime extends GameObject {
 		}
 	}
 	
+	/**
+	 * Process an overlap of a Slime with a Plant.
+	 * 
+	 * @param	plant
+	 * 				The Plant with which this Slime overlaps.
+	 */
 	@Override
 	protected void processPlantOverlap(Plant plant) {
 		
 	}
+
+	/***************************************************** TERMINATION *************************************************/
 	
+	/**
+	 * Terminate a Slime.
+	 * 
+	 * @effect	TODO: final implementation
+	 * @post	| new.isTerminated == true
+	 */
 	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
-		return allImpassableGameObjects;
+	protected void terminate(){
+		this.getWorld().removeGameObject(this);
+		this.setWorld(null); // TODO: vervangen door method World removeAs?
+
+		this.unsetSchool();
+		
+		this.terminated = true;
 	}
+	
+	/**
+	 * Check if a Slime is terminated.
+	 * 
+	 * @return	| result == ( this.terminated )
+	 */
+	@Override
+	public boolean isTerminated(){
+		return this.terminated;
+	}
+	
+	/**
+	 * Variable registering the terminated status of a Slime.
+	 */
+	private boolean terminated = false;
 	
 }

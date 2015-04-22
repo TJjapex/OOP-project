@@ -115,8 +115,56 @@ public abstract class GameObject {
 		return this.getWorld() != null;
 	}
 	
-	public abstract void setWorldTo(World world);
-	protected abstract void unsetWorld();
+	/**
+	 * Set the world of a Game object to world.
+	 * 
+	 * @param	world
+	 * 				The world to which the Game object must be set.
+	 * @effect	| setWorld(world)
+	 * @effect	| if (this instanceof Mazub)
+	 * 			|	then world.addAsMazub(this)
+	 * @effect	| if (this instanceof Shark)
+	 * 			|	then world.addAsShark(this)
+	 * @effect	| if (this instanceof Slime)
+	 * 			|	then world.addAsSlime(this)
+	 * @effect	| if (this instanceof Plant)
+	 * 			|	then world.addAsPlant(this)
+	 * @effect
+	 * @throws	IllegalArgumentException
+	 * 				| ( ! canHaveAsWorld(world) ) || ( ! world.canHaveAsGameObject(this) )
+	 */
+	public void setWorldTo(World world) throws IllegalArgumentException{
+		
+		if(!this.canHaveAsWorld(world))
+			throw new IllegalArgumentException("This plant cannot have given world as world!");
+		if(!world.canHaveAsGameObject(this))
+			throw new IllegalArgumentException("Given world cannot have this plant as plant!");
+		
+		setWorld(world);
+		if (this instanceof Mazub)
+			world.addAsMazub( (Mazub) this);
+		else if (this instanceof Shark)
+			world.addAsShark( (Shark) this);
+		else if (this instanceof Slime)
+			world.addAsSlime( (Slime) this);
+		else if (this instanceof Plant)
+			world.addAsPlant( (Plant) this);	// beter implementeren als addAsGameObject in World class?
+	}
+	
+	/**
+	 * Unset the world of a Game object.
+	 * 
+	 * @effect	| if ( this.hasWorld() )
+	 * 			| 	then this.getWorld().removeAsGameObject(this)
+	 * @effect	| if ( this.hasWorld() )
+	 * 			|	then this.setWorld(null)
+	 */
+	protected void unsetWorld() {
+		if(this.hasWorld()){
+			this.getWorld().removeAsGameObject(this);
+			this.setWorld(null);
+		}
+	}
 
 	protected void setWorld(World world) {
 		this.world = world;
@@ -977,6 +1025,31 @@ public abstract class GameObject {
 	
 	public abstract void doMove(double dt);
 	
+	/**
+	 * Make a Game object change direction.
+	 * 
+	 * @effect	| if (this.getOrientation() == Orientation.RIGHT)
+	 * 			|	then this.endMove(Orientation.RIGHT)
+	 * 			| else
+	 * 			|	this.endMove(Orientation.LEFT)
+	 * @effect	| if (this.getOrientation() == Orientation.RIGHT)
+	 * 			|	then this.startMove(Orientation.LEFT)
+	 * 			| else
+	 * 			|	this.startMove(Orientation.RIGHT)
+	 */
+	public void changeDirection(){
+		
+		if (this.getOrientation() == Orientation.RIGHT){
+			this.endMove(Orientation.RIGHT);
+			this.startMove(Orientation.LEFT);
+		}
+		else {
+			this.endMove(Orientation.LEFT);
+			this.startMove(Orientation.RIGHT);
+		}
+		
+	}
+	
 	
 	/**
 	 * Increase the timers of this gameobject with the given dt
@@ -1110,18 +1183,12 @@ public abstract class GameObject {
 		this.nbHitPoints = Math.max( Math.min(nbHitPoints, getMaxNbHitPoints()), 0);
 	}
 	
-	protected void increaseNbHitPoints(int nbHitPoints){
+	protected void modifyNbHitPoints(int nbHitPoints){
 		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
 	}
 	
-	// TODO zouden we dit wel doen? Extra "redundantie"? Mss beter gewoon in de comment bij de increase  method zetten dat nbHitPoints ook negatief mag zijn dan
-	// -> of een betere naam die beiden verondersteld: modifyNbHitPoints ?
-	protected void decreaseNbHitPoints(int nbHitPoints){
-		this.setNbHitPoints(this.getNbHitPoints() - nbHitPoints);
-	}
-	
 	protected void takeDamage(int damageAmount){
-		this.increaseNbHitPoints(-damageAmount);
+		this.modifyNbHitPoints(-damageAmount);
 	}
 
 	public boolean isValidNbHitPoints(int nbHitPoints) {

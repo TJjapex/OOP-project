@@ -592,7 +592,7 @@ public class Mazub extends GameObject{
 	@Override
 	protected void processPlantOverlap(Plant plant){
 		if(!plant.isKilled() && !this.isFullHitPoints()){
-			this.increaseNbHitPoints(50);
+			this.modifyNbHitPoints(50);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}

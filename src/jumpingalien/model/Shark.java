@@ -197,7 +197,7 @@ public class Shark extends GameObject{
 		// Randomized movement
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
-			this.periodMovement();
+			this.periodicMovement();
 					
 			this.getTimer().setSinceLastPeriod(0);		
 			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
@@ -253,7 +253,7 @@ public class Shark extends GameObject{
 		super.processVerticalCollision();
 	}
 	
-	public void periodMovement(){
+	public void periodicMovement(){
 		
 		this.endMove(this.getOrientation());
 		

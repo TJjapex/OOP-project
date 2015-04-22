@@ -7,7 +7,6 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.util.Sprite;
 
@@ -71,7 +70,7 @@ public class Plant extends GameObject {
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit, sprites, 
-			  nbHitPoints, maxNbHitPoints);
+			  nbHitPoints, 1);
 		
 		this.configureTerrain();
 
@@ -125,51 +124,12 @@ public class Plant extends GameObject {
 		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0, false));
 		
 	}
-	
-	/******************************************************** WORLD ****************************************************/
-	
-	/**
-	 * Set the world of a Plant to world.
-	 * 
-	 * @param	world
-	 * 				The world to which the Plant must be set.
-	 * @effect	| setWorld(world)
-	 * @effect	| world.addAsPlant(this)
-	 * @throws	IllegalArgumentException
-	 * 				| ( ! canHaveAsWorld(world) ) || ( ! world.canHaveAsGameObject(this) )
-	 */
-	@Override
-	public void setWorldTo(World world) throws IllegalArgumentException{
-		
-		if(!this.canHaveAsWorld(world))
-			throw new IllegalArgumentException("This plant cannot have given world as world!");
-		if(!world.canHaveAsGameObject(this))
-			throw new IllegalArgumentException("Given world cannot have this plant as plant!");
-		
-		setWorld(world);
-		world.addAsPlant(this);
-	}
-	
-	/**
-	 * Unset the world of a Plant.
-	 * 
-	 * @effect	| if ( this.hasWorld() )
-	 * 			| 	then this.getWorld().removeAsPlant(this)
-	 * @effect	| if ( this.hasWorld() )
-	 * 			|	then this.setWorld(null)
-	 */
-	@Override
-	protected void unsetWorld() {
-		if(this.hasWorld()){
-			this.getWorld().removeAsPlant(this);
-			this.setWorld(null);
-		}
-	}
 
 	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
-	 * Initiate a new periodic movement, if needed, and adjust the Plant's horizontal position for the given time interval.
+	 * Initiate a new periodic movement, if needed, and update the Plant's horizontal position for the given time
+	 * interval.
 	 * 
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
@@ -185,7 +145,7 @@ public class Plant extends GameObject {
 		// Initiate periodic movement
 		if (this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
 			
-			this.periodMovement();
+			this.periodicMovement();
 			
 			this.getTimer().setSinceLastPeriod(0);
 		}
@@ -195,40 +155,15 @@ public class Plant extends GameObject {
 	}
 	
 	/**
-	 * Make a Plant change direction.
-	 * 
-	 * @effect	| if (this.getOrientation() == Orientation.RIGHT)
-	 * 			|	then this.endMove(Orientation.RIGHT)
-	 * 			| else
-	 * 			|	this.endMove(Orientation.LEFT)
-	 * @effect	| if (this.getOrientation() == Orientation.RIGHT)
-	 * 			|	then this.startMove(Orientation.LEFT)
-	 * 			| else
-	 * 			|	this.startMove(Orientation.RIGHT)
-	 */
-	public void changeDirection(){
-		
-		if (this.getOrientation() == Orientation.RIGHT){
-			this.endMove(Orientation.RIGHT);
-			this.startMove(Orientation.LEFT);
-		}
-		else {
-			this.endMove(Orientation.LEFT);
-			this.startMove(Orientation.RIGHT);
-		}
-		
-	}
-	
-	/**
 	 * Start the periodic movement of a Plant.
 	 * 
 	 * @effect	changeDirection()
 	 */
-	public void periodMovement(){
-		
+	public void periodicMovement(){
 		this.changeDirection();
-		
 	}
+	
+	/****************************************************** COLLISION **************************************************/
 	
 	/**
 	 * Process the horizontal collision of a Plant.
@@ -239,21 +174,31 @@ public class Plant extends GameObject {
 	 */
 	@Override
 	protected void processHorizontalCollision() {		
-		
 		this.changeDirection();
-		
 	}
 	
-	/****************************************************** COLLISION **************************************************/
+	/**
+	 * Return all impassable Game objects for a Plant.
+	 * 
+	 * @return	A Hashset that contains all Mazubs and Plants in the Plant's world.
+	 */
+	@Override
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
+		return allImpassableGameObjects;
+	}
+	
+	/******************************************************* OVERLAP **************************************************/
 
 	/**
 	 * Process an overlap of a Plant with a Mazub.
 	 * 
-	 * @param	alien
-	 * 				The Mazub with whom the Plant overlaps.
+	 * @param	mazub
+	 * 				The Mazub with whom this Plant overlaps.
 	 */
 	@Override
-	public void processMazubOverlap(Mazub alien) {
+	public void processMazubOverlap(Mazub mazub) {
 		
 	}
 
@@ -261,7 +206,7 @@ public class Plant extends GameObject {
 	 * Process an overlap of a Plant with another Plant.
 	 * 
 	 * @param	plant
-	 * 				The other plant with which this Plant overlaps.
+	 * 				The other Plant with which this Plant overlaps.
 	 */
 	@Override
 	public void processPlantOverlap(Plant plant) {
@@ -289,17 +234,5 @@ public class Plant extends GameObject {
 	public void processSlimeOverlap(Slime slime) {
 
 	}
-	
-	/**
-	 * Get all impassable GameObjects for a Plant.
-	 * 
-	 * @return	A Hashset that contains all Mazubs and Plants in the Plant's world.
-	 */
-	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
-		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
-		return allImpassableGameObjects;
-	}
-	
+		
 }
