@@ -325,6 +325,7 @@ public class Shark extends GameObject{
 		if(!alien.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
+			this.setImmune(true);
 		}
 	}
 	
@@ -333,6 +334,7 @@ public class Shark extends GameObject{
 		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
+			this.setImmune(true);
 		}
 	}
 	

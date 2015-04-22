@@ -525,7 +525,7 @@ public class Mazub extends GameObject{
 
 	@Override
 	public void doMove(double dt) {	
-		
+
 		/* Horizontal */
 		this.updatePositionX(dt);
 		this.updateVelocityX(dt);		
@@ -593,7 +593,7 @@ public class Mazub extends GameObject{
 	protected void processPlantOverlap(Plant plant){
 		if(!plant.isKilled() && !this.isFullHitPoints()){
 			this.increaseNbHitPoints(50);
-			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
+			// plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
 	

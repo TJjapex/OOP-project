@@ -157,7 +157,7 @@ public class Plant extends GameObject {
 	
 	@Override
 	public void processMazubOverlap(Mazub alien) {
-
+		 this.takeDamage(1);
 	}
 
 	@Override

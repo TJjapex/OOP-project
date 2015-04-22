@@ -287,6 +287,7 @@ public class Slime extends GameObject {
 		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
+			this.setImmune(true);
 		}
 	}	
 	
@@ -306,6 +307,7 @@ public class Slime extends GameObject {
 		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
 			this.takeDamage(50);
 			this.getTimer().setSinceEnemyCollision(0);
+			this.setImmune(true);
 		}
 	}
 	
