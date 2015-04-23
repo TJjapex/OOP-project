@@ -534,22 +534,22 @@ public class World {
 		return this.canAddGameObject() && gameObject != null;
 	}
 	
-	public boolean canHaveAsMazub(Mazub mazub){
-		return this.canHaveAsGameObject(mazub);
-	}
-	
-	public boolean canHaveAsShark(Shark shark){
-		return this.canHaveAsGameObject(shark);
-	}
-	
-	public boolean canHaveAsSlime(Slime slime){
-		return this.canHaveAsGameObject(slime);
-	}
-	
-	public boolean canHaveAsPlant(Plant plant){
-		return this.canHaveAsGameObject(plant);
-	}
-	
+//	public boolean canHaveAsMazub(Mazub mazub){
+//		return this.canHaveAsGameObject(mazub);
+//	}
+//	
+//	public boolean canHaveAsShark(Shark shark){
+//		return this.canHaveAsGameObject(shark);
+//	}
+//	
+//	public boolean canHaveAsSlime(Slime slime){
+//		return this.canHaveAsGameObject(slime);
+//	}
+//	
+//	public boolean canHaveAsPlant(Plant plant){
+//		return this.canHaveAsGameObject(plant);
+//	}
+//	
 	public boolean hasProperGameObjects(){
 		if(getNbGameObjects() > 100){
 			return false;
@@ -570,26 +570,14 @@ public class World {
 //		return false;
 //	}
 	
-	/**
-	 * Sets the given alien as the player's character in the given world.
-	 * 
-	 * @param world
-	 *            The world for which to set the player's character.
-	 * @param alien
-	 *            The alien to be set as the player's character.
-	 */
-	void addAsMazub(Mazub alien) throws IllegalStateException{
-//		
-//		if (this.hasStarted){
-//			throw new IllegalStateException("World already started!");
-//		}
-		assert canHaveAsMazub(alien);
-		// assert slime.canHaveAsWorld(this); met deze assert werkt het niet omdat die checkt of world null is (beetje zoals die TA zei)
-		assert alien.getWorld() == this;
-		
-		mazubs.add(alien);
-		
-	}
+//	/**
+//	 * Sets the given alien as the player's character in the given world.
+//	 * 
+//	 * @param world
+//	 *            The world for which to set the player's character.
+//	 * @param alien
+//	 *            The alien to be set as the player's character.
+//	 */
 	
 	public Mazub getMazub(){
 		if(this.getNbMazubs() == 1){
@@ -597,43 +585,39 @@ public class World {
 		}else{
 			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
 		}
-	}
-	
-	void addAsPlant(Plant plant) throws IllegalStateException{
-		assert canHaveAsPlant(plant);		
-		assert plant.getWorld() == this;
-		
-		plants.add(plant);	
-		
-	}
-	
-	void addAsSlime(Slime slime) throws IllegalStateException, IllegalArgumentException{;
-		assert canHaveAsSlime(slime);
-		// assert slime.canHaveAsWorld(this); met deze assert werkt het niet omdat die checkt of world null is (beetje zoals die TA zei)
-		assert slime.getWorld() == this;
-		
-		slimes.add(slime);	
-		
-	}
-	
-	void addAsShark(Shark shark) throws IllegalStateException{
-		assert canHaveAsShark(shark);
-		// assert slime.canHaveAsWorld(this); met deze assert werkt het niet omdat die checkt of world null is (beetje zoals die TA zei)
-		assert shark.getWorld() == this;
-		
-		sharks.add(shark);	
-	
-	}
-	
-	
+	}	
 	
 	
 	public void addAsGameObject(GameObject gameObject){
-		// TODO Auto-generated method stub
+		assert canHaveAsGameObject(gameObject);
+		assert gameObject.getWorld() == this;
+		
+		if (gameObject instanceof Mazub)
+			mazubs.add((Mazub) gameObject);
+		else if (gameObject instanceof Shark)
+			sharks.add((Shark) gameObject);	
+		else if (gameObject instanceof Slime)
+			slimes.add((Slime) gameObject);
+		else if (gameObject instanceof Plant)
+			plants.add((Plant) gameObject);
 	}
 	
 	public void removeAsGameObject(GameObject gameObject){
-		// TODO Auto-generated method stub
+		assert gameObject != null && !gameObject.hasWorld();
+		
+		if (gameObject instanceof Mazub){
+			assert hasAsMazub((Mazub) gameObject);
+			mazubs.remove((Mazub) gameObject);
+		}else if (gameObject instanceof Shark){
+			assert hasAsShark((Shark) gameObject);
+			sharks.remove((Shark) gameObject);	
+		}else if (gameObject instanceof Slime){
+			assert hasAsSlime((Slime) gameObject);
+			slimes.remove((Slime) gameObject);
+		}else if (gameObject instanceof Plant){
+			assert hasAsPlant((Plant) gameObject);
+			plants.remove((Plant) gameObject);
+		}
 	}
 	
 	
@@ -720,47 +704,6 @@ public class World {
 	
 	public int getNbSlimes(){
 		return this.getAllSlimes().size();
-	}
-
-	// removers
-	public void removeAsMazub(Mazub mazub) {
-		assert mazub != null && !mazub.hasWorld();
-		assert hasAsMazub(mazub);
-		
-		mazubs.remove(mazub);
-	}
-	
-	public void removeAsPlant(Plant plant) {
-		assert plant != null && !plant.hasWorld();
-		assert hasAsPlant(plant);
-		
-		plants.remove(plant);
-	}
-	
-	public void removeAsShark(Shark shark) {
-		assert shark != null && !shark.hasWorld();
-		assert hasAsShark(shark);
-		
-		sharks.remove(shark);
-	}
-	
-	public void removeAsSlime(Slime slime) {
-		assert slime != null && !slime.hasWorld();
-		assert hasAsSlime(slime);
-		
-		slimes.remove(slime);
-	}
-	
-	
-	
-	// Niet meer nodig dnek ik
-	public void removeGameObject(GameObject gameObject){
-		
-		// Ugly & tricky maar werkt... of isinstance gebruiken... of aparte methods voor elk type instance
-		mazubs.remove(gameObject);
-		plants.remove(gameObject);
-		sharks.remove(gameObject);
-		slimes.remove(gameObject);
 	}
 	
 	// Vars

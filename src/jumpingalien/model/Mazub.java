@@ -202,25 +202,7 @@ public class Mazub extends GameObject{
 	}
 	
 	/********************************************** WORLD RELATION ********************************************/
-	@Override
-	public void setWorldTo(World world){
-		if(!this.canHaveAsWorld(world))
-			throw new IllegalArgumentException("This mazub cannot have given world as world!");
-		if(!world.canHaveAsGameObject(this))
-			throw new IllegalArgumentException("Given world cannot have this mazub as mazub!");
-		
-		setWorld(world);
-		world.addAsMazub(this);
-	}
-	
-	@Override
-	protected void unsetWorld() {
-		if(this.hasWorld()){
-			World formerWorld = this.getWorld();
-			this.setWorld(null);
-			formerWorld.removeAsMazub(this);
-		}
-	}
+
 	/************************************************* HELPER CLASSES *****************************************/
 	
 	/**

@@ -150,14 +150,15 @@ public abstract class GameObject {
 			throw new IllegalArgumentException("Given world cannot have this plant as plant!");
 		
 		setWorld(world);
-		if (this instanceof Mazub)
-			world.addAsMazub( (Mazub) this);
-		else if (this instanceof Shark)
-			world.addAsShark( (Shark) this);
-		else if (this instanceof Slime)
-			world.addAsSlime( (Slime) this);
-		else if (this instanceof Plant)
-			world.addAsPlant( (Plant) this);	// beter implementeren als addAsGameObject in World class?
+		world.addAsGameObject(this);
+//		if (this instanceof Mazub)
+//			world.addAsMazub( (Mazub) this);
+//		else if (this instanceof Shark)
+//			world.addAsShark( (Shark) this);
+//		else if (this instanceof Slime)
+//			world.addAsSlime( (Slime) this);
+//		else if (this instanceof Plant)
+//			world.addAsPlant( (Plant) this);	// beter implementeren als addAsGameObject in World class?
 	}
 	
 	/**
@@ -170,8 +171,9 @@ public abstract class GameObject {
 	 */
 	protected void unsetWorld() {
 		if(this.hasWorld()){
-			this.getWorld().removeAsGameObject(this);
+			World formerWorld = this.getWorld();
 			this.setWorld(null);
+			formerWorld.removeAsGameObject(this);
 		}
 	}
 
