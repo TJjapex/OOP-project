@@ -29,6 +29,14 @@ public abstract class GameObject {
 	/************************************************** GENERAL ***********************************************/
 	
 	/**
+	 * Constant reflecting the duration that an object should be immune after losing hit-points due to contact with an Enemy
+	 * 
+	 * @return	
+	 * 			| result == -10.0
+	 */
+	private static final double IMMUNE_TIME = 0.6;
+
+	/**
 	 * Constant reflecting the vertical acceleration for game objects.
 	 * 
 	 * @return	The vertical acceleration of GameObjects is equal to -10.0 m/s^2.
@@ -182,7 +190,7 @@ public abstract class GameObject {
 	
 	// Invoked to remove object after 0.6s
 	void kill(){
-		this.setNbHitPoints(0);;
+		this.setNbHitPoints(0);
 	}
 	
 	public boolean isKilled(){
@@ -191,8 +199,7 @@ public abstract class GameObject {
 	
 	// Will remove object from world
 	protected void terminate(){
-		this.getWorld().removeGameObject(this);
-		this.setWorld(null);
+		this.unsetWorld();
 		
 		this.terminated = true;
 	}
@@ -1005,13 +1012,8 @@ public abstract class GameObject {
 			return; // Zo gewoon return doen is nie echt proper
 		}
 		
-		// Check if still alive...
-		if (this.getNbHitPoints() == 0){
-			this.kill();
-		}
-		
 		// Check last enemy collision and reset immunity status if needed
-		if (this.getTimer().getSinceEnemyCollision() > 0.6 && this.isImmune()){
+		if (this.isImmune() && this.getTimer().getSinceEnemyCollision() > IMMUNE_TIME ){
 			this.setImmune(false);
 		}
 		

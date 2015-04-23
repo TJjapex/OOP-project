@@ -67,8 +67,17 @@ import jumpingalien.model.helper.Terrain;
  */
 public class Mazub extends GameObject{
 		
+	private static final int PLANT_HP_INCREASE = 50;
+
+
+	private static final int SHARK_DAMAGE = 50;
+
+
 	/************************************************** GENERAL ***********************************************/	
 	
+	private static final int SLIME_DAMAGE = 50;
+
+
 	/**
 	 * Constant reflecting the maximal horizontal velocity for Mazubs when ducking.
 	 * 
@@ -592,7 +601,7 @@ public class Mazub extends GameObject{
 	@Override
 	protected void processPlantOverlap(Plant plant){
 		if(!plant.isKilled() && !this.isFullHitPoints()){
-			this.modifyNbHitPoints(50);
+			this.modifyNbHitPoints(PLANT_HP_INCREASE);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
 		}
 	}
@@ -600,18 +609,22 @@ public class Mazub extends GameObject{
 	@Override
 	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled()){
-			this.takeDamage(50);
-			this.getTimer().setSinceEnemyCollision(0);
-			this.setImmune(true);
+			if(!this.doesOverlapWith(shark, Orientation.BOTTOM)){
+				this.takeDamage(SHARK_DAMAGE);
+				this.setImmune(true);
+				this.getTimer().setSinceEnemyCollision(0);
+			}	
 		}
 	}
 	
 	@Override
 	protected void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled()){
-			this.takeDamage(50);
-			this.getTimer().setSinceEnemyCollision(0);
-			this.setImmune(true);
+			if(!this.doesOverlapWith(slime, Orientation.BOTTOM)){
+				this.takeDamage(SLIME_DAMAGE);
+				this.setImmune(true);
+				this.getTimer().setSinceEnemyCollision(0);
+			}			
 		}
 	}
 	
@@ -625,9 +638,9 @@ public class Mazub extends GameObject{
 				this.getRoundedPositionY(),
 				this.getRoundedPositionX() + this.getWidth(),
 				this.getRoundedPositionY() + this.getHeight())){
-
-		if((tile[0] == this.getWorld().getTargetTileX()) && (tile[1] == this.getWorld().getTargetTileY()))
-			return true;
+	
+			if((tile[0] == this.getWorld().getTargetTileX()) && (tile[1] == this.getWorld().getTargetTileY()))
+				return true;
 
 		}
 		

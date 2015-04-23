@@ -16,6 +16,10 @@ import jumpingalien.model.helper.Terrain;
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
+ * 
+ * 
+ * @invar 
+ * 		| getNbGameObjects() <= 100
  */
 
 public class World {

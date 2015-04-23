@@ -23,6 +23,10 @@ import jumpingalien.util.Util;
  */
 public class Shark extends GameObject{
 	
+	private static final int MAZUB_DAMAGE = 50;
+
+	private static final int SLIME_DAMAGE = 50;
+
 	/******************************************************* GENERAL ***************************************************/
 	
 	/**
@@ -561,8 +565,8 @@ public class Shark extends GameObject{
 	 */
 	@Override
 	public void processMazubOverlap(Mazub alien) {
-		if(!alien.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
-			this.takeDamage(50);
+		if(!alien.isKilled()){
+			this.takeDamage(MAZUB_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
 		}
@@ -577,8 +581,8 @@ public class Shark extends GameObject{
 	 */
 	@Override
 	public void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
-			this.takeDamage(50);
+		if(!slime.isKilled()){
+			this.takeDamage(SLIME_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
 		}

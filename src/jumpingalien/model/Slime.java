@@ -20,8 +20,12 @@ import jumpingalien.util.Sprite;
  */
 public class Slime extends GameObject {
 	
+	private static final int MAZUB_DAMAGE = 50;
+
 	/******************************************************* GENERAL ***************************************************/
 	
+	private static final int SHARK_DAMAGE = 50;
+
 	/**
 	 * Constant reflecting the minimal period time for a periodic movement of a Slime.
 	 * 
@@ -289,8 +293,11 @@ public class Slime extends GameObject {
 	 */
 	private void unsetSchool(){
 		if(this.hasSchool()){
-			this.getSchool().removeAsSlime(this);
-			this.setSchool(null);	
+//			this.getSchool().removeAsSlime(this);
+//			this.setSchool(null);	
+			School formerSchool = this.getSchool();
+			this.setSchool(null);
+			formerSchool.removeAsSlime(this);
 		}
 	}
 	
@@ -447,8 +454,8 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	protected void processMazubOverlap(Mazub mazub){
-		if(!mazub.isKilled() && getTimer().getSinceEnemyCollision() > 0.6){
-			this.takeDamage(50);
+		if(!mazub.isKilled()){
+			this.takeDamage(MAZUB_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
 		}
@@ -481,8 +488,8 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
-		if(!shark.isKilled() && this.getTimer().getSinceEnemyCollision() > 0.6){
-			this.takeDamage(50);
+		if(!shark.isKilled()){
+			this.takeDamage(SHARK_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
 		}
@@ -509,9 +516,7 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	protected void terminate(){
-		this.getWorld().removeGameObject(this);
-		this.setWorld(null); // TODO: vervangen door method World removeAs?
-
+		this.unsetWorld();
 		this.unsetSchool();
 		
 		this.terminated = true;
