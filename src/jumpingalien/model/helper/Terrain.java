@@ -1,4 +1,5 @@
 package jumpingalien.model.helper;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -6,7 +7,7 @@ import java.util.List;
 import be.kuleuven.cs.som.annotate.Value;
 
 /**
- * An enumeration of directions. The direction can be left or right.
+ * An enumeration of Terrain types.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
@@ -21,7 +22,6 @@ public enum Terrain {
 	WATER	(2),
 	MAGMA	(3);
 	
-	
 	// Variables
 	private final int id;
 	
@@ -29,7 +29,6 @@ public enum Terrain {
 	private Terrain(int id) {
 		this.id = id;
 	}
-	
 	
 	// Getters
 	public int getId(){

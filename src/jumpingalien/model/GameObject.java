@@ -25,6 +25,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 // Superclass for Mazub, Shark, Slime, Plant
 
 public abstract class GameObject {
+	
 	/************************************************** GENERAL ***********************************************/
 	
 	/**
@@ -196,13 +197,19 @@ public abstract class GameObject {
 		this.terminated = true;
 	}
 	
+	/**
+	 * Check if a Game object is terminated.
+	 * 
+	 * @return	| result == ( this.terminated )
+	 */
 	public boolean isTerminated(){
 		return this.terminated;
 	}
 	
-	private boolean terminated = false;
-	
-	
+	/**
+	 * Variable registering the terminated status of a Game object.
+	 */
+	protected boolean terminated = false;
 	
 	/************************************************* HELPER CLASSES *****************************************/
 

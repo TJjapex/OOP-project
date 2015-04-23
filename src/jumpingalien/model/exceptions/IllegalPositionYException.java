@@ -11,6 +11,7 @@ public class IllegalPositionYException extends RuntimeException {
 
 	/**
 	 * Initialize this new illegal y position exception with the given y position.
+	 * 
 	 * @param 	positionY
 	 * 				The y position for this exception.
 	 * @post	The y position for this exception is set to the given y position.

@@ -157,7 +157,7 @@ public class Plant extends GameObject {
 	/**
 	 * Start the periodic movement of a Plant.
 	 * 
-	 * @effect	changeDirection()
+	 * @effect	| changeDirection()
 	 */
 	public void periodicMovement(){
 		this.changeDirection();

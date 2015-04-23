@@ -11,7 +11,6 @@ import java.util.Set;
  * 
  * @invar	| hasProperSlimes()
  */
-
 public class School {
 	
 	/***************************************************** CONSTRUCTOR *************************************************/

@@ -18,7 +18,6 @@ import jumpingalien.util.Sprite;
  * 
  * @invar	| hasProperSchool()
  */
-
 public class Slime extends GameObject {
 	
 	/******************************************************* GENERAL ***************************************************/
@@ -81,6 +80,7 @@ public class Slime extends GameObject {
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
 	 * 					sprites,nbHitPoints, maxNbHitPoints)
 	 * @effect	| setSchoolTo(school)
+	 * @effect	| setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
 	 * @effect	| startMove( this.getRandomOrientation() )
 	 * @effect 	| configureTerrain()
 	 * @throws 	IllegalPositionXException
@@ -104,6 +104,7 @@ public class Slime extends GameObject {
 
 		this.setSchoolTo(school);
 		
+		this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
 		this.startMove(this.getRandomOrientation());
 		
 		this.configureTerrain();
@@ -135,9 +136,36 @@ public class Slime extends GameObject {
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
 		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100, 100);
 	}
+	
+	/******************************************************** TIMER ****************************************************/
+	
+	/**
+	 * Return the current period time of a Slime.
+	 * 
+	 * @return	A double representing the current period time of a Slime.
+	 */
+	public double getCurrentPeriodTime(){
+		return this.currentPeriodTime;
+	}
+	
+	/**
+	 * Set the current period time of a Slime.
+	 * 
+	 * @param 	newPeriodTime
+	 * 				The new period time of a Slime.
+	 * @post	| new.getCurrentPeriodTime() == newPeriodTime
+	 */
+	private void setCurrentPeriodTime( double newPeriodTime ){
+		this.currentPeriodTime = newPeriodTime;
+	}
+	
+	/**
+	 * Variable registering the current random period time of a Slime.
+	 */
+	private double currentPeriodTime;
 	
 	/******************************************************* TERRAIN ***************************************************/
 	
@@ -333,10 +361,11 @@ public class Slime extends GameObject {
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
-	 * 			|	then this.periodMovement();
+	 * 			|	then this.periodicMovement();
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.getTimer().setSinceLastPeriod(0)
-	 * @effect 	TODO: hoe dit in commentaar schrijven?
+	 * @effect 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
 	 * @effect	| updatePositionX(dt)
 	 * @effect	| updateVelocityX(dt)
 	 * @effect	| updatePositionY(dt)
@@ -350,32 +379,24 @@ public class Slime extends GameObject {
 		if( this.doesCollide())
 			throw new IllegalStateException(" Collision before movement! ");	
 
-		// Initiate periodic movement
+		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
 			this.periodicMovement();
 			
 			this.getTimer().setSinceLastPeriod(0);
-			currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
+			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
 		}
 		
-		// Update horizontal position
+		/* Horizontal */
 		this.updatePositionX(dt);
-		
-		// Update horizontal velocity
 		this.updateVelocityX(dt);
 
-		// Update vertical position
+		/* Vertical */
 		this.updatePositionY(dt);
+		this.updateVelocityY(dt);	
 		
-		// Update vertical velocity
-		this.updateVelocityY(dt);			
 	}
-	
-	/**
-	 * Variable registering the current random period time.
-	 */
-	private double currentPeriodTime = timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME);
 	
 	/**
 	 * Start the periodic movement of a Plant.
@@ -395,7 +416,7 @@ public class Slime extends GameObject {
 	 * 
 	 * @note	As an optional implementation, a Slime changes his direction when he collides.
 	 * 
-	 * @effect	changeDirection()
+	 * @effect	| changeDirection()
 	 */
 	@Override
 	protected void processHorizontalCollision() {		
@@ -495,20 +516,5 @@ public class Slime extends GameObject {
 		
 		this.terminated = true;
 	}
-	
-	/**
-	 * Check if a Slime is terminated.
-	 * 
-	 * @return	| result == ( this.terminated )
-	 */
-	@Override
-	public boolean isTerminated(){
-		return this.terminated;
-	}
-	
-	/**
-	 * Variable registering the terminated status of a Slime.
-	 */
-	private boolean terminated = false;
 	
 }

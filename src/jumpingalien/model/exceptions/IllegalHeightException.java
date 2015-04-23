@@ -9,11 +9,11 @@ import be.kuleuven.cs.som.annotate.Immutable;
  * @author Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
  */
-
 public class IllegalHeightException extends RuntimeException{
 
 	/**
 	 * Initialize this new illegal height exception with the given height.
+	 * 
 	 * @param 	height
 	 * 				The height value for this exception.
 	 * @post	The height value for this exception is set to the given height.
@@ -43,6 +43,5 @@ public class IllegalHeightException extends RuntimeException{
 	 * number for classes that implement the interface Serializable.
 	 */
 	private static final long serialVersionUID = -167299129520942749L;
-
 
 }
