@@ -8,6 +8,7 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Terrain;
+import jumpingalien.model.helper.TerrainProperties;
 import jumpingalien.util.Sprite;
 
 /**
@@ -151,7 +152,7 @@ public class Plant extends GameObject {
 		}
 		
 		// Update horizontal position
-		this.updatePositionX(dt);
+	//	this.updatePositionX(dt);
 	}
 	
 	/**

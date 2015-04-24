@@ -8,6 +8,7 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Terrain;
+import jumpingalien.model.helper.TerrainProperties;
 import jumpingalien.util.Sprite;
 
 /**
@@ -437,6 +438,8 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
+		assert hasProperWorld();
+		
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
 		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
 		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());

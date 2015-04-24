@@ -12,6 +12,8 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
+import jumpingalien.model.helper.TerrainInteraction;
+import jumpingalien.model.helper.TerrainProperties;
 import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
@@ -55,8 +57,6 @@ public abstract class GameObject {
 		
 		this.positionX = pixelLeftX;
 		this.positionY = pixelBottomY;
-//		setPositionX(pixelLeftX);
-//		setPositionY(pixelBottomY);
 
 		this.velocityXInit = velocityXInit;
 		this.velocityYInit = velocityYInit;
@@ -202,7 +202,6 @@ public abstract class GameObject {
 	// Will remove object from world
 	protected void terminate(){
 		this.unsetWorld();
-		
 		this.terminated = true;
 	}
 	
@@ -530,7 +529,8 @@ public abstract class GameObject {
 		if(! hasProperWorld())
 			throw new IllegalStateException("GameObject not in proper world!");
 		
-		return this.doesOverlap(Orientation.BOTTOM);
+		return doesInteractWithTerrain(TerrainInteraction.STAND_ON, Orientation.BOTTOM) || 
+			   doesInteractWithGameObjects(TerrainInteraction.STAND_ON, Orientation.BOTTOM);
 	}
 	
 
@@ -1220,59 +1220,20 @@ public abstract class GameObject {
 	
 	/************************************************************ COLLISION *************************************************************/
 	
+	public boolean doesCollide(){
+		return doesCollide(Orientation.ALL);
+	}
+	
 	/**
 	 * Checks if this object collides with impassable terrain or any other impassable object.
 	 * 
 	 * @return
 	 * 		True if and only if this object collides with impassable terrain or an impassable object.
 	 */
-	public boolean doesCollide(){
-		return doesCollideWithTerrain() || doesCollideWithGameObjects();
-	}
-	
-	/**
-	 * Checks if this object collides in the given direction with impassable terrain.
-	 * 
-	 * @return
-	 * 		True if and only if this object collides with impassable terrain.
-	 */
-	public boolean doesCollideWithTerrain(){
-		World world = this.getWorld();
-		
-		// Check collision with tiles
-		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
-													this.getRoundedPositionY(),
-			 										this.getRoundedPositionX() + this.getWidth(), 
-													this.getRoundedPositionY() + this.getHeight());
+	public boolean doesCollide(Orientation orientation){
+		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
+				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);	}
 
-		for(int[] tile : tiles){
-			// Check if that tile is passable 
-			// and if the given object collides with a tile...
-			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
-			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength())){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Checks if this object collides in the given direction with any other impassable game object.
-	 * 
-	 * @return
-	 * 		True if and only if this object collides with an impassable object.
-	 */
-	public boolean doesCollideWithGameObjects(){
-		for(GameObject object : this.getAllImpassableGameObjects()){
-			if(object != this && this.doesCollideWith(object)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * Checks if this object collides with a given gameobject.
 	 * 
@@ -1281,8 +1242,8 @@ public abstract class GameObject {
 	 * @return
 	 * 		True if and only if this object and the given gameobject collides.
 	 */
-	public boolean doesCollideWith(GameObject other){
-		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+	public boolean doesCollideWith(GameObject other, Orientation orientation){
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), orientation);
 	}
 	
 	/**
@@ -1298,16 +1259,10 @@ public abstract class GameObject {
 	 * 		The height of the region
 	 * @return
 	 */
-	public boolean doesCollideWith(int x, int y, int width, int height){
-		
-		return ! ( // Dus geeft true als elke deelexpressie false geeft
-					(this.getRoundedPositionX() + ( this.getWidth() - 2) <  x) 
-				 || (x + (width - 2) < this.getRoundedPositionX())
-				 || ( this.getRoundedPositionY() + (this.getHeight() - 2) < y) // top
-				 || (y + (height - 2) < this.getRoundedPositionY() ) //bottom
-						
-				);
-		
+	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
+		return GameObject.doRegionsOverlap(
+				(this.getRoundedPositionX() + 1) , (this.getRoundedPositionY() + 1), (this.getWidth() - 2), (this.getHeight() - 2), 
+				x, y, width, height, orientation);		
 	}
 	
 	/************************************************************ OVERLAP **********************************************************/
@@ -1317,43 +1272,9 @@ public abstract class GameObject {
 	}
 	
 	public boolean doesOverlap(Orientation orientation){
-		return doesOverlapWithTerrain(orientation) || doesOverlapWithGameObjects(orientation);
-	}	
-	
-	public boolean doesOverlapWithTerrain(Orientation orientation){
-		World world = this.getWorld();
-		
-		// Check overlap with tiles
-		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
-													this.getRoundedPositionY(),
-			 										this.getRoundedPositionX() + this.getWidth(), 
-													this.getRoundedPositionY() + this.getHeight());
-
-		for(int[] tile : tiles){
-			// Check if that tile is passable 
-			// and if the given object collides with a tile...
-			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
-			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				if( this.doesOverlapWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
-					return true;
-				}
-			}
-		}
-		
-		return false;
+		return doesInteractWithTerrain(TerrainInteraction.OVERLAP, orientation) || 
+			   doesInteractWithGameObjects(TerrainInteraction.OVERLAP, orientation);
 	}
-	
-	public boolean doesOverlapWithGameObjects(Orientation orientation){
-		// Check overlap with gameObjects
-		for(GameObject object : this.getAllImpassableGameObjects()){
-			if(object != this && doesOverlapWith(object, orientation)){
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
 	
 	/**
 	 * Checks if this object overlaps with the given gameobject
@@ -1369,18 +1290,6 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this object overlaps with the given region.
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @return
-	 */
-	public boolean doesOverlapWith(int x, int y, int width, int height){
-		return this.doesOverlapWith(x,y,width,height,Orientation.ALL);
-	}
-	
-	/**
 	 * Checks if this object overlaps in the given direction with the given object.
 	 * @param x
 	 * @param y
@@ -1390,57 +1299,7 @@ public abstract class GameObject {
 	 * @return
 	 */
 	public boolean doesOverlapWith(int x, int y, int width, int height, Orientation orientation){
-		// return this.doesCollideWith(x+1, y+1, width-2, height -2) zou ook moeten werken (rekenkundig hetzelfde), minder redundant. Niet getest. TODO
-		
-		switch (orientation) {
-		
-			case RIGHT: 
-				
-				return  this.getPositionX() + this.getWidth() > x &&
-						this.getPositionX() + this.getWidth() < x + width &&
-						this.getYOverlap(y, height);
-				
-			case LEFT:
-				
-				return  this.getPositionX() > x &&
-						this.getPositionX() < x + width &&
-						this.getYOverlap(y, height);
-				
-			case TOP:
-		
-				return 	this.getPositionY() + this.getHeight() > y && 
-						this.getPositionY() + this.getHeight() < y + height &&
-						this.getXOverlap(x, width);
-								
-			case BOTTOM:
- 
-				return 	this.getPositionY() > y &&
-						this.getPositionY() < y + height &&
-						this.getXOverlap(x, width);
-			
-			default:
-				return ! ( // Dus geeft true als elke deelexpressie false geeft
-						   (this.getRoundedPositionX() + ( this.getWidth() - 1) <  x) 
-						|| (x + (width - 1) < this.getRoundedPositionX())
-						|| ( this.getRoundedPositionY() + (this.getHeight() - 1) < y) // top
-						|| (y + (height - 1) < this.getRoundedPositionY() ) //bottom
-					
-					);
-		}
-	}
-	
-	public boolean getXOverlap(int x, int width){
-		
-		return  ( (this.getPositionX() + 1 > x) && (this.getPositionX() + 1 < x + width) ) ||
-				( (this.getPositionX() + (this.getWidth() - 1) - 1 > x) && (this.getPositionX() + (this.getWidth() - 1) - 1 < x + width));
-		
-	}
-	
-	public boolean getYOverlap(int y, int height){
-		
-		return	( (this.getPositionY() + 1 > y) && (this.getPositionY() + 1 < y + height) ) ||
-				( (this.getPositionY() + (this.getHeight() - 1) - 1 > y) && (this.getPositionY() + (this.getHeight() - 1) - 1 < y + height));
-		
+		return GameObject.doRegionsOverlap(getRoundedPositionX(), getRoundedPositionY(), getWidth(), getHeight(), x, y, width, height, orientation);
 	}
 	
 	/** 
@@ -1457,12 +1316,127 @@ public abstract class GameObject {
 													this.getRoundedPositionY() + this.getHeight()  );
 		
 		for(int[] tile : tiles){
-			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength())){
+			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), Orientation.ALL)){
 				overlappingTerrainTypes.add(world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])));	
 			}
 		}
 		
 		return overlappingTerrainTypes;
+	}
+	
+	/******************************************* OVERLAPPING REGION ******************************************/
+	
+	/** Checks if the region 1 overlaps with the region 2 in the given direction*/
+	public static boolean doRegionsOverlap(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2, Orientation orientation) 
+			throws IllegalArgumentException{
+		switch (orientation) {
+			case RIGHT: 
+				return  x1 + width1 > x2 &&
+						x1 + width1 <= x2 + width2 &&
+						GameObject.getYOverlap(y1, height1, y2, height2);
+			case LEFT:
+				return  x1 >= x2 &&
+						x1 < x2 + width2 &&
+						GameObject.getYOverlap(y1, height1, y2, height2);
+//			case TOP:
+//		
+//				return 	y1 + height1 > y2 && 
+//						y1 + height1 < y2 + height2 &&
+//						GameObject.getXOverlap(x1 + 1, width1 - 2, x2, width2);
+//								
+			case BOTTOM:
+				return 	y1 >= y2 &&
+						y1 < y2 + height2 &&
+						GameObject.getXOverlap(x1, width1, x2, width2);
+			case ALL:
+				return ! ( // Dus geeft true als elke deelexpressie false geeft
+						   (x1 + (width1 - 1) < x2) 
+						|| (x2 + (width2 - 1) < x1)
+						|| (y1 + (height1 - 1) < y2) // top
+						|| (y2 + (height2 - 1) < y1) //bottom
+					
+				);
+			default:
+				throw new IllegalArgumentException("Given orientation not implemented!");
+		}
+	}
+	
+	public static boolean getXOverlap(int x1, int width1, int x2, int width2){
+		return	x1 < x2 + width2 && x1 + width1 > x2;
+	}
+	
+	public static boolean getYOverlap(int y1, int height1, int y2, int height2){
+		return	y1 < y2 + height2 && y1 + height1 > y2;
+	}
+	
+	
+	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){
+		assert hasProperWorld();
+		World world = this.getWorld();
+		
+		// Check overlap with tiles
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
+													this.getRoundedPositionY(),
+			 										this.getRoundedPositionX() + this.getWidth(), 
+													this.getRoundedPositionY() + this.getHeight());
+
+		for(int[] tile : tiles){
+			// Check if that tile is passable 
+			// and if the given object collides with a tile...
+			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
+			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
+				switch(interaction){
+					case COLLIDE:
+						if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation))
+							return true;
+					break;
+					case OVERLAP:
+						if( this.doesOverlapWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation))
+							return true;
+					break;
+					case STAND_ON:
+						if(GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(), getWidth() - 2, getHeight(),
+								world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation))
+								return true;
+					break;
+				}
+					
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Checks if this object collides in the given direction with any other impassable game object.
+	 * 
+	 * @return
+	 * 		True if and only if this object collides with an impassable object.
+	 */
+	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
+		assert hasProperWorld();
+		
+		for(GameObject object : this.getAllImpassableGameObjects()){
+			if(object != this){
+				switch(interaction){
+					case COLLIDE:
+						if(this.doesCollideWith(object, orientation))
+							return true;
+					break;
+					case OVERLAP:
+						if(this.doesOverlapWith(object, orientation))
+							return true;
+					break;
+					case STAND_ON:
+						assert orientation == Orientation.BOTTOM;
+						if(GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(), getWidth() - 2, getHeight(),
+								object.getRoundedPositionX(), object.getRoundedPositionY(), object.getWidth(), object.getHeight(), orientation))
+								return true;
+					break;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/****************************************************** OVERLAP PROCESSING ****************************************************/

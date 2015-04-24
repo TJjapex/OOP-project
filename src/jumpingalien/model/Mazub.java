@@ -15,6 +15,7 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
+import jumpingalien.model.helper.TerrainProperties;
 
 // All aspects shall be specified both formally and informally.
 
@@ -582,6 +583,7 @@ public class Mazub extends GameObject{
 	
 	@Override
 	protected void processPlantOverlap(Plant plant){
+		System.out.println("plant overlap");
 		if(!plant.isKilled() && !this.isFullHitPoints()){
 			this.modifyNbHitPoints(PLANT_HP_INCREASE);
 			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?

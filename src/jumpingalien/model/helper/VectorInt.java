@@ -1,4 +1,4 @@
-package jumpingalien.model;
+package jumpingalien.model.helper;
 
 public class VectorInt {
 	public VectorInt(int x, int y){

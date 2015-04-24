@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import jumpingalien.model.helper.Terrain;
+import jumpingalien.model.helper.VectorInt;
 
 // All aspects shall ONLY be specified in a formal way.
 
@@ -691,19 +692,19 @@ public class World {
 	}
 	
 	public int getNbMazubs(){
-		return this.getAllMazubs().size();
+		return this.mazubs.size();
 	}
 	
 	public int getNbPlants(){
-		return this.getAllPlants().size();
+		return this.plants.size();
 	}	
 		
 	public int getNbSharks(){
-		return this.getAllSharks().size();
+		return this.sharks.size();
 	}
 	
 	public int getNbSlimes(){
-		return this.getAllSlimes().size();
+		return this.slimes.size();
 	}
 	
 	// Vars
