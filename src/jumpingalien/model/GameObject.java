@@ -151,14 +151,6 @@ public abstract class GameObject {
 		
 		setWorld(world);
 		world.addAsGameObject(this);
-//		if (this instanceof Mazub)
-//			world.addAsMazub( (Mazub) this);
-//		else if (this instanceof Shark)
-//			world.addAsShark( (Shark) this);
-//		else if (this instanceof Slime)
-//			world.addAsSlime( (Slime) this);
-//		else if (this instanceof Plant)
-//			world.addAsPlant( (Plant) this);	// beter implementeren als addAsGameObject in World class?
 	}
 	
 	/**
@@ -1220,19 +1212,15 @@ public abstract class GameObject {
 	
 	/************************************************************ COLLISION *************************************************************/
 	
-	public boolean doesCollide(){
-		return doesCollide(Orientation.ALL);
-	}
-	
 	/**
 	 * Checks if this object collides with impassable terrain or any other impassable object.
 	 * 
 	 * @return
 	 * 		True if and only if this object collides with impassable terrain or an impassable object.
 	 */
-	public boolean doesCollide(Orientation orientation){
-		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
-				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);	}
+	public boolean doesCollide(){
+		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, Orientation.ALL) || 
+				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, Orientation.ALL);	}
 
 	/**
 	 * Checks if this object collides with a given gameobject.
@@ -1242,8 +1230,8 @@ public abstract class GameObject {
 	 * @return
 	 * 		True if and only if this object and the given gameobject collides.
 	 */
-	public boolean doesCollideWith(GameObject other, Orientation orientation){
-		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), orientation);
+	public boolean doesCollideWith(GameObject other){
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
 	}
 	
 	/**
@@ -1259,10 +1247,10 @@ public abstract class GameObject {
 	 * 		The height of the region
 	 * @return
 	 */
-	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
+	public boolean doesCollideWith(int x, int y, int width, int height){
 		return GameObject.doRegionsOverlap(
-				(this.getRoundedPositionX() + 1) , (this.getRoundedPositionY() + 1), (this.getWidth() - 2), (this.getHeight() - 2), 
-				x, y, width, height, orientation);		
+				this.getRoundedPositionX() + 1 , this.getRoundedPositionY() + 1, this.getWidth() - 2, this.getHeight() - 2, 
+				x, y, width, height, Orientation.ALL);		
 	}
 	
 	/************************************************************ OVERLAP **********************************************************/
@@ -1316,7 +1304,7 @@ public abstract class GameObject {
 													this.getRoundedPositionY() + this.getHeight()  );
 		
 		for(int[] tile : tiles){
-			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), Orientation.ALL)){
+			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength())){
 				overlappingTerrainTypes.add(world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])));	
 			}
 		}
@@ -1338,12 +1326,10 @@ public abstract class GameObject {
 				return  x1 >= x2 &&
 						x1 < x2 + width2 &&
 						GameObject.getYOverlap(y1, height1, y2, height2);
-//			case TOP:
-//		
-//				return 	y1 + height1 > y2 && 
-//						y1 + height1 < y2 + height2 &&
-//						GameObject.getXOverlap(x1 + 1, width1 - 2, x2, width2);
-//								
+			case TOP:
+				return 	y1 + height1 > y2 && 
+						y1 + height1 <= y2 + height2 &&
+						GameObject.getXOverlap(x1, width1, x2, width2);				
 			case BOTTOM:
 				return 	y1 >= y2 &&
 						y1 < y2 + height2 &&
@@ -1382,12 +1368,12 @@ public abstract class GameObject {
 
 		for(int[] tile : tiles){
 			// Check if that tile is passable 
-			// and if the given object collides with a tile...
+			// and if the given object interacts with a tile
 			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
 			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
 				switch(interaction){
 					case COLLIDE:
-						if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation))
+						if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength()))
 							return true;
 					break;
 					case OVERLAP:
@@ -1415,24 +1401,25 @@ public abstract class GameObject {
 	 */
 	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld();
+		assert interaction != TerrainInteraction.COLLIDE || orientation == Orientation.ALL; 
 		
 		for(GameObject object : this.getAllImpassableGameObjects()){
 			if(object != this){
 				switch(interaction){
 					case COLLIDE:
-						if(this.doesCollideWith(object, orientation))
+						if(this.doesCollideWith(object))
 							return true;
-					break;
+						break;
 					case OVERLAP:
 						if(this.doesOverlapWith(object, orientation))
 							return true;
-					break;
+						break;
 					case STAND_ON:
 						assert orientation == Orientation.BOTTOM;
 						if(GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(), getWidth() - 2, getHeight(),
 								object.getRoundedPositionX(), object.getRoundedPositionY(), object.getWidth(), object.getHeight(), orientation))
 								return true;
-					break;
+						break;
 				}
 			}
 		}

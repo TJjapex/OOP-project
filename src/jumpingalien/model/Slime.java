@@ -383,10 +383,6 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	public void doMove(double dt) throws IllegalStateException{
-		
-		if( this.doesCollide())
-			throw new IllegalStateException(" Collision before movement! ");	
-
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			

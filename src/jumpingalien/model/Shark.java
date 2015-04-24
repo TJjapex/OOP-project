@@ -384,14 +384,7 @@ public class Shark extends GameObject{
 	 * 				| this.doesCollide()
 	 */
 	@Override
-	public void doMove(double dt) throws IllegalStateException{		
-		
-		// System.out.println("acc x"+this.getAccelerationX()+" y "+this.getAccelerationY());
-		// System.out.println("vel x"+this.getVelocityX() + " y "+this.getVelocityY());
-
-		if( this.doesCollide())
-			throw new IllegalStateException(" Collision before movement! ");	
-		
+	public void doMove(double dt){
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			

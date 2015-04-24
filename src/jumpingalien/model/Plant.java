@@ -145,14 +145,12 @@ public class Plant extends GameObject {
 
 		// Initiate periodic movement
 		if (this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
-			
 			this.periodicMovement();
-			
 			this.getTimer().setSinceLastPeriod(0);
 		}
 		
 		// Update horizontal position
-	//	this.updatePositionX(dt);
+		this.updatePositionX(dt);
 	}
 	
 	/**
