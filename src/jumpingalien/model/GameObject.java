@@ -24,33 +24,101 @@ import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
-// Superclass for Mazub, Shark, Slime, Plant
-
+/**
+ * A superclass for Game objects in the game world of Mazub.
+ * 
+ * @author Thomas Verelst, Hans Cauwenbergh
+ * 
+ * TODO: invars
+ * 
+ * @version 1.0
+ */
 public abstract class GameObject {
 	
-	/************************************************** GENERAL ***********************************************/
+	/******************************************************* GENERAL ***************************************************/
 	
 	/**
-	 * Constant reflecting the duration that an object should be immune after losing hit-points due to contact with an Enemy
+	 * Constant reflecting the duration that an object should be immune after losing hit points due to contact
+	 * with some other Game object.
 	 * 
-	 * @return	
-	 * 			| result == -10.0
+	 * @return	the duration that an object should be immune after losing hit points due to contact with some other
+	 *  		Game object is equal to 0.6s.
+	 * 			| result == 0.6
 	 */
 	private static final double IMMUNE_TIME = 0.6;
 
 	/**
-	 * Constant reflecting the vertical acceleration for game objects.
+	 * Constant reflecting the vertical acceleration for Game objects.
 	 * 
-	 * @return	The vertical acceleration of GameObjects is equal to -10.0 m/s^2.
+	 * @return	The vertical acceleration of Game objects is equal to -10.0 m/s^2.
 	 * 			| result == -10.0
 	 */
 	public static final double ACCELERATION_Y = -10.0;
 	
-	/************************************************ CONSTRUCTOR *********************************************/
+	/***************************************************** CONSTRUCTOR *************************************************/
 
+	/**
+	 * Constructor for the superclass Game object.
+	 * 
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Game object's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Game object's bottom left pixel.
+	 * @param 	velocityXInit
+	 * 				The initial horizontal velocity of a Game object.
+	 * @param 	velocityYInit
+	 * 				The initial vertical velocity of a Game object.
+	 * @param 	velocityXMax
+	 * 				The maximal horizontal velocity of a Game object.
+	 * @param 	accelerationXInit
+	 * 				The initial horizontal acceleration of a Game object.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Game object.
+	 * @param 	nbHitPoints
+	 * 				The number of hit points of a Game object.
+	 * @param 	maxNbHitPoints
+	 * 				The maximal number of hit points of a Game object.
+	 * @effect	Set a new Timer for a Game object.
+	 * 			| setTimer(new Timer())
+	 * @effect	Set a new Animation for a Game object.
+	 * 			| setAnimation(new Animation(this, sprites))
+	 * @post	The horizontal position is equal to pixelLeftX.
+	 * 			| new.getPositionX == pixelLeftX
+	 * @post	The vertical position is equal to pixelBottomY.
+	 * 			| new.getPositionY == pixelBottomY
+	 * @post	The initial horizontal velocity is equal to velocityXInit.
+	 * 			| new.velocityXInit == velocityXInit
+	 * @post	The initial vertical velocity is equal to velocityYInit.
+	 * 			| new.velocityYInit == velocityYInit
+	 * @effect	The maximal horizontal velocity is set to velocityXMax.
+	 * 			| setVelocityXMax(velocityXMax)
+	 * @post	The initial horizontal acceleration is equal to accelerationXInit.
+	 * 			| new.accelerationXInit == accelerationXInit
+	 * @effect	Set the initial Orientation to the right.
+	 * 			| setOrientation(Orientation.RIGHT)
+	 * @post	The maximal number of hit points is equal to maxNbHitPoints.
+	 * 			| new.maxNbHitPoints == maxNbHitPoints
+	 * @effect	Set the initial number of hit points to nbHitPoints.
+	 * 			| setNbHitPoints(nbHitPoints)
+	 * @throws	IllegalPositionXException
+	 * 				The X position of a Game object is not a valid X position.
+	 * 				| ! isValidPositionX(positionX)
+	 * @throws	IllegalPositionYException
+	 * 				The Y position of a Game object is not a valid Y position.
+	 * 				| ! isValidPositionY(positionY)
+	 * @throws	IllegalWidthException
+	 * 				The width of at least one sprite in the given array sprites is not a valid width.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws	IllegalHeightException
+	 * 				The height of at least one sprite in the given array sprites is not a valid height.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidHeight(sprite.getHeight())
+	 */
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
-					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
-					throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
+					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
+					  int maxNbHitPoints)
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
 		
 		this.setTimer(new Timer());	
 		this.setAnimation(new Animation(this, sprites));
@@ -70,11 +138,9 @@ public abstract class GameObject {
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
 		
-
-		
 	}
 
-	/************************************************* HELPER CLASSES *****************************************/
+	/****************************************************** ANIMATION **************************************************/
 	
 	/**
 	 * Set the animation object for Mazub.
@@ -108,9 +174,112 @@ public abstract class GameObject {
 	 * Variable registering the animation of this Mazub.
 	 */
 	private Animation animation;
-
 	
-	/************************************************ WORLD RELATION *****************************************/
+	public Sprite getCurrentSprite(){
+		return this.getAnimation().getCurrentSprite();
+	}
+	
+	/******************************************************** TIMER ****************************************************/
+
+	/**
+	 * Set the time properties of Mazub.
+	 * 
+	 * @pre		The given timer object is not null.
+	 * 			| timer != null
+	 * @param 	timer
+	 * 				A timer that keeps track of several times involving the behaviour of Mazub.
+	 * @post	The new time of Mazub is equal to timerClass.
+	 * 			| new.getTimer() == timer
+	 */
+	@Basic
+	protected void setTimer(Timer timer) {
+		assert timer != null;
+		
+		this.timer = timer;
+	}
+
+	/**
+	 * Return the time properties of Mazub.
+	 * 
+	 * @return	A timer that keeps track of several times involving the behaviour of Mazub.
+	 */
+	@Basic
+	@Raw
+	public Timer getTimer() {
+		return this.timer;
+	}
+
+	protected Timer timer;
+	
+	/**
+	 * Increase the timers of this gameobject with the given dt
+	 * 
+	 * @param dt
+	 * 		
+	 */
+	protected void updateTimers(double dt){
+		if(!this.isMoving())
+			this.getTimer().increaseSinceLastMove(dt);
+		
+		this.getTimer().increaseSinceLastSprite(dt);
+		this.getTimer().increaseTerrainOverlapDuration(dt);
+		this.getTimer().increaseSinceLastTerrainDamage(dt);
+		this.getTimer().increaseSinceEnemyCollision(dt);
+		this.getTimer().increaseSinceLastPeriod(dt);
+		
+		resetTerrainOverlapDuration();
+	}
+	
+	/******************************************************* TERRAIN ***************************************************/
+	
+	public Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
+	
+	public Map<Terrain, TerrainProperties> getAllTerrainProperties() {
+		return allTerrainProperties;
+	}
+	
+	public TerrainProperties getTerrainPropertiesOf(Terrain terrain) {
+		return allTerrainProperties.get(terrain);
+	}
+	
+	protected void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
+		allTerrainProperties.put(terrain, terrainProperties);
+	}
+	
+	public boolean hasTerrainPropertiesOf(Terrain terrain){
+		return allTerrainProperties.containsKey(terrain);
+	}
+	
+	protected abstract void configureTerrain();
+	
+	private void resetTerrainOverlapDuration(){
+		// If character does not collide with terrain type, set the overlapping duration with the terrain type to 0
+		Set<Terrain> overlappingTerrainTypes = getOverlappingTerrainTypes();
+		for(Terrain terrain : Terrain.getAllTerrainTypes()){
+			if(!overlappingTerrainTypes.contains(terrain)){
+				getTimer().setTerrainOverlapDuration(terrain, 0);
+			}
+		}
+	}
+	
+	public boolean isSubmergedIn(Terrain terrain){		
+		World world = this.getWorld();
+		
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX() + 1, 						// overlap left
+													this.getRoundedPositionY() + 1,							// overlap bottom
+													this.getRoundedPositionX() + (this.getWidth() - 1) - 1, // overlap right
+													this.getRoundedPositionY() + (this.getHeight() - 1) );	// may not overlap top (otherwise sharks take damage while submerged in water)
+		
+		for(int[] tile : tiles){
+			if( world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])) != terrain){
+				return false;	
+			}
+		}
+		
+		return true;	
+	}
+	
+	/******************************************************** WORLD ****************************************************/
 	
 	public World getWorld() {
 		return this.world;
@@ -178,125 +347,9 @@ public abstract class GameObject {
 	}
 	
 	private World world;
-	
-	
-	
-	
-	// Invoked to remove object after 0.6s
-	void kill(){
-		this.setNbHitPoints(0);
-	}
-	
-	public boolean isKilled(){
-		return this.getNbHitPoints() == 0;
-	}
-	
-	// Will remove object from world
-	protected void terminate(){
-		this.unsetWorld();
-		this.terminated = true;
-	}
-	
-	/**
-	 * Check if a Game object is terminated.
-	 * 
-	 * @return	| result == ( this.terminated )
-	 */
-	public boolean isTerminated(){
-		return this.terminated;
-	}
-	
-	/**
-	 * Variable registering the terminated status of a Game object.
-	 */
-	protected boolean terminated = false;
-	
-	/************************************************* HELPER CLASSES *****************************************/
 
-	/**
-	 * Set the time properties of Mazub.
-	 * 
-	 * @pre		The given timer object is not null.
-	 * 			| timer != null
-	 * @param 	timer
-	 * 				A timer that keeps track of several times involving the behaviour of Mazub.
-	 * @post	The new time of Mazub is equal to timerClass.
-	 * 			| new.getTimer() == timer
-	 */
-	@Basic
-	protected void setTimer(Timer timer) {
-		assert timer != null;
-		
-		this.timer = timer;
-	}
-
-	/**
-	 * Return the time properties of Mazub.
-	 * 
-	 * @return	A timer that keeps track of several times involving the behaviour of Mazub.
-	 */
-	@Basic
-	@Raw
-	public Timer getTimer() {
-		return this.timer;
-	}
-
-	protected Timer timer;	
-
-	/************************************************ TERRAIN *************************************************/
-	public Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
+	/******************************************************** SIZE *****************************************************/
 	
-	public Map<Terrain, TerrainProperties> getAllTerrainProperties() {
-		return allTerrainProperties;
-	}
-	
-	public TerrainProperties getTerrainPropertiesOf(Terrain terrain) {
-		return allTerrainProperties.get(terrain);
-	}
-	
-	protected void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
-		allTerrainProperties.put(terrain, terrainProperties);
-	}
-	
-	public boolean hasTerrainPropertiesOf(Terrain terrain){
-		return allTerrainProperties.containsKey(terrain);
-	}
-	
-	protected abstract void configureTerrain();
-	
-	/********************************************* SIZE AND POSITIONING ***************************************/
-	
-	/**
-	 * Return the rounded down x-location of Mazub's bottom left pixel.
-	 * 
-	 * @return 	An integer that represents the x-coordinate of Mazub's
-	 * 			bottom left pixel in the world.
-	 */
-	@Raw
-	public int getRoundedPositionX() {
-		return (int) Math.floor(this.getPositionX());
-	}
-	
-	public boolean canHaveAsPositionX(int positionX){
-		return positionX >= 0 && (!hasProperWorld() || positionX < this.getWorld().getWorldWidth());
-	}
-
-	/**
-	 * Return the rounded down y-location of Mazub's bottom left pixel.
-	 * 
-	 * @return 	An integer that represents the y-coordinate of Mazub's
-	 * 			bottom left pixel in the world.
-	 */
-	@Raw
-	public int getRoundedPositionY() {
-		return (int) Math.floor(this.getPositionY());
-	}
-
-	public boolean canHaveAsPositionY(int positionY){
-		return positionY >= 0 && (!hasProperWorld() || positionY < this.getWorld().getWorldHeight());
-	}
-	
-
 	/**
 	 * Return the width of Mazub, depending on the active sprite.
 	 * 
@@ -339,7 +392,524 @@ public abstract class GameObject {
 		return height > 0;
 	}
 	
-	/************************************************ MOVING *************************************************/
+	/*************************************************** CHARACTERISTICS ***********************************************/
+	
+	/* Horizontal position */
+	
+	/**
+	 * Return the rounded down x-location of Mazub's bottom left pixel.
+	 * 
+	 * @return 	An integer that represents the x-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Raw
+	public int getRoundedPositionX() {
+		return (int) Math.floor(this.getPositionX());
+	}
+	
+	public boolean canHaveAsPositionX(int positionX){
+		return positionX >= 0 && (!hasProperWorld() || positionX < this.getWorld().getWorldWidth());
+	}
+
+	/**
+	 * Return the x-location of Mazub's bottom left pixel.
+	 * 
+	 * @return	A double that represents the x-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic
+	@Raw
+	public double getPositionX() {
+		return this.positionX;
+	}
+
+	/**
+	 * Check whether the given X position is a valid horizontal position.
+	 * 
+	 * @param 	positionX
+	 * 				A double that represents an x-coordinate.
+	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
+	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
+	 * 			GAME_WIDTH.
+	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
+	 */
+	public boolean canHaveAsPositionX(double positionX) {
+		return canHaveAsPositionX((int) Math.floor(positionX));
+	}
+
+	/**
+	 * Set the x-location of Mazub's bottom left pixel.
+	 * 
+	 * @param	positionX
+	 * 				A double that represents the desired x-location of Mazub's bottom left pixel.
+	 * @post	The X position of Mazub is equal to positionX.
+	 * 			| new.getPositionX() == positionX
+	 * @throws	IllegalPositionXException
+	 * 				The X position of Mazub is not a valid X position.
+	 * 				| ! isValidPositionX(positionX)
+	 */
+	@Basic
+	@Raw
+	protected void setPositionX(double positionX) throws IllegalStateException, IllegalPositionXException, CollisionException {
+		if( !canHaveAsPositionX(positionX)) 
+			throw new IllegalPositionXException(positionX);
+		if( this.doesCollide())
+			throw new IllegalStateException("Collision before updating x position");
+			
+		double oldPositionX = this.positionX;
+		this.positionX = positionX;
+		
+		this.getAnimation().updateSpriteIndex();
+		if(this.doesCollide()){
+			this.positionX = oldPositionX;
+			throw new CollisionException();
+		}	
+	}
+	
+	/**
+	 * Variable registering the horizontal position of this Mazub.
+	 */
+	private double positionX;
+	
+	/* Vertical position*/
+	
+	/**
+	 * Return the rounded down y-location of Mazub's bottom left pixel.
+	 * 
+	 * @return 	An integer that represents the y-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Raw
+	public int getRoundedPositionY() {
+		return (int) Math.floor(this.getPositionY());
+	}
+
+	public boolean canHaveAsPositionY(int positionY){
+		return positionY >= 0 && (!hasProperWorld() || positionY < this.getWorld().getWorldHeight());
+	}
+	
+	/**
+	 * Return the y-location of Mazub's bottom left pixel.
+	 * 
+	 * @return	A double that represents the y-coordinate of Mazub's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic
+	@Raw
+	public double getPositionY() {
+		return this.positionY;
+	}
+	
+	/**
+	 * Check whether the given Y position is a valid vertical position.
+	 * 
+	 * @param 	positionY
+	 * 				A double that represents a y-coordinate.
+	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
+	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
+	 * 			GAME_HEIGHT. 
+	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
+	 */
+	public boolean canHaveAsPositionY(double positionY) {
+		return canHaveAsPositionY((int) Math.floor(positionY));
+	}
+
+	/**
+	 * Set the y-location of Mazub's bottom left pixel.
+	 * 
+	 * @param 	positionY
+	 * 				A double that represents the desired y-location of Mazub's bottom left pixel.  
+	 * @post	The Y position of Mazub is equal to positionY.
+	 * 			| new.getPositionY() == positionY
+	 * @throws	IllegalPositionYException
+	 * 				The Y position of Mazub is not a valid Y position.
+	 * 				| ! isValidPositionY(positionY)
+	 */
+	@Basic
+	@Raw
+	protected void setPositionY(double positionY) throws IllegalPositionYException, CollisionException {
+		if( !canHaveAsPositionY(positionY)) 
+			throw new IllegalPositionYException(positionY);
+		if( this.doesCollide())
+			throw new IllegalStateException("Collision before updating y position");
+		
+		double oldPositionY = this.positionY;
+		this.positionY = positionY;
+		
+		this.getAnimation().updateSpriteIndex();
+		if(this.doesCollide()){
+			this.positionY = oldPositionY;
+			throw new CollisionException();
+		}
+	}
+	
+	/**
+	 * Variable registering the vertical position of this Mazub.
+	 */
+	private double positionY;
+
+	/* Horizontal velocity */
+	
+	/**
+	 * Return the horizontal velocity of Mazub.
+	 * 
+	 * @return	A double that represents the horizontal velocity of Mazub.
+	 */
+	@Basic
+	@Raw
+	public double getVelocityX() {
+		return this.velocityX;
+	}
+	
+	/**
+	 * Checks whether the horizontal velocity of Mazub is a valid velocity.
+	 * 
+	 * @param 	velocityX
+	 * 				A double that represents the horizontal velocity of Mazub.
+	 * @return	True if and only if the absolute value of the given horizontal velocity is smaller or equal to
+	 *  		the maximal horizontal velocity.
+	 * 			| result == ( Math.abs(velocityX) <= this.getVelocityXMax() )
+	 */
+	public boolean isValidVelocityX(double velocityX) {
+		return Math.abs(velocityX) <= this.getVelocityXMax();
+	}
+
+	/**
+	 * Set the horizontal velocity of Mazub.
+	 * 
+	 * @param 	velocityX
+	 * 				A double that represents the desired horizontal velocity of Mazub.
+	 * @post	If the absolute value of the given velocityX is smaller than the maximal horizontal velocity,
+	 * 			the horizontal velocity is equal to the given velocityX. Else, the horizontal velocity is equal
+	 * 			to the maximal horizontal velocity provided with the sign of velocityX.
+	 * 			| if (Math.abs(velocityX) < this.getVelocityXMax())
+	 * 			|	then new.getVelocityX() == velocityX
+	 * 			| else
+	 * 			|	new.getVelocityX() == Math.signum(velocityX)*this.getVelocityXMax()
+	 * @post	If the absolute value of the given velocityX is greater than or equal to
+	 * 			the maximum horizontal velocity, the horizontal acceleration will be zero.
+	 * 			| if(Math.abs(velocityX) >= this.getVelocityXMax())
+	 * 			|	then new.getAccelerationX() == 0
+	 */
+	@Basic
+	protected void setVelocityX(double velocityX) {
+		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax())){
+			this.setAccelerationX(0);
+		}
+			
+		this.velocityX = Math.max( Math.min( velocityX , this.getVelocityXMax()), -this.getVelocityXMax());
+	}
+	
+	/**
+	 * Variable registering the horizontal velocity of this Mazub.
+	 */
+	private double velocityX;
+	
+	/* Vertical velocity */
+	
+	/**
+	 * Return the vertical velocity of Mazub.
+	 * 
+	 * @return	A double that represents the vertical velocity of Mazub.
+	 */
+	@Basic
+	@Raw
+	public double getVelocityY() {
+		return this.velocityY;
+	}
+
+	/**
+	 * Set the vertical velocity of this object.
+	 * 
+	 * @param 	velocityY
+	 * 				A double that represents the desired vertical velocity of Mazub.
+	 * @post	The vertical velocity is equal to velocityY.
+	 * 			| new.getVelocityY() == velocityY
+	 */
+	@Basic
+	@Raw
+	protected void setVelocityY(double velocityY) {
+		this.velocityY = velocityY;
+	}
+	
+	/**
+	 * Variable registering the vertical velocity of this Mazub.
+	 */
+	private double velocityY;
+	
+	/* Velocity magnitude */
+	
+	/**
+	 * Returns the magnitude of the velocity of this object.
+	 * @return
+	 * 		the magnitude of the velocity of this object
+	 */
+	protected double getVelocityMagnitude(){
+		return Math.sqrt( Math.pow(this.getVelocityX(), 2) + Math.sqrt( Math.pow(this.getVelocityY(), 2)));
+	}
+
+	/* Initial velocity */ 
+	
+	/**
+	 * Return the initial horizontal velocity of Mazub. The initial horizontal velocity is used when Mazub
+	 * starts walking.
+	 *  
+	 * @return	A double that represents the initial horizontal velocity of Mazub.
+	 */
+	@Basic
+	@Raw
+	public double getVelocityXInit() {
+		return this.velocityXInit;
+	}
+	
+	public double getVelocityYInit(){
+		return this.velocityYInit;
+	}
+
+	/**
+	 * Variable registering the initial horizontal velocity of this Mazub.
+	 */
+	protected final double velocityXInit;
+	
+	protected final double velocityYInit;
+
+	/* Maximal velocity */
+	
+	/**
+	 * Return the maximal horizontal velocity of Mazub.
+	 * 
+	 * @return	A double that represents the maximal horizontal velocity of Mazub.
+	 */
+	@Basic
+	@Raw
+	public double getVelocityXMax() {
+		return this.velocityXMax;
+	}
+
+	/**
+	 * Set the maximal horizontal velocity of Mazub.
+	 * 
+	 * @param 	velocityXMax
+	 * 				A double that represents the desired maximal horizontal velocity of Mazub.
+	 * @post	If velocityXMax is greater than the initial horizontal velocity, the maximal horizontal
+	 * 			velocity is equal to velocityXMax. Otherwise, it's equal to the initial horizontal velocity.
+	 * 			| if ( velocityXMax > this.getVelocityXInit() )
+	 * 			| 	then new.getVelocityXMax() == velocityXMax
+	 * 			| else
+	 * 			|	new.getVelocityXMax() == this.getVelocityXInit()
+	 */
+	@Basic
+	@Raw
+	protected void setVelocityXMax(double velocityXMax) {
+		this.velocityXMax = Math.max( this.getVelocityXInit() , velocityXMax );
+	}
+
+	/**
+	 * Checks wether the given maximum velocity is a valid value for this instance of Mazub
+	 * 
+	 * @param 	velocityXMax
+	 * 				A double that represents the maximal horizontal velocity that needs to be checked.
+	 * @return	True if and only if the given velocityXMax is greater than or equal to the current initial
+	 * 			velocity of Mazub.
+	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
+	 */
+	public boolean canHaveAsVelocityXMax(double velocityXMax) {
+		return  velocityXMax >= this.getVelocityXInit();
+	}
+
+	/**
+	 * Variable registering the maximal horizontal velocity of this Mazub.
+	 */
+	private double velocityXMax;
+
+	/* Horizontal acceleration */
+	
+	/**
+	 * Return the horizontal acceleration of Mazub.
+	 * 
+	 * @return	A double that represents the horizontal acceleration of Mazub.
+	 */
+	@Basic
+	@Raw
+	public double getAccelerationX() {
+		return this.accelerationX;
+	}
+
+	/**
+	 * Set the horizontal acceleration of Mazub.
+	 * 
+	 * @param 	accelerationX
+	 * 				A double that represents the desired horizontal acceleration of Mazub.
+	 * @post	The horizontal acceleration is equal to accelerationX. However, if accelerationX is equal
+	 * 			to NaN, the horizontal acceleration is set to 0 instead.
+	 * 			| if ( Double.isNaN(accelerationX) ) 
+	 * 			| 	then new.getAccelerationX() == 0
+	 * 			| else
+	 * 			| 	new.getAccelerationX() == accelerationX
+	 */
+	@Basic
+	@Raw
+	protected void setAccelerationX(double accelerationX) {
+		if (Double.isNaN(accelerationX)){
+			this.accelerationX = 0;
+		} else
+			this.accelerationX = accelerationX;
+	}
+	
+	/**
+	 * Variable registering the horizontal acceleration of this Mazub.
+	 */
+	private double accelerationX;
+	
+	/* Vertical acceleration */
+	
+	/**
+	 * Return the vertical acceleration of Mazub.
+	 * 
+	 * @return	A double that represents the vertical acceleration of Mazub.
+	 */
+	@Basic
+	@Raw
+	@Immutable
+	public double getAccelerationY() {
+		if(this.isOnGround()){
+			return 0;
+		}else{
+			return ACCELERATION_Y;
+		}
+	}
+
+	/* Acceleration magnitude */ 
+	
+	/**
+	 * Returns the magnitude of the acceleration of this object.
+	 * @return
+	 * 		the magnitude of the acceleration of this object
+	 */
+	protected double getAccelerationMagnitude(){
+		 return Math.sqrt( Math.pow(this.getAccelerationX(), 2) + Math.sqrt( Math.pow(this.getAccelerationY(), 2)));
+	}
+	
+	/* Initial acceleration */
+
+	public double getAccelerationXInit() {
+		return this.accelerationXInit;
+	}
+	
+	protected final double accelerationXInit;
+
+	/* Orientation */
+	
+	/**
+	 * Return the orientation of Mazub.
+	 * 
+	 * @return	An orientation that represents the current orientation of Mazub.
+	 */
+	@Basic
+	@Raw
+	public Orientation getOrientation() {
+		return this.orientation;
+	}
+
+	/**
+	 * Set the orientation of Mazub.
+	 * 
+	 * @param 	orientation
+	 * 				An orientation that represents the desired orientation of Mazub.
+	 * @post	The orientation of Mazub is equal to the given orientation.
+	 * 			| new.getOrientation() == orientation
+	 */
+	@Basic
+	@Raw
+	@Model
+	protected void setOrientation(Orientation orientation) {
+		this.orientation = orientation;
+	}
+
+	/**
+	 * Checks if the given orientation is valid
+	 * 
+	 * @param	orientation
+	 * 				An orientation that represents the desired orientation of Mazub.
+	 * @return	True if and only if the orientation is valid, which means it should be LEFT or RIGHT.
+	 * 			| result == ( (orientation == Orientation.LEFT) || orientation == Orientation.RIGHT) )
+	 */
+	public static boolean isValidOrientation(Orientation orientation) {
+		return (orientation == Orientation.LEFT) || (orientation == Orientation.RIGHT);
+	}
+	
+	public Orientation getRandomOrientation(){
+		Random random = new Random();
+		if (random.nextBoolean())
+			return Orientation.RIGHT;
+		else {
+			return Orientation.LEFT;
+		}
+	}
+
+	/**
+	 * Variable registering the orientation of this Mazub.
+	 */
+	protected Orientation orientation;
+	
+	/****************************************************** HIT POINTS *************************************************/
+	
+	public int getNbHitPoints() {
+		return this.nbHitPoints;
+	}
+
+	protected void setNbHitPoints(int nbHitPoints) {
+		this.nbHitPoints = Math.max( Math.min(nbHitPoints, getMaxNbHitPoints()), 0);
+	}
+	
+	protected void modifyNbHitPoints(int nbHitPoints){
+		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
+	}
+	
+	protected void takeDamage(int damageAmount){
+		this.modifyNbHitPoints(-damageAmount);
+	}
+
+	public boolean isValidNbHitPoints(int nbHitPoints) {
+		return (nbHitPoints <= getMaxNbHitPoints());
+	}
+
+	private int nbHitPoints;
+	
+	public int getMaxNbHitPoints(){
+		return this.maxNbHitPoints;
+	}
+	
+	protected final int maxNbHitPoints;
+	
+	public boolean isFullHitPoints(){
+		return ( this.getNbHitPoints() == this.getMaxNbHitPoints() );
+	}
+	
+	/****************************************************** IMMUNITY ***************************************************/
+	
+	/**
+	 * Returns whether the given alien is currently immune against enemies (see
+	 * section 1.2.5 of the assignment).
+	 * 
+	 * @param alien
+	 *            The alien for which to retrieve the immunity status.
+	 * @return True if the given alien is immune against other enemies (i.e.,
+	 *         there are no interactions between the alien and enemy objects).
+	 */
+	public boolean isImmune() {
+		return this.immune;
+	}
+	
+	protected void setImmune( boolean immune ){
+		this.immune = immune;
+	}
+	
+	protected boolean immune;
+	
+	protected abstract Set<GameObject> getAllImpassableGameObjects();
+	
+	/******************************************************* RUNNING ***************************************************/
 
 	/**
 	 * Make Mazub start moving. Set the initial horizontal velocity and acceleration of Mazub,
@@ -476,7 +1046,7 @@ public abstract class GameObject {
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
 	}
 	
-	/********************************************* JUMPING AND FALLING ****************************************/
+	/************************************************* JUMPING AND FALLING *********************************************/
 
 	/**
 	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
@@ -525,7 +1095,6 @@ public abstract class GameObject {
 			   doesInteractWithGameObjects(TerrainInteraction.STAND_ON, Orientation.BOTTOM);
 	}
 	
-
 	/**
 	 * Make Mazub stop falling. Set the vertical velocity and acceleration of Mazub to 0.
 	 * 
@@ -538,445 +1107,9 @@ public abstract class GameObject {
 	protected void stopFall() {
 		this.setVelocityY( 0 );
 	}
-
-	/************************************************ CHARACTERISTICS *****************************************/
 	
-	/* Horizontal position */
-	/**
-	 * Return the x-location of Mazub's bottom left pixel.
-	 * 
-	 * @return	A double that represents the x-coordinate of Mazub's
-	 * 			bottom left pixel in the world.
-	 */
-	@Basic
-	@Raw
-	public double getPositionX() {
-		return this.positionX;
-	}
-
-//	/**
-//	 * Check whether the given X position is a valid horizontal position.
-//	 * 
-//	 * @param 	positionX
-//	 * 				A double that represents an x-coordinate.
-//	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
-//	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
-//	 * 			GAME_WIDTH.
-//	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
-//	 */
-	public boolean canHaveAsPositionX(double positionX) {
-		return canHaveAsPositionX((int) Math.floor(positionX));
-	}
-
+	/******************************************************* MOVEMENT **************************************************/
 	
-	/**
-	 * Set the x-location of Mazub's bottom left pixel.
-	 * 
-	 * @param	positionX
-	 * 				A double that represents the desired x-location of Mazub's bottom left pixel.
-	 * @post	The X position of Mazub is equal to positionX.
-	 * 			| new.getPositionX() == positionX
-	 * @throws	IllegalPositionXException
-	 * 				The X position of Mazub is not a valid X position.
-	 * 				| ! isValidPositionX(positionX)
-	 */
-	@Basic
-	@Raw
-	protected void setPositionX(double positionX) throws IllegalStateException, IllegalPositionXException, CollisionException {
-		if( !canHaveAsPositionX(positionX)) 
-			throw new IllegalPositionXException(positionX);
-		if( this.doesCollide())
-			throw new IllegalStateException("Collision before updating x position");
-			
-		double oldPositionX = this.positionX;
-		this.positionX = positionX;
-		
-		this.getAnimation().updateSpriteIndex();
-		if(this.doesCollide()){
-			this.positionX = oldPositionX;
-			throw new CollisionException();
-		}	
-	}
-	
-	/**
-	 * Variable registering the horizontal position of this Mazub.
-	 */
-	private double positionX;
-	
-	
-	/* Vertical position*/
-	
-	/**
-	 * Return the y-location of Mazub's bottom left pixel.
-	 * 
-	 * @return	A double that represents the y-coordinate of Mazub's
-	 * 			bottom left pixel in the world.
-	 */
-	@Basic
-	@Raw
-	public double getPositionY() {
-		return this.positionY;
-	}
-	
-//	/**
-//	 * Check whether the given Y position is a valid vertical position.
-//	 * 
-//	 * @param 	positionY
-//	 * 				A double that represents a y-coordinate.
-//	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
-//	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
-//	 * 			GAME_HEIGHT. 
-//	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
-//	 */
-	public boolean canHaveAsPositionY(double positionY) {
-		return canHaveAsPositionY((int) Math.floor(positionY));
-	}
-
-
-	/**
-	 * Set the y-location of Mazub's bottom left pixel.
-	 * 
-	 * @param 	positionY
-	 * 				A double that represents the desired y-location of Mazub's bottom left pixel.  
-	 * @post	The Y position of Mazub is equal to positionY.
-	 * 			| new.getPositionY() == positionY
-	 * @throws	IllegalPositionYException
-	 * 				The Y position of Mazub is not a valid Y position.
-	 * 				| ! isValidPositionY(positionY)
-	 */
-	@Basic
-	@Raw
-	protected void setPositionY(double positionY) throws IllegalPositionYException, CollisionException {
-		if( !canHaveAsPositionY(positionY)) 
-			throw new IllegalPositionYException(positionY);
-		if( this.doesCollide())
-			throw new IllegalStateException("Collision before updating y position");
-		
-		double oldPositionY = this.positionY;
-		this.positionY = positionY;
-		
-		this.getAnimation().updateSpriteIndex();
-		if(this.doesCollide()){
-			this.positionY = oldPositionY;
-			throw new CollisionException();
-		}
-	}
-	
-	/**
-	 * Variable registering the vertical position of this Mazub.
-	 */
-	private double positionY;
-
-	
-	/* Horizontal velocity */
-	/**
-	 * Return the horizontal velocity of Mazub.
-	 * 
-	 * @return	A double that represents the horizontal velocity of Mazub.
-	 */
-	@Basic
-	@Raw
-	public double getVelocityX() {
-		return this.velocityX;
-	}
-	
-	/**
-	 * Checks whether the horizontal velocity of Mazub is a valid velocity.
-	 * 
-	 * @param 	velocityX
-	 * 				A double that represents the horizontal velocity of Mazub.
-	 * @return	True if and only if the absolute value of the given horizontal velocity is smaller or equal to
-	 *  		the maximal horizontal velocity.
-	 * 			| result == ( Math.abs(velocityX) <= this.getVelocityXMax() )
-	 */
-	public boolean isValidVelocityX(double velocityX) {
-		return Math.abs(velocityX) <= this.getVelocityXMax();
-	}
-
-	/**
-	 * Set the horizontal velocity of Mazub.
-	 * 
-	 * @param 	velocityX
-	 * 				A double that represents the desired horizontal velocity of Mazub.
-	 * @post	If the absolute value of the given velocityX is smaller than the maximal horizontal velocity,
-	 * 			the horizontal velocity is equal to the given velocityX. Else, the horizontal velocity is equal
-	 * 			to the maximal horizontal velocity provided with the sign of velocityX.
-	 * 			| if (Math.abs(velocityX) < this.getVelocityXMax())
-	 * 			|	then new.getVelocityX() == velocityX
-	 * 			| else
-	 * 			|	new.getVelocityX() == Math.signum(velocityX)*this.getVelocityXMax()
-	 * @post	If the absolute value of the given velocityX is greater than or equal to
-	 * 			the maximum horizontal velocity, the horizontal acceleration will be zero.
-	 * 			| if(Math.abs(velocityX) >= this.getVelocityXMax())
-	 * 			|	then new.getAccelerationX() == 0
-	 */
-	@Basic
-	protected void setVelocityX(double velocityX) {
-		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax())){
-			this.setAccelerationX(0);
-		}
-			
-		this.velocityX = Math.max( Math.min( velocityX , this.getVelocityXMax()), -this.getVelocityXMax());
-	}
-	
-	/**
-	 * Variable registering the horizontal velocity of this Mazub.
-	 */
-	private double velocityX;
-	
-	/* Vertical velocity */
-	
-	/**
-	 * Return the vertical velocity of Mazub.
-	 * 
-	 * @return	A double that represents the vertical velocity of Mazub.
-	 */
-	@Basic
-	@Raw
-	public double getVelocityY() {
-		return this.velocityY;
-	}
-
-	/**
-	 * Set the vertical velocity of this object.
-	 * 
-	 * @param 	velocityY
-	 * 				A double that represents the desired vertical velocity of Mazub.
-	 * @post	The vertical velocity is equal to velocityY.
-	 * 			| new.getVelocityY() == velocityY
-	 */
-	@Basic
-	@Raw
-	protected void setVelocityY(double velocityY) {
-		this.velocityY = velocityY;
-	}
-	
-	/**
-	 * Variable registering the vertical velocity of this Mazub.
-	 */
-	private double velocityY;
-	
-	/* Velocity maginutde */
-	
-	/**
-	 * Returns the magnitude of the velocity of this object.
-	 * @return
-	 * 		the magnitude of the velocity of this object
-	 */
-	protected double getVelocityMagnitude(){
-		return Math.sqrt( Math.pow(this.getVelocityX(), 2) + Math.sqrt( Math.pow(this.getVelocityY(), 2)));
-	}
-
-	/* Initial velocity */ 
-	/**
-	 * Return the initial horizontal velocity of Mazub. The initial horizontal velocity is used when Mazub
-	 * starts walking.
-	 *  
-	 * @return	A double that represents the initial horizontal velocity of Mazub.
-	 */
-	@Basic
-	@Raw
-	public double getVelocityXInit() {
-		return this.velocityXInit;
-	}
-	
-	public double getVelocityYInit(){
-		return this.velocityYInit;
-	}
-
-	/**
-	 * Variable registering the initial horizontal velocity of this Mazub.
-	 */
-	protected final double velocityXInit;
-	
-	protected final double velocityYInit;
-
-	/**
-	 * Return the maximal horizontal velocity of Mazub.
-	 * 
-	 * @return	A double that represents the maximal horizontal velocity of Mazub.
-	 */
-	@Basic
-	@Raw
-	public double getVelocityXMax() {
-		return this.velocityXMax;
-	}
-
-	/**
-	 * Set the maximal horizontal velocity of Mazub.
-	 * 
-	 * @param 	velocityXMax
-	 * 				A double that represents the desired maximal horizontal velocity of Mazub.
-	 * @post	If velocityXMax is greater than the initial horizontal velocity, the maximal horizontal
-	 * 			velocity is equal to velocityXMax. Otherwise, it's equal to the initial horizontal velocity.
-	 * 			| if ( velocityXMax > this.getVelocityXInit() )
-	 * 			| 	then new.getVelocityXMax() == velocityXMax
-	 * 			| else
-	 * 			|	new.getVelocityXMax() == this.getVelocityXInit()
-	 */
-	@Basic
-	@Raw
-	protected void setVelocityXMax(double velocityXMax) {
-		this.velocityXMax = Math.max( this.getVelocityXInit() , velocityXMax );
-	}
-
-	/**
-	 * Checks wether the given maximum velocity is a valid value for this instance of Mazub
-	 * 
-	 * @param 	velocityXMax
-	 * 				A double that represents the maximal horizontal velocity that needs to be checked.
-	 * @return	True if and only if the given velocityXMax is greater than or equal to the current initial
-	 * 			velocity of Mazub.
-	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
-	 */
-	public boolean canHaveAsVelocityXMax(double velocityXMax) {
-		return  velocityXMax >= this.getVelocityXInit();
-	}
-
-	/**
-	 * Variable registering the maximal horizontal velocity of this Mazub.
-	 */
-	private double velocityXMax;
-
-	
-	/* Horizontal acceleration */
-	
-	/**
-	 * Return the horizontal acceleration of Mazub.
-	 * 
-	 * @return	A double that represents the horizontal acceleration of Mazub.
-	 */
-	@Basic
-	@Raw
-	public double getAccelerationX() {
-		return this.accelerationX;
-	}
-
-	/**
-	 * Set the horizontal acceleration of Mazub.
-	 * 
-	 * @param 	accelerationX
-	 * 				A double that represents the desired horizontal acceleration of Mazub.
-	 * @post	The horizontal acceleration is equal to accelerationX. However, if accelerationX is equal
-	 * 			to NaN, the horizontal acceleration is set to 0 instead.
-	 * 			| if ( Double.isNaN(accelerationX) ) 
-	 * 			| 	then new.getAccelerationX() == 0
-	 * 			| else
-	 * 			| 	new.getAccelerationX() == accelerationX
-	 */
-	@Basic
-	@Raw
-	protected void setAccelerationX(double accelerationX) {
-		if (Double.isNaN(accelerationX)){
-			this.accelerationX = 0;
-		} else
-			this.accelerationX = accelerationX;
-	}
-	
-	/**
-	 * Variable registering the horizontal acceleration of this Mazub.
-	 */
-	private double accelerationX;
-	
-	/* Vertical acceleration */
-	/**
-	 * Return the vertical acceleration of Mazub.
-	 * 
-	 * @return	A double that represents the vertical acceleration of Mazub.
-	 */
-	@Basic
-	@Raw
-	@Immutable
-	public double getAccelerationY() {
-		if(this.isOnGround()){
-			return 0;
-		}else{
-			return ACCELERATION_Y;
-		}
-	}
-
-	/* Acceleration magnitude */ 
-	
-	/**
-	 * Returns the magnitude of the acceleration of this object.
-	 * @return
-	 * 		the magnitude of the acceleration of this object
-	 */
-	protected double getAccelerationMagnitude(){
-		 return Math.sqrt( Math.pow(this.getAccelerationX(), 2) + Math.sqrt( Math.pow(this.getAccelerationY(), 2)));
-	}
-	
-	/* Initial acceleration */
-
-	public double getAccelerationXInit() {
-		return this.accelerationXInit;
-	}
-	
-	protected final double accelerationXInit;
-
-	/* Orientation */
-	
-	/**
-	 * Return the orientation of Mazub.
-	 * 
-	 * @return	An orientation that represents the current orientation of Mazub.
-	 */
-	@Basic
-	@Raw
-	public Orientation getOrientation() {
-		return this.orientation;
-	}
-
-	/**
-	 * Set the orientation of Mazub.
-	 * 
-	 * @param 	orientation
-	 * 				An orientation that represents the desired orientation of Mazub.
-	 * @post	The orientation of Mazub is equal to the given orientation.
-	 * 			| new.getOrientation() == orientation
-	 */
-	@Basic
-	@Raw
-	@Model
-	protected void setOrientation(Orientation orientation) {
-		this.orientation = orientation;
-	}
-
-	/**
-	 * Checks if the given orientation is valid
-	 * 
-	 * @param	orientation
-	 * 				An orientation that represents the desired orientation of Mazub.
-	 * @return	True if and only if the orientation is valid, which means it should be LEFT or RIGHT.
-	 * 			| result == ( (orientation == Orientation.LEFT) || orientation == Orientation.RIGHT) )
-	 */
-	public static boolean isValidOrientation(Orientation orientation) {
-		return (orientation == Orientation.LEFT) || (orientation == Orientation.RIGHT);
-	}
-	
-	public Orientation getRandomOrientation(){
-		Random random = new Random();
-		if (random.nextBoolean())
-			return Orientation.RIGHT;
-		else {
-			return Orientation.LEFT;
-		}
-	}
-
-	/**
-	 * Variable registering the orientation of this Mazub.
-	 */
-	protected Orientation orientation;
-
-	
-	/****************************************************** SPRITES *******************************************/
-	
-	public Sprite getCurrentSprite(){
-		return this.getAnimation().getCurrentSprite();
-	}
-	
-	
-	/*********************************************** CHARACTERISTICS UPDATERS *********************************/
 	public void advanceTime(double dt){
 		// determine minDt		
 		double minDt;
@@ -1053,38 +1186,6 @@ public abstract class GameObject {
 		
 	}
 	
-	
-	/**
-	 * Increase the timers of this gameobject with the given dt
-	 * 
-	 * @param dt
-	 * 		
-	 */
-	protected void updateTimers(double dt){
-		if(!this.isMoving())
-			this.getTimer().increaseSinceLastMove(dt);
-		
-		this.getTimer().increaseSinceLastSprite(dt);
-		this.getTimer().increaseTerrainOverlapDuration(dt);
-		this.getTimer().increaseSinceLastTerrainDamage(dt);
-		this.getTimer().increaseSinceEnemyCollision(dt);
-		this.getTimer().increaseSinceLastPeriod(dt);
-		
-		
-		resetTerrainOverlapDuration();
-	}
-	
-	private void resetTerrainOverlapDuration(){
-		// If character does not collide with terrain type, set the overlapping duration with the terrain type to 0
-		Set<Terrain> overlappingTerrainTypes = getOverlappingTerrainTypes();
-		for(Terrain terrain : Terrain.getAllTerrainTypes()){
-			if(!overlappingTerrainTypes.contains(terrain)){
-				getTimer().setTerrainOverlapDuration(terrain, 0);
-			}
-		}
-	}
-	
-	
 	/* Horizontal */
 	
 	/**
@@ -1126,11 +1227,6 @@ public abstract class GameObject {
 		this.setVelocityX( newVx );
 	}
 
-	protected void processHorizontalCollision(){
-		this.endMove(this.getOrientation());
-		
-	}
-	
 	/* Vertical */
 	
 	/**
@@ -1170,47 +1266,12 @@ public abstract class GameObject {
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
 		this.setVelocityY( newVy );
 	}
-
-	protected void processVerticalCollision(){
-		this.stopFall();
+		
+	/****************************************************** COLLISION **************************************************/
+	
+	public boolean doesCollide(){
+		return doesCollide(Orientation.ALL);
 	}
-	
-	
-	/*************************************************** HIT POINTS *******************************************/
-	
-	public int getNbHitPoints() {
-		return this.nbHitPoints;
-	}
-
-	protected void setNbHitPoints(int nbHitPoints) {
-		this.nbHitPoints = Math.max( Math.min(nbHitPoints, getMaxNbHitPoints()), 0);
-	}
-	
-	protected void modifyNbHitPoints(int nbHitPoints){
-		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
-	}
-	
-	protected void takeDamage(int damageAmount){
-		this.modifyNbHitPoints(-damageAmount);
-	}
-
-	public boolean isValidNbHitPoints(int nbHitPoints) {
-		return (nbHitPoints <= getMaxNbHitPoints());
-	}
-
-	private int nbHitPoints;
-	
-	public int getMaxNbHitPoints(){
-		return this.maxNbHitPoints;
-	}
-	
-	protected final int maxNbHitPoints;
-	
-	public boolean isFullHitPoints(){
-		return ( this.getNbHitPoints() == this.getMaxNbHitPoints() );
-	}
-	
-	/************************************************************ COLLISION *************************************************************/
 	
 	/**
 	 * Checks if this object collides with impassable terrain or any other impassable object.
@@ -1218,9 +1279,9 @@ public abstract class GameObject {
 	 * @return
 	 * 		True if and only if this object collides with impassable terrain or an impassable object.
 	 */
-	public boolean doesCollide(){
-		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, Orientation.ALL) || 
-				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, Orientation.ALL);	}
+	public boolean doesCollide(Orientation orientation){
+		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
+				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);	}
 
 	/**
 	 * Checks if this object collides with a given gameobject.
@@ -1230,8 +1291,9 @@ public abstract class GameObject {
 	 * @return
 	 * 		True if and only if this object and the given gameobject collides.
 	 */
-	public boolean doesCollideWith(GameObject other){
-		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight());
+	public boolean doesCollideWith(GameObject other, Orientation orientation){
+		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), 
+									other.getWidth(), other.getHeight(), orientation);
 	}
 	
 	/**
@@ -1247,13 +1309,22 @@ public abstract class GameObject {
 	 * 		The height of the region
 	 * @return
 	 */
-	public boolean doesCollideWith(int x, int y, int width, int height){
+	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
 		return GameObject.doRegionsOverlap(
-				this.getRoundedPositionX() + 1 , this.getRoundedPositionY() + 1, this.getWidth() - 2, this.getHeight() - 2, 
-				x, y, width, height, Orientation.ALL);		
+				this.getRoundedPositionX() + 1 , this.getRoundedPositionY() + 1, 
+				this.getWidth() - 2, this.getHeight() - 2, 
+				x, y, width, height, orientation);		
 	}
 	
-	/************************************************************ OVERLAP **********************************************************/
+	protected void processHorizontalCollision(){
+		this.endMove(this.getOrientation());
+	}
+	
+	protected void processVerticalCollision(){
+		this.stopFall();
+	}
+	
+	/******************************************************* OVERLAP **************************************************/
 	
 	public boolean doesOverlap(){
 		return this.doesOverlap(Orientation.ALL);
@@ -1274,7 +1345,8 @@ public abstract class GameObject {
 	}
 	
 	public boolean doesOverlapWith(GameObject other, Orientation orientation){
-		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(), other.getWidth(), other.getHeight(), orientation);
+		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(),
+									other.getWidth(), other.getHeight(), orientation);
 	}
 	
 	/**
@@ -1304,7 +1376,7 @@ public abstract class GameObject {
 													this.getRoundedPositionY() + this.getHeight()  );
 		
 		for(int[] tile : tiles){
-			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength())){
+			if(this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation)){
 				overlappingTerrainTypes.add(world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])));	
 			}
 		}
@@ -1312,12 +1384,13 @@ public abstract class GameObject {
 		return overlappingTerrainTypes;
 	}
 	
-	/******************************************* OVERLAPPING REGION ******************************************/
-	
 	/** Checks if the region 1 overlaps with the region 2 in the given direction*/
-	public static boolean doRegionsOverlap(int x1, int y1, int width1, int height1, int x2, int y2, int width2, int height2, Orientation orientation) 
-			throws IllegalArgumentException{
+	public static boolean doRegionsOverlap(int x1, int y1, int width1, int height1, int x2, int y2,
+										   int width2, int height2, Orientation orientation) 
+							throws IllegalArgumentException{
+		
 		switch (orientation) {
+		
 			case RIGHT: 
 				return  x1 + width1 > x2 &&
 						x1 + width1 <= x2 + width2 &&
@@ -1354,79 +1427,6 @@ public abstract class GameObject {
 	public static boolean getYOverlap(int y1, int height1, int y2, int height2){
 		return	y1 < y2 + height2 && y1 + height1 > y2;
 	}
-	
-	
-	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){
-		assert hasProperWorld();
-		World world = this.getWorld();
-		
-		// Check overlap with tiles
-		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
-													this.getRoundedPositionY(),
-			 										this.getRoundedPositionX() + this.getWidth(), 
-													this.getRoundedPositionY() + this.getHeight());
-
-		for(int[] tile : tiles){
-			// Check if that tile is passable 
-			// and if the given object interacts with a tile
-			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
-			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
-				switch(interaction){
-					case COLLIDE:
-						if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength()))
-							return true;
-					break;
-					case OVERLAP:
-						if( this.doesOverlapWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation))
-							return true;
-					break;
-					case STAND_ON:
-						if(GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(), getWidth() - 2, getHeight(),
-								world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]), world.getTileLength(), world.getTileLength(), orientation))
-								return true;
-					break;
-				}
-					
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Checks if this object collides in the given direction with any other impassable game object.
-	 * 
-	 * @return
-	 * 		True if and only if this object collides with an impassable object.
-	 */
-	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
-		assert hasProperWorld();
-		assert interaction != TerrainInteraction.COLLIDE || orientation == Orientation.ALL; 
-		
-		for(GameObject object : this.getAllImpassableGameObjects()){
-			if(object != this){
-				switch(interaction){
-					case COLLIDE:
-						if(this.doesCollideWith(object))
-							return true;
-						break;
-					case OVERLAP:
-						if(this.doesOverlapWith(object, orientation))
-							return true;
-						break;
-					case STAND_ON:
-						assert orientation == Orientation.BOTTOM;
-						if(GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(), getWidth() - 2, getHeight(),
-								object.getRoundedPositionX(), object.getRoundedPositionY(), object.getWidth(), object.getHeight(), orientation))
-								return true;
-						break;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/****************************************************** OVERLAP PROCESSING ****************************************************/
 	
 	protected void processOverlap(){
 		this.processTileOverlap();
@@ -1496,45 +1496,110 @@ public abstract class GameObject {
 	protected abstract void processPlantOverlap(Plant plant);
 	protected abstract void processSharkOverlap(Shark shark);
 	protected abstract void processSlimeOverlap(Slime slime);
-
 	
-	public boolean isSubmergedIn(Terrain terrain){		
+	/***************************************************** INTERACTION ************************************************/
+	
+	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){
+		assert hasProperWorld();
 		World world = this.getWorld();
 		
-		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX() + 1, 						// overlap left
-													this.getRoundedPositionY() + 1,							// overlap bottom
-													this.getRoundedPositionX() + (this.getWidth() - 1) - 1, // overlap right
-													this.getRoundedPositionY() + (this.getHeight() - 1) );	// may not overlap top (otherwise sharks take damage while submerged in water)
-		
+		// Check overlap with tiles
+		int[][] tiles = world.getTilePositionsIn(	this.getRoundedPositionX(), 
+													this.getRoundedPositionY(),
+			 										this.getRoundedPositionX() + this.getWidth(), 
+													this.getRoundedPositionY() + this.getHeight());
+
 		for(int[] tile : tiles){
-			if( world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1])) != terrain){
-				return false;	
+			// Check if that tile is passable 
+			// and if the given object interacts with a tile
+			Terrain terrain = world.getGeologicalFeature(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]));
+			if( !getTerrainPropertiesOf( terrain ).isPassable() ){
+				switch(interaction){
+					case COLLIDE:
+						if( this.doesCollideWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]),
+												 world.getTileLength(), world.getTileLength(), orientation))
+							return true;
+					break;
+					case OVERLAP:
+						if( this.doesOverlapWith(world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]),
+												 world.getTileLength(), world.getTileLength(), orientation))
+							return true;
+					break;
+					case STAND_ON:
+						if( GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(),
+													   getWidth() - 2, getHeight(),
+													   world.getPositionXOfTile(tile[0]), world.getPositionYOfTile(tile[1]),
+													   world.getTileLength(), world.getTileLength(), orientation))
+								return true;
+					break;
+				}	
 			}
 		}
 		
-		return true;
-		
+		return false;
 	}
 	
 	/**
-	 * Returns whether the given alien is currently immune against enemies (see
-	 * section 1.2.5 of the assignment).
+	 * Checks if this object collides in the given direction with any other impassable game object.
 	 * 
-	 * @param alien
-	 *            The alien for which to retrieve the immunity status.
-	 * @return True if the given alien is immune against other enemies (i.e.,
-	 *         there are no interactions between the alien and enemy objects).
+	 * @return
+	 * 		True if and only if this object collides with an impassable object.
 	 */
-	public boolean isImmune() {
-		return this.immune;
+	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
+		assert hasProperWorld();
+		assert interaction != TerrainInteraction.COLLIDE || orientation == Orientation.ALL; 
+		
+		for(GameObject object : this.getAllImpassableGameObjects()){
+			if(object != this){
+				switch(interaction){
+					case COLLIDE:
+						if(this.doesCollideWith(object, orientation))
+							return true;
+						break;
+					case OVERLAP:
+						if(this.doesOverlapWith(object, orientation))
+							return true;
+						break;
+					case STAND_ON:
+						assert orientation == Orientation.BOTTOM;
+						if(GameObject.doRegionsOverlap(getRoundedPositionX() + 1, getRoundedPositionY(), getWidth() - 2, getHeight(),
+								object.getRoundedPositionX(), object.getRoundedPositionY(), object.getWidth(), object.getHeight(), orientation))
+								return true;
+						break;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	/***************************************************** TERMINATION *************************************************/
+	
+	void kill(){
+		this.setNbHitPoints(0);
 	}
 	
-	protected void setImmune( boolean immune ){
-		this.immune = immune;
+	public boolean isKilled(){
+		return this.getNbHitPoints() == 0;
 	}
 	
-	protected boolean immune;
+	protected void terminate(){
+		this.unsetWorld();
+		this.terminated = true;
+	}
 	
-	protected abstract Set<GameObject> getAllImpassableGameObjects();
+	/**
+	 * Check if a Game object is terminated.
+	 * 
+	 * @return	| result == ( this.terminated )
+	 */
+	public boolean isTerminated(){
+		return this.terminated;
+	}
+	
+	/**
+	 * Variable registering the terminated status of a Game object.
+	 */
+	protected boolean terminated = false;
 	
 }

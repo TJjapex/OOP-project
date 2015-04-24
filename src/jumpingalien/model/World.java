@@ -1,6 +1,5 @@
 package jumpingalien.model;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,22 +9,18 @@ import java.util.Set;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.model.helper.VectorInt;
 
-// All aspects shall ONLY be specified in a formal way.
-
 /**
  * A class of Worlds for Mazubs to move around in. 
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
+ * 
+ * @invar | getNbGameObjects() <= 101
+ * 
  * @version 1.0
- * 
- * 
- * @invar 
- * 		| getNbGameObjects() <= 100
  */
-
 public class World {
 
-/************************************************** GENERAL ***********************************************/
+	/******************************************************* GENERAL ***************************************************/
 
 	private boolean hasStarted(){
 		return this.hasStarted;
@@ -37,36 +32,31 @@ public class World {
 	
 	private boolean hasStarted = false;
 	
-	/************************************************ CONSTRUCTOR *********************************************/
-	
-	//	Upon world creation:
-	//	* at least one player character (Mazub)
-	//	* no more than 100 other game objects
-	//	* world may at all times contain no other objects than these
-	//	* initial positions of objects are passed at time of their creation
+	/***************************************************** CONSTRUCTOR *************************************************/
 	
 	public World(int tileSize, int nbTilesX, int nbTilesY,
 			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
 			int targetTileY) {
 		
+		assert canHaveAsDisplayWidth(visibleWindowWidth);
+		assert canHaveAsDisplayHeight(visibleWindowHeight);
+		
 		this.tileLength = tileSize;
 		this.nbTilesX = nbTilesX;
 		this.nbTilesY = nbTilesY;
 		
-		// Asserts staan hier maar tijdelijk =) of toch niet...
-		assert canHaveAsDisplayWidth(visibleWindowWidth);
-		assert canHaveAsDisplayHeight(visibleWindowHeight);
-		
 		this.displayWidth = visibleWindowWidth;
 		this.displayHeight = visibleWindowHeight;
+		
+		this.setDisplayPositionX(0);
+		this.setDisplayPositionY(0);
 		
 		this.targetTileX = targetTileX;
 		this.targetTileY = targetTileY;
 	}
+
+	/******************************************************** SIZE *****************************************************/
 	
-	/**************************************************** WORLD SIZE ************************************************/
-	
-	/* world dimensions */
 	public int getWorldWidth() {
 		return ( this.getNbTilesX()) * getTileLength();
 	}
@@ -75,9 +65,9 @@ public class World {
 		return ( this.getNbTilesY()) * getTileLength();
 	}
 	
-	/*********************************************** DISPLAY WINDOW *******************************************/	
+	/*************************************************** DISPLAY WINDOW ************************************************/	
 	
-	// width
+	/* Size */
 	
 	public int getDisplayWidth() {
 		return displayWidth;
@@ -88,8 +78,6 @@ public class World {
 	}
 	
 	private final int displayWidth;
-
-	// height
 	
 	public int getDisplayHeight() {
 		return displayHeight;
@@ -101,9 +89,8 @@ public class World {
 	
 	private final int displayHeight;
 	
-	/* inspect position (bottom-left corner) of the display window */	
+	/* Position */
 	
-	// X
 	public int getDisplayPositionX(){
 		return this.displayPositionX;
 	}
@@ -132,9 +119,7 @@ public class World {
 		this.setDisplayPositionX( Math.min( this.getWorldWidth() - this.getDisplayWidth(), this.getDisplayPositionX() ) );
 	}
 	
-	private int displayPositionX = 0;
-
-	// Y
+	private int displayPositionX;
 
 	public int getDisplayPositionY(){
 		return this.displayPositionY;
@@ -165,19 +150,9 @@ public class World {
 		updateDisplayPositionY();
 	}
 	
-	private int displayPositionY = 0;
+	private int displayPositionY;
 	
-	
-	/*************************************************** TILES ************************************************/
-
-	// 	* bottom-left pixel (0,0) to top-right pixel (X-1,Y-1)
-	// 	* each pixel has a side length of 1 [cm] = 0.01 [m]
-	// 	* pixels are grouped in TILES of size: length [pixel] x length [pixel]
-	// 	  such that: (X % length == 0) and (Y % length == 0)
-	// 	* bottom-left tile (0,0) to top-right tile (xTmax,yTmax)
-	// 	  such that: (xTmax * length == X) and (yTmax * length == Y)
-	
-	
+	/******************************************************** TILES ****************************************************/
 	
 	/* Number of tiles */
 	
@@ -204,8 +179,7 @@ public class World {
 		return nbTilesY;
 	}
 	private final int nbTilesY;
-	
-	
+		
 	/* Target tile */
 	
 	public int getTargetTileX() {
@@ -310,20 +284,8 @@ public class World {
 
 		return  positions.toArray(new int[positions.size()][2]);
 	}
-
-	/******************************************** CHARACTERISTICS ********************************************/
 	
-	// 	* bottom-left pixel (0,0) to top-right pixel (X-1,Y-1)
-	// 	* each pixel has a side length of 1 [cm] = 0.01 [m]
-	// 	* pixels are grouped in TILES of size: length [pixel] x length [pixel]
-	// 	  such that: (X % length == 0) and (Y % length == 0)
-	// 	* bottom-left tile (0,0) to top-right tile (xTmax,yTmax)
-	// 	  such that: (xTmax * length == X) and (yTmax * length == Y)
-	
-	// Deels uitgewerkt onder tiles...
-	
-	
-	/************************************************ ADVANCE TIME ********************************************/
+	/**************************************************** ADVANCE TIME *************************************************/
 	
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
 	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
@@ -400,43 +362,7 @@ public class World {
 //		return obstacleOrientations;
 //	}
 	
-	// Help functions
-	
-	/************************************************ GAME OBJECTS ********************************************/
-	
-	//	- player character (Mazub)
-	//	- enemy characters
-	//	- collectable items
-	//
-	//	* typically rectangular, occupy multiple pixels
-	//	* position is determined by means of the position of the bottom-left pixel (x,y)
-	//	* affects pixels, not always whole tiles
-	//	* may occupy any pixel of passable terrain
-	//	* may only occupy the top-most row of pixels of solid terrain tiles
-	//	* numeric aspects of game world and positions shall be worked out using integers
-	//	* may not pass through other game objects
-	//	* size: 		Xg [pixel] x Yg [pixel]
-	//	* left side: 	(x			, y+1 .. y+Yg-2)
-	//	* right side: 	(x+Xg-1		, y+1 .. y+Yg-2)
-	//	* bottom side:	(x .. x+Xg-1, y)
-	//	* top side:		(x .. x+Xg-1, y+Yg-1)
-	//	* objects are removed if their position leaves the boundaries of the game world
-	//	* death objects will: - not move
-	//						  - be removed from the world with a delay of 0.6s
-	//						  - passively interact with other objects
-	//	* game terminates when Mazub is removed from the world or reaches a target tile
-	
-	//  * determine whose bottom-left pixel is positioned on a given position (constant time! -> Map(key,value) 
-
-	public boolean isGameOver() {
-		return (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() );
-	}
-
-	public boolean didPlayerWin() {	
-		return this.getMazub().isOnTargetTile();	
-	}
-	
-	/********************************************* GEOLOGICAL FEATURES *****************************************/	
+	/************************************************* GEOLOGICAL FEATURES *********************************************/	
 	
 	public static Terrain terrainIndexToType(int terrainTypeIndex){ // Slechte naam	
 		switch(terrainTypeIndex){
@@ -453,12 +379,6 @@ public class World {
 				return Terrain.AIR;
 		}
 	}
-	
-	
-	//	- passable terrain (air=default, water, magma)
-	//	- impassable terrain (solid ground)
-	//
-	//	* position is determined by means of the position of a tile (xT,yT)
 	
 	/**
 	 * Modify the geological type of a specific tile in the this world to a
@@ -527,9 +447,7 @@ public class World {
 	
 	private Map<VectorInt, Terrain> geologicalFeatures = new HashMap<VectorInt, Terrain>();
 	
-	/********************************************* RELATIONS *****************************************/
-	
-
+	/**************************************************** GAME OBJECTS *************************************************/
 	
 	public boolean canHaveAsGameObject(GameObject gameObject){
 		return this.canAddGameObject() && gameObject != null;
@@ -552,7 +470,7 @@ public class World {
 //	}
 //	
 	public boolean hasProperGameObjects(){
-		if(getNbGameObjects() > 100){
+		if( (this.getNbMazubs() < 1) || (this.getNbGameObjects() - 1 > 100 )){
 			return false;
 		}
 		
@@ -563,23 +481,15 @@ public class World {
 		}
 		return true;
 	}
-
-// 	Waar komt deze methode vandaan? Auto generated?
-//
-//	public boolean hasAsGameObject(GameObject gameObject){
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
 	
-//	/**
-//	 * Sets the given alien as the player's character in the given world.
-//	 * 
-//	 * @param world
-//	 *            The world for which to set the player's character.
-//	 * @param alien
-//	 *            The alien to be set as the player's character.
-//	 */
-	
+	/**
+	 * Sets the given alien as the player's character in the given world.
+	 * 
+	 * @param world
+	 *            The world for which to set the player's character.
+	 * @param alien
+	 *            The alien to be set as the player's character.
+	 */
 	public Mazub getMazub(){
 		if(this.getNbMazubs() == 1){
 			return this.getAllMazubs().iterator().next();
@@ -587,7 +497,6 @@ public class World {
 			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
 		}
 	}	
-	
 	
 	public void addAsGameObject(GameObject gameObject){
 		assert canHaveAsGameObject(gameObject);
@@ -621,7 +530,6 @@ public class World {
 		}
 	}
 	
-	
 	// Getters
 	
 	public Set<Mazub> getAllMazubs(){
@@ -636,15 +544,6 @@ public class World {
 		allGameObjects.addAll(this.getAllSharks());
 		return allGameObjects;
 	}
-	
-//	public Set<GameObject> getAllImpassableGameObjects(){
-//		Set<GameObject> allNonPassableGameObjects= new HashSet<GameObject>(this.getAllMazubs());
-//		allNonPassableGameObjects.addAll(this.getAllSlimes());
-//		allNonPassableGameObjects.addAll(this.getAllSharks());
-//		//allNonPassableGameObjects.addAll(this.getAllPlants());
-//		return allNonPassableGameObjects;
-//	}
-
 	
 	public Set<GameObject> getAllEnemies(){
 		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
@@ -667,6 +566,7 @@ public class World {
 		Set<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
 		return slimesClone;
 	}
+	
 	// checkers
 	
 	public boolean hasAsMazub(Mazub mazub){
@@ -714,8 +614,17 @@ public class World {
 	public Set<Shark> sharks = new HashSet<Shark>();
 	public Set<Slime> slimes = new HashSet<Slime>();
 	
+	/******************************************************* PLAYER ****************************************************/
+
+	public boolean isGameOver() {
+		return (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() );
+	}
+
+	public boolean didPlayerWin() {	
+		return this.getMazub().isOnTargetTile();	
+	}
 	
-	// Termination
+	/***************************************************** TERMINATION *************************************************/
 	
 	public void terminate(){
 		this.terminated = true;

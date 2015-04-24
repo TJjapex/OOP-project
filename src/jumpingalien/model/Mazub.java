@@ -3,8 +3,6 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.stream.events.StartDocument;
-
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -17,8 +15,6 @@ import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.model.helper.TerrainProperties;
 
-// All aspects shall be specified both formally and informally.
-
 /**
  * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
  * for a project of the course Object Oriented Programming at KULeuven.
@@ -27,7 +23,7 @@ import jumpingalien.model.helper.TerrainProperties;
  * @author 	Thomas Verelst	:	r0457538, Ingenieurswetenschappen: Elektrotechniek - Computerwetenschappen
  * 			Hans Cauwenbergh:	r0449585, Ingenieurswetenschappen: Computerwetenschappen - Elektrotechniek
  * 	
- * @note	The test file of this class is located in tests/jumpingaline.part1.tests/TestCase.java
+ * @note	The test file of this class is located in tests/jumpingaline.part2.tests/TestCase.java
  * 
  * @note	The source of this project is hosted in a private GIT repository on Bitbucket.
  * 			The repository is only available to invited users. In case access to this 
@@ -36,15 +32,6 @@ import jumpingalien.model.helper.TerrainProperties;
  * 			The link (which is not accessible for unauthorized users) of the repository is:
  * 				https://bitbucket.org/thmz/oop-project/
  *
- * 
- * @invar	The x position must be valid.
- * 			|	isValidPositionX( this.getPositionX() )
- * @invar	The y position must be valid.
- * 			|	isValidPositionY( this.getPositionY() )
- * @invar	The rounded x position must be valid.
- * 			|	isValidRoundedPositionX( this.getRoundedPositionX() )
- * @invar	The rounded y position must be valid.
- * 			|	isValidRoundedPositionY( this.getRoundedPositionY() )
  * @invar	The width of the character must be valid.
  * 			|	isValidWidth( this.getWidth() )
  * @invar	The height of the character must be valid.
@@ -68,44 +55,50 @@ import jumpingalien.model.helper.TerrainProperties;
  */
 public class Mazub extends GameObject{
 		
+	/******************************************************* GENERAL ***************************************************/	
+	
+	/**
+	 * Constant reflecting the amount of hit points a Mazub gets when he overlaps with a Plant.
+	 * 
+	 * @return	The amount of hit points a Mazub gets when he overlaps with a Plant is equal to 50.
+	 * 			| result == 50
+	 */
 	private static final int PLANT_HP_INCREASE = 50;
 
-
+	/**
+	 * Constant reflecting the amount of damage a Mazub should take when he overlaps with a Shark.
+	 * 
+	 * @return	The amount of damage a Mazub should take when he overlaps with a Shark is equal to 50.
+	 * 			| result == 50
+	 */
 	private static final int SHARK_DAMAGE = 50;
-
-
-	/************************************************** GENERAL ***********************************************/	
 	
+	/**
+	 * Constant reflecting the amount of damage a Mazub should take when he overlaps with a Slime.
+	 * 
+	 * @return	The amount of damage a Mazub should take when he overlaps with a Slime is equal to 50.
+	 * 			| result == 50
+	 */
 	private static final int SLIME_DAMAGE = 50;
 
 
 	/**
-	 * Constant reflecting the maximal horizontal velocity for Mazubs when ducking.
+	 * Constant reflecting the maximal horizontal velocity for a Mazub when ducking.
 	 * 
-	 * @return	The maximal horizontal velocity of Mazubs when ducking is equal to 1.0 m/s.
+	 * @return	The maximal horizontal velocity of a Mazub when ducking is equal to 1.0 m/s.
 	 * 			| result == 1.0
 	 */
 	public static final double VELOCITY_X_MAX_DUCKING = 1.0;
 	
 	
 	/**
-	 * Constant reflecting the maximal horizontal velocity for Mazubs when running.
+	 * Constant reflecting the maximal horizontal velocity for a Mazub when running.
 	 * 
-	 * @return	The maximal horizontal velocity of Mazubs when running.
+	 * @return	The maximal horizontal velocity of a Mazub when running.
 	 */
 	private static double VELOCITY_X_MAX_RUNNING;
-	
-	@Override
-	public void configureTerrain(){
 		
-		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
-		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false));
-		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2, false));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true));
-		
-	}
-		
-	/************************************************ CONSTRUCTOR *********************************************/
+	/***************************************************** CONSTRUCTOR *************************************************/
 
 	/**
 	 * Constructor for the class Mazub.
@@ -120,31 +113,21 @@ public class Mazub extends GameObject{
 	 * 				The maximal horizontal velocity of Mazub when he's running.
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
-	 * @param	hitPoints
+	 * @param	nbHitPoints
 	 * 				The number of Mazub's hit points.
+	 * @effect	The Mazub is initiated with the constructor of his superclass GameObject.
+	 * 			| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
+	 * 					sprites,nbHitPoints, maxNbHitPoints) 
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
-	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0) 
-	 * @post	The initial ducking status of Mazub is equal to false.
-	 * 			| new.isDucking() == false
-	 * @post	The X position of Mazub is equal to pixelLeftX.
-	 * 			| new.getPositionX() == pixelLeftX
-	 * @post	The Y position of Mazub is equal to pixelBottomY.
-	 * 			| new.getPositionY() == pixelBottomY
-	 * @post	The value of the initial horizontal velocity is equal to velocityXInit.
-	 * 			| new.getVelocityXInit() == velocityXInit
-	 * @effect	If VELOCITY_X_MAX_RUNNING is greater than the initial horizontal velocity, the initial maximal
-	 *  		horizontal velocity is equal to VELOCITY_X_MAX_RUNNING. Otherwise, it's equal to the initial 
-	 *  		horizontal velocity.
-	 *  		| setVelocityXMax(VELOCITY_X_MAX_RUNNING)
-	 * @effect	The initial orientation of Mazub is equal to right.
-	 * 			| setOrientation(Orientation.RIGHT)
+	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
+	 * @post	The constant VELOCITY_X_MAX_RUNNING is equal to velocityXMaxRunning.
+	 *  		| VELOCITY_X_MAX_RUNNING == velocityXMaxRunning
+	 * @post	The initial ducking status of Mazub is set to false.
+	 * 			| setDucking(false)
 	 * @post	The animation is initiated.
 	 * 			| new.getAnimation() != null
-	 * @post	The timer is initiated.
-	 * 			| new.getTimer() != null
-	 * @effect	If nbHitPoints is smaller or equal to MAX_NB_HITPOINTS, the number of Mazub's hit points is equal
-	 * 		 	to nbHitPoints. Otherwise, it's equal to MAX_NB_HITPOINTS.
-	 * 			| setNbHitPoints(nbHitPoints)
+	 * @effect 	The terrain is configured for a Mazub.
+	 * 			| configureTerrain()
 	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
 	 * 				| ! isValidPositionX(positionX)
@@ -160,10 +143,13 @@ public class Mazub extends GameObject{
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityXMaxRunning,
-				 Sprite[] sprites, int nbHitPoints)
-	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		super(pixelLeftX, pixelBottomY, velocityXInit, 8.0, velocityXMaxRunning, 0.9, sprites, nbHitPoints, 500);
+	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+				 double velocityXMaxRunning, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
+				 int maxNbHitPoints)
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+		
+		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMaxRunning, accelerationXInit, sprites,
+			  nbHitPoints, maxNbHitPoints);
 		
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
@@ -178,7 +164,8 @@ public class Mazub extends GameObject{
 	}
 	
 	/**
-	 * Initialize Mazub with default velocityXInit and velocityXMaxRunning.
+	 * Initialize a Mazub with default initial horizontal velocity, initial vertical velocity, maximal horizontal
+	 * velocity, initial horizontal acceleration, number of hit points and maximal number of hit points.
 	 * 
 	 * @param 	pixelLeftX
 	 * 				The x-location of Mazub's bottom left pixel.
@@ -188,24 +175,31 @@ public class Mazub extends GameObject{
 	 * 				The array of sprite images for Mazub.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
-	 * @effect  Construct Mazub with velocityXInit = 1.0 and velocityXMaxRunning  = 3.0
-	 * 			| this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites)
+	 * @effect  Construct Mazub with velocityXInit = 1.0, velocityYInit = 8.0, velocityXMaxRunning  = 3.0,
+	 * 			accelerationXInit = 0.9, nbHitPoints = 100 and maxNbHitPoints = 500.
+	 * 			| this(pixelLeftX, pixelBottomY, 1.0, 8.0, 3.0, 0.9, sprites, 100, 500)
 	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
 	 * 				| ! isValidPositionX(positionX)
 	 * @throws	IllegalPositionYException
 	 * 				The Y position of Mazub is not a valid Y position.
 	 * 				| ! isValidPositionY(positionY)
+	 * @throws	IllegalWidthException
+	 * 				The width of at least one sprite in the given array sprites is not a valid width.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws	IllegalHeightException
+	 * 				The height of at least one sprite in the given array sprites is not a valid height.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
-	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws IllegalPositionXException,
-				IllegalPositionYException, IllegalWidthException, IllegalHeightException{
-		this(pixelLeftX, pixelBottomY, 1.0, 3.0, sprites, 100);
+	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites)
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+		this(pixelLeftX, pixelBottomY, 1.0, 8.0, 3.0, 0.9, sprites, 100, 500);
 	}
 	
-	/********************************************** WORLD RELATION ********************************************/
+	/****************************************************** ANIMATION **************************************************/
 
-	/************************************************* HELPER CLASSES *****************************************/
-	
 	/**
 	 * Set the animation object for Mazub.
 	 * 
@@ -239,30 +233,63 @@ public class Mazub extends GameObject{
 	 */
 	private MazubAnimation animation;
 	
+	/**
+	 * Return the correct sprite of Mazub, depending on his current status.
+	 * 
+	 * @return	A sprite that fits the current status of Mazub.
+	 * @note	No formal documentation was required for this method.
+	 */
+	@Override
+	public Sprite getCurrentSprite() {
+		return this.getAnimation().getCurrentSprite();	
+	}	
 	
-	/********************************************* SIZE AND POSITIONING ***************************************/
+	/******************************************************** TIMER ****************************************************/
 	
-	// X position 
+	/**
+	 * Update the timers of a Mazub and change his animation accordingly.
+	 * 
+	 * @param	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	The method updateTimers of Mazub's superclass GameObject is invoked.
+	 * 			| super.updateTimers(dt)
+	 * @effect	The animation of Mazub is updated accordingly to his timers.
+	 * 			| getAnimation().updateAnimationIndex(this.getTimer())
+	 */
+	@Override
+	protected void updateTimers(double dt){
+		super.updateTimers(dt);
+		
+		this.getAnimation().updateAnimationIndex(this.getTimer());
+	}
 	
+	/******************************************************* TERRAIN ***************************************************/
+
+	/**
+	 * Configure the terrain properties for a Mazub.
+	 * 
+	 * @effect	Configure the terrain properties of an air tile for a Mazub.
+	 * 			| setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false))
+	 * @effect	Configure the terrain properties of a solid tile for a Mazub.
+	 * 			| setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false))
+	 * @effect	Configure the terrain properties of a water tile for a Mazub.
+	 * 			| setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2, false))
+	 * @effect	Configure the terrain properties of a magma tile for a Mazub.
+	 * 			| setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true))
+	 */
+	@Override
+	public void configureTerrain(){
+		
+		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
+		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false));
+		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 2, 0.2, false));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true));
+		
+	}
 	
+	/******************************************************* RUNNING ***************************************************/
 	
-	// Y position
-	
-	
-	
-	// Width
-	
-	
-	
-	// Height
-	
-	
-	
-	/************************************************ RUNNING *************************************************/
-	
-	// * move through tiles of passable terrain
-	// * if there are multiple ongoing movements at the same time, the horizontal velocity shall not be set
-	//	 to zero before all ongoing movements are terminated
+	// TODO: commentary
 	
 	@Override
 	public void endMove(Orientation orientation) {
@@ -312,75 +339,51 @@ public class Mazub extends GameObject{
 	private boolean shouldMoveRight;
 	private boolean shouldMoveLeft;
 	
-	/********************************************* JUMPING AND FALLING ****************************************/
-	
-	// * once startJump has been invoked while Mazub is located on top of solid ground or another game object,
-	//	 Mazub starts moving up with a velocity of 8 [m/s] -> NO MORE INFINITE JUMPING
-	// * if Mazub overlaps with impassable terrain or other game objects while jumping, endJump will set the
-	//	 vertical velocity to zero immediately
-	// * when Mazub's bottom perimeter does not overlap with pixels belonging to impassable tiles or game 
-	//	 objects, Mazub shall fall until Mazub's bottom perimeter reaches the top-most row of pixels of an
-	//	 impassable tile, game object or leaves the map
-	// * as Mazub stands on impassable terrain or another game object, the vertical acceleration shall be
-	//	 set to zero
-	
-
-	
-	/*************************************************** DUCKING **********************************************/
-	
-	// * if endDuck is invoked in a location where the appropriate non-ducking Yp would result in Mazub
-	//	 overlappping with impassable terrain, Mazub shall continue to duck until appropriate space is 
-	//	 available. Thus, startDuck may be invoked while Mazub is still trying to stand up from previously
-	//	 ducking. -> wrong defensive implementation at the moment?
+	/******************************************************* DUCKING ***************************************************/
 	
 	/**
 	 * Make Mazub start ducking. Set the maximal horizontal velocity for ducking.
 	 * 
-	 * @post	The maximal horizontal velocity of Mazub is equal to VELOCITY_X_MAX_DUCKING.
-	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_DUCKING
-	 * @post	The ducking status of Mazub is true.
-	 * 			| new.isDucking() == true
-	 * @throws	IllegalStateException
-	 * 				Mazub is already ducking.
-	 * 				| this.isDucking()
+	 * @effect	The maximal horizontal velocity of Mazub is set to VELOCITY_X_MAX_DUCKING.
+	 * 			| setVelocityXMax(VELOCITY_X_MAX_DUCKING)
+	 * @effect	The ducking status of Mazub is set to true.
+	 * 			| setDucking(true)
 	 */
-	public void startDuck(){
-		if( this.isDucking())
-			throw new IllegalStateException("Mazub already ducking!");
-		
+	public void startDuck(){	
 		this.setVelocityXMax(VELOCITY_X_MAX_DUCKING);
 		this.setDucking(true);
 	}
 	
 	/**
-	 * Make Mazub end ducking. Reset the maximal horizontal velocity.
+	 * Make Mazub end ducking.
 	 * 
-	 * @post	The maximal horizontal velocity of Mazub is equal to VELOCITY_X_MAX_RUNNING.
-	 * 			| new.getVelocityXMax() == VELOCITY_X_MAX_RUNNING
-	 * @post	The ducking status of Mazub is false.
-	 * 			| new.isDucking() == false
-	 * @post	If Mazub is moving, set the acceleration to the default value.
-	 * 			| new.getAccelerationX() == this.getOrientation().getSign() * ACCELERATION_X
+	 * @effect	The maximal horizontal velocity of Mazub is set to VELOCITY_X_MAX_RUNNING.
+	 * 			| setVelocityXMax(VELOCITY_X_MAX_RUNNING)
+	 * @effect	If Mazub is moving, set his horizontal acceleration back to the default value.
+	 * 			| if ( this.isMoving() )
+	 * 			|	then this.setAccelerationX(this.getOrientation().getSign() * this.getAccelerationXInit())
+	 * @effect	Mazub should not end his duck anymore after this method is invoked.
+	 * 			| setShouldEndDucking(false)
+	 * @effect	The ducking status of Mazub is set to false.
+	 * 			| setDucking(false)
+	 * TODO: commentary
 	 * @throws	IllegalStateException
 	 * 				Mazub is not ducking.
 	 * 				| !this.isDucking()
 	 */
 	public void endDuck() throws IllegalStateException{
-		// Check
-		if(this.doesCollide())
-			throw new IllegalStateException("Colission before invocation");
 		
 		if(!this.isDucking())
 			throw new IllegalStateException("Mazub not ducking!");		
 		
-		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);		
+		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
+		
 		if(this.isMoving()){
 			this.setAccelerationX(this.getOrientation().getSign() * this.getAccelerationXInit());
 		}
 		
 		this.setShouldEndDucking(false);
 		this.setDucking(false);
-		
 		
 		Sprite oldSprite = this.getCurrentSprite();
 		this.getAnimation().updateSpriteIndex();
@@ -396,6 +399,7 @@ public class Mazub extends GameObject{
 	 * Checks whether Mazub is ducking.
 	 * 
 	 * @return	A boolean that represents if Mazub is ducking or not.
+	 * 			| result == ( this.ducking )
 	 */
 	@Basic
 	public boolean isDucking(){
@@ -421,135 +425,98 @@ public class Mazub extends GameObject{
 	private boolean ducking;
 	
 	
+	/**
+	 * Return whether or not Mazub should end ducking.
+	 * 
+	 * @return	A boolean that represents whether or not Mazub should end ducking.
+	 * 			| result == ( this.shouldEndDucking )
+	 */
 	@Basic
 	public boolean shouldEndDucking(){
 		return this.shouldEndDucking;
 	}
 	
+	/**
+	 * Set whether or not Mazub should end ducking.
+	 * 
+	 * @param 	shouldEndDucking
+	 * 				A boolean that represents whether or not Mazub should end ducking.
+	 */
 	@Basic
 	public void setShouldEndDucking(boolean shouldEndDucking){
 		this.shouldEndDucking = shouldEndDucking;
 	}
 	
-	private boolean shouldEndDucking;
-	
-	/************************************************ CHARACTERISTICS *****************************************/
-	
-	// * values for the initial velocity, the maximum horizontal velocity and the horizontal acceleration
-	//	 may change with respect to interaction with other game objects, terrain and actions performed by 
-	//	 Mazub
-	
-	// Position
-	
-	
-	
-	// Velocity
-
-	
-	
-	// Initial velocity
-	
-	
-	
-	// Maximal velocity
-	
-	
-	
-	// Acceleration
-	
-	
-	
-	// Orientation
-	
-	
-	
-	/******************************************* CHARACTER SIZE AND ANIMATION *********************************/
-	
 	/**
-	 * Return the correct sprite of Mazub, depending on his current status.
-	 * 
-	 * @return	A sprite that fits the current status of Mazub.
-	 * @note	No formal documentation was required for this method.
+	 * Variable registering whether or not Mazub should end ducking.
 	 */
-	@Override
-	public Sprite getCurrentSprite() {
-		return this.getAnimation().getCurrentSprite();	
-	}	
-	
-	/************************************************ ADVANCE TIME ********************************************/
-	
-	// * Mazub shall not move if its side perimeter in the direction of movements overlaps with impassable
-	//	 terrain or another game object
+	private boolean shouldEndDucking;
+
+	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
-	 * Advance time and update Mazub's position and velocity accordingly.
+	 * Update the Mazub's horizontal and vertical position and velocity for the given time interval along
+	 * with adjusting his sprites according to his current status. Consider prolonged movement of a 
+	 * Mazub and adjust his status.
 	 * 
-	 * @param 	dt
+	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
 	 * @effect	The horizontal position of Mazub is equal to the result of the formula used in the method
 	 * 			updatePositionX.
 	 * 			| updatePositionX(dt)
-	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
-	 * 			updatePositionY.
-	 * 			| updatePositionY(dt)
 	 * @effect	The horizontal velocity of Mazub is equal to the result of the formula used in the method 
 	 * 			updateVelocityX.
 	 * 			| updateVelocityX(dt)
+	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
+	 * 			updatePositionY.
+	 * 			| updatePositionY(dt)
 	 * @effect	The vertical velocity of Mazub is equal to the result of the formula used in the method	
 	 * 			updateVelocityY.
 	 * 			| updateVelocityY(dt)
-	 * @post	If Mazub wasn't moving, the time since his last move is increased by dt.
-	 * 			| if ( !this.isMoving() )
-	 * 			|	then (new timer).getSinceLastMove() == this.getTimer().getSinceLastMove() + dt
-	 * @post	The time since the last sprite of Mazub was activated is increased by dt.
-	 * 			| (new timer).getSinceLastSprite() == this.getTimer().getSinceLastSprite() + dt
-	 * @throws	IllegalArgumentException
-	 * 				The given time dt is either negative or greater than 0.2s.
-	 * 				| (dt > 0.2) || (dt < 0)
+	 * @effect	If Mazub should end ducking, make Mazub end ducking.
+	 * 			| if ( this.shouldEndDucking() )
+	 * 			|	then this.endDuck()
+	 * TODO: commentary
+	 * @effect	Update Mazub's sprite according to his current status.
+	 * 			| getAnimation().updateSpriteIndex()
 	 */
-	
-	@Override
-	protected void updateTimers(double dt){
-		super.updateTimers(dt);
-		
-		getAnimation().updateAnimationIndex(this.getTimer());
-	}
 
 	@Override
 	public void doMove(double dt) {	
 
 		/* Horizontal */
 		this.updatePositionX(dt);
-		this.updateVelocityX(dt);		
+		this.updateVelocityX(dt);
+		
+		/* Prolonged horizontal movement */
+		if(this.shouldMoveRight() && !this.doesCollide(Orientation.RIGHT)){
+			this.startMove(Orientation.RIGHT);
+			this.setShouldMoveRight(false);
+		} else if (this.shouldMoveLeft() && !this.doesCollide(Orientation.LEFT)) {
+			this.startMove(Orientation.LEFT);
+			this.setShouldMoveLeft(false);
+		}
 		
 		/* Vertical */		
 		this.updatePositionY(dt);		
 		this.updateVelocityY(dt);		
 		
-		/* Prolonged movement */
-		
-		// Ducking
+		/* Prolonged ducking */
 		if(this.shouldEndDucking()){
 			this.endDuck();
 		}
-		
-		// Moving
-		if(this.shouldMoveRight() && !this.doesOverlap(Orientation.RIGHT)){
-			this.startMove(Orientation.RIGHT);
-			this.setShouldMoveRight(false);
-		} else if (this.shouldMoveLeft() && !this.doesOverlap(Orientation.LEFT)) {
-			this.startMove(Orientation.LEFT);
-			this.setShouldMoveLeft(false);
-		}
-		
+			
 		/* Update sprite */
 		this.getAnimation().updateSpriteIndex();
 	}
 	
+	/****************************************************** COLLISION **************************************************/
 	
-	
-	/************************************************************* COLLISION *************************************************/	
-	
+	/**
+	 * Process the horizontal collision of a Mazub.
+	 * 
+	 * TODO: commentary
+	 */
 	@Override
 	protected void processHorizontalCollision(){
 		this.endMove(this.getOrientation());
@@ -559,37 +526,62 @@ public class Mazub extends GameObject{
 		} else {
 			this.setShouldMoveLeft(true);
 		}
-		
-		
+			
 	}
 	
+	/**
+	 * Process the vertical collision of a Mazub.
+	 * 
+	 * @effect	If Mazub is moving in a positive y direction, make him end his jump.
+	 * 			| if ( this.getVelocityY() > 0)
+	 * 			|	then this.endJump()
+	 * @effect	If Mazub is moving in a negative y direction, make him stop falling.
+	 * 			| if ( this.getVelocityY() <= 0)
+	 * 			|	then this.stopFall()
+	 */
 	@Override
 	protected void processVerticalCollision() {
 		if(this.getVelocityY() > 0){ // is going up
 			this.endJump();
 		} else { // is going down
-			this.setVelocityY(0);
 			this.stopFall();
 		}
 	}
 	
+	/**
+	 * Return all impassable Game objects for a Mazub.
+	 * 
+	 * @return	A Hashset that contains all Mazubs, Slimes, Sharks and Plants in the Mazub's world.
+	 */
+	@Override
+	protected Set<GameObject> getAllImpassableGameObjects(){
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
+		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
+		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
+		return allImpassableGameObjects;
+	}
 	
-	/********************************************************* OVERLAP PROCESSING *********************************************/
+	/******************************************************* OVERLAP **************************************************/
 	
+	/**
+	 * Process an overlap of this Mazub with another Mazub.
+	 * 
+	 * @param	mazub
+	 * 				The other Mazub with whom this Mazub overlaps.
+	 */
 	@Override
 	protected void processMazubOverlap(Mazub alien){
 		
 	}
 	
-	@Override
-	protected void processPlantOverlap(Plant plant){
-		System.out.println("plant overlap");
-		if(!plant.isKilled() && !this.isFullHitPoints()){
-			this.modifyNbHitPoints(PLANT_HP_INCREASE);
-			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
-		}
-	}
-	
+	/**
+	 * Process an overlap of a Mazub with a Shark.
+	 * 
+	 * @param	shark
+	 * 				The Shark with which this Mazub overlaps.
+	 * @effect	TODO: final implementation
+	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled()){
@@ -601,6 +593,13 @@ public class Mazub extends GameObject{
 		}
 	}
 	
+	/**
+	 * Process an overlap of a Mazub with a Slime.
+	 * 
+	 * @param	slime
+	 * 				The Slime with which this Mazub overlaps.
+	 * @effect	TODO: final implementation
+	 */
 	@Override
 	protected void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled()){
@@ -612,10 +611,34 @@ public class Mazub extends GameObject{
 		}
 	}
 	
-
+	/**
+	 * Process an overlap of a Mazub with a Plant.
+	 * 
+	 * @param	plant
+	 * 				The Plant with which this Mazub overlaps.
+	 * @effect	TODO: final implementation
+	 */
+	@Override
+	protected void processPlantOverlap(Plant plant){
+		System.out.println("plant overlap");
+		if(!plant.isKilled() && !this.isFullHitPoints()){
+			this.modifyNbHitPoints(PLANT_HP_INCREASE);
+			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
+		}
+	}
 	
-
-	
+	/**
+	 * Check whether or not Mazub is on the target tile of his world.
+	 * 
+	 * @return	True if and only if the target tile of his world is in the array of tiles from
+	 * 			getTilePositionsIn with his parameters.
+	 * 			| result == ( for some tile in this.getWorld().getTilePositionsIn(this.getRoundedPositionX(),
+	 *			|				   			   this.getRoundedPositionY(),
+	 *			|				           	   this.getRoundedPositionX() + this.getWidth(),
+	 *			|				  			   this.getRoundedPositionY() + this.getHeight() ):
+	 *			| 			  	tile[0] == this.getWorld().getTargetTileX() &&
+	 *			|				tile[1] == this.getWorld().getTargetTileY() 					)
+	 */
 	public boolean isOnTargetTile(){
 		
 		for(int[] tile: this.getWorld().getTilePositionsIn(this.getRoundedPositionX(),
@@ -632,16 +655,4 @@ public class Mazub extends GameObject{
 		
 	}
 	
-	
-	
-	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
-		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
-		return allImpassableGameObjects;
-	}
-	
-
 }

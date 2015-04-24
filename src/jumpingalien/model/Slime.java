@@ -20,11 +20,21 @@ import jumpingalien.util.Sprite;
  * @invar	| hasProperSchool()
  */
 public class Slime extends GameObject {
-	
-	private static final int MAZUB_DAMAGE = 50;
 
 	/******************************************************* GENERAL ***************************************************/
 	
+	/**
+	 * Constant reflecting the amount of damage a Slime should take when it overlaps with a Mazub.
+	 * 
+	 * @return	| result == 50
+	 */
+	private static final int MAZUB_DAMAGE = 50;
+	
+	/**
+	 * Constant reflecting the amount of damage a Slime should take when it overlaps with a Shark.
+	 * 
+	 * @return	| result == 50
+	 */
 	private static final int SHARK_DAMAGE = 50;
 
 	/**
@@ -192,37 +202,6 @@ public class Slime extends GameObject {
 		
 	}
 	
-	/****************************************************** HIT POINTS *************************************************/
-	
-	/**
-	 * Make a Slime take damage.
-	 * 
-	 * @param	damageAmount
-	 * 				The amount of damage that a Slime needs to take.
-	 * @effect	| modifyNbHitPoints( - damageAmount)
-	 * @effect	| if ( this.getSchool() != null)
-	 * 			|	then this.mutualDamage()
-	 */
-	@Override
-	protected void takeDamage(int damageAmount){
-		this.modifyNbHitPoints( - damageAmount );
-		this.mutualDamage();
-	}
-	
-	/**
-	 * Make the other Slimes of a school take mutual damage because one Slime in the School took some damage.
-	 * 
-	 * @effect	| for Slime in this.getSchool().getAllSlimes()
-	 * 			|	if ( ! slime.equals(this) )
-	 * 			| 		then slime.modifyNbHitPoints( - MUTUAL_SCHOOL_DAMAGE )
-	 */
-	protected void mutualDamage(){
-		for (Slime slime: this.getSchool().getAllSlimes()){
-			if (!slime.equals(this))
-				slime.modifyNbHitPoints( - MUTUAL_SCHOOL_DAMAGE );
-		}
-	}
-	
 	/***************************************************** SCHOOL *********************************************/
 	
 	/**
@@ -286,7 +265,7 @@ public class Slime extends GameObject {
 	
 	/**
 	 * Tear down the relation between a Slime and his School.
-	 * 
+	 * TODO: commentary
 	 * @effect	| if (this.hasSchool())
 	 * 			|	then this.getSchool().removeAsSlime(this)
 	 * @effect	| if (this.hasSchool())
@@ -360,6 +339,37 @@ public class Slime extends GameObject {
 	 */
 	private School school;
 	
+	/****************************************************** HIT POINTS *************************************************/
+	
+	/**
+	 * Make a Slime take damage.
+	 * 
+	 * @param	damageAmount
+	 * 				The amount of damage that a Slime needs to take.
+	 * @effect	| modifyNbHitPoints( - damageAmount)
+	 * @effect	| if ( this.getSchool() != null)
+	 * 			|	then this.mutualDamage()
+	 */
+	@Override
+	protected void takeDamage(int damageAmount){
+		this.modifyNbHitPoints( - damageAmount );
+		this.mutualDamage();
+	}
+	
+	/**
+	 * Make the other Slimes of a school take mutual damage because one Slime in the School took some damage.
+	 * 
+	 * @effect	| for Slime in this.getSchool().getAllSlimes()
+	 * 			|	if ( ! slime.equals(this) )
+	 * 			| 		then slime.modifyNbHitPoints( - MUTUAL_SCHOOL_DAMAGE )
+	 */
+	protected void mutualDamage(){
+		for (Slime slime: this.getSchool().getAllSlimes()){
+			if (!slime.equals(this))
+				slime.modifyNbHitPoints( - MUTUAL_SCHOOL_DAMAGE );
+		}
+	}
+	
 	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
@@ -378,11 +388,10 @@ public class Slime extends GameObject {
 	 * @effect	| updateVelocityX(dt)
 	 * @effect	| updatePositionY(dt)
 	 * @effect	| updateVelocityY(dt)
-	 * @throws	IllegalStateException
-	 * 				| this.doesCollide()
 	 */
 	@Override
-	public void doMove(double dt) throws IllegalStateException{
+	public void doMove(double dt){
+		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			

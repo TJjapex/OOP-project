@@ -114,7 +114,6 @@ public class Plant extends GameObject {
 	 * @effect	| setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false))
 	 * @effect	| setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0, false))
 	 * @effect	| setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0, false))
-	 *
 	 */
 	@Override
 	public void configureTerrain(){
@@ -143,13 +142,13 @@ public class Plant extends GameObject {
 	@Override
 	public void doMove(double dt){		
 
-		// Initiate periodic movement
+		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
 			this.periodicMovement();
 			this.getTimer().setSinceLastPeriod(0);
 		}
 		
-		// Update horizontal position
+		/* Horizontal */
 		this.updatePositionX(dt);
 	}
 	

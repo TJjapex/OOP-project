@@ -10,6 +10,7 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
+import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.helper.Terrain;
 import jumpingalien.model.helper.TerrainProperties;
 import jumpingalien.util.Sprite;
@@ -23,11 +24,21 @@ import jumpingalien.util.Util;
  */
 public class Shark extends GameObject{
 	
+	/******************************************************* GENERAL ***************************************************/
+	
+	/**
+	 * Constant reflecting the amount of damage a Shark should take when it overlaps with a Mazub.
+	 * 
+	 * @return	| result == 50
+	 */
 	private static final int MAZUB_DAMAGE = 50;
 
+	/**
+	 * Constant reflecting the amount of damage a Shark should take when it overlaps with a Slime.
+	 * 
+	 * @return	| result == 50
+	 */
 	private static final int SLIME_DAMAGE = 50;
-
-	/******************************************************* GENERAL ***************************************************/
 	
 	/**
 	 * Constant reflecting the minimal period time for a periodic movement of a Shark.
@@ -42,6 +53,13 @@ public class Shark extends GameObject{
 	 * @return	| result == 4.0
 	 */
 	public static final double MAX_PERIOD_TIME = 4.0;
+	
+	/**
+	 * Constant reflecting the initial vertical velocity for a Shark when jumping.
+	 * 
+	 * @return	| result == 2.0
+	 */
+	public static final double VELOCITY_Y_INIT_JUMPING = 2.0;
 	
 	/**
 	 * Constant reflecting the minimal acceleration of a Shark while diving in water.
@@ -143,7 +161,7 @@ public class Shark extends GameObject{
 	 */
 	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
-		this(pixelLeftX, pixelBottomY, 1.0, 2.0, 4.0, 1.5, sprites, 100, 100);
+		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 4.0, 1.5, sprites, 100, 100);
 	}
 	
 	/******************************************************** TIMER ****************************************************/
@@ -291,7 +309,7 @@ public class Shark extends GameObject{
 	 */
 	@Override
 	public void startJump() {
-		this.setVelocityY( this.getVelocityYInit() );
+		this.setVelocityY( VELOCITY_Y_INIT_JUMPING );
 		this.setJumping(true);
 	}
 	
@@ -380,11 +398,10 @@ public class Shark extends GameObject{
 	 * @effect	| updateVelocityX(dt)
 	 * @effect	| updatePositionY(dt)
 	 * @effect	| updateVelocityY(dt)
-	 * @throws	IllegalStateException
-	 * 				| this.doesCollide()
 	 */
 	@Override
 	public void doMove(double dt){
+		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
