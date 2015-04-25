@@ -292,21 +292,69 @@ public class Mazub extends GameObject{
 	// TODO: commentary
 	
 	@Override
-	public void endMove(Orientation orientation) {
-		assert (this.getOrientation() != null);
+	public void startMove(Orientation orientation){
+		assert isValidOrientation(orientation);
 		
-		if(orientation == this.getOrientation()){
+		this.setOrientation(orientation);
+		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
+		this.setAccelerationX( orientation.getSign() * accelerationXInit);
+		
+		if(orientation == Orientation.LEFT){
+			this.setMoveLeft(true);
+		}else{
+			this.setMoveRight(true);
+		}
+	}
+	
+	@Override
+	public void endMove(Orientation orientation){
+		assert isValidOrientation(orientation);
+		
+		if(orientation == Orientation.LEFT){
+			this.setMoveLeft(false);
+			this.setShouldMoveLeft(false);
+		}else{
+			this.setMoveRight(false);
+			this.setShouldMoveRight(false);
+		}
+		
+		if(!this.isMoveLeft() && !this.isMoveRight()){
 			this.setVelocityX(0);
 			this.setAccelerationX(0);
 			this.getTimer().setSinceLastMove(0);
 		}
 		
-		if (orientation == Orientation.RIGHT){
-			this.setShouldMoveRight(false);
-		} else {
-			this.setShouldMoveLeft(false);
+		if(this.isMoveLeft() && getOrientation() != Orientation.LEFT){
+			startMove(Orientation.LEFT);
+		}else
+		if(this.isMoveRight() && getOrientation() != Orientation.RIGHT){
+			startMove(Orientation.RIGHT);
 		}
 	}
+	
+	
+	public boolean isMoveLeft() {
+		return moveLeft;
+	}
+
+	public void setMoveLeft(boolean moveLeft) {
+		this.moveLeft = moveLeft;
+	}
+	
+	boolean moveLeft = false;
+
+	public boolean isMoveRight() {
+		return moveRight;
+	}
+
+	public void setMoveRight(boolean moveRight) {
+		this.moveRight = moveRight;
+	}
+
+	boolean moveRight = false;
+	
+	
+	/* Prolonged horizontal movement */
 	
 	/**
 	 * Checks whether Mazub has moved in the last second.
@@ -489,10 +537,10 @@ public class Mazub extends GameObject{
 		this.updateVelocityX(dt);
 		
 		/* Prolonged horizontal movement */
-		if(this.shouldMoveRight() && !this.doesCollide(Orientation.RIGHT)){
+		if(this.shouldMoveRight() && !this.doesOverlap(Orientation.RIGHT)){
 			this.startMove(Orientation.RIGHT);
 			this.setShouldMoveRight(false);
-		} else if (this.shouldMoveLeft() && !this.doesCollide(Orientation.LEFT)) {
+		} else if (this.shouldMoveLeft() && !this.doesOverlap(Orientation.LEFT)) {
 			this.startMove(Orientation.LEFT);
 			this.setShouldMoveLeft(false);
 		}

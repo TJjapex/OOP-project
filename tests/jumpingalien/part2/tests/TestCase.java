@@ -322,7 +322,7 @@ public class TestCase {
 		 assertFalse(GameObject.doRegionsOverlap(0, 0, 20, 20, 20, 0, 20, 20, Orientation.RIGHT));
 		 assertTrue(GameObject.doRegionsOverlap(0, 0, 20, 20, 19, 0, 20, 20, Orientation.RIGHT));
 	 }
-	
+		
 	 /* Orientation.LEFT */
 	 @Test
 	 public void testRegionOverlap_left1(){
@@ -344,6 +344,29 @@ public class TestCase {
 	 public void testRegionOverlap_left2(){
 		 assertFalse(GameObject.doRegionsOverlap(0, 20, 20, 20, 0, 0, 20, 20, Orientation.LEFT));
 		 assertTrue(GameObject.doRegionsOverlap(0, 19, 20, 20, 0, 0, 20, 20, Orientation.LEFT));
+	 }
+		
+	 /* Orientation.TOP */
+	 @Test
+	 public void testRegionOverlap_top1(){
+		 assertTrue(GameObject.doRegionsOverlap(0, 0, 20, 20, 0, 0, 20, 20, Orientation.TOP));
+		 assertTrue(GameObject.doRegionsOverlap(0, 0, 20, 20, 10, 10, 20, 20, Orientation.TOP));
+		 assertFalse(GameObject.doRegionsOverlap(10, 10, 20, 20, 0, 0, 20, 20, Orientation.TOP));
+		 assertTrue(GameObject.doRegionsOverlap(0, 0, 20, 20, 0, 10, 20, 20, Orientation.TOP));
+		 assertTrue(GameObject.doRegionsOverlap(0, 0, 20, 20, 10, 0, 20, 20, Orientation.TOP));
+		 
+		 
+		 // region 2 inside region 1
+		 assertFalse(GameObject.doRegionsOverlap(0, 0, 20, 20, 5, 5, 10, 10, Orientation.TOP));
+		 
+		 // region 2 outside region 1
+		 assertTrue(GameObject.doRegionsOverlap(5, 5, 10, 10, 0, 0, 20, 20, Orientation.TOP));
+	 }
+	 
+	 @Test
+	 public void testRegionOverlap_top2(){
+		 assertFalse(GameObject.doRegionsOverlap(0, 0, 20, 20, 0, 20, 20, 20, Orientation.TOP));
+		 assertTrue(GameObject.doRegionsOverlap(0, 0, 20, 20, 0, 19, 20, 20, Orientation.TOP));
 	 }
 	
 	

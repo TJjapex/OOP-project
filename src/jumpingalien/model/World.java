@@ -38,12 +38,12 @@ public class World {
 			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
 			int targetTileY) {
 		
-		assert canHaveAsDisplayWidth(visibleWindowWidth);
-		assert canHaveAsDisplayHeight(visibleWindowHeight);
-		
 		this.tileLength = tileSize;
 		this.nbTilesX = nbTilesX;
 		this.nbTilesY = nbTilesY;
+		
+		assert canHaveAsDisplayWidth(visibleWindowWidth);
+		assert canHaveAsDisplayHeight(visibleWindowHeight);
 		
 		this.displayWidth = visibleWindowWidth;
 		this.displayHeight = visibleWindowHeight;

@@ -949,40 +949,16 @@ public abstract class GameObject {
 //		}
 //	}
 	
-	boolean moveLeft = false;
-	boolean moveRight = false;
-	
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
 		this.setAccelerationX( orientation.getSign() * accelerationXInit);
-		
-		if(orientation == Orientation.LEFT){
-			moveLeft = true;
-		}else{
-			moveRight = true;
-		}
 	}
-	
-	public void endMove(Orientation orientation){
-		if(orientation == Orientation.LEFT){
-			moveLeft = false;
-		}else{
-			moveRight = false;
-		}
-		
-		if(!moveLeft && !moveRight){
-			this.setVelocityX(0);
-			this.setAccelerationX(0);
-			this.getTimer().setSinceLastMove(0);
-		}
-		
-		if(moveLeft && getOrientation() != Orientation.LEFT){
-			startMove(Orientation.LEFT);
-		}else
-		if(moveRight && getOrientation() != Orientation.RIGHT){
-			startMove(Orientation.RIGHT);
-		}
+
+	public void endMove(Orientation orientation){		
+		this.setVelocityX(0);
+		this.setAccelerationX(0);
+		this.getTimer().setSinceLastMove(0);
 	}
 	
 //	public void startMoveLeft(){
@@ -1500,7 +1476,8 @@ public abstract class GameObject {
 	/***************************************************** INTERACTION ************************************************/
 	
 	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){
-		assert hasProperWorld();
+		assert hasProperWorld(); 
+		
 		World world = this.getWorld();
 		
 		// Check overlap with tiles
@@ -1547,7 +1524,6 @@ public abstract class GameObject {
 	 */
 	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld();
-		assert interaction != TerrainInteraction.COLLIDE || orientation == Orientation.ALL; 
 		
 		for(GameObject object : this.getAllImpassableGameObjects()){
 			if(object != this){
