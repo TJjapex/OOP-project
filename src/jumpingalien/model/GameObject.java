@@ -231,27 +231,69 @@ public abstract class GameObject {
 	}
 	
 	/******************************************************* TERRAIN ***************************************************/
-	
+	/**
+	 * A map containing the properties for the different types of terrain. 
+	 */
 	public Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
 	
+	/**
+	 * Returns the map of terrain properties for the different types of terrain.
+	 * 
+	 * @return
+	 * 			The map of terrain properties for the different types of terrain.
+	 */
 	public Map<Terrain, TerrainProperties> getAllTerrainProperties() {
-		return allTerrainProperties;
+		return this.allTerrainProperties;
 	}
 	
+	/**
+	 * Returns the terrain properties for the given terrain type.
+	 * 
+	 * @param terrain
+	 * 			The terrain type, as an element of the Terrain enumeration.
+	 * @return
+	 * 			The terrain properties, as instance of the class TerrainProperties.
+	 */
 	public TerrainProperties getTerrainPropertiesOf(Terrain terrain) {
-		return allTerrainProperties.get(terrain);
+		return this.allTerrainProperties.get(terrain);
 	}
 	
+	/**
+	 * Sets the terrain properties for the given terrain type to the given properties.
+	 * 
+	 * @param terrain
+	 * 			The terrain type, as element of the Terrain enumeration.
+	 * @param terrainProperties
+	 * 			The terrain properties, as instance of the class TerrainProperties.
+	 */
 	protected void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
-		allTerrainProperties.put(terrain, terrainProperties);
+		this.allTerrainProperties.put(terrain, terrainProperties);
 	}
 	
+	/**
+	 * Checks whether the properties for the given terrain are set.
+	 * 
+	 * @param terrain
+	 * 			The terrain type, as element of the Terrain enumeration.
+	 * @return
+	 * 			True if and only if the given terrain type is configured.
+	 * 
+	 */
 	public boolean hasTerrainPropertiesOf(Terrain terrain){
-		return allTerrainProperties.containsKey(terrain);
+		return this.allTerrainProperties.containsKey(terrain);
 	}
 	
+	/**
+	 * Sets the terrain properties. Must be implemented in subclass, according to specifications.
+	 */
 	protected abstract void configureTerrain();
 	
+	/**
+	 * Sets the overlap duration timer for any terrain overlap timer to zero,
+	 * if this GameObject does not overlap with that terrain.
+	 * Does this for each terrain type, which are elements of the Terrain enumeration.
+	 * 
+	 */
 	private void resetTerrainOverlapDuration(){
 		// If character does not collide with terrain type, set the overlapping duration with the terrain type to 0
 		Set<Terrain> overlappingTerrainTypes = getOverlappingTerrainTypes();
@@ -262,6 +304,16 @@ public abstract class GameObject {
 		}
 	}
 	
+	/**
+	 * Checks whether this GameObject overlaps with the given Terrain type.
+	 * 
+	 * TODO beter documenteren, ik begrijp niet exact de details van die randjes enzo (waarvoor die -1 enzo dienen)
+	 * 
+	 * @param terrain
+	 * 			The given terrain type, as element of the Terrain enumeration.
+	 * @return
+	 * 			True if and only if this object overlaps with the given Terrain type.
+	 */
 	public boolean isSubmergedIn(Terrain terrain){		
 		World world = this.getWorld();
 		
@@ -281,16 +333,46 @@ public abstract class GameObject {
 	
 	/******************************************************** WORLD ****************************************************/
 	
+	/**
+	 * Returns the world of this Game object.
+	 * 
+	 * @return
+	 * 		The world of this Game object.
+	 */
 	public World getWorld() {
 		return this.world;
 	}
-
+	
+	/**
+	 * Checks whether this Game object is related to a proper Game world.
+	 * 	 * 
+	 * @return
+	 * 		True if and only if this game object has a proper world.
+	 */
 	public boolean hasProperWorld(){
 		return this.hasWorld();
 	}
 	
+	/**
+	 * Checks whether this Game object has a Game world. 
+	 * 
+	 * @return
+	 * 		True if and only if the Game world of this Game object is not null.
+	 */
 	public boolean hasWorld(){
 		return this.getWorld() != null;
+	}
+	
+	/**
+	 * Sets the world of this Game object to the given world
+	 * 
+	 * @param world
+	 * 			The world to which the world of this Game object will be set
+	 * @post 	The new world of this Game object will be the given world.
+	 * 			| this.getWorld() == world
+	 */
+	protected void setWorld(World world) {
+		this.world = world;
 	}
 	
 	/**
@@ -299,17 +381,9 @@ public abstract class GameObject {
 	 * @param	world
 	 * 				The world to which the Game object must be set.
 	 * @effect	| setWorld(world)
-	 * @effect	| if (this instanceof Mazub)
-	 * 			|	then world.addAsMazub(this)
-	 * @effect	| if (this instanceof Shark)
-	 * 			|	then world.addAsShark(this)
-	 * @effect	| if (this instanceof Slime)
-	 * 			|	then world.addAsSlime(this)
-	 * @effect	| if (this instanceof Plant)
-	 * 			|	then world.addAsPlant(this)
-	 * @effect
+	 * @effect  | world.addAsGameObject(this)
 	 * @throws	IllegalArgumentException
-	 * 				| ( ! canHaveAsWorld(world) ) || ( ! world.canHaveAsGameObject(this) )
+	 * 				| ! canHaveAsWorld(world) or  ! world.canHaveAsGameObject(this)
 	 */
 	public void setWorldTo(World world) throws IllegalArgumentException{
 		
@@ -318,17 +392,28 @@ public abstract class GameObject {
 		if(!world.canHaveAsGameObject(this))
 			throw new IllegalArgumentException("Given world cannot have this plant as plant!");
 		
-		setWorld(world);
+		this.setWorld(world);
 		world.addAsGameObject(this);
 	}
 	
 	/**
-	 * Unset the world of a Game object.
+	 * Unset the world, if any, from this Game object.
 	 * 
 	 * @effect	| if ( this.hasWorld() )
 	 * 			| 	then this.getWorld().removeAsGameObject(this)
 	 * @effect	| if ( this.hasWorld() )
 	 * 			|	then this.setWorld(null)
+	 * 
+	 * TODO afwerken, zal ik later doen meot nu weg
+	 */
+	
+	/*
+	 * @post   This ownable no longer has an owner.
+	 *       | ! new.hasOwner()
+	 * @post   The former owner of this owning, if any, no longer
+	 *         has this owning as one of its ownings.
+	 *       |    (getOwner() == null)
+	 *       | || (! (new getOwner()).hasAsOwning(owning))
 	 */
 	protected void unsetWorld() {
 		if(this.hasWorld()){
@@ -336,10 +421,6 @@ public abstract class GameObject {
 			this.setWorld(null);
 			formerWorld.removeAsGameObject(this);
 		}
-	}
-
-	protected void setWorld(World world) {
-		this.world = world;
 	}
 	
 	public boolean canHaveAsWorld(World world){
