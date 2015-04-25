@@ -1,4 +1,4 @@
-package jumpingalien.model.helper;
+package jumpingalien.model.terrain;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

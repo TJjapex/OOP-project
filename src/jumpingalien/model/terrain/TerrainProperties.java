@@ -1,4 +1,4 @@
-package jumpingalien.model.helper;
+package jumpingalien.model.terrain;
 
 /**
  * A class of Terrain properties for the game world of Mazub.

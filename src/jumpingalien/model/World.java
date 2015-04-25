@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import jumpingalien.model.helper.Terrain;
+import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.helper.VectorInt;
 
 /**

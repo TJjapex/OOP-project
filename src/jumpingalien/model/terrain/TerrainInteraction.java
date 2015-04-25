@@ -1,4 +1,4 @@
-package jumpingalien.model.helper;
+package jumpingalien.model.terrain;
 
 public enum TerrainInteraction {
 	STAND_ON,

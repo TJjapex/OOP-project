@@ -3,12 +3,12 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Terrain;
-import jumpingalien.model.helper.TerrainProperties;
+import jumpingalien.model.terrain.TerrainProperties;
 import jumpingalien.util.Sprite;
 
 /**

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
