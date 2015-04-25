@@ -933,50 +933,13 @@ public abstract class GameObject {
 	 * 			|	then new.getAccelerationX() == this.ACCELERATION_X
 	 * 			| else if (this.getOrientation() == LEFT)
 	 * 			| 	then new.getAccelerationX() == -this.ACCELERATION_X
-	 */
-//	public void startMove(Orientation orientation) {		
-//		assert (this.getOrientation() != null);
-//		assert isValidOrientation(orientation);
-//		
-//		this.setOrientation(orientation);
-//		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
-//		this.setAccelerationX( orientation.getSign() * accelerationXInit);
-//		
-//		if(orientation == Orientation.LEFT){
-//			moveLeft = true;
-//		}else{
-//			moveRight = true;
-//		}
-//	}
-	
+	 */	
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
 		this.setAccelerationX( orientation.getSign() * accelerationXInit);
 	}
 
-	public void endMove(Orientation orientation){		
-		this.setVelocityX(0);
-		this.setAccelerationX(0);
-		this.getTimer().setSinceLastMove(0);
-	}
-	
-//	public void startMoveLeft(){
-//		
-//	}
-//	
-//	public void startMoveRight(){
-//		
-//	}
-//	
-//	public void endMoveLeft(){
-//		
-//	}
-//	
-//	public void endMoveRight(){
-//		
-//	}
-	
 	/**
 	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
 	 * @pre		The given orientation is not null.
@@ -988,28 +951,11 @@ public abstract class GameObject {
 	 * @post	The time since the last move was made is reset to 0.
 	 *			| (new timer).getSinceLastMove() == 0
 	 */
-//	public void endMove(Orientation orientation) {
-//		assert (this.getOrientation() != null);
-//		assert isValidOrientation(orientation);
-//		
-//		if(orientation == this.getOrientation()){
-//			this.setVelocityX(0);
-//			this.setAccelerationX(0);
-//			this.getTimer().setSinceLastMove(0);
-//		}	
-//		
-//		if(orientation == Orientation.LEFT){
-//			moveLeft = false;
-//			if(moveRight && getOrientation() != Orientation.RIGHT){
-//				startMove(Orientation.RIGHT);
-//			}
-//		}else{
-//			moveRight = false;
-//			if(moveLeft && getOrientation() != Orientation.LEFT){
-//				startMove(Orientation.LEFT);
-//			}
-//		}
-//	}
+	public void endMove(Orientation orientation){		
+		this.setVelocityX(0);
+		this.setAccelerationX(0);
+		this.getTimer().setSinceLastMove(0);
+	}
 
 	/**
 	 * Checks whether Mazub is moving.
