@@ -14,7 +14,8 @@ import jumpingalien.model.helper.VectorInt;
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * 
- * @invar | getNbGameObjects() <= 101
+ * @invar 	| getNbGameObjects() <= 101
+ * @invar	| getNbSchools() <= 10
  * 
  * @version 1.0
  */
@@ -290,7 +291,7 @@ public class World {
 	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
 	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
 	public void advanceTime( double dt) {
-
+		System.out.println(this.getNbSchools());
 		for(Mazub alien: this.getAllMazubs()){
 			alien.advanceTime(dt);						
 		}
@@ -605,6 +606,14 @@ public class World {
 	
 	public int getNbSlimes(){
 		return this.slimes.size();
+	}
+	
+	public int getNbSchools(){
+		Set<School> schools = new HashSet<School>();
+		for ( Slime slime: this.getAllSlimes() ){
+			schools.add(slime.getSchool());
+		}
+		return schools.size();
 	}
 	
 	// Vars

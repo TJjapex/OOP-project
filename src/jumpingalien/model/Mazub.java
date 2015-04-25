@@ -122,7 +122,7 @@ public class Mazub extends GameObject{
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
 	 * @post	The constant VELOCITY_X_MAX_RUNNING is equal to velocityXMaxRunning.
 	 *  		| VELOCITY_X_MAX_RUNNING == velocityXMaxRunning
-	 * @post	The initial ducking status of Mazub is set to false.
+	 * @effect	The initial ducking status of Mazub is set to false.
 	 * 			| setDucking(false)
 	 * @post	The animation is initiated.
 	 * 			| new.getAnimation() != null
@@ -263,6 +263,18 @@ public class Mazub extends GameObject{
 		this.getAnimation().updateAnimationIndex(this.getTimer());
 	}
 	
+	/**
+	 * Checks whether Mazub has moved in the last second.
+	 * 
+	 * @return	True if and only if the time since the last move by Mazub was made is less or equal to 1.
+	 * 			(up to a certain epsilon)
+	 * 			| result == ( this.getTime().getSinceLastMove() <= 1.0 )
+	 */
+	@Raw
+	public boolean hasMovedInLastSecond(){
+		return Util.fuzzyLessThanOrEqualTo(this.getTimer().getSinceLastMove(), 1.0);
+	}
+	
 	/******************************************************* TERRAIN ***************************************************/
 
 	/**
@@ -289,8 +301,26 @@ public class Mazub extends GameObject{
 	
 	/******************************************************* RUNNING ***************************************************/
 	
-	// TODO: commentary
-	
+	/**
+	 * Make Mazub start moving.
+	 * 
+	 * @param	orientation
+	 * 				The direction in which Mazub starts moving.
+	 * @pre		The given orientation should be a valid orientation.
+	 * 			| isValidOrientation(orientation)
+	 * @effect	The orientation of Mazub is set to orientation.
+	 * 			| setOrientation(orientation)
+	 * @effect	The horizontal velocity of Mazub is set to the initial horizontal velocity provided with the sign
+	 *  		of the given orientation.
+	 * 			| setVelocityX( orientation.getSign() * this.getVelocityXInit() )
+	 * @effect	The horizontal acceleration of Mazub is set to the initial horizontal acceleration provided with
+	 * 			the sign of the given orientation.
+	 * 			| setAccelerationX( orientation.getSign() * accelerationXInit)
+	 * @effect	If the given orientation is LEFT, set the status telling if Mazub should move left to true.
+	 * 			| setShouldMoveLeft(true)
+	 * @effect	If the given orientation is RIGHT, set the status telling if Mazub should move right to true.
+	 * 			| setShouldMoveRight(true)
+	 */
 	@Override
 	public void startMove(Orientation orientation){
 		assert isValidOrientation(orientation);
@@ -300,92 +330,170 @@ public class Mazub extends GameObject{
 		this.setAccelerationX( orientation.getSign() * accelerationXInit);
 		
 		if(orientation == Orientation.LEFT){
-			this.setMoveLeft(true);
+			this.setShouldMoveLeft(true);
 		}else{
-			this.setMoveRight(true);
+			this.setShouldMoveRight(true);
 		}
 	}
 	
+	/**
+	 * Make Mazub end moving.
+	 * 
+	 * @param	orientation
+	 * 				The direction in which Mazub ends moving.
+	 * @pre		The given orientation should be a valid orientation.
+	 * 			| isValidOrientation(orientation)
+	 * @effect	If the given orientation is LEFT, set the status telling if Mazub should move left to false.
+	 * 			| setShouldMoveLeft(false)
+	 * @effect	If the given orientation is RIGHT, set the status telling if Mazub should move right to false.
+	 * 			| setShouldMoveRight(false)
+	 * @effect	If Mazub shouldn't move left or right anymore, set his horizontal velocity to 0.
+	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
+	 * 			|	then this.setVelocityX(0)
+	 * @effect 	If Mazub shouldn't move left or right anymore, set his horizontal acceleration to 0.
+	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
+	 * 			|	then this.setAccelerationX(0)
+	 * @effect 	If Mazub shouldn't move left or right anymore, set the time since his last move to 0.
+	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
+	 * 			|	then this.getTimer().setSinceLastMove(0)
+	 */
 	@Override
 	public void endMove(Orientation orientation){
 		assert isValidOrientation(orientation);
 		
 		if(orientation == Orientation.LEFT){
-			this.setMoveLeft(false);
 			this.setShouldMoveLeft(false);
 		}else{
-			this.setMoveRight(false);
 			this.setShouldMoveRight(false);
 		}
 		
-		if(!this.isMoveLeft() && !this.isMoveRight()){
+		if(!this.getShouldMoveLeft() && !this.getShouldMoveRight()){
 			this.setVelocityX(0);
 			this.setAccelerationX(0);
 			this.getTimer().setSinceLastMove(0);
 		}
 		
-		if(this.isMoveLeft() && getOrientation() != Orientation.LEFT){
+		if(this.getShouldMoveLeft() && getOrientation() != Orientation.LEFT){
 			startMove(Orientation.LEFT);
 		}else
-		if(this.isMoveRight() && getOrientation() != Orientation.RIGHT){
+		if(this.getShouldMoveRight() && getOrientation() != Orientation.RIGHT){
 			startMove(Orientation.RIGHT);
 		}
 	}
 	
-	
-	public boolean isMoveLeft() {
-		return moveLeft;
-	}
-
-	public void setMoveLeft(boolean moveLeft) {
-		this.moveLeft = moveLeft;
-	}
-	
-	boolean moveLeft = false;
-
-	public boolean isMoveRight() {
-		return moveRight;
-	}
-
-	public void setMoveRight(boolean moveRight) {
-		this.moveRight = moveRight;
-	}
-
-	boolean moveRight = false;
-	
-	
-	/* Prolonged horizontal movement */
-	
 	/**
-	 * Checks whether Mazub has moved in the last second.
+	 * Return whether or not Mazub should still move right.
 	 * 
-	 * @return	True if and only if the time since the last move by Mazub was made is less or equal to 1.
-	 * 			(up to a certain epsilon)
-	 * 			| result == ( this.getTime().getSinceLastMove() <= 1.0 )
+	 * @return	True if and only if Mazub should still move right.
+	 * 			| result = ( this.shouldMoveRight )
 	 */
-	@Raw
-	public boolean hasMovedInLastSecond(){
-		return Util.fuzzyLessThanOrEqualTo(this.getTimer().getSinceLastMove(), 1.0);
-	}
-	
-	public boolean shouldMoveRight(){
+	public boolean getShouldMoveRight() {
 		return this.shouldMoveRight;
 	}
-	
-	public boolean shouldMoveLeft(){
-		return this.shouldMoveLeft;
-	}
-	
-	private void setShouldMoveRight(boolean shouldMoveRight){
+
+	/**
+	 * Set whether or not Mazub should still move right.
+	 * 
+	 * @param 	shouldMoveRight
+	 * 				A boolean representing whether or not Mazub should still move right.
+	 * @post	The new status telling if Mazub should still move right is equal to shouldMoveRight.
+	 * 			| new.getShouldMoveRight() == shouldMoveRight
+	 */
+	public void setShouldMoveRight(boolean shouldMoveRight) {
 		this.shouldMoveRight = shouldMoveRight;
 	}
+
+	/**
+	 * Variable registering whether or not Mazub should still move right.
+	 */
+	boolean shouldMoveRight = false;
 	
-	private void setShouldMoveLeft(boolean shouldMoveLeft){
+	/**
+	 * Return whether or not Mazub should still move left.
+	 * 
+	 * @return	True if and only if Mazub should still move left.
+	 * 			| result = ( this.shouldMoveLeft )
+	 */
+	public boolean getShouldMoveLeft() {
+		return this.shouldMoveLeft;
+	}
+
+	/**
+	 * Set whether or not Mazub should still move left.
+	 * 
+	 * @param 	shouldMoveLeft
+	 * 				A boolean representing whether or not Mazub should still move left.
+	 * @post	The new status telling if Mazub should still move left is equal to shouldMoveLeft.
+	 * 			| new.getShouldMoveLeft() == shouldMoveLeft
+	 */
+	public void setShouldMoveLeft(boolean shouldMoveLeft) {
 		this.shouldMoveLeft = shouldMoveLeft;
 	}
 	
-	private boolean shouldMoveRight;
-	private boolean shouldMoveLeft;
+	/**
+	 * Variable registering whether or not Mazub should still move left.
+	 */
+	boolean shouldMoveLeft = false;
+
+	/* Prolonged horizontal movement */
+	
+	/**
+	 * Return whether or not Mazub has a prolonged movement to the right.
+	 * 
+	 * @return	True if and only if Mazub has a prolonged movement to the right.
+	 * 			| result = ( this.prolongedMoveRight )
+	 */
+	public boolean getProlongedMoveRight(){
+		return this.prolongedMoveRight;
+	}
+	
+	/**
+	 * Set whether or not Mazub should have a prolonged movement to the right.
+	 * 
+	 * @param 	prolongedMoveRight
+	 * 				A boolean representing whether or not Mazub should have a prolonged 
+	 * 				movement to the right.
+	 * @post	The new status telling if Mazub has a prolonged movement to the right is
+	 * 			equal to prolongedMoveRight.
+	 * 			| new.getProlongedMoveRight() == prolongedMoveRight
+	 */
+	private void setProlongedMoveRight(boolean prolongedMoveRight){
+		this.prolongedMoveRight = prolongedMoveRight;
+	}
+	
+	/**
+	 * Variable registering whether or not Mazub has a prolonged movement to the right.
+	 */
+	private boolean prolongedMoveRight;
+	
+	/**
+	 * Return whether or not Mazub has a prolonged movement to the left.
+	 * 
+	 * @return	True if and only if Mazub has a prolonged movement to the left.
+	 * 			| result = ( this.prolongedMoveLeft )
+	 */
+	public boolean getProlongedMoveLeft(){
+		return this.prolongedMoveLeft;
+	}
+	
+	/**
+	 * Set whether or not Mazub should have a prolonged movement to the left.
+	 * 
+	 * @param 	prolongedMoveLeft
+	 * 				A boolean representing whether or not Mazub should have a prolonged 
+	 * 				movement to the left.
+	 * @post	The new status telling if Mazub has a prolonged movement to the left is
+	 * 			equal to prolongedMoveLeft.
+	 * 			| new.getProlongedMoveLeft() == prolongedMoveLeft
+	 */
+	private void setProlongedMoveLeft(boolean prolongedMoveLeft){
+		this.prolongedMoveLeft = prolongedMoveLeft;
+	}
+	
+	/**
+	 * Variable registering whether or not Mazub has a prolonged movement to the left.
+	 */
+	private boolean prolongedMoveLeft;
 	
 	/******************************************************* DUCKING ***************************************************/
 	
@@ -537,12 +645,12 @@ public class Mazub extends GameObject{
 		this.updateVelocityX(dt);
 		
 		/* Prolonged horizontal movement */
-		if(this.shouldMoveRight() && !this.doesOverlap(Orientation.RIGHT)){
+		if(this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT)){
 			this.startMove(Orientation.RIGHT);
-			this.setShouldMoveRight(false);
-		} else if (this.shouldMoveLeft() && !this.doesOverlap(Orientation.LEFT)) {
+			this.setProlongedMoveRight(false);
+		} else if (this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT)) {
 			this.startMove(Orientation.LEFT);
-			this.setShouldMoveLeft(false);
+			this.setProlongedMoveLeft(false);
 		}
 		
 		/* Vertical */		
@@ -570,9 +678,9 @@ public class Mazub extends GameObject{
 		this.endMove(this.getOrientation());
 		
 		if (this.getOrientation() == Orientation.RIGHT){
-			this.setShouldMoveRight(true);
+			this.setProlongedMoveRight(true);
 		} else {
-			this.setShouldMoveLeft(true);
+			this.setProlongedMoveLeft(true);
 		}
 			
 	}

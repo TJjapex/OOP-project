@@ -143,24 +143,7 @@ public abstract class GameObject {
 	/****************************************************** ANIMATION **************************************************/
 	
 	/**
-	 * Set the animation object for Mazub.
-	 * 
-	 * @pre		The given animation object is not null.
-	 * 			| animation != null
-	 * @param 	animation
-	 * 				An animation that consists of consecutive sprites.
-	 * @post	The new animation for Mazub is equal to the given animation.
-	 * 			| new.getAnimation() == animation
-	 */
-	@Basic
-	protected void setAnimation(Animation animation) {
-		assert animation != null;
-		
-		this.animation = animation;
-	}
-
-	/**
-	 * Return the animation object for Mazub.
+	 * Return the animation object for a Game object.
 	 * 
 	 * @return	An animation that consists of consecutive sprites.
 	 */
@@ -171,10 +154,33 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the animation of this Mazub.
+	 * Set the animation object for a Game object.
+	 * 
+	 * @pre		The given animation object is not null.
+	 * 			| animation != null
+	 * @param 	animation
+	 * 				An animation that consists of consecutive sprites.
+	 * @post	The new animation for a Game object is equal to the given animation.
+	 * 			| new.getAnimation() == animation
+	 */
+	@Basic
+	protected void setAnimation(Animation animation) {
+		assert animation != null;
+		
+		this.animation = animation;
+	}
+	
+	/**
+	 * Variable registering the animation of this Game object.
 	 */
 	private Animation animation;
 	
+	/**
+	 * Return the correct sprite of the Game object, depending on his current status.
+	 * 
+	 * @return	A sprite that fits the current status of the Game object.
+	 * @note	No formal documentation was required for this method.
+	 */
 	public Sprite getCurrentSprite(){
 		return this.getAnimation().getCurrentSprite();
 	}
@@ -182,13 +188,24 @@ public abstract class GameObject {
 	/******************************************************** TIMER ****************************************************/
 
 	/**
-	 * Set the time properties of Mazub.
+	 * Return the time properties of a Game object.
+	 * 
+	 * @return	A timer that keeps track of several times involving the behavior of a Game object.
+	 */
+	@Basic
+	@Raw
+	public Timer getTimer() {
+		return this.timer;
+	}
+	
+	/**
+	 * Set the time properties of a Game object.
 	 * 
 	 * @pre		The given timer object is not null.
 	 * 			| timer != null
 	 * @param 	timer
-	 * 				A timer that keeps track of several times involving the behaviour of Mazub.
-	 * @post	The new time of Mazub is equal to timerClass.
+	 * 				A timer that keeps track of several times involving the behavior of a Game object.
+	 * @post	The new time of a Game object is equal to timer.
 	 * 			| new.getTimer() == timer
 	 */
 	@Basic
@@ -199,23 +216,29 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Return the time properties of Mazub.
-	 * 
-	 * @return	A timer that keeps track of several times involving the behaviour of Mazub.
+	 * Variable registering the timer of this Game object.
 	 */
-	@Basic
-	@Raw
-	public Timer getTimer() {
-		return this.timer;
-	}
-
 	protected Timer timer;
 	
 	/**
-	 * Increase the timers of this gameobject with the given dt
+	 * Increase the timers of this Game object with the given dt.
 	 * 
-	 * @param dt
-	 * 		
+	 * @param 	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	If the Game object isn't moving, increase the time since his last move.
+	 * 			| getTimer().increaseSinceLastMove(dt)
+	 * @effect	Increase the time since the last sprite.
+	 * 			| getTimer().increaseSinceLastSprite(dt)
+	 * @effect	Increase the terrain overlap duration.
+	 * 			| getTimer().increaseTerrainOverlapDuration(dt)
+	 * @effect	Increase the time since the last terrain damage.
+	 * 			| getTimer().increaseSinceLastTerrainDamage(dt)
+	 * @effect	Increase the time since the last enemy collision.
+	 * 			| getTimer().increaseSinceLastTerrainDamage(dt)
+	 * @effect	Increase the time since the last period.
+	 * 			| getTimer().increaseSinceLastPeriod(dt)
+	 * @efect	Reset the terrain overlap duration.
+	 * 			| resetTerrainOverlapDuration()
 	 */
 	protected void updateTimers(double dt){
 		if(!this.isMoving())
@@ -227,92 +250,105 @@ public abstract class GameObject {
 		this.getTimer().increaseSinceEnemyCollision(dt);
 		this.getTimer().increaseSinceLastPeriod(dt);
 		
-		resetTerrainOverlapDuration();
+		this.resetTerrainOverlapDuration();
 	}
 	
 	/******************************************************* TERRAIN ***************************************************/
+	
 	/**
 	 * A map containing the properties for the different types of terrain. 
 	 */
 	public Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
 	
 	/**
-	 * Returns the map of terrain properties for the different types of terrain.
+	 * Return the map of terrain properties for the different types of terrain.
 	 * 
-	 * @return
-	 * 			The map of terrain properties for the different types of terrain.
+	 * @return	The map of terrain properties for the different types of terrain.
 	 */
 	public Map<Terrain, TerrainProperties> getAllTerrainProperties() {
 		return this.allTerrainProperties;
 	}
 	
 	/**
-	 * Returns the terrain properties for the given terrain type.
+	 * Return the terrain properties for the given terrain type.
 	 * 
-	 * @param terrain
-	 * 			The terrain type, as an element of the Terrain enumeration.
-	 * @return
-	 * 			The terrain properties, as instance of the class TerrainProperties.
+	 * @param 	terrain
+	 * 				The terrain type, as an element of the Terrain enumeration.
+	 * @return	The terrain properties, as instance of the class TerrainProperties.
 	 */
 	public TerrainProperties getTerrainPropertiesOf(Terrain terrain) {
 		return this.allTerrainProperties.get(terrain);
 	}
 	
 	/**
-	 * Sets the terrain properties for the given terrain type to the given properties.
+	 * Set the terrain properties for the given terrain type to the given terrain properties.
 	 * 
-	 * @param terrain
-	 * 			The terrain type, as element of the Terrain enumeration.
-	 * @param terrainProperties
-	 * 			The terrain properties, as instance of the class TerrainProperties.
+	 * @param 	terrain
+	 * 				The terrain type, as element of the Terrain enumeration.
+	 * @param 	terrainProperties
+	 * 				The terrain properties, as instance of the class TerrainProperties.
+	 * @post	The new terrain properties for the given terrain type are equal to the given
+	 * 			terrain properties.
+	 * 			| new.getTerrainPropertiesOf(terrain) == terrainProperties
 	 */
 	protected void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
 		this.allTerrainProperties.put(terrain, terrainProperties);
 	}
 	
 	/**
-	 * Checks whether the properties for the given terrain are set.
+	 * Check whether the properties for the given terrain are set.
 	 * 
-	 * @param terrain
-	 * 			The terrain type, as element of the Terrain enumeration.
-	 * @return
-	 * 			True if and only if the given terrain type is configured.
-	 * 
+	 * @param 	terrain
+	 * 				The terrain type, as element of the Terrain enumeration.
+	 * @return	True if and only if the given terrain type is configured.
+	 * 			| result == ( this.allTerrainProperties.containsKey(terrain) )
 	 */
 	public boolean hasTerrainPropertiesOf(Terrain terrain){
 		return this.allTerrainProperties.containsKey(terrain);
 	}
 	
 	/**
-	 * Sets the terrain properties. Must be implemented in subclass, according to specifications.
+	 * Set the terrain properties for each terrain type. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
 	 */
 	protected abstract void configureTerrain();
 	
 	/**
-	 * Sets the overlap duration timer for any terrain overlap timer to zero,
-	 * if this GameObject does not overlap with that terrain.
-	 * Does this for each terrain type, which are elements of the Terrain enumeration.
+	 * Set the overlap duration timer for any terrain overlap timer to 0 if this Game object does
+	 * not overlap with that terrain. Iterates over each terrain type, which are elements of the
+	 * Terrain enumeration.
 	 * 
+	 * @effect	If a Game object is overlapping with a type of terrain, the timer of the terrain
+	 * 			overlap duration is set to 0.
+	 * 			| for terrain in Terrain.getAllTerrainTypes():
+	 * 			|	if (! this.getOverlappingTerrainTypes().contains(terrain) )
+	 * 			|		then this.getTimer().setTerrainOverlapDuration(terrain, 0)
 	 */
 	private void resetTerrainOverlapDuration(){
-		// If character does not collide with terrain type, set the overlapping duration with the terrain type to 0
-		Set<Terrain> overlappingTerrainTypes = getOverlappingTerrainTypes();
+		
+		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
 			if(!overlappingTerrainTypes.contains(terrain)){
-				getTimer().setTerrainOverlapDuration(terrain, 0);
+				this.getTimer().setTerrainOverlapDuration(terrain, 0);
 			}
 		}
+		
 	}
 	
 	/**
-	 * Checks whether this GameObject overlaps with the given Terrain type.
+	 * Check whether this Game object is submerged in the given type of terrain.
 	 * 
-	 * TODO beter documenteren, ik begrijp niet exact de details van die randjes enzo (waarvoor die -1 enzo dienen)
-	 * 
-	 * @param terrain
-	 * 			The given terrain type, as element of the Terrain enumeration.
-	 * @return
-	 * 			True if and only if this object overlaps with the given Terrain type.
+	 * @param 	terrain
+	 * 				The terrain type to check, as element of the Terrain enumeration.
+	 * @return	True if and only if the tiles in which the Game object is located, are all of the given
+	 * 			Terrain type.
+	 * 			| result == ( for all tile in 
+	 * 			|				this.getWorld().getTilePositionsIn(	this.getRoundedPositionX() + 1,
+	 *			|													this.getRoundedPositionY() + 1,
+	 *			|													this.getRoundedPositionX() + (this.getWidth() - 1) - 1,
+	 *			|													this.getRoundedPositionY() + (this.getHeight() - 1) ):
+	 *			|				this.getWorld().getGeologicalFeature(world.getPositionXOfTile(tile[0]),
+	 *			|													 world.getPositionYOfTile(tile[1])) == terrain			)											
 	 */
 	public boolean isSubmergedIn(Terrain terrain){		
 		World world = this.getWorld();
@@ -334,40 +370,39 @@ public abstract class GameObject {
 	/******************************************************** WORLD ****************************************************/
 	
 	/**
-	 * Returns the world of this Game object.
+	 * Return the world of this Game object.
 	 * 
-	 * @return
-	 * 		The world of this Game object.
+	 * @return	The world of this Game object.
 	 */
 	public World getWorld() {
 		return this.world;
 	}
 	
 	/**
-	 * Checks whether this Game object is related to a proper Game world.
-	 * 	 * 
-	 * @return
-	 * 		True if and only if this game object has a proper world.
+	 * Check whether this Game object is related to a proper Game world.
+	 * 
+	 * @return 	True if and only if this game object has a world.
+	 * 			| result == ( this.hasWorld() )
 	 */
 	public boolean hasProperWorld(){
 		return this.hasWorld();
 	}
 	
 	/**
-	 * Checks whether this Game object has a Game world. 
+	 * Check whether this Game object has a Game world. 
 	 * 
-	 * @return
-	 * 		True if and only if the Game world of this Game object is not null.
+	 * @return	True if and only if the Game world of this Game object is not null.
+	 * 			| result == ( this.getWorld() != null )
 	 */
 	public boolean hasWorld(){
 		return this.getWorld() != null;
 	}
 	
 	/**
-	 * Sets the world of this Game object to the given world
+	 * Set the world of this Game object to the given world.
 	 * 
-	 * @param world
-	 * 			The world to which the world of this Game object will be set
+	 * @param 	world
+	 * 				The world to which the world of this Game object will be set.
 	 * @post 	The new world of this Game object will be the given world.
 	 * 			| this.getWorld() == world
 	 */
@@ -376,14 +411,16 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Set the world of a Game object to world.
+	 * Make a relation between a Game object and the given world.
 	 * 
 	 * @param	world
 	 * 				The world to which the Game object must be set.
-	 * @effect	| setWorld(world)
-	 * @effect  | world.addAsGameObject(this)
+	 * @effect	The world of the Game object is set to the given world.
+	 * 			| setWorld(world)
+	 * @effect  The Game object is added to the given World.
+	 * 			| world.addAsGameObject(this)
 	 * @throws	IllegalArgumentException
-	 * 				| ! canHaveAsWorld(world) or  ! world.canHaveAsGameObject(this)
+	 * 				| ( ! canHaveAsWorld(world) ) || ( ! world.canHaveAsGameObject(this) )
 	 */
 	public void setWorldTo(World world) throws IllegalArgumentException{
 		
@@ -399,21 +436,12 @@ public abstract class GameObject {
 	/**
 	 * Unset the world, if any, from this Game object.
 	 * 
-	 * @effect	| if ( this.hasWorld() )
+	 * @effect	If the Game object has a World, remove the Game object from this World.
+	 * 			| if ( this.hasWorld() )
 	 * 			| 	then this.getWorld().removeAsGameObject(this)
-	 * @effect	| if ( this.hasWorld() )
+	 * @effect	If the Game object has a World, set his World to null.
+	 * 			| if ( this.hasWorld() )
 	 * 			|	then this.setWorld(null)
-	 * 
-	 * TODO afwerken, zal ik later doen meot nu weg
-	 */
-	
-	/*
-	 * @post   This ownable no longer has an owner.
-	 *       | ! new.hasOwner()
-	 * @post   The former owner of this owning, if any, no longer
-	 *         has this owning as one of its ownings.
-	 *       |    (getOwner() == null)
-	 *       | || (! (new getOwner()).hasAsOwning(owning))
 	 */
 	protected void unsetWorld() {
 		if(this.hasWorld()){
@@ -423,25 +451,37 @@ public abstract class GameObject {
 		}
 	}
 	
+	/**
+	 * Check if the Game object can have the given world as his World.
+	 * 
+	 * @param 	world
+	 * 				The world to check.
+	 * @return	True if and only if the given world is not null and the Game object
+	 * 			is not terminated and has no World yet.
+	 * 			| result == ( world != null && !this.isTerminated() && !this.hasWorld() )
+	 */
 	public boolean canHaveAsWorld(World world){
-		return world != null && !this.isTerminated() && !this.hasWorld();
+		return ( world != null && !this.isTerminated() && !this.hasWorld() );
 	}
 	
+	/**
+	 * Variable registering the World of a Game object.
+	 */
 	private World world;
 
 	/******************************************************** SIZE *****************************************************/
 	
 	/**
-	 * Return the width of Mazub, depending on the active sprite.
+	 * Return the width of a Game object, depending on the active sprite.
 	 * 
-	 * @return	An integer that represents the width of Mazub's active sprite.
+	 * @return	An integer that represents the width of the Game object's active sprite.
 	 */
 	public int getWidth() {
 		return this.getCurrentSprite().getWidth();
 	}
 
 	/**
-	 * Check whether the given width is a valid width for any Mazub instance.
+	 * Check whether the given width is a valid width for any Game object instance.
 	 * 
 	 * @param 	width
 	 * 				The width to check.
@@ -453,16 +493,16 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Return the height of Mazub, depending on the active sprite.
+	 * Return the height of a Game object, depending on the active sprite.
 	 * 
-	 * @return	An integer that represents the height of Mazub's active sprite.
+	 * @return	An integer that represents the height of the Game object's active sprite.
 	 */
 	public int getHeight() {
 		return this.getCurrentSprite().getHeight();
 	}
 
 	/**
-	 * Check whether the given height is a valid height for any Mazub instance.
+	 * Check whether the given height is a valid height for any Game object instance.
 	 * 
 	 * @param 	height
 	 * 				The height to check.
@@ -478,9 +518,9 @@ public abstract class GameObject {
 	/* Horizontal position */
 	
 	/**
-	 * Return the rounded down x-location of Mazub's bottom left pixel.
+	 * Return the rounded down x-location of a Game object's bottom left pixel.
 	 * 
-	 * @return 	An integer that represents the x-coordinate of Mazub's
+	 * @return 	An integer that represents the x-coordinate of a Game object's
 	 * 			bottom left pixel in the world.
 	 */
 	@Raw
@@ -488,14 +528,24 @@ public abstract class GameObject {
 		return (int) Math.floor(this.getPositionX());
 	}
 	
+	/**
+	 * Check whether a Game object can have the given X position as his horizontal position.
+	 * 
+	 * @param 	positionX
+	 * 				An integer that represents the horizontal position to check.
+	 * @return	True if and only if the given X position is not negative and if the Game object has
+	 * 			a proper World, the given X position should be smaller than the width of that World.
+	 * 			| result == ( positionX >= 0 && 
+	 * 			|			  (!hasProperWorld() || positionX < this.getWorld().getWorldWidth()) )
+	 */
 	public boolean canHaveAsPositionX(int positionX){
 		return positionX >= 0 && (!hasProperWorld() || positionX < this.getWorld().getWorldWidth());
 	}
 
 	/**
-	 * Return the x-location of Mazub's bottom left pixel.
+	 * Return the x-location of a Game object's bottom left pixel.
 	 * 
-	 * @return	A double that represents the x-coordinate of Mazub's
+	 * @return	A double that represents the x-coordinate of a Game object's
 	 * 			bottom left pixel in the world.
 	 */
 	@Basic
@@ -505,33 +555,44 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Check whether the given X position is a valid horizontal position.
+	 * Check whether a Game object can have the given X position as his horizontal position.
 	 * 
 	 * @param 	positionX
 	 * 				A double that represents an x-coordinate.
-	 * @return	True if and only if the given x-position positionX is between the boundaries of the game world, 
-	 * 			which means that the x-coordinate must be greater than or equal to 0 and smaller or equal to
-	 * 			GAME_WIDTH.
-	 * 			|  result == ( (positionX >= 0) && (positionX <= GAME_WIDTH-1) )
+	 * @return	True if and only if the Game object can have the rounded down given position
+	 * 			as his horizontal position.
+	 * 			| result == ( canHaveAsPositionX((int) Math.floor(positionX)) )
 	 */
 	public boolean canHaveAsPositionX(double positionX) {
-		return canHaveAsPositionX((int) Math.floor(positionX));
+		return this.canHaveAsPositionX((int) Math.floor(positionX));
 	}
 
 	/**
-	 * Set the x-location of Mazub's bottom left pixel.
+	 * Set the x-location of a Game object's bottom left pixel.
 	 * 
 	 * @param	positionX
-	 * 				A double that represents the desired x-location of Mazub's bottom left pixel.
-	 * @post	The X position of Mazub is equal to positionX.
-	 * 			| new.getPositionX() == positionX
+	 * 				A double that represents the desired x-location of a Game object's bottom left pixel.
+	 * @effect	The active sprite gets updated according to the current status of the Game object.
+	 * 			| getAnimation().updateSpriteIndex()
+	 * @post	The X position of a Game object is equal to positionX if the Game object doesn't collide
+	 *  		after the change.
+	 * 			| if (! this.doesCollide() )
+	 * 			| 	then new.getPositionX() == positionX
 	 * @throws	IllegalPositionXException
-	 * 				The X position of Mazub is not a valid X position.
-	 * 				| ! isValidPositionX(positionX)
+	 * 				The Game object can't have the given position as his horizontal position.
+	 * 				| ! canHaveAsPositionX(positionX)
+	 * @throws	IllegalStateException
+	 * 				A collision before updating the Game object's position is not allowed.
+	 * 				| doesCollide()
+	 * @throws	CollisionException
+	 * 				The game object does collide after changing his horizontal position.
+	 * 				| doesCollide()
 	 */
 	@Basic
 	@Raw
-	protected void setPositionX(double positionX) throws IllegalStateException, IllegalPositionXException, CollisionException {
+	protected void setPositionX(double positionX) 
+					throws IllegalStateException, IllegalPositionXException, CollisionException {
+		
 		if( !canHaveAsPositionX(positionX)) 
 			throw new IllegalPositionXException(positionX);
 		if( this.doesCollide())
@@ -548,16 +609,16 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the horizontal position of this Mazub.
+	 * Variable registering the horizontal position of this Game object.
 	 */
 	private double positionX;
 	
 	/* Vertical position*/
 	
 	/**
-	 * Return the rounded down y-location of Mazub's bottom left pixel.
+	 * Return the rounded down y-location of a Game object's bottom left pixel.
 	 * 
-	 * @return 	An integer that represents the y-coordinate of Mazub's
+	 * @return 	An integer that represents the y-coordinate of a Game object's
 	 * 			bottom left pixel in the world.
 	 */
 	@Raw
@@ -565,14 +626,24 @@ public abstract class GameObject {
 		return (int) Math.floor(this.getPositionY());
 	}
 
+	/**
+	 * Check whether a Game object can have the given Y position as his vertical position.
+	 * 
+	 * @param 	positionY
+	 * 				An integer that represents the vertical position to check.
+	 * @return	True if and only if the given Y position is not negative and if the Game object has
+	 * 			a proper World, the given Y position should be smaller than the height of that World.
+	 * 			| result == ( positionX >= 0 && 
+	 * 			|			  (!hasProperWorld() || positionX < this.getWorld().getWorldWidth()) )
+	 */
 	public boolean canHaveAsPositionY(int positionY){
 		return positionY >= 0 && (!hasProperWorld() || positionY < this.getWorld().getWorldHeight());
 	}
 	
 	/**
-	 * Return the y-location of Mazub's bottom left pixel.
+	 * Return the y-location of a Game object's bottom left pixel.
 	 * 
-	 * @return	A double that represents the y-coordinate of Mazub's
+	 * @return	A double that represents the y-coordinate of a Game object's
 	 * 			bottom left pixel in the world.
 	 */
 	@Basic
@@ -582,29 +653,38 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Check whether the given Y position is a valid vertical position.
+	 * Check whether a Game object can have the given Y position as his vertical position.
 	 * 
 	 * @param 	positionY
-	 * 				A double that represents a y-coordinate.
-	 * @return 	True if and only if the given y-position positionY is between the boundaries of the game world, 
-	 * 			which means that the y-coordinate must be greater than or equal to 0 and smaller or equal to 
-	 * 			GAME_HEIGHT. 
-	 * 			|  result == ( (positionY >= 0) && (positionY <= GAME_HEIGHT-1) )
+	 * 				A double that represents an y-coordinate.
+	 * @return	True if and only if the Game object can have the rounded down given position
+	 * 			as his vertical position.
+	 * 			| result == ( canHaveAsPositionY((int) Math.floor(positionY)) )
 	 */
 	public boolean canHaveAsPositionY(double positionY) {
 		return canHaveAsPositionY((int) Math.floor(positionY));
 	}
 
 	/**
-	 * Set the y-location of Mazub's bottom left pixel.
+	 * Set the y-location of a Game object's bottom left pixel.
 	 * 
-	 * @param 	positionY
-	 * 				A double that represents the desired y-location of Mazub's bottom left pixel.  
-	 * @post	The Y position of Mazub is equal to positionY.
-	 * 			| new.getPositionY() == positionY
+	 * @param	positionY
+	 * 				A double that represents the desired y-location of a Game object's bottom left pixel.
+	 * @effect	The active sprite gets updated according to the current status of the Game object.
+	 * 			| getAnimation().updateSpriteIndex()
+	 * @post	The Y position of a Game object is equal to positionY if the Game object doesn't collide
+	 *  		after the change.
+	 * 			| if (! this.doesCollide() )
+	 * 			| 	then new.getPositionY() == positionY
 	 * @throws	IllegalPositionYException
-	 * 				The Y position of Mazub is not a valid Y position.
-	 * 				| ! isValidPositionY(positionY)
+	 * 				The Game object can't have the given position as his vertical position.
+	 * 				| ! canHaveAsPositionY(positionY)
+	 * @throws	IllegalStateException
+	 * 				A collision before updating the Game object's position is not allowed.
+	 * 				| doesCollide()
+	 * @throws	CollisionException
+	 * 				The game object does collide after changing his vertical position.
+	 * 				| doesCollide()
 	 */
 	@Basic
 	@Raw
@@ -625,16 +705,16 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the vertical position of this Mazub.
+	 * Variable registering the vertical position of this Game object.
 	 */
 	private double positionY;
 
 	/* Horizontal velocity */
 	
 	/**
-	 * Return the horizontal velocity of Mazub.
+	 * Return the horizontal velocity of a Game object.
 	 * 
-	 * @return	A double that represents the horizontal velocity of Mazub.
+	 * @return	A double that represents the horizontal velocity of a Game object.
 	 */
 	@Basic
 	@Raw
@@ -643,10 +723,10 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks whether the horizontal velocity of Mazub is a valid velocity.
+	 * Check whether the horizontal velocity of a Game object is a valid velocity.
 	 * 
 	 * @param 	velocityX
-	 * 				A double that represents the horizontal velocity of Mazub.
+	 * 				A double that represents the horizontal velocity of a Game object.
 	 * @return	True if and only if the absolute value of the given horizontal velocity is smaller or equal to
 	 *  		the maximal horizontal velocity.
 	 * 			| result == ( Math.abs(velocityX) <= this.getVelocityXMax() )
@@ -656,10 +736,10 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the horizontal velocity of Mazub.
+	 * Set the horizontal velocity of a Game object.
 	 * 
 	 * @param 	velocityX
-	 * 				A double that represents the desired horizontal velocity of Mazub.
+	 * 				A double that represents the desired horizontal velocity of a Game object.
 	 * @post	If the absolute value of the given velocityX is smaller than the maximal horizontal velocity,
 	 * 			the horizontal velocity is equal to the given velocityX. Else, the horizontal velocity is equal
 	 * 			to the maximal horizontal velocity provided with the sign of velocityX.
@@ -682,16 +762,16 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the horizontal velocity of this Mazub.
+	 * Variable registering the horizontal velocity of this Game object.
 	 */
 	private double velocityX;
 	
 	/* Vertical velocity */
 	
 	/**
-	 * Return the vertical velocity of Mazub.
+	 * Return the vertical velocity of a Game object.
 	 * 
-	 * @return	A double that represents the vertical velocity of Mazub.
+	 * @return	A double that represents the vertical velocity of a Game object.
 	 */
 	@Basic
 	@Raw
@@ -700,10 +780,10 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the vertical velocity of this object.
+	 * Set the vertical velocity of this Game object.
 	 * 
 	 * @param 	velocityY
-	 * 				A double that represents the desired vertical velocity of Mazub.
+	 * 				A double that represents the desired vertical velocity of a Game object.
 	 * @post	The vertical velocity is equal to velocityY.
 	 * 			| new.getVelocityY() == velocityY
 	 */
@@ -714,16 +794,15 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the vertical velocity of this Mazub.
+	 * Variable registering the vertical velocity of this Game object.
 	 */
 	private double velocityY;
 	
 	/* Velocity magnitude */
 	
 	/**
-	 * Returns the magnitude of the velocity of this object.
-	 * @return
-	 * 		the magnitude of the velocity of this object
+	 * Return the magnitude of the velocity of this Game object.
+	 * @return	The magnitude of the velocity of this Game object.
 	 */
 	protected double getVelocityMagnitude(){
 		return Math.sqrt( Math.pow(this.getVelocityX(), 2) + Math.sqrt( Math.pow(this.getVelocityY(), 2)));
@@ -732,10 +811,10 @@ public abstract class GameObject {
 	/* Initial velocity */ 
 	
 	/**
-	 * Return the initial horizontal velocity of Mazub. The initial horizontal velocity is used when Mazub
-	 * starts walking.
+	 * Return the initial horizontal velocity of a Game object. The initial horizontal velocity is used when the
+	 * Game object starts moving.
 	 *  
-	 * @return	A double that represents the initial horizontal velocity of Mazub.
+	 * @return	A double that represents the initial horizontal velocity of a Game object.
 	 */
 	@Basic
 	@Raw
@@ -743,23 +822,34 @@ public abstract class GameObject {
 		return this.velocityXInit;
 	}
 	
-	public double getVelocityYInit(){
-		return this.velocityYInit;
-	}
-
 	/**
-	 * Variable registering the initial horizontal velocity of this Mazub.
+	 * Variable registering the initial horizontal velocity of this Game object.
 	 */
 	protected final double velocityXInit;
 	
+	/**
+	 * Return the initial vertical velocity of a Game object. The initial vertical velocity is used when the
+	 * Game object starts jumping.
+	 *  
+	 * @return	A double that represents the initial vertical velocity of a Game object.
+	 */
+	@Basic
+	@Raw
+	public double getVelocityYInit(){
+		return this.velocityYInit;
+	}
+	
+	/**
+	 * Variable registering the initial vertical velocity of this Game object.
+	 */
 	protected final double velocityYInit;
 
 	/* Maximal velocity */
 	
 	/**
-	 * Return the maximal horizontal velocity of Mazub.
+	 * Return the maximal horizontal velocity of a Game object.
 	 * 
-	 * @return	A double that represents the maximal horizontal velocity of Mazub.
+	 * @return	A double that represents the maximal horizontal velocity of a Game object.
 	 */
 	@Basic
 	@Raw
@@ -768,10 +858,10 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the maximal horizontal velocity of Mazub.
+	 * Set the maximal horizontal velocity of a Game object.
 	 * 
 	 * @param 	velocityXMax
-	 * 				A double that represents the desired maximal horizontal velocity of Mazub.
+	 * 				A double that represents the desired maximal horizontal velocity of a Game object.
 	 * @post	If velocityXMax is greater than the initial horizontal velocity, the maximal horizontal
 	 * 			velocity is equal to velocityXMax. Otherwise, it's equal to the initial horizontal velocity.
 	 * 			| if ( velocityXMax > this.getVelocityXInit() )
@@ -786,12 +876,12 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Checks wether the given maximum velocity is a valid value for this instance of Mazub
+	 * Check whether the given maximum velocity is a valid value for this Game object.
 	 * 
 	 * @param 	velocityXMax
 	 * 				A double that represents the maximal horizontal velocity that needs to be checked.
 	 * @return	True if and only if the given velocityXMax is greater than or equal to the current initial
-	 * 			velocity of Mazub.
+	 * 			velocity of a Game object.
 	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
 	 */
 	public boolean canHaveAsVelocityXMax(double velocityXMax) {
@@ -799,16 +889,16 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Variable registering the maximal horizontal velocity of this Mazub.
+	 * Variable registering the maximal horizontal velocity of this Game object.
 	 */
 	private double velocityXMax;
 
 	/* Horizontal acceleration */
 	
 	/**
-	 * Return the horizontal acceleration of Mazub.
+	 * Return the horizontal acceleration of a Game object.
 	 * 
-	 * @return	A double that represents the horizontal acceleration of Mazub.
+	 * @return	A double that represents the horizontal acceleration of a Game object.
 	 */
 	@Basic
 	@Raw
@@ -817,10 +907,10 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the horizontal acceleration of Mazub.
+	 * Set the horizontal acceleration of a Game object.
 	 * 
 	 * @param 	accelerationX
-	 * 				A double that represents the desired horizontal acceleration of Mazub.
+	 * 				A double that represents the desired horizontal acceleration of a Game object.
 	 * @post	The horizontal acceleration is equal to accelerationX. However, if accelerationX is equal
 	 * 			to NaN, the horizontal acceleration is set to 0 instead.
 	 * 			| if ( Double.isNaN(accelerationX) ) 
@@ -838,16 +928,16 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Variable registering the horizontal acceleration of this Mazub.
+	 * Variable registering the horizontal acceleration of this Game object.
 	 */
 	private double accelerationX;
 	
 	/* Vertical acceleration */
 	
 	/**
-	 * Return the vertical acceleration of Mazub.
+	 * Return the vertical acceleration of a Game object.
 	 * 
-	 * @return	A double that represents the vertical acceleration of Mazub.
+	 * @return	If the Game object is on the ground, return 0. Else return ACCELERATION_Y.
 	 */
 	@Basic
 	@Raw
@@ -863,9 +953,9 @@ public abstract class GameObject {
 	/* Acceleration magnitude */ 
 	
 	/**
-	 * Returns the magnitude of the acceleration of this object.
-	 * @return
-	 * 		the magnitude of the acceleration of this object
+	 * Return the magnitude of the acceleration of this Game object.
+	 * 
+	 * @return	The magnitude of the acceleration of this Game object.
 	 */
 	protected double getAccelerationMagnitude(){
 		 return Math.sqrt( Math.pow(this.getAccelerationX(), 2) + Math.sqrt( Math.pow(this.getAccelerationY(), 2)));
@@ -873,18 +963,26 @@ public abstract class GameObject {
 	
 	/* Initial acceleration */
 
+	/**
+	 * Return the initial horizontal acceleration of this Game object.
+	 * 
+	 * @return	A double that represents the initial horizontal acceleration of this Game object.
+	 */
 	public double getAccelerationXInit() {
 		return this.accelerationXInit;
 	}
 	
+	/**
+	 * Variable registering the horizontal initial acceleration of this Game object.
+	 */
 	protected final double accelerationXInit;
 
 	/* Orientation */
 	
 	/**
-	 * Return the orientation of Mazub.
+	 * Return the orientation of a Game object.
 	 * 
-	 * @return	An orientation that represents the current orientation of Mazub.
+	 * @return	An orientation that represents the current orientation of the Game object.
 	 */
 	@Basic
 	@Raw
@@ -893,11 +991,11 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Set the orientation of Mazub.
+	 * Set the orientation of a Game object.
 	 * 
 	 * @param 	orientation
-	 * 				An orientation that represents the desired orientation of Mazub.
-	 * @post	The orientation of Mazub is equal to the given orientation.
+	 * 				An orientation that represents the desired orientation of the Game object.
+	 * @post	The orientation of the Game object is equal to the given orientation.
 	 * 			| new.getOrientation() == orientation
 	 */
 	@Basic
@@ -911,7 +1009,7 @@ public abstract class GameObject {
 	 * Checks if the given orientation is valid
 	 * 
 	 * @param	orientation
-	 * 				An orientation that represents the desired orientation of Mazub.
+	 * 				An orientation that represents the orientation to check.
 	 * @return	True if and only if the orientation is valid, which means it should be LEFT or RIGHT.
 	 * 			| result == ( (orientation == Orientation.LEFT) || orientation == Orientation.RIGHT) )
 	 */
@@ -919,6 +1017,11 @@ public abstract class GameObject {
 		return (orientation == Orientation.LEFT) || (orientation == Orientation.RIGHT);
 	}
 	
+	/**
+	 * Return a random, valid Orientation for this Game object.
+	 * 
+	 * @return	A random, valid Orientation for this Game object. 
+	 */
 	public Orientation getRandomOrientation(){
 		Random random = new Random();
 		if (random.nextBoolean())
@@ -929,40 +1032,107 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Variable registering the orientation of this Mazub.
+	 * Variable registering the orientation of this Game object.
 	 */
 	protected Orientation orientation;
 	
 	/****************************************************** HIT POINTS *************************************************/
 	
+	/**
+	 * Return the current number of hit points of this Game object.
+	 * 
+	 * @return	An integer that represents the current number of hit points of this Game object.
+	 */
 	public int getNbHitPoints() {
 		return this.nbHitPoints;
 	}
 
+	/**
+	 * Set the current number of hit points for this Game object.
+	 * 
+	 * @param 	nbHitPoints
+	 * 				The desired number of hit points for this Game object.
+	 * @post	If the given number of hit points is between 0 and the maximal number of hit points,
+	 * 			the number of hit points of this Game object is equal to nbHitPoints. If it is negative, 
+	 * 			the number of hit points of this Game object is equal to 0. If it is greater than the maximal
+	 * 			number of hit points for this Game object, the number of hit points of this Game object is 
+	 * 			equal to the maximal number of hit points for this Game object.
+	 * 			| if ( nbHitPoints < 0)
+	 * 			| 	then new.getNbHitPoints() == 0
+	 * 			| else if ( nbHitPoints > this.getMaxNbHitPoints() )
+	 * 			|	then new.getNbHitPoints() == this.getMaxNbHitPoints
+	 * 			| else
+	 * 			| 	new.getNbHitPoints() == nbHitPoints
+	 */
 	protected void setNbHitPoints(int nbHitPoints) {
-		this.nbHitPoints = Math.max( Math.min(nbHitPoints, getMaxNbHitPoints()), 0);
+		this.nbHitPoints = Math.max( Math.min(nbHitPoints, this.getMaxNbHitPoints()), 0);
 	}
 	
+	/**
+	 * Modify the number of hit points of this Game object.
+	 * 
+	 * @param 	nbHitPoints
+	 * 				The number of hit points to modify.
+	 * @effect	Set the number of hit points of this Game object to his current number of hit points added to
+	 * 			the given number of hit points to modify.
+	 * 			| setNbHitPoints(this.getNbHitPoints() + nbHitPoints)
+	 */
 	protected void modifyNbHitPoints(int nbHitPoints){
 		this.setNbHitPoints(this.getNbHitPoints() + nbHitPoints);
 	}
 	
+	/**
+	 * Let the Game object take an amount of damage.
+	 * 
+	 * @param 	damageAmount
+	 * 				The desired amount of damage for the Game object to take.
+	 * @effect	The number of hit points for this Game object gets modified with the negative given amount
+	 * 			of damage.
+	 * 			| modifyNbHitPoints(-damageAmount)
+	 */
 	protected void takeDamage(int damageAmount){
 		this.modifyNbHitPoints(-damageAmount);
 	}
 
+	/**
+	 * Check whether or not the given number of hit points is a valid number of hit points for this Game object.
+	 * 
+	 * @param 	nbHitPoints
+	 * 				The number of hit points to check.
+	 * @return	True if and only if the given number of hit points is in the range of 0 to the maximal
+	 * 			number of hit points for this Game object.
+	 * 			| result == (0 <= nbHitPoints && nbHitPoints <= this.getMaxNbHitPoints())
+	 */
 	public boolean isValidNbHitPoints(int nbHitPoints) {
-		return (nbHitPoints <= getMaxNbHitPoints());
+		return (0 <= nbHitPoints && nbHitPoints <= this.getMaxNbHitPoints());
 	}
 
+	/**
+	 * Variable registering the number of hit points of this Game object.
+	 */
 	private int nbHitPoints;
 	
+	/**
+	 * Return the maximal number of hit points for this Game object.
+	 * 
+	 * @return	An integer that represents the maximal number of hit points for this Game object.
+	 */
 	public int getMaxNbHitPoints(){
 		return this.maxNbHitPoints;
 	}
 	
+	/**
+	 * Variable registering the maximal number of hit points of this Game object.
+	 */
 	protected final int maxNbHitPoints;
 	
+	/**
+	 * Return whether or not the Game object has full hit points.
+	 * 
+	 * @return	True if and only if the current number of hit points of the Game object is equal to
+	 * 			the maximal number of hit points for the Game object.
+	 * 			| result == ( this.getNbHitPoints() == this.getMaxNbHitPoints() )
+	 */
 	public boolean isFullHitPoints(){
 		return ( this.getNbHitPoints() == this.getMaxNbHitPoints() );
 	}
@@ -970,79 +1140,89 @@ public abstract class GameObject {
 	/****************************************************** IMMUNITY ***************************************************/
 	
 	/**
-	 * Returns whether the given alien is currently immune against enemies (see
-	 * section 1.2.5 of the assignment).
+	 * Return whether the given alien is currently immune against enemies.
 	 * 
-	 * @param alien
-	 *            The alien for which to retrieve the immunity status.
-	 * @return True if the given alien is immune against other enemies (i.e.,
-	 *         there are no interactions between the alien and enemy objects).
+	 * @return	A boolean that represents whether or not the Game object is currently immune.
+	 * 			| result == ( this.immune )
 	 */
 	public boolean isImmune() {
 		return this.immune;
 	}
 	
+	/**
+	 * Set the immunity status of this Game object.
+	 * 
+	 * @param 	immune
+	 * 				A boolean that represents the desired immunity status of this Game object.
+	 * @post	The immunity status of this Game object is equal to immune.
+	 * 			| new.isImmun() == immune
+	 */
 	protected void setImmune( boolean immune ){
 		this.immune = immune;
 	}
 	
+	/**
+	 * Variable registering the current immunity status of this Game object.
+	 */
 	protected boolean immune;
 	
+	/**
+	 * Get all impassable Game objects for this Game object. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract Set<GameObject> getAllImpassableGameObjects();
 	
 	/******************************************************* RUNNING ***************************************************/
 
 	/**
-	 * Make Mazub start moving. Set the initial horizontal velocity and acceleration of Mazub,
-	 * depending on his orientation.
+	 * Make the Game object start moving.
 	 * 
 	 * @param 	orientation
-	 * 				The direction in which Mazub starts moving.
-	 * @pre		The given orientation is not null.
-	 * 			| orientation != null
-	 * @post	The orientation of Mazub is equal to the given orientation.
-	 * 			| new.getOrientation() == orientation
-	 * @post	The horizontal velocity of Mazub is equal to the initial horizontal velocity. It's positive 
-	 * 			if the orientation of Mazub is right, negative if the orientation of Mazub is left.
-	 * 			| if (this.getOrientation() == RIGHT)
-	 * 			|	then new.getVelocityX() == this.getVelocityXInit
-	 * 			| else if (this.getOrientation() == LEFT)
-	 * 			| 	then new.getVelocityX() == -this.getVelocityXInit
-	 * @post	The horizontal acceleration of Mazub is equal to the initial horizontal acceleration. It's
-	 * 			positive if the orientation of Mazub is right, negative if the orientation of Mazub is left.
-	 * 			| if (this.getOrientation() == RIGHT)
-	 * 			|	then new.getAccelerationX() == this.ACCELERATION_X
-	 * 			| else if (this.getOrientation() == LEFT)
-	 * 			| 	then new.getAccelerationX() == -this.ACCELERATION_X
+	 * 				The direction in which a Game object starts moving.
+	 * @pre		The given orientation should be a valid orientation.
+	 * 			| isValidOrientation(orientation)
+	 * @effect	The orientation of the Game object is set to orientation.
+	 * 			| setOrientation(orientation)
+	 * @effect	The horizontal velocity of a Game object is set to the initial horizontal velocity provided with the sign
+	 *  		of the given orientation.
+	 * 			| setVelocityX( orientation.getSign() * this.getVelocityXInit() )
+	 * @effect	The horizontal acceleration of a Game object is set to the initial horizontal acceleration provided with
+	 * 			the sign of the given orientation.
+	 * 			| setAccelerationX( orientation.getSign() * accelerationXInit)
 	 */	
 	public void startMove(Orientation orientation){
+		assert isValidOrientation(orientation);
+		
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
 		this.setAccelerationX( orientation.getSign() * this.getAccelerationXInit());
 	}
 
 	/**
-	 * Make Mazub end moving. Set the horizontal velocity and acceleration of Mazub to 0.
-	 * @pre		The given orientation is not null.
-	 * 			| orientation != null
-	 * @post	The horizontal velocity of Mazub is equal to zero. 
-	 * 			| new.getVelocityX() == 0
-	 * @post	The horizontal acceleration of Mazub is equal to zero.
-	 * 			| new.getAccelerationX() == 0
-	 * @post	The time since the last move was made is reset to 0.
-	 *			| (new timer).getSinceLastMove() == 0
+	 * Make the Game object end moving.
+	 * 
+	 * @pre		The given orientation should be a valid orientation.
+	 * 			| isValidOrientation(orientation)
+	 * @effect	The horizontal velocity of a Game object is set to zero. 
+	 * 			| setVelocityX(0)
+	 * @effect	The horizontal acceleration of a Game object is set to zero.
+	 * 			| setAccelerationX(0)
+	 * @effect	The time since the last move was made is set to 0.
+	 *			| getTimer().setSinceLastMove(0)
 	 */
-	public void endMove(Orientation orientation){		
+	public void endMove(Orientation orientation){	
+		assert isValidOrientation(orientation);
+		
 		this.setVelocityX(0);
 		this.setAccelerationX(0);
 		this.getTimer().setSinceLastMove(0);
 	}
 
 	/**
-	 * Checks whether Mazub is moving.
+	 * Check whether the Game object is moving.
 	 * 
 	 * @return 	True if and only if the horizontal velocity is not equal to 0. (up to a certain epsilon)
-	 * 			| result == ( this.getVelocityX() != 0 )
+	 * 			| result == ( !Util.fuzzyEquals(this.getVelocityX(), 0) )
 	 */
 	@Raw
 	public boolean isMoving() {
@@ -1052,12 +1232,10 @@ public abstract class GameObject {
 	/************************************************* JUMPING AND FALLING *********************************************/
 
 	/**
-	 * Make Mazub start jumping. Set the vertical initial velocity and gravitational acceleration of Mazub.
+	 * Make a Game object start jumping.
 	 * 
-	 * @post	The vertical velocity of Mazub is equal to VELOCITY_Y_INIT.
-	 * 			| new.getVelocityY() == VELOCITY_Y_INIT
-	 * @post	The vertical acceleration of Mazub is equal to ACCELERATION_Y.
-	 * 			| new.getAccelerationY() == ACCELERATION_Y
+	 * @effect	If the Game object is on the ground, set the vertical velocity to the initial vertical velocity.
+	 * 			| setVelocityY( this.getVelocityYInit() )
 	 */
 
 	public void startJump() {
@@ -1067,31 +1245,34 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Make Mazub end jumping. Set the vertical velocity of Mazub to 0 when he's still moving upwards.
+	 * Make a Game object end jumping.
 	 * 
-	 * @post	If the vertical velocity of Mazub was greater than 0 (up to a certain epsilon) ,
-	 * 			it is now equal to 0.
-	 * 			| if (this.getVelocityY() > 0)
-	 * 			|	then new.getVelocityY() == 0
+	 * @effect	Set the vertical velocity of the Game object to 0.
+	 * 			| setVelocityY(0)
 	 * @throws 	IllegalStateException
-	 * 				Mazub does not have a positive vertical velocity.
-	 * 				| this.getVelocityY() < 0
+	 * 				The game object does not have a positive vertical velocity. (up to a certain epsilon)
+	 * 				| ! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )
 	 */
 	public void endJump() throws IllegalStateException {
 		if(! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 ))
-			throw new IllegalStateException("GameObject does not have a positive vertical velocity!");
+			throw new IllegalStateException("Game object does not have a positive vertical velocity!");
 		
 		this.setVelocityY(0);
 	}
 
 	/**
-	 * Checks whether Mazub is jumping.
+	 * Check whether the Game object is jumping.
 	 * 
-	 * @return	True if and only if the vertical position of Mazub is equal to 0. (up to a certain epsilon)
-	 * 			| result == ( this.getPositionY() == 0 )
+	 * @return	True if and only if the Game object is standing on impassable terrain or another impassable
+	 * 			Game object.
+	 * 			| result == ( doesInteractWithTerrain(TerrainInteraction.STAND_ON, Orientation.BOTTOM) || 
+	 *		   	|			  doesInteractWithGameObjects(TerrainInteraction.STAND_ON, Orientation.BOTTOM) )
+	 *@throws	IllegalStateException
+	 *				The Game object has no proper World.
+	 *				| ! hasProperWorld()
 	 */
 	public boolean isOnGround() throws IllegalStateException{		
-		if(! hasProperWorld())
+		if(! this.hasProperWorld())
 			throw new IllegalStateException("GameObject not in proper world!");
 		
 		return doesInteractWithTerrain(TerrainInteraction.STAND_ON, Orientation.BOTTOM) || 
@@ -1099,12 +1280,10 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Make Mazub stop falling. Set the vertical velocity and acceleration of Mazub to 0.
+	 * Make a Game object stop falling.
 	 * 
-	 * @post	The vertical velocity of Mazub is equal to 0.
-	 * 			| new.getVelocityY() == 0
-	 * @post	The vertical acceleration of Mazub is equal to 0.
-	 * 			| new.getAccelerationY() == 0
+	 * @effect	The vertical velocity of the Game object is set to 0.
+	 * 			| setVelocityY( 0 )
 	 */
 	@Raw
 	protected void stopFall() {
@@ -1113,6 +1292,13 @@ public abstract class GameObject {
 	
 	/******************************************************* MOVEMENT **************************************************/
 	
+	/**
+	 * Advance time for this Game object in general.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @note	No further documentation was required for this method.
+	 */
 	public void advanceTime(double dt){
 		// determine minDt		
 		double minDt;
@@ -1122,24 +1308,36 @@ public abstract class GameObject {
 			if(this.isTerminated()){
 				break;
 			}
-			minDt = Math.min( dt,  0.01 / (getVelocityMagnitude() + getAccelerationMagnitude()* dt) );
-			advanceTimeOnce(minDt);
+			minDt = Math.min( dt,  0.01 / (this.getVelocityMagnitude() + this.getAccelerationMagnitude()* dt) );
+			this.advanceTimeOnce(minDt);
 			dt -= minDt;	
 		}
 	}
 	
+	/**
+	 * Advance time for this Game object once.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @note	No further documentation was required for this method.
+	 * @throws 	IllegalArgumentException
+	 * 				The given dt is not in range of 0 to 0.2. (up to a certain epsilon)
+	 * 				| !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2)
+	 * @throws 	IllegalStateException
+	 * 				The Game object is already terminated or it has no proper World.
+	 * 				| !this.isTerminated() && !this.hasProperWorld()
+	 */
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
+		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
-		if(!this.isTerminated() && !this.hasProperWorld())
+		if( !this.isTerminated() && !this.hasProperWorld())
 			throw new IllegalStateException("This object is not in a proper world!");
 		
-		processKilledButNotTerminated_NameMustBeChanged(dt);
+		this.processKilled(dt);
 				
-		if(this.isKilled()){ // Als het geterminate is is het sowieso gekilled...
-			// Dit is noodzakelijk, want soms wordt advanceTime nog door World uitgevoerd door die minDt gedoe (stel dat in de eerste
-			// uitvoer van advanceTime het object geterminate wordt dan blijft die nog effe doorgaan
-			return; // Zo gewoon return doen is nie echt proper
+		if(this.isKilled()){
+			return;
 		}
 		
 		// Check last enemy collision and reset immunity status if needed
@@ -1147,12 +1345,27 @@ public abstract class GameObject {
 			this.setImmune(false);
 		}
 		
-		updateTimers(dt);
-		doMove(dt);
-		getAnimation().updateSpriteIndex();
+		this.updateTimers(dt);
+		this.doMove(dt);
+		this.getAnimation().updateSpriteIndex();
 	}
 
-	protected void processKilledButNotTerminated_NameMustBeChanged(double dt) {
+	/**
+	 * Process the killed status of a Game object. 0.6s after the moment the Game object was killed,
+	 * it gets terminated.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	If the time since the Game object was killed is greater than 0.6s, the Game object
+	 * 			gets terminated.
+	 * 			| if ( this.isKilled() && !this.isTerminated() && this.getTimer().getSinceKilled() > 0.6 )
+	 * 			|	then this.terminate()
+	 * @effect	If the time since the Game object was killed is smaller than 0.6s, the time since the
+	 * 			Game object was killed is increased with the given dt.
+	 * 			| if ( this.isKilled() && !this.isTerminated() && this.getTimer().getSinceKilled() <= 0.6 )
+	 * 			|	then this.getTimer().increaseSinceKilled(dt)
+	 */
+	protected void processKilled(double dt) {
 		if(this.isKilled() && !this.isTerminated()){
 			if(this.getTimer().getSinceKilled() > 0.6){
 				this.terminate();
@@ -1162,16 +1375,22 @@ public abstract class GameObject {
 		}
 	}
 	
+	/**
+	 * Make the Game object execute his movement. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	public abstract void doMove(double dt);
 	
 	/**
 	 * Make a Game object change direction.
 	 * 
-	 * @effect	| if (this.getOrientation() == Orientation.RIGHT)
+	 * @effect	End his current movement.
+	 * 			| if (this.getOrientation() == Orientation.RIGHT)
 	 * 			|	then this.endMove(Orientation.RIGHT)
 	 * 			| else
 	 * 			|	this.endMove(Orientation.LEFT)
-	 * @effect	| if (this.getOrientation() == Orientation.RIGHT)
+	 * @effect	Start the opposite movement.
+	 * 			| if (this.getOrientation() == Orientation.RIGHT)
 	 * 			|	then this.startMove(Orientation.LEFT)
 	 * 			| else
 	 * 			|	this.startMove(Orientation.RIGHT)
@@ -1192,16 +1411,24 @@ public abstract class GameObject {
 	/* Horizontal */
 	
 	/**
-	 * Update Mazub's horizontal position according to the given dt.
+	 * Update the Game object's horizontal position according to the given dt.
 	 * 
 	 * @param 	dt
 	 * 				A double that represents the elapsed in-game time.
-	 * @post	The horizontal position of Mazub is equal to the previous horizontal position incremented 
+	 * @effect	The horizontal position of a Game object is set to the previous horizontal position incremented 
 	 * 			with the product of the horizontal velocity and dt, and half of the product of the horizontal 
 	 * 			acceleration and the second power of dt, all multiplied with a scaling factor which in this 
 	 * 			case is equal to 100.
-	 * 			| new.getPositionX() == this.getPositionX() + 100*( this.getVelocityX() * dt +
-	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) )
+	 * 			| setPositionX( this.getPositionX() + 100*( this.getVelocityX() * dt +
+	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) ) )
+	 * @effect	Process the overlap of the Game object.
+	 * 			| processOverlap()
+	 * @effect	If an IllegalPositionXException is thrown in the try part of this method, catch it and 
+	 * 			kill the Game object.
+	 * 			| kill();
+	 * @effect	If a CollisionException is thrown in the try part of this method,  catch it and process 
+	 * 			the horizontal collision.
+	 * 			| processHorizontalCollision()	
 	 */
 	@Model
 	protected void updatePositionX(double dt) {
@@ -1217,13 +1444,13 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Update Mazub's horizontal velocity according to the given dt.
+	 * Update the Game object's horizontal velocity according to the given dt.
 	 * 
-	 * @param dt
-	 * 			A double that represents the elapsed time.
-	 * @post	The horizontal velocity of Mazub is equal to the previous horizontal velocity incremented 
-	 * 			with the product of the horizontal acceleration and dt
-	 * 			| new.getVelocityX() == this.getVelocityX() + this.getAccelerationX() * dt
+	 * @param 	dt
+	 * 				A double that represents the elapsed time.
+	 * @effect	The horizontal velocity of a Game object is set to the previous horizontal velocity incremented 
+	 * 			with the product of the horizontal acceleration and dt.
+	 * 			| setVelocityX( this.getVelocityX() + this.getAccelerationX() * dt )
 	 */
 	protected void updateVelocityX(double dt) {
 		double newVx = this.getVelocityX() + this.getAccelerationX() * dt;
@@ -1233,16 +1460,24 @@ public abstract class GameObject {
 	/* Vertical */
 	
 	/**
-	 * Update Mazub's vertical position according to the given dt.
+	 * Update the Game object's vertical position according to the given dt.
 	 * 
 	 * @param 	dt
 	 * 				A double that represents the elapsed in-game time.
-	 * @post	The vertical position of Mazub is equal to the previous vertical position incremented 
+	 * @effect	The vertical position of the Game object is set to the previous vertical position incremented 
 	 * 			with the product of the vertical velocity and dt, and half of the product of the vertical 
 	 * 			acceleration and the second power of dt, all multiplied with a scaling factor which in this is
 	 * 			equal to 100.
-	 * 			| new.getPositionY() == this.getPositionY() + 100*( this.getVelocityY() * dt +
-	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) )
+	 * 			| setPositionY( this.getPositionY() + 100*( this.getVelocityY() * dt +
+	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) ) )
+	 * @effect	Process the overlap of the Game object.
+	 * 			| processOverlap()
+	 * @effect	If an IllegalPositionYException is thrown in the try part of this method, catch it and 
+	 * 			kill the Game object.
+	 * 			| kill();
+	 * @effect	If a CollisionException is thrown in the try part of this method,  catch it and process 
+	 * 			the vertical collision.
+	 * 			| processVerticalCollision()	
 	 */
 	@Model
 	protected void updatePositionY(double dt) {
@@ -1258,12 +1493,13 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Update Mazub's vertical velocity according to the given dt.
-	 * @param dt
-	 * 			A double that represents the elapsed time.
-	 * @post	The vertical velocity of Mazub is equal to the previous horizontal velocity incremented 
-	 * 			with the product of the vertical acceleration and dt
-	 * 			| new.getVelocityY() == this.getVelocityY() + this.getAccelerationY() * dt
+	 * Update the Game object's vertical velocity according to the given dt.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed time.
+	 * @effect	The vertical velocity of a Game object is set to the previous vertical velocity incremented 
+	 * 			with the product of the vertical acceleration and dt.
+	 * 			| setVelocityY( this.getVelocityY() + this.getAccelerationY() * dt )
 	 */
 	protected void updateVelocityY(double dt) {
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
@@ -1495,9 +1731,28 @@ public abstract class GameObject {
 		
 	}
 	
+	/**
+	 * Process an overlap of the Game object with a given Mazub. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract void processMazubOverlap(Mazub alien);
+	
+	/**
+	 * Process an overlap of the Game object with a given Plant. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract void processPlantOverlap(Plant plant);
+	
+	/**
+	 * Process an overlap of the Game object with a given Shark. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract void processSharkOverlap(Shark shark);
+	
+	/**
+	 * Process an overlap of the Game object with a given Slime. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract void processSlimeOverlap(Slime slime);
 	
 	/***************************************************** INTERACTION ************************************************/
@@ -1546,8 +1801,7 @@ public abstract class GameObject {
 	/**
 	 * Checks if this object collides in the given direction with any other impassable game object.
 	 * 
-	 * @return
-	 * 		True if and only if this object collides with an impassable object.
+	 * @return	True if and only if this object collides with an impassable object.
 	 */
 	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld();
@@ -1578,14 +1832,34 @@ public abstract class GameObject {
 
 	/***************************************************** TERMINATION *************************************************/
 	
+	/**
+	 * Kill this Game object
+	 * 
+	 * @effect	Set the number of hit points of this Game object to 0.
+	 * 			| setNbHitPoints(0)
+	 */
 	void kill(){
 		this.setNbHitPoints(0);
 	}
 	
+	/**
+	 * Check whether or not a Game object is killed.
+	 * 
+	 * @return	True if and only if the current number of hit points of the Game object is equal to 0.
+	 * 			| result == ( this.getNbHitPoints() == 0 )
+	 */
 	public boolean isKilled(){
 		return this.getNbHitPoints() == 0;
 	}
 	
+	/**
+	 * Terminate this Game object.
+	 * 
+	 * @effect	Break the relation between the Game object and his current World.
+	 * 			| unsetWorld()
+	 * @post	The terminated status of the Game object is equal to true.
+	 * 			| new.isTerminated == true
+	 */
 	protected void terminate(){
 		this.unsetWorld();
 		this.terminated = true;

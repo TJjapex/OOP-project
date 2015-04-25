@@ -11,7 +11,6 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.terrain.TerrainProperties;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -401,7 +400,7 @@ public class Shark extends GameObject{
 	 */
 	@Override
 	public void doMove(double dt){
-		
+
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
