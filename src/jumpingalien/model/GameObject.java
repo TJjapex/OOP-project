@@ -937,7 +937,7 @@ public abstract class GameObject {
 	public void startMove(Orientation orientation){
 		this.setOrientation(orientation);
 		this.setVelocityX( orientation.getSign() * this.getVelocityXInit() );
-		this.setAccelerationX( orientation.getSign() * accelerationXInit);
+		this.setAccelerationX( orientation.getSign() * this.getAccelerationXInit());
 	}
 
 	/**
