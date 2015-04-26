@@ -611,7 +611,7 @@ public class World {
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		
-		for(Mazub alien: this.getAllMazubs()){
+		for(Mazub alien: Mazub.getAllInWorld(this) ){
 			try{
 				alien.advanceTime(dt);	
 			}catch(IllegalStateException exc){
@@ -730,12 +730,12 @@ public class World {
 	/**
 	 * Check whether or not this World has proper Game objects.
 	 * 
-	 * @return	| result == ( (this.getNbMazubs() >= 1) && (this.getNbGameObjects() - 1 <= 100 ) &&
+	 * @return	| result == ( ( Mazub.getNbInWorld(this) >= 1) && (this.getNbGameObjects() - 1 <= 100 ) &&
 	 * 			|			  ( for every object in this.getAllGameObjects(): object.getWorld() == this ) )
 	 */
 	@Raw
 	public boolean hasProperGameObjects(){
-		if( (this.getNbMazubs() < 1) || (this.getNbGameObjects() - 1 > 100 )){
+		if( (Mazub.getNbInWorld(this) < 1) || (this.getNbGameObjects() - 1 > 100 )){
 			return false;
 		}
 		
@@ -747,38 +747,47 @@ public class World {
 		return true;
 	}
 	
+//	@Basic
+//	void addAsGameObject(GameObject gameObject) throws IllegalArgumentException{
+//		if(!canHaveAsGameObject(gameObject))
+//			throw new IllegalArgumentException("World can not have this game object!");
+//		assert gameObject.getWorld() == this;
+//		
+//		if (gameObject instanceof Mazub)
+//			mazubs.add((Mazub) gameObject);
+//		else if (gameObject instanceof Shark)
+//			sharks.add((Shark) gameObject);	
+//		else if (gameObject instanceof Slime)
+//			slimes.add((Slime) gameObject);
+//		else if (gameObject instanceof Plant)
+//			plants.add((Plant) gameObject);
+//	}
+	
 	@Basic
-	void addAsGameObject(GameObject gameObject) throws IllegalArgumentException{
-		if(!canHaveAsGameObject(gameObject))
-			throw new IllegalArgumentException("World can not have this game object!");
-		assert gameObject.getWorld() == this;
-		
-		if (gameObject instanceof Mazub)
-			mazubs.add((Mazub) gameObject);
-		else if (gameObject instanceof Shark)
-			sharks.add((Shark) gameObject);	
-		else if (gameObject instanceof Slime)
-			slimes.add((Slime) gameObject);
-		else if (gameObject instanceof Plant)
-			plants.add((Plant) gameObject);
+	void addAsGameObject(GameObject gameObject){
+		gameObject.addToWorld();
 	}
 	
+//	void removeAsGameObject(GameObject gameObject){
+//		assert gameObject != null && !gameObject.hasWorld();
+//		
+//		if (gameObject instanceof Mazub){
+//			assert hasAsMazub((Mazub) gameObject);
+//			mazubs.remove((Mazub) gameObject);
+//		}else if (gameObject instanceof Shark){
+//			assert hasAsShark((Shark) gameObject);
+//			sharks.remove((Shark) gameObject);	
+//		}else if (gameObject instanceof Slime){
+//			assert hasAsSlime((Slime) gameObject);
+//			slimes.remove((Slime) gameObject);
+//		}else if (gameObject instanceof Plant){
+//			assert hasAsPlant((Plant) gameObject);
+//			plants.remove((Plant) gameObject);
+//		}
+//	}
+	
 	void removeAsGameObject(GameObject gameObject){
-		assert gameObject != null && !gameObject.hasWorld();
-		
-		if (gameObject instanceof Mazub){
-			assert hasAsMazub((Mazub) gameObject);
-			mazubs.remove((Mazub) gameObject);
-		}else if (gameObject instanceof Shark){
-			assert hasAsShark((Shark) gameObject);
-			sharks.remove((Shark) gameObject);	
-		}else if (gameObject instanceof Slime){
-			assert hasAsSlime((Slime) gameObject);
-			slimes.remove((Slime) gameObject);
-		}else if (gameObject instanceof Plant){
-			assert hasAsPlant((Plant) gameObject);
-			plants.remove((Plant) gameObject);
-		}
+		gameObject.removeFromWorld(this);
 	}
 	
 	// Getters
@@ -787,135 +796,154 @@ public class World {
 	 * Return the player's Mazub in the World.
 	 * 
 	 * @return	If there is only one Mazub in the World, return this Mazub.
-	 * @throws	| this.getNbMazubs() != 1
+	 * @throws	| Mazub.getNbInWorld(this) != 1
 	 */
 	public Mazub getMazub() throws IllegalStateException{
 		
-		if(this.getNbMazubs() == 1){
-			return this.getAllMazubs().iterator().next();
+		if(Mazub.getNbInWorld(this) == 1){
+			return Mazub.getAllInWorld(this).iterator().next();
 		}else{
 			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
 		}
 		
 	}
 	
-	@Basic
-	public Set<Mazub> getAllMazubs(){
-		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(this.mazubs);
-		return mazubsClone;
-	}
+//	public Set<GameObject> getAllGameObjects(){
+//		Set<GameObject> allGameObjects= new HashSet<GameObject>(this.getAllMazubs());
+//		allGameObjects.addAll(this.getAllPlants());
+//		allGameObjects.addAll(this.getAllSlimes());
+//		allGameObjects.addAll(this.getAllSharks());
+//		return allGameObjects;
+//	}
+//	
+//	public Set<GameObject> getAllEnemies(){
+//		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
+//		allEnemies.addAll(this.getAllSlimes());
+//		allEnemies.addAll(this.getAllSharks());
+//		return allEnemies;
+//	}
 	
 	public Set<GameObject> getAllGameObjects(){
-		Set<GameObject> allGameObjects= new HashSet<GameObject>(this.getAllMazubs());
-		allGameObjects.addAll(this.getAllPlants());
-		allGameObjects.addAll(this.getAllSlimes());
-		allGameObjects.addAll(this.getAllSharks());
+		Set<GameObject> allGameObjects= new HashSet<GameObject>( Mazub.getAllInWorld(this) );
+		allGameObjects.addAll( Plant.getAllInWorld(this));
+		allGameObjects.addAll( Slime.getAllInWorld(this));
+		allGameObjects.addAll( Shark.getAllInWorld(this));
 		return allGameObjects;
 	}
 	
 	public Set<GameObject> getAllEnemies(){
-		Set<GameObject> allEnemies = new HashSet<GameObject>(this.getAllPlants());
-		allEnemies.addAll(this.getAllSlimes());
-		allEnemies.addAll(this.getAllSharks());
+		Set<GameObject> allEnemies = new HashSet<GameObject>( Plant.getAllInWorld(this) );
+		allEnemies.addAll( Slime.getAllInWorld(this));
+		allEnemies.addAll( Shark.getAllInWorld(this));
 		return allEnemies;
 	}
-
-	@Basic
-	public Set<Plant> getAllPlants(){
-		Set<Plant> plantsClone =  new HashSet<Plant>(this.plants);
-		return plantsClone;
-	}
 	
-	@Basic
-	public Set<Shark> getAllSharks(){
-		Set<Shark> sharksClone =  new HashSet<Shark>(this.sharks);
-		return sharksClone;
-	}
+//	@Basic
+//	public Set<Mazub> getAllMazubs(){
+//		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(this.mazubs);
+//		return mazubsClone;
+//	}
+//
+//	@Basic
+//	public Set<Plant> getAllPlants(){
+//		Set<Plant> plantsClone =  new HashSet<Plant>(this.plants);
+//		return plantsClone;
+//	}
+//	
+//	@Basic
+//	public Set<Shark> getAllSharks(){
+//		Set<Shark> sharksClone =  new HashSet<Shark>(this.sharks);
+//		return sharksClone;
+//	}
+//	
+//	@Basic
+//	public Set<Slime> getAllSlimes(){
+//		Set<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
+//		return slimesClone;
+//	}
+//	
+//	// checkers
+//	
+//	@Basic @Raw
+//	public boolean hasAsMazub(@Raw Mazub mazub){
+//		return this.mazubs.contains(mazub);
+//	}
+//	
+//	@Basic @Raw
+//	public boolean hasAsPlant(@Raw Plant plant){
+//		return this.plants.contains(plant);
+//	}
+//	
+//	@Basic @Raw
+//	public boolean hasAsShark(@Raw Shark shark){
+//		return this.sharks.contains(shark);
+//	}
+//	
+//	@Basic @Raw
+//	public boolean hasAsSlime(@Raw Slime slime){
+//		return this.slimes.contains(slime);
+//	}
+//	
+//	/**
+//	 * Check whether or not this World has the given Game object as its Game object.
+//	 * 
+//	 * @param 	gameObject 
+//	 * 				The Game object to check.
+//	 * @pre		The given Game object must be an instance of Mazub, Shark, Slime or Plant.
+//	 * 			| gameObject instanceof Mazub || gameObject instanceof Shark ||
+//	 * 			| gameObject instanceof Slime || gameObject instanceof Plant 
+//	 * @return	| result == ( if (gameObject instanceof Mazub)
+//	 *			|				then hasAsMazub((Mazub) gameObject)
+//	 *			|			  else if (gameObject instanceof Shark)
+//	 *			|			  	then hasAsShark((Shark) gameObject)
+//	 *			|			  else if (gameObject instanceof Slime)
+//	 *			| 				then hasAsSlime((Slime) gameObject)
+//	 *			|			  else if (gameObject instanceof Plant)
+//	 *			|				then hasAsPlant((Plant) gameObject)
+//	 *			|			  else 
+//	 *			|				false								)
+//	 */
+//	@Raw
+//	public boolean hasAsGameObject(@Raw GameObject gameObject){
+//		if (gameObject instanceof Mazub)
+//			return hasAsMazub((Mazub) gameObject);
+//		else if (gameObject instanceof Shark)
+//			return hasAsShark((Shark) gameObject);
+//		else if (gameObject instanceof Slime)
+//			return hasAsSlime((Slime) gameObject);
+//		else if (gameObject instanceof Plant)
+//			return hasAsPlant((Plant) gameObject);
+//		else 
+//			assert(false);
+//		return false;
+//	}
 	
-	@Basic
-	public Set<Slime> getAllSlimes(){
-		Set<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
-		return slimesClone;
-	}
-	
-	// checkers
-	
-	@Basic @Raw
-	public boolean hasAsMazub(@Raw Mazub mazub){
-		return this.mazubs.contains(mazub);
-	}
-	
-	@Basic @Raw
-	public boolean hasAsPlant(@Raw Plant plant){
-		return this.plants.contains(plant);
-	}
-	
-	@Basic @Raw
-	public boolean hasAsShark(@Raw Shark shark){
-		return this.sharks.contains(shark);
-	}
-	
-	@Basic @Raw
-	public boolean hasAsSlime(@Raw Slime slime){
-		return this.slimes.contains(slime);
-	}
-	
-	/**
-	 * Check whether or not this World has the given Game object as its Game object.
-	 * 
-	 * @param 	gameObject 
-	 * 				The Game object to check.
-	 * @pre		The given Game object must be an instance of Mazub, Shark, Slime or Plant.
-	 * 			| gameObject instanceof Mazub || gameObject instanceof Shark ||
-	 * 			| gameObject instanceof Slime || gameObject instanceof Plant 
-	 * @return	| result == ( if (gameObject instanceof Mazub)
-	 *			|				then hasAsMazub((Mazub) gameObject)
-	 *			|			  else if (gameObject instanceof Shark)
-	 *			|			  	then hasAsShark((Shark) gameObject)
-	 *			|			  else if (gameObject instanceof Slime)
-	 *			| 				then hasAsSlime((Slime) gameObject)
-	 *			|			  else if (gameObject instanceof Plant)
-	 *			|				then hasAsPlant((Plant) gameObject)
-	 *			|			  else 
-	 *			|				false								)
-	 */
-	@Raw
-	public boolean hasAsGameObject(@Raw GameObject gameObject){
-		if (gameObject instanceof Mazub)
-			return hasAsMazub((Mazub) gameObject);
-		else if (gameObject instanceof Shark)
-			return hasAsShark((Shark) gameObject);
-		else if (gameObject instanceof Slime)
-			return hasAsSlime((Slime) gameObject);
-		else if (gameObject instanceof Plant)
-			return hasAsPlant((Plant) gameObject);
-		else 
-			assert(false);
-		return false;
+	public boolean hasAsGameObject(GameObject gameObject){
+		return gameObject.hasAsWorld(this);
 	}
 	
 	// Count
 	
 	public int getNbGameObjects(){
-		return this.getNbMazubs() + this.getNbPlants() + this.getNbSharks() + this.getNbSlimes();
+		return Mazub.getNbInWorld(this) + Plant.getNbInWorld(this) + Shark.getNbInWorld(this) + Slime.getNbInWorld(this);
 	}
 	
-	@Basic
-	public int getNbMazubs(){
-		return this.mazubs.size();
-	}
-	@Basic
-	public int getNbPlants(){
-		return this.plants.size();
-	}	
-	@Basic	
-	public int getNbSharks(){
-		return this.sharks.size();
-	}
-	@Basic
-	public int getNbSlimes(){
-		return this.slimes.size();
-	}
+//	@Basic
+//	public int getNbMazubs(){
+//		return this.mazubs.size();
+//	}
+//	@Basic
+//	public int getNbPlants(){
+//		return this.plants.size();
+//	}	
+//	@Basic	
+//	public int getNbSharks(){
+//		return this.sharks.size();
+//	}
+//	@Basic
+//	public int getNbSlimes(){
+//		return this.slimes.size();
+//	}
 	
 	/**
 	 * Return the number of Schools in this World.
@@ -924,7 +952,7 @@ public class World {
 	 */
 	public int getNbSchools(){
 		Set<School> schools = new HashSet<School>();
-		for ( Slime slime: this.getAllSlimes() ){
+		for ( Slime slime: Slime.getAllInWorld(this) ){
 			schools.add(slime.getSchool());
 		}
 		return schools.size();
@@ -935,22 +963,22 @@ public class World {
 	/**
 	 * Set registering the Mazubs in this World.
 	 */
-	private Set<Mazub> mazubs = new HashSet<Mazub>();
+	Set<Mazub> mazubs = new HashSet<Mazub>();
 	
 	/**
 	 * Set registering the Plants in this World.
 	 */
-	private Set<Plant> plants = new HashSet<Plant>();
+	Set<Plant> plants = new HashSet<Plant>();
 	
 	/**
 	 * Set registering the Sharks in this World.
 	 */
-	private Set<Shark> sharks = new HashSet<Shark>();
+	Set<Shark> sharks = new HashSet<Shark>();
 	
 	/**
 	 * Set registering the Slimes in this World.
 	 */
-	private Set<Slime> slimes = new HashSet<Slime>();
+	Set<Slime> slimes = new HashSet<Slime>();
 	
 	/******************************************************* PLAYER ****************************************************/
 	

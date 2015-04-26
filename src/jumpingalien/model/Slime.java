@@ -206,7 +206,41 @@ public class Slime extends GameObject {
 		
 	}
 	
-	/***************************************************** SCHOOL *********************************************/
+	/******************************************************** WORLD ****************************************************/
+	
+	// TODO: commentary
+	@Override
+	protected void addToWorld(){
+		this.getWorld().slimes.add(this);
+	}
+	
+	// TODO: commentary
+	@Override
+	protected void removeFromWorld(World world){
+		assert this != null && !this.hasWorld();
+		assert world.hasAsGameObject(this);
+		
+		world.slimes.remove(this);
+	}
+	
+	// TODO: commentary
+	@Override
+	protected boolean hasAsWorld(World world){
+		return Slime.getAllInWorld(world).contains(this);
+	}
+	
+	// TODO: commentary
+	protected static int getNbInWorld(World world){
+		return Slime.getAllInWorld(world).size();
+	}
+	
+	// TODO: commentary
+	public static Set<Slime> getAllInWorld(World world){
+		HashSet<Slime> slimesClone =  new HashSet<Slime>(world.slimes);
+		return slimesClone;
+	}
+	
+	/******************************************************** SCHOOL ***************************************************/
 	
 	/**
 	 * Return the School of a Slime.
@@ -449,9 +483,9 @@ public class Slime extends GameObject {
 	protected Set<GameObject> getAllImpassableGameObjects(){
 		assert hasProperWorld();
 		
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(Mazub.getAllInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;
 	}
 	

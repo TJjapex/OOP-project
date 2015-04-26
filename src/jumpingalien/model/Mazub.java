@@ -299,6 +299,41 @@ public class Mazub extends GameObject{
 		
 	}
 	
+	/******************************************************** WORLD ****************************************************/
+	
+	// TODO: commentary
+	@Override
+	protected void addToWorld(){
+		this.getWorld().mazubs.add(this);
+	}
+	
+	// TODO: commentary
+	@Override
+	protected void removeFromWorld(World world){
+		assert this != null && !this.hasWorld();
+		assert world.hasAsGameObject(this);
+		
+		world.mazubs.remove(this);
+	}
+	
+	// TODO: commentary
+	@Override
+	protected boolean hasAsWorld(World world){
+		// return world.getAllMazubs().contains(this);
+		return Mazub.getAllInWorld(world).contains(this);
+	}
+	
+	// TODO: commentary
+	protected static int getNbInWorld(World world){
+		return Mazub.getAllInWorld(world).size();
+	}
+	
+	// TODO: commentary
+	public static Set<Mazub> getAllInWorld(World world){
+		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(world.mazubs);
+		return mazubsClone;
+	}
+	
 	/******************************************************* RUNNING ***************************************************/
 	
 	/**
@@ -744,10 +779,10 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSlimes());
-		allImpassableGameObjects.addAll(this.getWorld().getAllSharks());
-		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(Mazub.getAllInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Plant.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;
 	}
 	

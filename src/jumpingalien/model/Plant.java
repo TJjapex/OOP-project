@@ -125,6 +125,40 @@ public class Plant extends GameObject {
 		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0, false));
 		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0, false));
 	}
+	
+	/******************************************************** WORLD ****************************************************/
+	
+	// TODO: commentary
+	@Override
+	protected void addToWorld(){
+		this.getWorld().plants.add(this);
+	}
+	
+	// TODO: commentary
+	@Override
+	protected void removeFromWorld(World world){
+		assert this != null && !this.hasWorld();
+		assert world.hasAsGameObject(this);
+		
+		world.plants.remove(this);
+	}
+	
+	// TODO: commentary
+	@Override
+	protected boolean hasAsWorld(World world){
+		return Plant.getAllInWorld(world).contains(this);
+	}
+	
+	// TODO: commentary
+	protected static int getNbInWorld(World world){
+		return Plant.getAllInWorld(world).size();
+	}
+	
+	// TODO: commentary
+	public static Set<Plant> getAllInWorld(World world){
+		HashSet<Plant> plantsClone =  new HashSet<Plant>(world.plants);
+		return plantsClone;
+	}
 
 	/******************************************************* MOVEMENT **************************************************/
 	
@@ -183,8 +217,8 @@ public class Plant extends GameObject {
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(this.getWorld().getAllMazubs());
-		allImpassableGameObjects.addAll(this.getWorld().getAllPlants());
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(Mazub.getAllInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Plant.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;
 	}
 	

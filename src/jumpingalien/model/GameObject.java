@@ -492,6 +492,18 @@ public abstract class GameObject {
 		return ( world != null && !this.isTerminated() && !this.hasWorld() );
 	}
 	
+	// TODO: commentary
+	protected abstract void addToWorld();
+	
+	// TODO: commentary
+	protected abstract void removeFromWorld(World world);
+	
+	// TODO: commentary
+	protected abstract boolean hasAsWorld(World world);
+	
+	// TODO: commentary
+	//protected abstract int getNbInWorld(World world);
+	
 	/**
 	 * Variable registering the World of a Game object.
 	 */
@@ -2028,25 +2040,25 @@ public abstract class GameObject {
 	protected void processGameObjectOverlap(){
 		World world = this.getWorld();
 		
-		for(Mazub mazub:  world.getAllMazubs()){
+		for(Mazub mazub:  Mazub.getAllInWorld(world)){
 			if(this.doesOverlapWith(mazub)){
 				this.processMazubOverlap(mazub);
 			}
 		}
 		
-		for(Plant plant :  world.getAllPlants()){
+		for(Plant plant :  Plant.getAllInWorld(world)){
 			if(this.doesOverlapWith(plant)){
 				this.processPlantOverlap(plant);
 			}
 		}
 		
-		for(Shark shark :  world.getAllSharks()){
+		for(Shark shark :  Shark.getAllInWorld(world)){
 			if(this.doesOverlapWith(shark)){
 				processSharkOverlap(shark);
 			}
 		}
 		
-		for(Slime slime :  world.getAllSlimes()){
+		for(Slime slime :  Slime.getAllInWorld(world)){
 			if(this.doesOverlapWith(slime)){
 				processSlimeOverlap(slime);
 			}

@@ -357,7 +357,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Collection<Plant> getPlants(World world) {
-		return world.getAllPlants();
+		return Plant.getAllInWorld(world);
 	}
 
 	@Override
@@ -394,7 +394,7 @@ public class Facade implements IFacadePart2 {
 	
 	@Override
 	public Collection<Shark> getSharks(World world) {
-		return world.getAllSharks();
+		return Shark.getAllInWorld(world);
 	}
 
 	@Override
@@ -438,7 +438,7 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Collection<Slime> getSlimes(World world) {
-		return world.getAllSlimes();
+		return Slime.getAllInWorld(world);
 	}
 
 	@Override
