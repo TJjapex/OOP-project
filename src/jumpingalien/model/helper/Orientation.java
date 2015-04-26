@@ -4,8 +4,9 @@ import be.kuleuven.cs.som.annotate.Value;
 /**
  * An enumeration of orientations.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
- * @version 1.0
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 2.0
  */
 @Value
 public enum Orientation {
@@ -14,7 +15,7 @@ public enum Orientation {
 		/**
 		 * Return the sign of the left orientation.
 		 * 
-		 * @return	Negative X direction
+		 * @return	Negative X direction.
 		 * 			| -1
 		 */
 		public int getSign(){
@@ -25,7 +26,7 @@ public enum Orientation {
 		/**
 		 * Return the sign of the right orientation.
 		 * 
-		 * @return	Positive X direction
+		 * @return	Positive X direction.
 		 * 			| 1
 		 */
 		public int getSign(){
@@ -36,7 +37,7 @@ public enum Orientation {
 		/**
 		 * Return the sign of the up orientation.
 		 * 
-		 * @return	Positive Y direction
+		 * @return	Positive Y direction.
 		 * 			| 1
 		 */
 		public int getSign(){
@@ -47,7 +48,7 @@ public enum Orientation {
 		/**
 		 * Return the sign of the down orientation.
 		 * 
-		 * @return	Negative Y direction
+		 * @return	Negative Y direction.
 		 * 			| -1
 		 */
 		public int getSign(){
@@ -58,7 +59,7 @@ public enum Orientation {
 		/**
 		 * Return the sign of all orientations.
 		 * 
-		 * @return	All directions
+		 * @return	All directions.
 		 * 			| 1
 		 */
 		public int getSign(){
@@ -67,10 +68,9 @@ public enum Orientation {
 	};
 	
 	/**
-	 * Return the sign of the orientation, left is negative and right is positive.
+	 * Return the sign of the orientation.
 	 * 
-	 * @return
-	 * 		The sign of the orientation.
+	 * @return	The sign of the orientation.
 	 */
 	public abstract int getSign();
 	

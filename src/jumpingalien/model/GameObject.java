@@ -24,7 +24,8 @@ import be.kuleuven.cs.som.annotate.*;
 /**
  * A superclass for Game objects in the game world of Mazub.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * 
  * @invar	The width of the Game object must be valid.
  * 			|	isValidWidth( this.getWidth() )
@@ -32,7 +33,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 			|	isValidHeight( this.getHeight() )
  * @invar	The horizontal velocity must be valid.
  * 			|	isValidVelocityX( this.getVelocityX() )
- * @invar	The maximal horizontal velocity must be greater than the initial horizontal velocity.
+ * @invar	The Game object can have this maximal horizontal velocity as its maximal horizontal velocity.
  * 			|	canHaveAsVelocityXMax( this.getVelocityXMax() )
  * @invar	The timer object linked to a Game object instance is not null.
  * 			| 	this.getTimer() != null
@@ -51,7 +52,7 @@ import be.kuleuven.cs.som.annotate.*;
  */
 public abstract class GameObject {
 	
-	/******************************************************* GENERAL ***************************************************/
+	/****************************************************** CONSTANTS **************************************************/
 	
 	/**
 	 * Constant reflecting the duration that an object should be immune after losing hit points due to contact
@@ -76,8 +77,6 @@ public abstract class GameObject {
 	/**
 	 * Constructor for the superclass Game object.
 	 * 
-	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
-	 * 			| (Array.getLength(sprites) >= 0)
 	 * @param 	pixelLeftX
 	 * 				The x-location of a Game object's bottom left pixel.
 	 * @param 	pixelBottomY
@@ -96,6 +95,8 @@ public abstract class GameObject {
 	 * 				The number of hit points of a Game object.
 	 * @param 	maxNbHitPoints
 	 * 				The maximal number of hit points of a Game object.
+	 * @pre		The length of the given array sprites should not be null and should be greater or equal to 2.
+	 * 			| (Array.getLength(sprites) >= 2) && sprites != null
 	 * @effect	Set a new Timer for a Game object.
 	 * 			| setTimer(new Timer())
 	 * @effect	Set a new Animation for a Game object.
@@ -119,10 +120,10 @@ public abstract class GameObject {
 	 * @effect	Set the initial number of hit points to nbHitPoints.
 	 * 			| setNbHitPoints(nbHitPoints)
 	 * @throws	IllegalPositionXException
-	 * 				The X position of a Game object is not a valid X position.
+	 * 				The Game object can't have positionX as his horizontal position.
 	 * 				| ! canHaveAsPositionX(positionX)
 	 * @throws	IllegalPositionYException
-	 * 				The Y position of a Game object is not a valid Y position.
+	 * 				The Game object can't have positionY as his vertical position.
 	 * 				| ! canHaveAsPositionY(positionY)
 	 * @throws	IllegalWidthException
 	 * 				The width of at least one sprite in the given array sprites is not a valid width.
@@ -137,7 +138,7 @@ public abstract class GameObject {
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
 					  int maxNbHitPoints)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
-		assert sprites != null && sprites.length >= 0;
+		assert sprites != null && sprites.length >= 2;
 		
 		this.setTimer(new Timer());	
 		this.setAnimation(new Animation(this, sprites));
@@ -1294,11 +1295,11 @@ public abstract class GameObject {
 	/**
 	 * Check whether the Game object is jumping.
 	 * 
-	 * @return	True if and only if the Game object is standing on impassable terrain or another impassable
+	 * @return	True if and only if the Game object is standing on impassable terrain or another impassable.
 	 * 			Game object.
 	 * 			| result == ( doesInteractWithTerrain(TerrainInteraction.STAND_ON, Orientation.BOTTOM) || 
 	 *		   	|			  doesInteractWithGameObjects(TerrainInteraction.STAND_ON, Orientation.BOTTOM) )
-	 *@throws	IllegalStateException
+	 * @throws	IllegalStateException
 	 *				The Game object has no proper World.
 	 *				| ! hasProperWorld()
 	 */
@@ -1329,19 +1330,20 @@ public abstract class GameObject {
 	 * @param 	dt
 	 * 				A double that represents the elapsed in-game time.
 	 * @note	No further documentation was required for this method.
-	 * @throws
-	 * 		IllegalArgumentException
-	 * @throws
-	 * 		IllegalStateException
+	 * @throws 	IllegalArgumentException
+	 * 				The given dt is not in range of 0 to 0.2. (up to a certain epsilon)
+	 * 				| !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2)
+	 * @throws 	IllegalStateException
+	 * 				The Game object is already terminated or it has no proper World when advanceTimeOnce is invoked.
+	 * 				| !this.isTerminated() && !this.hasProperWorld()
 	 */
 	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
+		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
-		
-		// determine minDt		
+				
 		double minDt;
 		
-		// iteratively advance time;
 		while(!Util.fuzzyGreaterThanOrEqualTo(0, dt)){
 			if(this.isTerminated()){
 				break;
@@ -1366,6 +1368,7 @@ public abstract class GameObject {
 	 * 				| !this.isTerminated() && !this.hasProperWorld()
 	 */
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
+		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		if( !this.isTerminated() && !this.hasProperWorld())
@@ -1539,28 +1542,29 @@ public abstract class GameObject {
 	}
 		
 	/****************************************************** COLLISION **************************************************/
+	
 	/**
-	 * Checks if this object collides with impassable terrain or any other impassable Game object. 
-	 * Colliding means that only the outer perimeter may overlap with the other object or terrain.
+	 * Check if this object collides with impassable Terrain or any other impassable Game object. Colliding means that
+	 * not only the outer perimeter of the Game object overlaps with the other Game object or Terrain.
 	 * 
-	 * @return
-	 * 		True if and only if this object collides with impassable terrain or an impassable Game object.
-	 * 		| doesCollide(Orientation.ALL)
+	 * @return	True if and only if this object collides with impassable Terrain or an impassable Game object in any
+	 * 			direction.
+	 * 			| result == ( doesCollide(Orientation.ALL) )
 	 */
 	public boolean doesCollide(){
 		return doesCollide(Orientation.ALL);
 	}
 	
 	/**
-	 * Checks if this object collides with impassable terrain or any other impassable Game object in the given direction.
+	 * Check if this Game object collides with impassable Terrain or any other impassable Game object in the
+	 * given direction.
 	 * 
-	 * @param orientation	
-	 * 			The orientation to check collision with.
-	 * 			For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
-	 * @return
-	 * 		True if and only if this object collides with impassable terrain or an impassable Game object in the given direction.
-	 * 		|	doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
-				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);
+	 * @param 	orientation	
+	 * 				The orientation to check collision with.
+	 * @return	True if and only if this Game object collides with impassable Terrain or an impassable Game object in
+	 *  		the given direction.
+	 * 			|	result == ( doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
+				|				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation) )
 	 */
 	public boolean doesCollide(Orientation orientation){
 		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
@@ -1568,17 +1572,15 @@ public abstract class GameObject {
 	}
 
 	/**
-	 * Checks if this Game object collides with a given Game object in the given orientation.
+	 * Check if this Game object collides with a given Game object in the given orientation.
 	 * 
-	 * @param other
-	 * 		An instance of GameObject to check collision with.
-	 * @param orientation
-	 * 		The orientation to check collision with.
-	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
-	 * @return
-	 * 		True if and only if this object and the given Game object collides.
-	 * 		|	this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), 
-									 other.getWidth(), other.getHeight(), orientation)
+	 * @param 	other
+	 * 				An instance of Game object to check collision with.
+	 * @param	orientation
+	 * 				The orientation to check collision with.
+	 * @return	True if and only if this object and the given Game object collides.
+	 * 			|	result == ( doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), 
+				|					 			other.getWidth(), other.getHeight(), orientation) 			)
 	 */
 	public boolean doesCollideWith(GameObject other, Orientation orientation){
 		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), 
@@ -1586,23 +1588,22 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this Game object collides with the given rectangular region in the given orientation.
+	 * Check if this Game object collides with the given rectangular region in the given orientation.
 	 * 
-	 * @param x
-	 * 		The horizontal position of the left bottom corner of the rectangular region.
-	 * @param y
-	 * 		The vertical position of the left bottom corner of the rectangular region.
-	 * @param width
-	 * 		The width of the region.
-	 * @param height
-	 * 		The height of the region.
-	 * @param orientation
-	 * 		The orientation to check collision with.
-	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
-	 * @return
-	 * 		True if and only if the object collides with the given region, in the given orientation.
-	 * 		| GameObject.doRegionsOverlap( this.getRoundedPositionX() + 1 , this.getRoundedPositionY() + 1, this.getWidth() - 2, this.getHeight() - 2, 
-	 * 										x, y, width, height, orientation);
+	 * @param 	x
+	 * 				The horizontal position of the left bottom corner of the rectangular region.
+	 * @param 	y
+	 * 				The vertical position of the left bottom corner of the rectangular region.
+	 * @param 	width
+	 * 				The width of the region.
+	 * @param 	height
+	 * 				The height of the region.
+	 * @param 	orientation
+	 * 				The orientation to check collision with.
+	 * @return	True if and only if the object collides with the given region, in the given orientation.
+	 * 			| result == ( GameObject.doRegionsOverlap( this.getRoundedPositionX() + 1 , this.getRoundedPositionY() + 1, 
+	 * 			|										   this.getWidth() - 2, this.getHeight() - 2, 
+	 * 			|											x, y, width, height, orientation)				)
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
 		return GameObject.doRegionsOverlap(
@@ -1612,20 +1613,18 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Defines the actions to do when the Game object collides horizontally.
+	 * Defines the actions that need to be executed when the Game object collides horizontally.
 	 * 
-	 * @effect	
-	 * 		| this.endMove(this.getOrientation());
+	 * @effect	| endMove(this.getOrientation())
 	 */
 	protected void processHorizontalCollision(){
 		this.endMove(this.getOrientation());
 	}
 	
 	/**
-	 * Defines the actions to do when the Game object collides vertically.
+	 * Defines the actions that need to be executed when the Game object collides vertically.
 	 * 
-	 * @effect
-	 * 		| this.stopFall();
+	 * @effect	| stopFall()
 	 */
 	protected void processVerticalCollision(){
 		this.stopFall();
@@ -1634,23 +1633,27 @@ public abstract class GameObject {
 	/******************************************************* OVERLAP **************************************************/
 	
 	/**
-	 * Returns true if and only if this Game object does overlap with another Game object or impassable terrain.
-	 * This means that this will return true if and only if at least one pixel overlaps.
+	 * Check whether or not a Game object overlaps with another impassable Game object or impassable Terrain in any
+	 * direction. This means that the method will return true if and only if at least one pixel overlaps.
 	 * 
-	 * @return
-	 * 		True if and only if this Game object does overlap with another Game object or impassable terrain.
-	 * 		| this.doesOverlap(Orientation.ALL);
+	 * @return	True if and only if this Game object does overlap with another Game object or impassable Terrain in
+	 * 			any direction.
+	 * 			| result == ( doesOverlap(Orientation.ALL) )
 	 */
 	public boolean doesOverlap(){
 		return this.doesOverlap(Orientation.ALL);
 	}
 	
 	/**
+	 * Check whether or not a Game object overlaps with another impassable Game object or impassable Terrain in a
+	 * given direction. This means that the method will return true if and only if at least one pixel overlaps.
 	 * 
-	 * @param orientation
-	 * 		The orientation to check overlap with.
-	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
-	 * @return
+	 * @param 	orientation
+	 * 				The orientation to check overlap with.
+	 * @return	True if and only if this Game object does overlap with another Game object or impassable Terrain in
+	 * 			the given direction.
+	 * 			| result == ( doesInteractWithTerrain(TerrainInteraction.OVERLAP, orientation) || 
+			   	|			  doesInteractWithGameObjects(TerrainInteraction.OVERLAP, orientation) )
 	 */
 	public boolean doesOverlap(Orientation orientation){
 		return doesInteractWithTerrain(TerrainInteraction.OVERLAP, orientation) || 
@@ -1658,27 +1661,26 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this object overlaps with the given Game object.
-	 * @param other
-	 * 			The Game object to check collision with.
-	 * @return
-	 * 			True if and only if this Game object overlaps with the other Game object.
-	 * 			|	this.doesOverlapWith(other, Orientation.ALL)
+	 * Check if this object overlaps with the given Game object.
+	 * 
+	 * @param 	other
+	 * 				The Game object to check collision with.
+	 * @return	True if and only if this Game object overlaps with the other Game object.
+	 * 			| result == ( doesOverlapWith(other, Orientation.ALL) )
 	 */
 	public boolean doesOverlapWith(GameObject other){
 		return this.doesOverlapWith(other, Orientation.ALL);
 	}
 	
 	/**
-	 * Checks if this object overlaps with the given Game object, in the given orientation.
-	 * @param other
-	 * 			The Game object to check collision with.
-	 * @param orientation
-	 * 			The orientation to check overlap with.
-	 * 			For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
-	 * @return
-	 * 			True if and only if this Game object overlaps with the other Game object.
-	 *	 		|	this.doesOverlapWith(other, Orientation.ALL)
+	 * Check if this object overlaps with the given Game object, in the given orientation.
+	 * 
+	 * @param 	other
+	 * 				The Game object to check collision with.
+	 * @param 	orientation
+	 * 				The orientation to check overlap with.
+	 * @return	True if and only if this Game object overlaps with the other Game object.
+	 *	 		| result == ( doesOverlapWith(other, Orientation.ALL) )
 	 */
 	public boolean doesOverlapWith(GameObject other, Orientation orientation){
 		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(),
@@ -1686,23 +1688,21 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this Game object overlaps with the given object, in the given direction.
+	 * Check if this Game object overlaps with the given object, in the given direction.
 	 * 
-	 * @param x
-	 * 		The horizontal position of the left bottom corner of the region.
-	 * @param y
-	 * 		The vertical position of the left bottom corner of the region.
-	 * @param width
-	 * 		The width of the region.
-	 * @param height
-	 * 		The height of the region.
-	 * @param orientation
-	 * 		The direction to check overlap with. 
-	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
-	 * @return
-	 * 		True if and only if the object overlaps with the given region, in the given orientation.
-	 * 		| GameObject.doRegionsOverlap(getRoundedPositionX(), getRoundedPositionY(), 
-	 * 			getWidth(), getHeight(), x, y, width, height, orientation);
+	 * @param 	x
+	 * 				The horizontal position of the left bottom corner of the region.
+	 * @param 	y
+	 * 				The vertical position of the left bottom corner of the region.
+	 * @param 	width
+	 * 				The width of the region.
+	 * @param 	height
+	 * 				The height of the region.
+	 * @param 	orientation
+	 * 				The direction to check overlap with.
+	 * @return	True if and only if the object overlaps with the given region, in the given orientation.
+	 * 			| result == ( GameObject.doRegionsOverlap( getRoundedPositionX(), getRoundedPositionY(), 
+	 * 			| 										   getWidth(), getHeight(), x, y, width, height, orientation)	)
 	 */
 	public boolean doesOverlapWith(int x, int y, int width, int height, Orientation orientation){
 		return GameObject.doRegionsOverlap(getRoundedPositionX(), getRoundedPositionY(), 
@@ -1710,10 +1710,9 @@ public abstract class GameObject {
 	}
 	
 	/** 
-	 * Returns a set containing the overlapping Terrain types.
+	 * Return a set containing the overlapping Terrain types.
 	 *  
-	 * @return
-	 *  	A set containing the overlapping terrain types.
+	 * @return	A set containing the overlapping terrain types.
 	 */
 	public Set<Terrain> getOverlappingTerrainTypes(){
 		World world = this.getWorld();
@@ -1735,47 +1734,48 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if one given region (region 1) overlaps with another given region (region 2), in the given direction	 * 
+	 * Check if one given region (region 1) overlaps with another given region (region 2), in the given direction.
 	 * 
-	 * @param x1
-	 * 		The horizontal position of the left bottom corner of the first region.
-	 * @param y1
-	 * 		The vertical position of the left bottom corner of the first region.
-	 * @param width1
-	 * 		The width of the first region.
-	 * @param height1
-	 * 		The height of the first region.
-	 * @param x2
-	 * 		The horizontal position of the left bottom corner of the second region.
-	 * @param y2
-	 * 		The vertical position of the left bottom corner of the second region.
-	 * @param width2
-	 * 		The width of the second region.
-	 * @param height2
-	 * 		The height of the second region.
-	 * @param orientation
-	 * 		The orientation to check overlap in. 
-	 * @return
-	 * 		In case orientation is Orientation.ALL, 
-	 * 			this method will check if at least one pixel of region 1 overlaps with one pixel of region 2
-	 * 	 	In case orientation is Orientation.BOTTOM, 
-	 * 			this method will check if the bottom perimeter (as defined in the assignment) overlaps with any pixel of region 2 
-	 * 		In case orientation is Orientation.TOP, 
-	 * 			this method will check if the top perimeter (as defined in the assignment) overlaps with any pixel of region 2
-	 * 		In case orientation is Orientation.RIGHT, 
-	 * 			this method will check if the right perimeter (as defined in the assignment) overlaps with any pixel of region 2
-	 * 		In case orientation is Orientation.LEFT, 
-	 * 			this method will check if the left perimeter (as defined in the assignment) overlaps with any pixel of region 2
-	 * 
-	 * @note
-	 * 		The perimeters in the assignment are defined as follows:
-	 * 			bottom: x..x + Xg - 1, y
-	 * 			top:	x..x + Xg - 1, y + Yg - 1 
-	 * 			left:	x, y+1..y+Yg-2
-	 * 			right:	x+Xg-1, y+1..y+Yg-2
-	 * 
-	 * @throws IllegalArgumentException
-	 * 				If the given orientation is not implemented.
+	 * @param 	x1
+	 * 				The horizontal position of the left bottom corner of the first region.
+	 * @param 	y1
+	 * 				The vertical position of the left bottom corner of the first region.
+	 * @param 	width1
+	 * 				The width of the first region.
+	 * @param 	height1
+	 * 				The height of the first region.
+	 * @param 	x2
+	 * 				The horizontal position of the left bottom corner of the second region.
+	 * @param 	y2
+	 * 				The vertical position of the left bottom corner of the second region.
+	 * @param 	width2
+	 * 				The width of the second region.
+	 * @param 	height2
+	 * 				The height of the second region.
+	 * @param 	orientation
+	 * 				The orientation to check overlap in. 
+	 * @return	In case orientation is Orientation.ALL, this method will check if at least one pixel of region 1 overlaps
+	 *  			with one pixel of region 2.
+	 * 	 		In case orientation is Orientation.BOTTOM, this method will check if the bottom perimeter overlaps with any
+	 *  			pixel of region 2. 
+	 * 			In case orientation is Orientation.TOP, this method will check if the top perimeter overlaps with any pixel
+	 *  			of region 2.
+	 * 			In case orientation is Orientation.RIGHT, this method will check if the right perimeter overlaps with any pixel
+	 *  			of region 2.
+	 * 			In case orientation is Orientation.LEFT, this method will check if the left perimeter overlaps with any pixel
+	 *  			of region 2.
+	 * @note	The perimeters in the assignment are defined as follows:
+	 * 				bottom: x..x + Xg - 1, y
+	 * 				top:	x..x + Xg - 1, y + Yg - 1 
+	 * 				left:	x, y+1..y+Yg-2
+	 * 				right:	x+Xg-1, y+1..y+Yg-2
+	 * @throws 	IllegalArgumentException
+	 * 				The given orientation is not implemented.
+	 * 				| orientation != Orientation.RIGHT &&
+	 * 				| orientation != Orientation.LEFT &&
+	 * 				| orientation != Orientation.TOP &&
+	 * 				| orientation != Orientation.BOTTOM &&
+	 * 				| orientation != Orientation.ALL &&
 	 */
 	public static boolean doRegionsOverlap(int x1, int y1, int width1, int height1, int x2, int y2,
 										   int width2, int height2, Orientation orientation) 
@@ -1813,32 +1813,41 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks whether two lines of pixels do overlap. The lines are defined by their most-left pixel (x) and width. 
+	 * Check whether two lines of pixels do overlap. The lines are defined by their most-left pixel (x) and their width. 
 	 * This can also be used for vertical lines, since the condition is the same.
 	 * 
-	 * @param x1
-	 * 			The first pixel of the first line.
-	 * @param width1
-	 * 			The width of the first line.
-	 * @param x2
-	 * 			The first pixel of the second line
-	 * @param width2
-	 * 			The width of the second line
-	 * @return
-	 * 			True if and only if the given lines of pixels overlap, which means they have at least one overlapping pixel.
-	 * 		
+	 * @param 	x1
+	 * 				The first pixel of the first line.
+	 * @param 	width1
+	 * 				The width of the first line.
+	 * @param 	x2
+	 * 				The first pixel of the second line
+	 * @param 	width2
+	 * 				The width of the second line
+	 * @return	True if and only if the given lines of pixels overlap, which means they have at least one overlapping pixel.
+	 * 			| result == ( x1 < x2 + width2 && x1 + width1 > x2 )
 	 */
 	public static boolean doPixelsOverlap(int x1, int width1, int x2, int width2){
 		return	x1 < x2 + width2 && x1 + width1 > x2;
 	}
 	
 	/***************************************************** INTERACTION ************************************************/
+	
 	/**
-	 * Checks if this object interacts with any other impassable game object, in the given direction.
+	 * Check if this Game object interacts with any other impassable Game object, in the given direction.
 	 * 
-	 * @pre		The game object must be in a proper world
+	 * @param	interaction
+	 * 				The desired type of interaction to check, as an element of the TerrainInteraction enumeration.
+	 * @param	orientation
+	 * 				The desired direction in which the interaction should be checked.
+	 * @pre		The game object must have a proper world.
 	 * 			| hasProperWorld()
-	 * @return	True if and only if this object collides with impassable terrain.
+	 * @return	In case the interaction is COLLIDE, return true if and only if this object collides with impassable
+	 * 			Terrain.
+	 * 			In case the interaction is OVERLAP, return true if and only if this object ovlerlaps with impassable
+	 * 			Terrain.
+	 * 			In case the interaction is STAND_ON, return true if and only if this object stands on the impassable
+	 * 			Terrain.
 	 */
 	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld(); 
@@ -1882,9 +1891,20 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this object interacts with any other impassable Game object, in the given direction.
+	 * Check if this Game object interacts with any other impassable Game object, in the given direction.
 	 * 
-	 * @return	True if and only if this object collides with an impassable Game object.
+	 * @param	interaction
+	 * 				The desired type of interaction to check, as an element of the TerrainInteraction enumeration.
+	 * @param	orientation
+	 * 				The desired direction in which the interaction should be checked.
+	 * @pre		The game object must have a proper world.
+	 * 			| hasProperWorld()
+	 * @return	In case the interaction is COLLIDE, return true if and only if this object collides with any
+	 * 			other impassable Game object.
+	 * 			In case the interaction is OVERLAP, return true if and only if this object overlaps with any
+	 * 			other impassable Game object.
+	 * 			In case the interaction is STAND_ON, return true if and only if this object stands on an
+	 * 			impassable Game object.
 	 */
 	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld();
@@ -1911,17 +1931,16 @@ public abstract class GameObject {
 		}
 		return false;
 	}
-
 	
-	/*********************************************** OVERLAP PROCESSING ********************************************/
+	/************************************************** OVERLAP PROCESSING ********************************************/
 	
 	/**
-	 * TODO: kan echt geen beschrijving bedenken behalve dan dat dat gewoon die methodes oproept... :/
+	 * Process an overlap of the Game object in general.
 	 * 
-	 * @effect
-	 * 		| this.processTileOverlap();
-	 * @effect
-	 * 		| this.processGameObjectOverlap();
+	 * @effect	Process overlap with tiles.
+	 * 			| processTileOverlap()
+	 * @effect	Process overlap with other Game objects.
+	 * 			| processGameObjectOverlap()
 	 */
 	protected void processOverlap(){
 		this.processTerrainOverlap();
@@ -1929,26 +1948,41 @@ public abstract class GameObject {
 	}
 
 	/**
+	 * Process an overlap of the Game object with Terrain.
 	 * 
+	 * @effect	If the Game object is overlapping with Terrain that should damage him, invoke
+	 * 			doTerrainDamage.
+	 * 			| for overlappingTerrain in this.getOverlappingTerrainTypes():
+	 * 			|	if ( this.hasTerrainPropertiesOf(overlappingTerrain) )
+	 * 			|		then this.doTerrainDamage( overlappingTerrain )
 	 */
 	protected void processTerrainOverlap(){
 		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		
-		// Check all terrain types that are overlapping
 		for(Terrain overlappingTerrain : overlappingTerrainTypes){
-			
-			// If this terrain type isn't configured, don't care
-			if(!this.hasTerrainPropertiesOf(overlappingTerrain)){
-				break;
+			if(this.hasTerrainPropertiesOf(overlappingTerrain)){
+				this.doTerrainDamage(overlappingTerrain);
 			}
-			
-			doTerrainDamage(overlappingTerrain);
 		}
 	}	
 	
 	/**
+	 * Make the Game object take damage according to the specifications of the given overlapping Terrain.
 	 * 
-	 * @param overlappingTerrain
+	 * @param 	overlappingTerrain
+	 * 				The Terrain with which the Game object overlaps.
+	 * @effect	If the given overlapping Terrain does damage to the Game object, the time since the last damage
+	 * 			he took from the terrain is greater than the damage time and either the Terrain deals instant
+	 * 			damage or the terrain overlap duration is greater than the damage time, make the Game object
+	 * 			take damage and set the time since the last terrain damage to 0.
+	 * 			| if ( this.getTerrainPropertiesOf(overlappingTerrain).getDamage() != 0 		&&
+	 * 			|	   this.getTimer().getSinceLastTerrainDamage(overlappingTerrain) >
+	 * 			|	   this.getTerrainPropertiesOf(overlappingTerrain).getDamageTime() 			&&
+	 * 			|	   ( this.getTerrainPropertiesOf(overlappingTerrain).isInstantDamage() 		||
+	 * 			|		 this.getTimer().getTerrainOverlapDuration(overlappingTerrain) > 
+	 * 			| 		 this.getTerrainPropertiesOf(overlappingTerrain).getDamageTime() ) )
+	 * 			|	then this.takeDamage( this.getTerrainPropertiesOf(overlappingTerrain).getDamage() )
+	 * 			|		 this.getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0)
 	 */
 	protected void doTerrainDamage(Terrain overlappingTerrain){
 		// Get configuration for this overlapping terrain type
@@ -1957,34 +1991,46 @@ public abstract class GameObject {
 		// if the gameobject can lose hit points due to contact with this terrain type
 		if(  terrainProperties.getDamage() != 0 ){ 
 			// If the time since the last hitpoints detection is greater than the configured damage time
-			if( getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
-				
+			if( this.getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
 				// Do damage if the terrain should do damage immediately after contact (for example, magma) 
 				// or if the overlapping duration is longer than the configured damage time
-				if(terrainProperties.isInstantDamage() || getTimer().getTerrainOverlapDuration(overlappingTerrain) > terrainProperties.getDamageTime() ){
+				if(terrainProperties.isInstantDamage() || 
+				   this.getTimer().getTerrainOverlapDuration(overlappingTerrain) > terrainProperties.getDamageTime() ){
+					
 					this.takeDamage( terrainProperties.getDamage() );
-					getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0);
+					this.getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0);
+					
 				}
 			}
 		}
 	}
 	
 	/**
-	 * Process the overlap of a Mazub, Plant, Shark or Slime with this Game object.
+	 * Process the overlap of another Game object with this Game object.
 	 * 
-	 * TODO: kunt ge @effect efficient uitschrijven hier? Dus bv
-	 * if this.doesOverlapWith(any alien)
-	 * 		then this.processMazubOverlap(alien)
-	 * 
-	 * of gewoon code copy pasten en effect voorzetten...
-	 * 	
+	 * @effect	Process overlaps of Mazubs with this Game object.
+	 * 			| for mazub in this.getWorld().getAllMazubs():
+	 * 			|	if ( this.doesOverlapWith(mazub) ) 
+	 * 			|		then this.processMazubOverlap(mazub)
+	 * @effect	Process overlaps of Plants with this Game object.
+	 * 			| for plant in this.getWorld().getAllPlants():
+	 * 			|	if ( this.doesOverlapWith(plant) ) 
+	 * 			|		then this.processPlantOverlap(plant)
+	 * @effect	Process overlaps of Sharks with this Game object.
+	 * 			| for shark in this.getWorld().getAllSharks():
+	 * 			|	if ( this.doesOverlapWith(shark) ) 
+	 * 			|		then this.processSharkOverlap(shark)
+	 * @effect	Process overlaps of Slimes with this Game object.
+	 * 			| for slime in this.getWorld().getAllSlimes():
+	 * 			|	if ( this.doesOverlapWith(slime) ) 
+	 * 			|		then this.processSlimeOverlap(slime) 	
 	 */
 	protected void processGameObjectOverlap(){
 		World world = this.getWorld();
 		
-		for(Mazub alien:  world.getAllMazubs()){
-			if(this.doesOverlapWith(alien)){
-				this.processMazubOverlap(alien);
+		for(Mazub mazub:  world.getAllMazubs()){
+			if(this.doesOverlapWith(mazub)){
+				this.processMazubOverlap(mazub);
 			}
 		}
 		
@@ -2035,7 +2081,7 @@ public abstract class GameObject {
 	/***************************************************** TERMINATION *************************************************/
 	
 	/**
-	 * Kill this Game object
+	 * Kill this Game object.
 	 * 
 	 * @effect	Set the number of hit points of this Game object to 0.
 	 * 			| setNbHitPoints(0)

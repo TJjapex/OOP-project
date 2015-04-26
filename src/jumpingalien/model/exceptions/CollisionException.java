@@ -3,7 +3,8 @@ package jumpingalien.model.exceptions;
 /**
  * A class for signaling a collision exception of a Game object.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public class CollisionException extends RuntimeException {

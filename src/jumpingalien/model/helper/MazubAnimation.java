@@ -10,32 +10,33 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 /**
  * An Animation class, implemented with methods to serve as a helper class for the class Mazub.
  * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
  * @note	For an Animation instance, the sprites can only be set once in the constructor. 
  * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  *
- * @invar	The sprites array of this animation has a length greater than or equal to 10 and is the length an even number
+ * @invar	The sprites array of this animation has a length greater than or equal to 10 and is the length an even number.
  * 			|	this.getNbSprites() >= 10 && (this.getNbSprites() % 2) == 0;
- * @invar	The number of frames for the walking animation should be greater than or equal to 1.
+ * @invar	The number of frames for the walking animation should be greater than 0.
  * 			| 	this.getNbFrames() > 0
- * 
- * @author 	Thomas Verelst, Hans Cauwenbergh
- * @version 1.0
  */
-public class MazubAnimation extends Animation {	
+public class MazubAnimation extends Animation {
+	
+	/***************************************************** CONSTRUCTOR *************************************************/
+	
 	/**
-	 * Constructor for the class Animation.
+	 * Constructor for the class MazubAnimation.
 	 * 
 	 * @param 	sprites
-	 * 				The array of sprite images for the animation.
+	 * 				The array of sprite images for the Animation.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
-	 * @post	The initial sprites of the animation are equal to the given array sprites.
-	 * 			| this.sprites == sprites
-	 * @post	The initial animation index of the animation is equal to 0.
-	 * 			| new.getAnimationIndex() == 0
-	 * @post	The initial number of frames of the animation is equal to the length of the sprites array
-	 * 			decremented with 8 and afterwards divided by 2.
-	 * 			| new.nbFrames == (this.sprites.length - 8) / 2
+	 * @effect	The MazubAnimation is initiated with the constructor of his superclass Animation.
+	 * 			| super(mazub, sprites)
+	 * @effect	Set the initial animation index to 0.
+	 * 			| setAnimationIndex(0)
 	 * @throws 	IllegalWidthException
 	 * 				The width of at least one sprite in the given array sprites is not a valid width.
 	 * 				| for some sprite in sprites:
@@ -45,43 +46,18 @@ public class MazubAnimation extends Animation {
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
-	public MazubAnimation(Mazub alien, Sprite[] sprites) throws IllegalWidthException, IllegalHeightException{
-		super(alien, sprites);
+	public MazubAnimation(Mazub mazub, Sprite[] sprites) throws IllegalWidthException, IllegalHeightException{
+		super(mazub, sprites);
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
-		this.gameObject = alien;
 		this.setAnimationIndex(0);
 	}
 	
-	/**
-	 * Returns the related Mazub game object
-	 * 
-	 * @return
-	 * 		The related Mazub game object
-	 */
-	@Basic
-	public Mazub getGameObject() {
-		return gameObject;
-	}
-	
-	private final Mazub gameObject;
-	/**
-	 *  Return the correct sprite of the Mazub instance
-	 * 
-	 * @param 	alien
-	 * 				A valid instance of the class Mazub.
-	 * @return	A sprite located at inde
-	 */
-	@Override
-	public Sprite getCurrentSprite(){
-		return this.getSpriteAt(this.getSpriteIndex());
-	}
+	/****************************************************** ANIMATION **************************************************/
 	
 	/**
-	 *  Updates the sprite index of the Mazub instance, depending on his current status.
+	 *  Update the sprite index of the Mazub instance, depending on his current status.
 	 * 
-	 * @param 	alien
-	 * 				A valid instance of the class Mazub.
 	 * @return	The sprite index in sprites for the current status of the given Mazub instance.
 	 * 			The index represents a certain status of Mazub:
 	 * 			index = 0: 	Mazub is not moving horizontally, has not moved horizontally within the last 
@@ -105,24 +81,25 @@ public class MazubAnimation extends Animation {
 	@Override
 	public void updateSpriteIndex(){
 		int currentIndex = this.getSpriteIndex();
-
+		Mazub mazub = (Mazub) this.getGameObject();
+		
 		int index = 0;
-		if(!getGameObject().isMoving()){
-			if(!getGameObject().hasMovedInLastSecond()){
-				if(!getGameObject().isDucking()){
+		if(!mazub.isMoving()){
+			if(!mazub.hasMovedInLastSecond()){
+				if(!mazub.isDucking()){
 					index = 0;
 				}else{
 					index = 1;
 				}
 			}else{
-				if(!getGameObject().isDucking()){
-					if(getGameObject().getOrientation() == Orientation.RIGHT){
+				if(!mazub.isDucking()){
+					if(mazub.getOrientation() == Orientation.RIGHT){
 						index = 2;
 					}else{ // LEFT
 						index = 3;
 					}
 				}else{
-					if(getGameObject().getOrientation() == Orientation.RIGHT){
+					if(mazub.getOrientation() == Orientation.RIGHT){
 						index = 6;
 					}else{ // LEFT
 						index = 7;
@@ -131,9 +108,9 @@ public class MazubAnimation extends Animation {
 			}
 			
 		}else{ // MOVING
-			if(!getGameObject().isOnGround()){
-				if(!getGameObject().isDucking()){
-					if(getGameObject().getOrientation() == Orientation.RIGHT){
+			if(!mazub.isOnGround()){
+				if(!mazub.isDucking()){
+					if(mazub.getOrientation() == Orientation.RIGHT){
 						index = 4;
 					}else{ // LEFT
 						index = 5;
@@ -141,15 +118,15 @@ public class MazubAnimation extends Animation {
 				}
 			}
 			
-			if(getGameObject().isDucking()){
-				if(getGameObject().getOrientation() == Orientation.RIGHT){
+			if(mazub.isDucking()){
+				if(mazub.getOrientation() == Orientation.RIGHT){
 					index = 6;
 				}else{ // LEFT
 					index = 7;
 				}
 			}
-			if(!getGameObject().isDucking() && getGameObject().isOnGround()){
-				if(getGameObject().getOrientation() == Orientation.RIGHT){
+			if(!mazub.isDucking() && mazub.isOnGround()){
+				if(mazub.getOrientation() == Orientation.RIGHT){
 					index = 8 + this.getAnimationIndex();
 				}else{ // LEFT
 					index = 8 + this.getNbFrames() + this.getAnimationIndex();
@@ -157,10 +134,9 @@ public class MazubAnimation extends Animation {
 			}
 		}
 		
-		
 		this.setSpriteIndex(index);
 		
-		if(getGameObject().doesCollide()){
+		if(mazub.doesCollide()){
 			this.setSpriteIndex(currentIndex); // undo changes
 		}
 	}
@@ -186,8 +162,6 @@ public class MazubAnimation extends Animation {
 		return this.animationIndex;
 	}
 	
-	
-	
 	/**
 	 * Set the animation index, which is the number of the sprite in an animated sequence.
 	 * 
@@ -208,26 +182,21 @@ public class MazubAnimation extends Animation {
 	/**
 	 * Increments the frame index, or sets it to 0 if the current frame is the last one.
 	 * 
-	 * @post	If the animation index was smaller than the number of frames of the animation minus one,
-	 * 			the animation index is now increased with one. If the animation index was equal to
-	 * 			the animation index plus one, the animation index is now reset to 0.
-	 * 			| if (this.getAnimationIndex() + 1 < this.nbFrames)
-	 * 			|	then new.getAnimationIndex() == this.getAnimationIndex() + 1 
-	 * 			| else if (this.getAnimationIndex() + 1  == this.nbFrames)
-	 * 			|	then new.getAnimationIndex() == 0		
+	 * @effect	Set the animation index to the remainder of the current animation index plus 1 divided by the current
+	 * 			number of frames.
+	 * 			| setAnimationIndex( (this.getAnimationIndex() + 1) % this.getNbFrames() )	
 	 */
 	private void incrementAnimationIndex(){
 		this.setAnimationIndex( (this.getAnimationIndex() + 1) % this.getNbFrames() );
 	}
 	
 	/**
-	 * Updates the current animation frame, based on the time since the last frame.
+	 * Update the current animation frame, based on the time since the last frame.
 	 * 
-	 * @pre The given timer instance is not null.
-	 * 		| timer != null
-	 * @param timer
-	 * 			A valid timer instance.
-	 * 
+	 * @param 	timer
+	 * 				A valid timer instance.
+	 * @pre 	The given timer instance is not null.
+	 * 			| timer != null
 	 */
 	public void updateAnimationIndex(Timer timer){
 		assert timer != null;

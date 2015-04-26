@@ -19,7 +19,9 @@ import jumpingalien.util.Util;
 /**
  * A class of Worlds for Mazubs to move around in. 
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
  * 
  * @invar 	| getNbGameObjects() <= 101
  * @invar	| getNbSchools() <= 10
@@ -28,56 +30,44 @@ import jumpingalien.util.Util;
  * @invar	| canHaveAsTargetTileX(getTargetTileX())
  * @invar	| canHaveAsTargetTileY(getTargetTileY())	
  * @invar	| isValidTileLength(getTileLength())
- * 			
- * 
- * @version 1.0
  */
 public class World {
-
-	/******************************************************* GENERAL ***************************************************/
-	/**
-	 * Returns whether this Game world is started
-	 * @return
-	 * 		|	this.hasStarted
-	 */
-	@Basic @Raw
-	private boolean hasStarted(){
-		return this.hasStarted;
-	}
-	
-	/**
-	 * Starts this Game world.
-	 * @post	Sets hasStarted to true.
-	 * 			| new.hasStarted() == true
-	 */
-	@Basic @Raw
-	public void start(){
-		this.hasStarted = true;
-	}
-	
-	/**
-	 * Variable registering whether the current world is already started or not.
-	 */
-	private boolean hasStarted = false;
 	
 	/***************************************************** CONSTRUCTOR *************************************************/
+	
 	/**
-	 * A constructor for a world
+	 * Constructor for the class World.
 	 * 
-	 * @param tileSize
-	 * 			The length of a square tile side
-	 * @param nbTilesX
-	 * 			The total number of tiles in the horizontal direction
-	 * @param nbTilesY
-	 * 			The total number of tiles in the vertical direction
-	 * @param visibleWindowWidth
-	 * 			The width of the visible Game window in pixels
-	 * @param visibleWindowHeight
-	 * 			The Height of the visible Game window in pixels
-	 * @param targetTileX
-	 * 			The horizontal tile-coordinate of the target tile.
-	 * @param targetTileY
-	 * 			The Vertical tile-coordinate of the target tile.
+	 * @param 	tileSize
+	 * 				The length of a square tile side.
+	 * @param 	nbTilesX
+	 * 				The total number of tiles in the horizontal direction.
+	 * @param 	nbTilesY
+	 * 				The total number of tiles in the vertical direction.
+	 * @param 	visibleWindowWidth
+	 * 				The width of the visible game window in pixels.
+	 * @param 	visibleWindowHeight
+	 * 				The height of the visible game window in pixels.
+	 * @param 	targetTileX
+	 * 				The horizontal tile-coordinate of the target tile.
+	 * @param 	targetTileY
+	 * 				The vertical tile-coordinate of the target tile.
+	 * @pre		| isValidTileLength(tileSize)
+	 * @pre		| nbTilesX > 0
+	 * @pre		| nbTilesY > 0
+	 * @pre		| canHaveAsDisplayWidth(visibleWindowWidth)
+	 * @pre		| canHaveAsDisplayHeight(visibleWindowHeight)
+	 * @pre		| canHaveAsTargetTileX(targetTileX)
+	 * @pre		| canHaveAsTargetTileY(targetTileY)
+	 * @post	| new.tileLength == tileSize
+	 * @post	| new.getNbTilesX() == nbTilesX
+	 * @post	| new.getNbTilesY() == nbTilesY
+	 * @post	| new.getDisplayWidth() == visibleWindowWidth
+	 * @post	| new.getDisplayHeight() == visibleWindowHeight
+	 * @effect	| setDisplayPositionX(0)
+	 * @effect	| setDisplayPositionY(0)
+	 * @post	| new.getTargetTileX() == targetTileX
+	 * @post	| new.getTargetTileY() == targetTileY
 	 */
 	@Raw
 	public World(int tileSize, int nbTilesX, int nbTilesY, int visibleWindowWidth, 
@@ -104,14 +94,42 @@ public class World {
 		this.targetTileX = targetTileX;
 		this.targetTileY = targetTileY;
 	}
+	
+	/******************************************************** START ****************************************************/
+	
+	/**
+	 * Return whether this Game world has started.
+	 * 
+	 * @return	| result == ( this.hasStarted )
+	 */
+	@Basic @Raw
+	private boolean hasStarted(){
+		return this.hasStarted;
+	}
+	
+	/**
+	 * Start this Game world.
+	 * 
+	 * @post	Set hasStarted to true.
+	 * 			| new.hasStarted() == true
+	 */
+	@Basic @Raw
+	public void start(){
+		this.hasStarted = true;
+	}
+	
+	/**
+	 * Variable registering whether or not the current World has already started.
+	 */
+	private boolean hasStarted = false;
 
 	/******************************************************** SIZE *****************************************************/
 	
 	/**
-	 * Returns the width of this world.
+	 * Return the width of this World.
 	 * 
-	 * @return	The width of this world
-	 * 			| result ==  ( this.getNbTilesX()) * getTileLength();
+	 * @return	The width of this World.
+	 * 			| result ==  ( this.getNbTilesX()) * getTileLength() )
 	 */ 
 	@Raw
 	public int getWorldWidth() {
@@ -119,10 +137,10 @@ public class World {
 	}
 	
 	/**
-	 * Returns the height of this world.
+	 * Return the height of this World.
 	 * 
-	 * @return	The height of this world
-	 * 			| result ==  ( this.getNbTilesY()) * getTileLength();
+	 * @return	The height of this World.
+	 * 			| result ==  ( this.getNbTilesY()) * getTileLength() )
 	 */
 	@Raw
 	public int getWorldHeight() {
@@ -134,10 +152,9 @@ public class World {
 	/* Size */
 	
 	/**
-	 * Returns the width of the visible game window.
+	 * Return the width of the visible game window.
 	 *  
-	 * @return	The width of the visible game window.
-	 * 			| result ==  displayWidth;
+	 * @return	| result ==  displayWidth
 	 */
 	@Basic @Immutable @Raw
 	public int getDisplayWidth() {
@@ -145,25 +162,26 @@ public class World {
 	}
 	
 	/**
-	 * Checks whether the given visible game window width if is valid.
+	 * Check whether or not the World can have the given visible game window width.
 	 * 
-	 * @param displayWidth
-	 * 			The width of the visible game window
-	 * @return
-	 *			| displayWidth <= this.getWorldWidth() && displayWidth > 0;
+	 * @param 	displayWidth
+	 * 				The width of the visible game window.
+	 * @return	| result == ( displayWidth <= this.getWorldWidth() && displayWidth > 0 )
 	 */
 	@Raw
 	public boolean canHaveAsDisplayWidth(int displayWidth){
 		return displayWidth <= this.getWorldWidth() && displayWidth > 0;
 	}
 	
+	/**
+	 * Variable registering the visible game window width.
+	 */
 	private final int displayWidth;
 	
 	/**
-	 * Returns the height of the visible game window.
+	 * Return the height of the visible game window.
 	 *  
-	 * @return	The height of the visible game window.
-	 * 			| result ==  displayHeight;
+	 * @return	| result ==  displayHeight
 	 */
 	@Basic @Immutable @Raw
 	public int getDisplayHeight() {
@@ -171,29 +189,29 @@ public class World {
 	}
 	
 	/**
-	 * Checks whether the given visible game window height if is valid.
+	 * Check whether or not the World can have the given visible game window height.
 	 * 
-	 * @param displayHeight
-	 * 			The height of the visible game window
-	 * @return
-	 *			| displayHeight <= this.getWorldHeight() && displayHeight > 0;
+	 * @param 	displayHeight
+	 * 				The height of the visible game window.
+	 * @return	| result == ( displayHeight <= this.getWorldHeight() && displayHeight > 0 )
 	 */
 	@Raw
 	public boolean canHaveAsDisplayHeight(int displayHeight){
 		return displayHeight <= this.getWorldHeight() && displayHeight > 0;
 	}
 	
+	/**
+	 * Variable registering the visible game window height.
+	 */
 	private final int displayHeight;
 	
 	/* Position */
 	
 	/**
-	 * Updates the horizontal and vertical position of the visible game window.
+	 * Update the horizontal and vertical position of the visible game window.
 	 * 
-	 * @effect
-	 * 			| updateDisplayPositionX()
-	 * @effect
-	 * 			| updateDisplayPositionY()
+	 * @effect	| updateDisplayPositionX()
+	 * @effect	| updateDisplayPositionY()
 	 */
 	public void updateDisplayPosition(){
 		updateDisplayPositionX();
@@ -203,9 +221,9 @@ public class World {
 	// X
 	
 	/**
-	 * Returns the horizontal position of the visible game window.
-	 * @return
-	 * 			| result == this.displayPositionX
+	 * Return the horizontal position of the visible game window.
+	 * 
+	 * @return	| result == this.displayPositionX
 	 */
 	@Basic @Raw
 	public int getDisplayPositionX(){
@@ -213,11 +231,12 @@ public class World {
 	}
 	
 	/**
-	 * Sets the horizontal position of the visible game window to the given value.
-	 * @param displayPositionX
-	 * 			The horizontal position of the visible game window
-	 * @post
-	 * 			| new.getDisplayPositionX() == displayPositionX
+	 * Set the horizontal position of the visible game window to the given value.
+	 * 
+	 * @param 	displayPositionX
+	 * 				The horizontal position of the visible game window.
+	 * @pre		| canHaveAsDisplayPositionX(displayPositionX)
+	 * @post	| new.getDisplayPositionX() == displayPositionX
 	 */
 	@Basic @Raw
 	private void setDisplayPositionX(int displayPositionX) {
@@ -227,12 +246,11 @@ public class World {
 	}
 	
 	/**
-	 * Checks whether the given horizontal position of the visible game window is valid for this game world.
+	 * Check whether or not the World can have the given horizontal position of the visible game window.
 	 * 
-	 * @param displayPositionX
-	 * 			The horizontal position that needs to be checked
-	 * @return
-	 * 			| result == (displayPositionX >= 0 && displayPositionX + this.getDisplayWidth() <= this.getWorldWidth())
+	 * @param	displayPositionX
+	 * 				The horizontal position that needs to be checked.
+	 * @return	| result == ( displayPositionX >= 0 && displayPositionX + this.getDisplayWidth() <= this.getWorldWidth() )
 	 */
 	@Raw
 	public boolean canHaveAsDisplayPositionX(int displayPositionX){
@@ -240,8 +258,17 @@ public class World {
 	}
 	
 	/**
-	 * Updates the horizontal position of the visible game window. 
-	 * TODO meer docs
+	 * Update the horizontal position of the visible game window. 
+	 * 
+	 * @effect	| if ( this.getDisplayPositionX() + this.getDisplayWidth() - 200 <
+	 * 			|	   this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() )
+	 * 			|	then this.setDisplayPositionX( Math.min( this.getWorldWidth() - this.getDisplayWidth(),
+	 * 			|											 Math.max( 0, this.getMazub().getRoundedPositionX()
+	 *  		|														  + this.getMazub().getWidth() + 200
+	 *  		|										 				  - this.getDisplayWidth() )	)	)
+	 * @effect	| if ( newDisplayPositionX + 200 > this.getMazub().getRoundedPositionX() )
+	 * 			|	then this.setDisplayPositionX( Math.min( this.getWorldWidth() - this.getDisplayWidth(),
+	 * 			|											 Math.max( 0, this.getMazub().getRoundedPositionX() - 200 ) ) )
 	 */
 	private void updateDisplayPositionX(){
 		int newDisplayPositionX = this.getDisplayPositionX();
@@ -256,21 +283,24 @@ public class World {
 			newDisplayPositionX = this.getMazub().getRoundedPositionX() - 200; 
 		}
 		
-		// Check borders of gameworld 
+		// Check borders of game world 
 		newDisplayPositionX =  Math.max( 0, newDisplayPositionX );
 		newDisplayPositionX =  Math.min( this.getWorldWidth() - this.getDisplayWidth(), newDisplayPositionX );
 		
 		this.setDisplayPositionX(newDisplayPositionX);
 	}
 	
+	/**
+	 * Variable registering the horizontal position of the visible game window.
+	 */
 	private int displayPositionX;
 
 	// Y
 	
 	/**
-	 * Returns the vertical position of the visible game window.
-	 * @return
-	 * 			| result == this.displayPositionY
+	 * Return the vertical position of the visible game window.
+	 * 
+	 * @return	| result == this.displayPositionY
 	 */
 	@Basic @Raw
 	public int getDisplayPositionY(){
@@ -278,11 +308,12 @@ public class World {
 	}
 	
 	/**
-	 * Sets the vertical position of the visible game window to the given value.
-	 * @param displayPositionY
-	 * 			The vertical position of the visible game window
-	 * @post
-	 * 			| new.getDisplayPositionY() == displayPositionY
+	 * Set the vertical position of the visible game window to the given value.
+	 * 
+	 * @param 	displayPositionY
+	 * 				The vertical position of the visible game window.
+	 * @pre		| canHaveAsDisplayPositionY(displayPositionY)
+	 * @post	| new.getDisplayPositionY() == displayPositionY
 	 */
 	@Basic @Raw
 	private void setDisplayPositionY(int displayPositionY) {
@@ -292,12 +323,11 @@ public class World {
 	}
 	
 	/**
-	 * Checks whether the given vertical position of the visible game window is valid for this game world.
+	 * Check whether or not the World can have the given vertical position of the visible game window.
 	 * 
-	 * @param displayPositionY
-	 * 			The vertical position that needs to be checked
-	 * @return
-	 * 			| result == (displayPositionY >= 0 && displayPositionY + this.getDisplayHeight() <= this.getWorldHeight())
+	 * @param 	displayPositionY
+	 * 				The vertical position that needs to be checked.
+	 * @return	| result == ( displayPositionY >= 0 && displayPositionY + this.getDisplayHeight() <= this.getWorldHeight() )
 	 */
 	@Raw
 	private boolean canHaveAsDisplayPositionY(int displayPositionY){
@@ -306,7 +336,16 @@ public class World {
 	
 	/**
 	 * Updates the vertical position of the visible game window. 
-	 * TODO meer docs
+	 *
+	 * @effect	| if ( this.getDisplayPositionY() + this.getDisplayHeight() - 200 <
+	 * 			|	   this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() )
+	 * 			|	then this.setDisplayPositionY( Math.min( this.getWorldHeight() - this.getDisplayHeight(),
+	 * 			|											 Math.max( 0, this.getMazub().getRoundedPositionY()
+	 *  		|														  + this.getMazub().getHeight() + 200
+	 *  		|										 				  - this.getDisplayWHeight() )	)	)
+	 * @effect	| if ( newDisplayPositionY + 200 > this.getMazub().getRoundedPositionY() )
+	 * 			|	then this.setDisplayPositionY( Math.min( this.getWorldHeight() - this.getDisplayHeight(),
+	 * 			|											 Math.max( 0, this.getMazub().getRoundedPositionY() - 200 ) ) )
 	 */
 	private void updateDisplayPositionY(){		
 		int newDisplayPositionY = this.getDisplayPositionY();
@@ -325,6 +364,9 @@ public class World {
 		this.setDisplayPositionY(newDisplayPositionY);
 	}
 	
+	/**
+	 * Variable registering the vertical position of the visible game window.
+	 */
 	private int displayPositionY;
 	
 	/******************************************************** TILES ****************************************************/
@@ -332,64 +374,97 @@ public class World {
 	/* Number of tiles */
 	
 	/**
-	 * Returns the number of horizontal tiles of the game world
+	 * Return the number of horizontal tiles in the World.
 	 * 
-	 * @return
-	 * 		The number of horizontal tiles of the game world
-	 * 		| this.getWorldWidth() / this.getTileLength();
+	 * @return	| result == ( this.nbTilesX )
 	 */
 	@Basic @Immutable @Raw
 	public int getNbTilesX() {
 		return this.nbTilesX;
 	}
 	
-	private final int nbTilesX ;
+	/**
+	 * Variable registering the number of horizontal tiles in the World.
+	 */
+	private final int nbTilesX;
 	
 	/**
-	 * Returns the number of vertical tiles of the game world
+	 * Return the number of vertical tiles in the World.
 	 * 
-	 * @return
-	 * 		The number of vertical tiles of the game world
-	 * 		| this.getWorldHeight() / this.getTileLength();
+	 * @return	| result == ( this.nbTilesY )
 	 */
 	@Basic @Immutable @Raw
 	public int getNbTilesY(){
 		return this.nbTilesY;
 	}
 	
+	/**
+	 * Variable registering the number of vertical tiles in the World.
+	 */
 	private final int nbTilesY;
 		
 	/* Target tile */
 	
+	/**
+	 * Return the horizontal target tile of the World.
+	 * 
+	 * @return	| result == ( this.targetTileX )
+	 */
 	@Basic @Immutable @Raw
 	public int getTargetTileX() {
 		return this.targetTileX;
 	}
 	
+	/**
+	 * Check whether or not the World can have targetTileX as its horizontal target tile.
+	 * 
+	 * @param 	targetTileX
+	 * 				The horizontal target tile to check.
+	 * @return	| result == ( targetTileX > 0 && targetTileX < this.getWorldWidth() )
+	 */
 	@Raw
 	public boolean canHaveAsTargetTileX(int targetTileX){
 		return targetTileX > 0 && targetTileX < this.getWorldWidth();
 	}	
 	
+	/**
+	 * Variable registering the horizontal target tile of the World.
+	 */
 	private final int targetTileX;
 	
+	/**
+	 * Return the vertical target tile of the World.
+	 * 
+	 * @return	| result == ( this.targetTileY )
+	 */
 	@Basic  @Immutable @Raw
 	public int getTargetTileY() {
 		return this.targetTileY;
 	}
 	
+	/**
+	 * Check whether or not the World can have targetTileY as its vertical target tile.
+	 * 
+	 * @param 	targetTileY
+	 * 				The vertical target tile to check.
+	 * @return	| result == ( targetTileY > 0 && targetTileY < this.getWorldHeight() )
+	 */
 	@Raw
 	public boolean canHaveAsTargetTileY(int targetTileY){
 		return targetTileY > 0 && targetTileY < this.getWorldHeight();
 	}	
 	
+	/**
+	 * Variable registering the vertical target tile of the World.
+	 */
 	private final int targetTileY;
 	
 	/* Tile length */
 	
 	/**
-	 * Returns the length of the side of a square tile
-	 * @return
+	 * Return the length of the side of a square tile.
+	 * 
+	 * @return	| result == ( this.tileLength )
 	 */
 	@Basic
 	@Immutable
@@ -397,18 +472,30 @@ public class World {
 		return this.tileLength;
 	}
 	
+	/**
+	 * Check whether or not the given tile length is a valid tile length for a World.
+	 * 
+	 * @param 	tileLength
+	 * 				The tile length to check.
+	 * @return	| result == ( tileLength > 0 )
+	 */
 	public static boolean isValidTileLength(int tileLength){
 		return tileLength > 0;
 	}
 	
+	/**
+	 * Variable registering the tile length of tiles in the World.
+	 */
 	private final int tileLength;
 	
 	/* Position of tiles */
 	
 	/**
-	 * Returns the horizontal position in pixels for a given x position of a tile.
-	 * @param tileX
-	 * @return
+	 * Return the horizontal position of the bottom left pixel of a tile for a given x position of a tile.
+	 * 
+	 * @param 	tileX
+	 * 				The x position of a tile.
+	 * @return	| result == ( tileX * getTileLength() )
 	 */
 	@Raw
 	public int getPositionXOfTile(int tileX){
@@ -416,12 +503,11 @@ public class World {
 	}
 
 	/**
-	 * Checks whether the given horizontal position between in the game world boundaries.
+	 * Check whether or not the given horizontal position is in between the World boundaries.
 	 * 
-	 * @param positionX
-	 * 			The horizontal position that needs to be checked
-	 * @return
-	 * 			| positionX >= 0 && positionX < this.getWorldWidth()
+	 * @param 	positionX
+	 * 				The horizontal position that needs to be checked.
+	 * @return	| result == ( positionX >= 0 && positionX < this.getWorldWidth() )
 	 */
 	@Raw
 	public boolean canHaveAsPositionX(int positionX){
@@ -429,9 +515,11 @@ public class World {
 	}
 	
 	/**
-	 * Returns the horizontal position in pixels for a given y position of a tile.
-	 * @param tileY
-	 * @return
+	 * Return the vertical position of the bottom left pixel of a tile for a given y position of a tile.
+	 * 
+	 * @param 	tileY
+	 * 				The y position of a tile.
+	 * @return	| result == ( tileY * getTileLength() )
 	 */
 	@Raw
 	public int getPositionYOfTile(int tileY){
@@ -439,12 +527,11 @@ public class World {
 	}	
 	
 	/**
-	 * Checks whether the given vertical position between in the game world boundaries.
+	 * Check whether or not the given vertical position is in between the World boundaries.
 	 * 
-	 * @param positionY
-	 * 			The vertical position that needs to be checked
-	 * @return
-	 * 			| positionY >= 0 && positionY < this.getWorldHeight()
+	 * @param 	positionY
+	 * 				The vertical position that needs to be checked.
+	 * @return	| result == ( positionY >= 0 && positionY < this.getWorldHeight() )
 	 */
 	@Raw
 	public boolean canHaveAsPositionY(int positionY){
@@ -452,12 +539,11 @@ public class World {
 	}
 	
 	/**
-	 * Returns the horizontal tile position for a given horizontal pixel position.
+	 * Return the horizontal tile position for a given horizontal pixel position.
 	 *
-	 * @param positionX
-	 * 			The pixel's horizontal position
-	 * @return
-	 * 			The horizontal tile position for the given horizontal pixel position
+	 * @param 	positionX
+	 * 				The pixel's horizontal position.
+	 * @return	| result == ( (int) Math.floor( positionX / this.getTileLength()) )
 	 */
 	@Raw
 	public int getTileX(int positionX){
@@ -465,12 +551,11 @@ public class World {
 	}
 	
 	/**
-	 * Returns the vertical tile position for a given vertical pixel position.
+	 * Return the vertical tile position for a given vertical pixel position.
 	 *
-	 * @param positionY
-	 * 			The pixel's vertical position
-	 * @return
-	 * 			The vertical tile position for the given vertical pixel position
+	 * @param 	positionY
+	 * 				The pixel's vertical position.
+	 * @return	| result == ( (int) Math.floor( positionY / this.getTileLength()) )
 	 */
 	@Raw
 	public int getTileY(int positionY){
@@ -478,25 +563,22 @@ public class World {
 	}
 	
 	/**
-	 * Returns the tile positions of all tiles within the given rectangular
-	 * region.
+	 * Return the tile positions of all tiles within the given rectangular region.
 	 *
-	 * @param pixelLeft
-	 *            The x-coordinate of the left side of the rectangular region.
-	 * @param pixelBottom
-	 *            The y-coordinate of the bottom side of the rectangular region.
-	 * @param pixelRight
-	 *            The x-coordinate of the right side of the rectangular region.
-	 * @param pixelTop
-	 *            The y-coordinate of the top side of the rectangular region.
-	 * 
-	 * @return An array of tile positions, where each position (x_T, y_T) is
-	 *         represented as an array of 2 elements, containing the horizontal
-	 *         (x_T) and vertical (y_T) coordinate of a tile in that order.
-	 *         The returned array is ordered from left to right,
-	 *         bottom to top: all positions of the bottom row (ordered from
-	 *         small to large x_T) precede the positions of the row above that.
-	 * 
+	 * @param 	pixelLeft
+	 *            	The x-coordinate of the left side of the rectangular region.
+	 * @param 	pixelBottom
+	 *            	The y-coordinate of the bottom side of the rectangular region.
+	 * @param 	pixelRight
+	 *            	The x-coordinate of the right side of the rectangular region.
+	 * @param 	pixelTop
+	 *            	The y-coordinate of the top side of the rectangular region.
+	 * @return 	An array of tile positions, where each position (x_T, y_T) is
+	 *         	represented as an array of 2 elements, containing the horizontal
+	 *         	(x_T) and vertical (y_T) coordinate of a tile in that order.
+	 *         	The returned array is ordered from left to right,
+	 *         	bottom to top: all positions of the bottom row (ordered from
+	 *         	small to large x_T) precede the positions of the row above that.
 	 */	
 	@Raw
 	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
@@ -516,13 +598,16 @@ public class World {
 	/**************************************************** ADVANCE TIME *************************************************/
 	
 	/**
-	 * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
+	 * Advance time to iteratively invoke advanceTime of all Game objects in the World, starting with Mazub.
 	 * 
-	 * @note No documentation must be worked out for this method
-	 * @param dt
-	 * @throws IllegalArgumentException
+	 * @param 	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @note	No further documentation was required for this method.
+	 * @throws 	IllegalArgumentException
+	 * 				| !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2)
 	 */
 	public void advanceTime( double dt) throws IllegalArgumentException{
+		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		
@@ -549,30 +634,24 @@ public class World {
 	/************************************************* GEOLOGICAL FEATURES *********************************************/	
 	
 	/**
-	 * Modify the geological type of a specific tile in the this world to a
-	 * given type.
+	 * Modify the geological type of a specific tile in the this world to a given type.
 	 * 
-	 * @param tileX
-	 *            The x-position x_T of the tile for which the type needs to be
-	 *            modified
-	 * @param tileY
-	 *            The y-position y_T of the tile for which the type needs to be
-	 *            modified
-	 * @param terrainType
-	 *            The new type for the given tile, where:
-	 *            	- the value 0 is returned for an air tile
-	 *         		- the value 1 is returned for a solid ground tile
-	 *         		- the value 2 is returned for a water tile
-	 *         		- the value 3 is returned for a magma tile
-	 *         
-	 * @throws IllegalStateException
-	 * 				If world has already started
+	 * @param 	tileX
+	 *            	The x-position x_T of the tile for which the type needs to be modified.
+	 * @param 	tileY
+	 *            	The y-position y_T of the tile for which the type needs to be modified.
+	 * @param 	terrainType
+	 *            	The new type for the given tile, where:
+	 *            		- the value 0 is returned for an air tile.
+	 *         			- the value 1 is returned for a solid ground tile.
+	 *         			- the value 2 is returned for a water tile.
+	 *         			- the value 3 is returned for a magma tile.
+	 * @post	| new.getGeologicalFeature( this.getPositionXofTile(tileX), this.getPositionYofTile(tileY) ) == terrainType
+	 * @throws 	IllegalStateException
 	 * 				| this.hasStarted()
-	 * @throws IllegalPositionXException
-	 * 				If horizontal position is not valid
+	 * @throws 	IllegalPositionXException
 	 * 				| !canHaveAsPositionX(getPositionXOfTile(tileX))
-	 * @throws IllegalPositionYException
-	 * 				If vertical position is not valid
+	 * @throws 	IllegalPositionYException
 	 * 				| !canHaveAsPositionY(getPositionYOfTile(tileY))
 	 */
 	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) 
@@ -585,32 +664,26 @@ public class World {
 		if (!canHaveAsPositionY(getPositionYOfTile(tileY)))
 			throw new IllegalPositionYException(getPositionYOfTile(tileY));
 		
-		
-		geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
+		this.geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
 	}
 	
 	/**
-	 * Returns the geological feature of the tile with its bottom left pixel at
-	 * the given position.
+	 * Return the geological feature of the tile with its bottom left pixel at the given position.
 	 *
-	 * @param pixelX
-	 *            The x-position of the pixel at the bottom left of the tile for
-	 *            which the geological feature should be returned.
-	 * @param pixelY
-	 *            The y-position of the pixel at the bottom left of the tile for
-	 *            which the geological feature should be returned.
-	 * 
-	 * @return The type of the tile with the given bottom left pixel position,
-	 *         where:
-	 *         	- the value 0 is returned for an air tile
-	 *         	- the value 1 is returned for a solid ground tile
-	 *         	- the value 2 is returned for a water tile
-	 *         	- the value 3 is returned for a magma tile
-	 * 
-	 * @note This method must return its result in constant time.
-	 * 
-	 * @throw IllegalArgumentException if the given position does not correspond to the
-	 *        bottom left pixel of a tile.
+	 * @param 	pixelX
+	 *            	The x-position of the pixel at the bottom left of the tile for
+	 *            	which the geological feature should be returned.
+	 * @param 	pixelY
+	 *           	The y-position of the pixel at the bottom left of the tile for
+	 *            	which the geological feature should be returned.
+	 * @note 	This method must return its result in constant time.
+	 * @return 	The type of the tile with the given bottom left pixel position, where:
+	 *         		- the value 0 is returned for an air tile.
+	 *         		- the value 1 is returned for a solid ground tile.
+	 *         		- the value 2 is returned for a water tile.
+	 *         		- the value 3 is returned for a magma tile.
+	 * @throw 	IllegalArgumentException
+	 * 				| (pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0)
 	 */
 	public Terrain getGeologicalFeature(int pixelX, int pixelY) throws IllegalArgumentException{
 		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0)
@@ -624,16 +697,18 @@ public class World {
 		
 	}
 	
+	/**
+	 * Map registering the geological features of this World.
+	 */
 	private Map<VectorInt, Terrain> geologicalFeatures = new HashMap<VectorInt, Terrain>();
 	
 	/**************************************************** GAME OBJECTS *************************************************/
 	
 	/**
-	 * Checks whether this world is in the right state to add a Game object. 
-	 * The world may not be started or termintated.
+	 * Check whether or not this World is in the right state to add a Game object. The world may not be started 
+	 * or terminated.
 	 * 
-	 * @return
-	 * 		result ==  !this.hasStarted() && !this.isTerminated(); 
+	 * @return	| result ==  ( !this.hasStarted() && !this.isTerminated() )
 	 */
 	@Raw
 	public boolean canAddGameObject(){
@@ -641,25 +716,30 @@ public class World {
 	}
 	
 	/**
-	 * Checks whether this world can have the given Game object as Game Object
+	 * Check whether or not this World can have the given Game object as its Game object.
 	 * 
-	 * @param gameObject
-	 * 			The game object that needs to be checked
-	 * @return
-	 * 			| result == this.canAddGameObject() && gameObject != null; 
+	 * @param 	gameObject
+	 * 				The Game object that needs to be checked.
+	 * @return	| result == ( this.canAddGameObject() && gameObject != null )
 	 */
 	@Raw
 	public boolean canHaveAsGameObject(GameObject gameObject){
 		return this.canAddGameObject() && gameObject != null;
 	}
 	
+	/**
+	 * Check whether or not this World has proper Game objects.
+	 * 
+	 * @return	| result == ( (this.getNbMazubs() >= 1) && (this.getNbGameObjects() - 1 <= 100 ) &&
+	 * 			|			  ( for every object in this.getAllGameObjects(): object.getWorld() == this ) )
+	 */
 	@Raw
 	public boolean hasProperGameObjects(){
 		if( (this.getNbMazubs() < 1) || (this.getNbGameObjects() - 1 > 100 )){
 			return false;
 		}
 		
-		for(GameObject object : getAllGameObjects()){
+		for(GameObject object : this.getAllGameObjects()){
 			if(object.getWorld() != this){
 				return false;
 			}
@@ -704,19 +784,19 @@ public class World {
 	// Getters
 	
 	/**
-	 * Sets the given alien as the player's character in the given world.
+	 * Return the player's Mazub in the World.
 	 * 
-	 * @param world
-	 *            The world for which to set the player's character.
-	 * @param alien
-	 *            The alien to be set as the player's character.
+	 * @return	If there is only one Mazub in the World, return this Mazub.
+	 * @throws	| this.getNbMazubs() != 1
 	 */
-	public Mazub getMazub(){
+	public Mazub getMazub() throws IllegalStateException{
+		
 		if(this.getNbMazubs() == 1){
 			return this.getAllMazubs().iterator().next();
 		}else{
 			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
 		}
+		
 	}
 	
 	@Basic
@@ -781,21 +861,23 @@ public class World {
 	}
 	
 	/**
-	 * Checks whether this world has the given game object as object.
+	 * Check whether or not this World has the given Game object as its Game object.
 	 * 
-	 * @pre		The given game object must be an instance of Mazub, Shark, Slime or Plant.
-	 * 			| gameObject instanceof Mazub || gameObject instanceof Shark || gameObject instanceof Slime || gameObject instanceof Plant 
-	 * @param gameObject 
-	 * 			The game object to check
-	 * @return
-	 * 		if (gameObject instanceof Mazub)
-	 *			return hasAsMazub((Mazub) gameObject);
-	 *		else if (gameObject instanceof Shark)
-	 *			return hasAsShark((Shark) gameObject);
-	 *		else if (gameObject instanceof Slime)
-	 *			return hasAsSlime((Slime) gameObject);
-	 *		else if (gameObject instanceof Plant)
-	 *			return hasAsPlant((Plant) gameObject);
+	 * @param 	gameObject 
+	 * 				The Game object to check.
+	 * @pre		The given Game object must be an instance of Mazub, Shark, Slime or Plant.
+	 * 			| gameObject instanceof Mazub || gameObject instanceof Shark ||
+	 * 			| gameObject instanceof Slime || gameObject instanceof Plant 
+	 * @return	| result == ( if (gameObject instanceof Mazub)
+	 *			|				then hasAsMazub((Mazub) gameObject)
+	 *			|			  else if (gameObject instanceof Shark)
+	 *			|			  	then hasAsShark((Shark) gameObject)
+	 *			|			  else if (gameObject instanceof Slime)
+	 *			| 				then hasAsSlime((Slime) gameObject)
+	 *			|			  else if (gameObject instanceof Plant)
+	 *			|				then hasAsPlant((Plant) gameObject)
+	 *			|			  else 
+	 *			|				false								)
 	 */
 	@Raw
 	public boolean hasAsGameObject(@Raw GameObject gameObject){
@@ -835,6 +917,11 @@ public class World {
 		return this.slimes.size();
 	}
 	
+	/**
+	 * Return the number of Schools in this World.
+	 * 
+	 * @return	The number of Schools in this World.
+	 */
 	public int getNbSchools(){
 		Set<School> schools = new HashSet<School>();
 		for ( Slime slime: this.getAllSlimes() ){
@@ -845,18 +932,32 @@ public class World {
 	
 	// Vars
 	
+	/**
+	 * Set registering the Mazubs in this World.
+	 */
 	private Set<Mazub> mazubs = new HashSet<Mazub>();
+	
+	/**
+	 * Set registering the Plants in this World.
+	 */
 	private Set<Plant> plants = new HashSet<Plant>();
+	
+	/**
+	 * Set registering the Sharks in this World.
+	 */
 	private Set<Shark> sharks = new HashSet<Shark>();
+	
+	/**
+	 * Set registering the Slimes in this World.
+	 */
 	private Set<Slime> slimes = new HashSet<Slime>();
 	
 	/******************************************************* PLAYER ****************************************************/
 	
 	/**
-	 * Checks if the game is over.
+	 * Check if the game is over.
 	 * 
-	 * @return | (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() )
-	 * 			
+	 * @return 	| result == ( (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() )	)
 	 */
 	@Raw
 	public boolean isGameOver() {
@@ -864,10 +965,9 @@ public class World {
 	}
 	
 	/**
-	 * Checks if the Mazub related to this world has won.
+	 * Check if the player has won (i.e. the Mazub related to this World is on the target tile of the World).
 	 * 
-	 * @return | this.getMazub().isOnTargetTile()
-	 * 			
+	 * @return 	| result == ( this.getMazub().isOnTargetTile() )
 	 */
 	@Raw
 	public boolean didPlayerWin() {	
@@ -877,10 +977,9 @@ public class World {
 	/***************************************************** TERMINATION *************************************************/
 	
 	/**
-	 * Terminated this world.
+	 * Terminate this world.
 	 * 
-	 * @post
-	 * 		| new.isTerminated() == true
+	 * @post	| new.isTerminated() == true
 	 */
 	@Basic
 	private void terminate(){
@@ -888,14 +987,18 @@ public class World {
 	}
 	
 	/**
-	 * Checks if this world is terminated.
-	 * @return
-	 * 		| result == this.terminated
+	 * Check if this world is terminated.
+	 * 
+	 * @return	| result == ( this.terminated )
 	 */
 	@Basic
 	public boolean isTerminated(){
 		return this.terminated;
 	}
 	
+	/**
+	 * Variable registering whether or not the World is terminated.
+	 */
 	private boolean terminated = false;
+	
 }

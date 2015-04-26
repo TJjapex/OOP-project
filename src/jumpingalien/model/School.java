@@ -8,7 +8,8 @@ import be.kuleuven.cs.som.annotate.*;
 /**
  * A class of Schools, groups of Slimes in the game world of Mazub.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  * 
  * @invar	| hasProperSlimes()

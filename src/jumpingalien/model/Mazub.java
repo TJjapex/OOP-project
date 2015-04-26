@@ -31,6 +31,8 @@ import jumpingalien.model.terrain.TerrainProperties;
  * 
  * 			The link (which is not accessible for unauthorized users) of the repository is:
  * 				https://bitbucket.org/thmz/oop-project/
+ * 
+ * @version 2.0
  *
  * @invar	The width of the character must be valid.
  * 			|	isValidWidth( this.getWidth() )
@@ -50,12 +52,10 @@ import jumpingalien.model.terrain.TerrainProperties;
  * 			|	isValidOrientation( this.getOrientation() )
  * @invar	The current number of Mazub's hit points is valid.
  * 			|	isValidNbHitPoints( this.getNbHitPoints() )
- *
- * @version 2.0
  */
 public class Mazub extends GameObject{
 		
-	/******************************************************* GENERAL ***************************************************/	
+	/****************************************************** CONSTANTS **************************************************/	
 	
 	/**
 	 * Constant reflecting the amount of hit points a Mazub gets when he overlaps with a Plant.
@@ -345,7 +345,11 @@ public class Mazub extends GameObject{
 	 * 			| isValidOrientation(orientation)
 	 * @effect	If the given orientation is LEFT, set the status telling if Mazub should move left to false.
 	 * 			| setShouldMoveLeft(false)
+	 * @effect	If the given orientation is LEFT, set the prolonged movement of Mazub to the left to false.
+	 * 			| setShouldMoveLeft(false)
 	 * @effect	If the given orientation is RIGHT, set the status telling if Mazub should move right to false.
+	 * 			| setShouldMoveRight(false)
+	 * @effect	If the given orientation is RIGHT, set the prolonged movement of Mazub to the right to false.
 	 * 			| setShouldMoveRight(false)
 	 * @effect	If Mazub shouldn't move left or right anymore, set his horizontal velocity to 0.
 	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
@@ -363,8 +367,10 @@ public class Mazub extends GameObject{
 		
 		if(orientation == Orientation.LEFT){
 			this.setShouldMoveLeft(false);
+			this.setProlongedMoveLeft(false);
 		}else{
 			this.setShouldMoveRight(false);
+			this.setProlongedMoveRight(false);
 		}
 		
 		if(!this.getShouldMoveLeft() && !this.getShouldMoveRight()){
@@ -522,7 +528,12 @@ public class Mazub extends GameObject{
 	 * 			| setShouldEndDucking(false)
 	 * @effect	The ducking status of Mazub is set to false.
 	 * 			| setDucking(false)
-	 * TODO: commentary
+	 * @effect	If the sprite of Mazub didn't change, Mazub should still be ducking.
+	 * 			| if ( this.getCurrentSprite() == new.getCurrentSprite() )
+	 * 			|	then this.setDucking(true)
+	 * @effect	If the sprite of Mazub didn't change, Mazub should end his duck.
+	 * 			| if ( this.getCurrentSprite() == new.getCurrentSprite() )
+	 * 			|	then this.setShouldEndDucking(true)
 	 * @throws	IllegalStateException
 	 * 				Mazub is not ducking.
 	 * 				| !this.isDucking()
@@ -623,6 +634,22 @@ public class Mazub extends GameObject{
 	 * @effect	The horizontal velocity of Mazub is equal to the result of the formula used in the method 
 	 * 			updateVelocityX.
 	 * 			| updateVelocityX(dt)
+	 * @effect	If Mazub has a prolonged movement to the right and he doesn't overlap to the right,
+	 * 			make Mazub start moving to the right.
+	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
+	 * 			|	then this.startMove(Orientation.RIGHT)
+	 * @effect	If Mazub has a prolonged movement to the right and he doesn't overlap to the right,
+	 * 			set the prolonged movement of Mazub to the right to false.
+	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
+	 * 			|	then this.setProlongedMoveRight(false)
+	 * @effect	If Mazub has a prolonged movement to the left and he doesn't overlap to the left,
+	 * 			make Mazub start moving to the left.
+	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
+	 * 			|	then this.startMove(Orientation.LEFT)
+	 * @effect	If Mazub has a prolonged movement to the left and he doesn't overlap to the left,
+	 * 			set the prolonged movement of Mazub to the left to false.
+	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
+	 * 			|	then this.setProlongedMoveLeft(false)
 	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
 	 * 			updatePositionY.
 	 * 			| updatePositionY(dt)
@@ -632,7 +659,6 @@ public class Mazub extends GameObject{
 	 * @effect	If Mazub should end ducking, make Mazub end ducking.
 	 * 			| if ( this.shouldEndDucking() )
 	 * 			|	then this.endDuck()
-	 * TODO: commentary
 	 * @effect	Update Mazub's sprite according to his current status.
 	 * 			| getAnimation().updateSpriteIndex()
 	 */
@@ -671,7 +697,14 @@ public class Mazub extends GameObject{
 	/**
 	 * Process the horizontal collision of a Mazub.
 	 * 
-	 * TODO: commentary
+	 * @effect	Make Mazub end his current movement.
+	 * 			| endMove(this.getOrientation())
+	 * @effect	If Mazub's current orientation is RIGHT, set his prolonged movement to the right to true.
+	 * 			| if ( this.getOrientation() == Orientation.RIGHT )
+	 * 	 		|	then setProlongedMoveRight(true)
+	 * @effect	If Mazub's current orientation is LEFT, set his prolonged movement to the left to true.
+	 * 			| if ( this.getOrientation() == Orientation.LEFT )	
+	 * 			| 	then setProlongedMoveLeft(true)
 	 */
 	@Override
 	protected void processHorizontalCollision(){
@@ -736,7 +769,18 @@ public class Mazub extends GameObject{
 	 * 
 	 * @param	shark
 	 * 				The Shark with which this Mazub overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Shark isn't killed, Mazub isn't immune and Mazub doesn't overlap with the Shark with his
+	 * 			bottom perimeter, make Mazub take damage.
+	 * 			| if ( !shark.isKilled() && !this.isImmune() && !this.doesOverlapWith(shark, Orientation.BOTTOM) )
+	 * 			|	then this.takeDamage(SHARK_DAMAGE)
+	 * @effect	If the given Shark isn't killed, Mazub isn't immune and Mazub doesn't overlap with the Shark with his
+	 * 			bottom perimeter, set the immunity status of Mazub to true.
+	 * 			| if ( !shark.isKilled() && !this.isImmune() && !this.doesOverlapWith(shark, Orientation.BOTTOM) )
+	 * 			|	then this.setImmune(true)
+	 * @effect	If the given Shark isn't killed, Mazub isn't immune and Mazub doesn't overlap with the Shark with his
+	 * 			bottom perimeter, set Mazub's time since an enemy collision to 0.
+	 * 			| if ( !shark.isKilled() && !this.isImmune() && !this.doesOverlapWith(shark, Orientation.BOTTOM) )
+	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
@@ -754,7 +798,18 @@ public class Mazub extends GameObject{
 	 * 
 	 * @param	slime
 	 * 				The Slime with which this Mazub overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Slime isn't killed, Mazub isn't immune and Mazub doesn't overlap with the Slime with his
+	 * 			bottom perimeter, make Mazub take damage.
+	 * 			| if ( !slime.isKilled() && !this.isImmune() && !this.doesOverlapWith(slime, Orientation.BOTTOM) )
+	 * 			|	then this.takeDamage(SLIME_DAMAGE)
+	 * @effect	If the given Slime isn't killed, Mazub isn't immune and Mazub doesn't overlap with the Slime with his
+	 * 			bottom perimeter, set the immunity status of Mazub to true.
+	 * 			| if ( !slime.isKilled() && !this.isImmune() && !this.doesOverlapWith(slime, Orientation.BOTTOM) )
+	 * 			|	then this.setImmune(true)
+	 * @effect	If the given Slime isn't killed, Mazub isn't immune and Mazub doesn't overlap with the Slime with his
+	 * 			bottom perimeter, set Mazub's time since an enemy collision to 0.
+	 * 			| if ( !slime.isKilled() && !this.isImmune() && !this.doesOverlapWith(slime, Orientation.BOTTOM) )
+	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
 	protected void processSlimeOverlap(Slime slime){
@@ -772,7 +827,13 @@ public class Mazub extends GameObject{
 	 * 
 	 * @param	plant
 	 * 				The Plant with which this Mazub overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Plant isn't killed and Mazub hasn't got full hit points, increase Mazub's current
+	 * 			hit points.
+	 * 			| if ( !plant.isKilled() && !this.isFullHitPoints() )
+	 * 			|	then this.modifyNbHitPoints(PLANT_HP_INCREASE)
+	 * @effect	If the given Plant isn't killed and Mazub hasn't got full hit points, kill the given Plant.
+	 * 			| if ( !plant.isKilled() && !this.isFullHitPoints() )
+	 * 			|	then plant.kill()
 	 */
 	@Override
 	protected void processPlantOverlap(Plant plant){

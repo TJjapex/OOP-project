@@ -4,7 +4,8 @@ import be.kuleuven.cs.som.annotate.*;
 /**
  * A class for signaling illegal x positions for Mazub.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public class IllegalPositionXException extends RuntimeException {

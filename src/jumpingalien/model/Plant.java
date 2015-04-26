@@ -14,12 +14,13 @@ import jumpingalien.util.Sprite;
 /**
  * A class of Plants, game objects in the game world of Mazub. 
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public class Plant extends GameObject {
 	
-	/******************************************************* GENERAL ***************************************************/
+	/****************************************************** CONSTANTS **************************************************/
 	
 	/**
 	 * Constant reflecting the period time for a periodic movement of a Plant.
@@ -72,6 +73,8 @@ public class Plant extends GameObject {
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit, sprites, 
 			  nbHitPoints, 1);
+
+		assert sprites.length == 2;
 		
 		this.configureTerrain();
 
