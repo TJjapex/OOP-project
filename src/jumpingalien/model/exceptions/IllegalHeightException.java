@@ -6,7 +6,8 @@ import be.kuleuven.cs.som.annotate.Immutable;
 /**
  * A class for signaling illegal height values for sprites.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public class IllegalHeightException extends RuntimeException{

@@ -6,7 +6,8 @@ import be.kuleuven.cs.som.annotate.*;
 /**
  * A class of Terrain properties for the game world of Mazub.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public class TerrainProperties {
@@ -15,8 +16,8 @@ public class TerrainProperties {
 	
 	/**
 	 * Constructor for the class TerrainProperties.
-	 * @pre
-	 * 			| damageTime > 0 || (damageTime == 0 && damage == 0)
+	 * 
+	 * @pre		| damageTime > 0 || (damageTime == 0 && damage == 0)
 	 * @param 	passable
 	 * 				A boolean representing whether or not a terrain is passable.
 	 * @param 	damage
@@ -26,6 +27,10 @@ public class TerrainProperties {
 	 * @param 	instantDamage
 	 * 				A boolean representing if a Game object takes instant damage on this terrain or only after
 	 * 			 	the damage time.
+	 * @post	| new.isPassable == passable
+	 * @post	| new.getDamage() == damage
+	 * @post	| new.damageTime() == damageTime
+	 * @post	| new.IsInstantDamage == instantDamage
 	 */
 	public TerrainProperties(boolean passable, int damage, double damageTime, boolean instantDamage) {
 		assert damageTime > 0 || (damageTime == 0 && damage == 0);
@@ -39,7 +44,7 @@ public class TerrainProperties {
 	/****************************************************** PROPERTIES *************************************************/
 		
 	/**
-	 * Checks whether or not this terrain is passable.
+	 * Check whether or not this terrain is passable.
 	 * 
 	 * @return	| result = ( this.passable )
 	 */

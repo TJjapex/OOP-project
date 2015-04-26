@@ -1,9 +1,10 @@
 package jumpingalien.model.terrain;
 
 /**
- * An enum listing the possible Terrain interactions between a Game object and terrain.
+ * An enumeration listing the possible Terrain interactions between a Game object and Terrain.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public enum TerrainInteraction {

@@ -18,12 +18,13 @@ import jumpingalien.util.Util;
 /**
  * A class of Sharks, enemy characters in the game world of Mazub.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
 public class Shark extends GameObject{
 	
-	/******************************************************* GENERAL ***************************************************/
+	/****************************************************** CONSTANTS **************************************************/
 	
 	/**
 	 * Constant reflecting the amount of damage a Shark should take when it overlaps with a Mazub.
@@ -526,9 +527,9 @@ public class Shark extends GameObject{
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
 	 * @effect	| super.updatePositionY(dt)
-	 * @effect	| if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping())
+	 * @effect	| if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping() && !this.getHasBeenOutWater())
 	 * 			|	then new.setPositionY( this.getPositionY() )
-	 * @effect	| if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping())
+	 * @effect	| if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping() && !this.getHasBeenOutWater())
 	 * 			|	then this.endDiveRise()
 	 */
 	@Override
@@ -537,7 +538,7 @@ public class Shark extends GameObject{
 		double oldPositionY = this.getPositionY();
 		super.updatePositionY(dt);
 		
-		if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping()){
+		if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping() && !this.getHasBeenOutWater()){
 			this.setPositionY(oldPositionY);
 			this.endDiveRise();
 		}
@@ -578,14 +579,25 @@ public class Shark extends GameObject{
 	 * 
 	 * @param	mazub
 	 * 				The Mazub with whom this Slime overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Mazub isn't killed, this Shark isn't immune and this Shark doesn't overlap with the
+	 * 		 	given Mazub with his bottom perimeter, make the Shark take damage.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.takeDamage(MAZUB_DAMAGE)
+	 * @effect	If the given Mazub isn't killed, this Shark isn't immune and this Shark doesn't overlap with the
+	 * 	 		given Mazub with his bottom perimeter, set the immunity status of the Shark to true.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.setImmune(true)
+	 * @effect	If the given Mazub isn't killed, this Shark isn't immune and this Shark doesn't overlap with the
+	 * 	 		given Mazub with his bottom perimeter, set the Shark's time since an enemy collision to 0.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	public void processMazubOverlap(Mazub alien) {
-		if(!alien.isKilled() && !this.isImmune()){
+	public void processMazubOverlap(Mazub mazub) {
+		if(!mazub.isKilled() && !this.isImmune()){
 			this.takeDamage(MAZUB_DAMAGE);
-			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
@@ -594,14 +606,25 @@ public class Shark extends GameObject{
 	 * 
 	 * @param	slime
 	 * 				The Slime with which this Shark overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Slime isn't killed, this Shark isn't immune and this Shark doesn't overlap with the
+	 * 		 	given Slime with his bottom perimeter, make the Shark take damage.
+	 * 			| if ( !slime.isKilled() && !this.isImmune() && !this.doesOverlapWith(slime, Orientation.BOTTOM) )
+	 * 			|	then this.takeDamage(SLIME_DAMAGE)
+	 * @effect	If the given Slime isn't killed, this Shark isn't immune and this Shark doesn't overlap with the
+	 * 	 		given Slime with his bottom perimeter, set the immunity status of the Shark to true.
+	 * 			| if ( !slime.isKilled() && !this.isImmune() && !this.doesOverlapWith(slime, Orientation.BOTTOM) )
+	 * 			|	then this.setImmune(true)
+	 * @effect	If the given Slime isn't killed, this Shark isn't immune and this Shark doesn't overlap with the
+	 * 	 		given Slime with his bottom perimeter, set the Shark's time since an enemy collision to 0.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
 	public void processSlimeOverlap(Slime slime){
 		if(!slime.isKilled()  && !this.isImmune()){
 			this.takeDamage(SLIME_DAMAGE);
-			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
@@ -610,7 +633,6 @@ public class Shark extends GameObject{
 	 * 
 	 * @param	shark
 	 * 				The other Shark with which this Shark overlaps.
-	 * @effect	TODO: final implementation
 	 */
 	@Override
 	public void processSharkOverlap(Shark shark){

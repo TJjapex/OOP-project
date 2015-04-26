@@ -9,37 +9,44 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 /**
  * An Animation class, implemented with methods to serve as a helper class for the class Game object.
  * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 2.0
+ * 
  * @note	For an Animation instance, the sprites can only be set once in the constructor. 
  * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  *
  * @invar	The sprites array of this animation has a length greater than or equal to 0
  * 			|	this.getNbSprites() >= 0
- * 
- * @author 	Thomas Verelst, Hans Cauwenbergh
- * @version 1.0
  */
 public class Animation {
+	
+	/***************************************************** CONSTRUCTOR *************************************************/
 	
 	/**
 	 * Constructor for the class Animation.
 	 * 
 	 * @param 	sprites
 	 * 				The array of sprite images for the animation.
-	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
-	 * 			| (Array.getLength(sprites) >= 0)
+	 * @pre		The length of the given array sprites should not be null and should be greater or equal to 2.
+	 * 			| sprites != null && (Array.getLength(sprites) >= 2)
+	 * @post	The Game object related to the Animation is equal to gameObject.
+	 * 			| new.getGameObject() == gameObject
 	 * @post	The initial sprites of the animation are equal to the given array sprites.
-	 * 			| this.sprites == sprites
+	 * 			| new.sprites == sprites
+	 * @effect	The initial sprite index is set to 0.
+	 * 			| setSpriteIndex(0)
 	 * @throws 	IllegalWidthException
 	 * 				The width of at least one sprite in the given array sprites is not a valid width.
 	 * 				| for some sprite in sprites:
-	 * 				|	! isValidWidth(sprite.getWidth())
+	 * 				|	! GameObject.isValidWidth(sprite.getWidth())
 	 * @throws	IllegalHeightException
 	 * 				The height of at least one sprite in the given array sprites is not a valid height.
 	 * 				| for some sprite in sprites:
-	 * 				|	! isValidHeight(sprite.getHeight())
+	 * 				|	! GameObject.isValidHeight(sprite.getHeight())
 	 */
 	public Animation(GameObject gameObject, Sprite[] sprites) throws IllegalWidthException, IllegalHeightException{
-		assert sprites != null && sprites.length >= 0;
+		assert sprites != null && sprites.length >= 2;
 		
 		for (int i = 0; i < sprites.length; i++){
 			if( !GameObject.isValidWidth(sprites[i].getWidth()))
@@ -53,49 +60,66 @@ public class Animation {
 		this.setSpriteIndex(0);
 	}
 	
+	/***************************************************** GAME OBJECT *************************************************/
+	
 	/**
-	 * Returns the related game object
+	 * Return the related Game object.
 	 * 
-	 * @return
-	 * 		The related game object
+	 * @return	The related Game object.
 	 */
 	@Basic
 	public GameObject getGameObject() {
 		return gameObject;
 	}
 	
+	/**
+	 * Variable registering the related Game object.
+	 */
 	private final GameObject gameObject;
 
+	/******************************************************* SPRITES ***************************************************/
+	
 	/**
-	 * Returns the current sprite
+	 * Return the current sprite of the Animation.
 	 * 
-	 * @return
-	 * 		The current sprite
+	 * @return	The current sprite of the Animation.
 	 */
 	public Sprite getCurrentSprite(){
 		return this.getSpriteAt(this.getSpriteIndex());
 	}	
 	
 	/**
-	 * Updates the current sprite according to the state of the related Game object
+	 * Update the current sprite according to the state of the related Game object.
+	 * 
+	 * @effect	If the current Orientation of the related Game object is RIGHT, set the sprite
+	 * 			index of this Animation to 1, else set it to 0.
+	 * 			| if ( this.getGameObject().getOrientation() == Orientation.RIGHT )
+	 * 			|	then this.setSpriteIndex(1)
+	 * 			| else
+	 * 			| 	setSpriteIndex(0)
+	 * @effect	If the related Game object does collide after changing the sprite index, reset the 
+	 * 			sprite index.
+	 * 			| if ( this.getGameObject().doesCollide() )
+	 * 			|	then new.setSpriteIndex( this.getSpriteIndex() )
 	 */
 	public void updateSpriteIndex(){
 		int currentIndex = this.getSpriteIndex();
 		
-		if(getGameObject().getOrientation() == Orientation.RIGHT){
+		if( this.getGameObject().getOrientation() == Orientation.RIGHT){
 			this.setSpriteIndex(1);
 		}else{
 			this.setSpriteIndex(0);
 		}	
 		
-		if(getGameObject().doesCollide()){
+		if( this.getGameObject().doesCollide()){
 			this.setSpriteIndex(currentIndex); // undo changes
 		}
 	}
+	
 	/**
-	 * Return the sprites of this animation class.
+	 * Return the sprites of this Animation.
 	 * 
-	 * @return	The sprites of this animation class.
+	 * @return	The sprites of this Animation.
 	 */
 	@Basic @Immutable
 	public Sprite[] getSprites(){
@@ -103,11 +127,11 @@ public class Animation {
 	}
 	
 	/**
-	 * Returns the sprite of this animation class, with the given index.
+	 * Return the sprite of this Animation, with the given index.
 	 * 
 	 * @param 	index
 	 * 				The index of the sprite.
-	 * @return	The sprite of this animation class, with the given index.
+	 * @return	The sprite of this Animation, with the given index.
 	 */
 	@Immutable
 	public Sprite getSpriteAt(int index){
@@ -115,9 +139,9 @@ public class Animation {
 	}
 	
 	/**
-	 * Returns the number of elements in the sprites array of the object.
+	 * Return the number of elements in the sprites array of the related Game object.
 	 * 
-	 * @return	The number of elements in the sprites array of the object.		
+	 * @return	The number of elements in the sprites array of the related Game object.		
 	 */
 	@Immutable
 	public int getNbSprites(){
@@ -130,10 +154,9 @@ public class Animation {
 	private final Sprite[] sprites;	
 	
 	/**
-	 * Returns the current sprite index
+	 * Return the current sprite index for this Animation.
 	 * 
-	 * @return
-	 * 		The current sprite index
+	 * @return	The current sprite index for this Animation.
 	 */
 	@Basic @Raw
 	public int getSpriteIndex() {
@@ -141,16 +164,19 @@ public class Animation {
 	}
 
 	/**
-	 * Sets the current sprite index to the given one
+	 * Set the current sprite index to the given one.
 	 * 
-	 * @param spriteIndex
-	 * 			The given sprite index
+	 * @param 	spriteIndex
+	 * 				The given sprite index.
 	 */
 	@Basic @Raw
 	protected void setSpriteIndex(int spriteIndex) {
 		this.spriteIndex = spriteIndex;
 	}
 	
+	/**
+	 * Variable registering the sprite index of this Animation.
+	 */
 	private int spriteIndex;	
 	
 }

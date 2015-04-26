@@ -15,14 +15,15 @@ import be.kuleuven.cs.som.annotate.*;
 /**
  * A class of Slimes, enemy characters in the game world of Mazub.
  * 
- * @author Thomas Verelst, Hans Cauwenbergh
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
  * @version 1.0
  * 
  * @invar	| hasProperSchool()
  */
 public class Slime extends GameObject {
 
-	/******************************************************* GENERAL ***************************************************/
+	/****************************************************** CONSTANTS **************************************************/
 	
 	/**
 	 * Constant reflecting the amount of damage a Slime should take when it overlaps with a Mazub.
@@ -270,7 +271,7 @@ public class Slime extends GameObject {
 	
 	/**
 	 * Tear down the relation between a Slime and his School.
-	 * TODO: commentary
+	 * 
 	 * @effect	| if (this.hasSchool())
 	 * 			|	then this.getSchool().removeAsSlime(this)
 	 * @effect	| if (this.hasSchool())
@@ -461,14 +462,25 @@ public class Slime extends GameObject {
 	 * 
 	 * @param	mazub
 	 * 				The Mazub with whom this Slime overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Mazub isn't killed, this Slime isn't immune and this Slime doesn't overlap with the
+	 * 		 	given Mazub with his bottom perimeter, make the Slime take damage.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.takeDamage(MAZUB_DAMAGE)
+	 * @effect	If the given Mazub isn't killed, this Slime isn't immune and this Slime doesn't overlap with the
+	 * 		 	given Mazub with his bottom perimeter, set the immunity status of the Slime to true.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.setImmune(true)
+	 * @effect	If the given Mazub isn't killed, this Slime isn't immune and this Slime doesn't overlap with the
+	 * 		 	given Mazub with his bottom perimeter, set the Slime's time since an enemy collision to 0.
+	 * 			| if ( !mazub.isKilled() && !this.isImmune() && !this.doesOverlapWith(mazub, Orientation.BOTTOM) )
+	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
 	protected void processMazubOverlap(Mazub mazub){
 		if(!mazub.isKilled() && !this.isImmune()){
 			this.takeDamage(MAZUB_DAMAGE);
-			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}	
 	
@@ -477,7 +489,16 @@ public class Slime extends GameObject {
 	 * 
 	 * @param	slime
 	 * 				The other Slime with which this Slime overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Slime is not equal to this Slime and the number of Slimes in the school of the 
+	 * 			given Slime is greater than the number of Slimes in the school of this Slime, switch this Slime
+	 * 			to the School of the given Slime.
+	 * 			| if ( slime != this && slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() )
+	 * 			|	then this.switchSchool( slime.getSchool() )
+	 * @effect	If the given Slime is not equal to this Slime and the number of Slimes in the school of the 
+	 * 			given Slime is smaller than the number of Slimes in the school of this Slime, switch the given
+	 * 			Slime to the School of this Slime.
+	 * 			| if ( slime != this && slime.getSchool().getNbSlimes() < this.getSchool().getNbSlimes() )
+	 * 			|	then slime.switchSchool( this.getSchool() )
 	 */
 	@Override
 	protected void processSlimeOverlap(Slime slime){
@@ -495,14 +516,25 @@ public class Slime extends GameObject {
 	 * 
 	 * @param	shark
 	 * 				The Shark with which this Slime overlaps.
-	 * @effect	TODO: final implementation
+	 * @effect	If the given Shark isn't killed, this Slime isn't immune and this Slime doesn't overlap with 
+	 * 			the Shark with his bottom perimeter, make the Slime take damage.
+	 * 			| if ( !shark.isKilled() && !this.isImmune() && !this.doesOverlapWith(shark, Orientation.BOTTOM) )
+	 * 			|	then this.takeDamage(SHARK_DAMAGE)
+	 * @effect	If the given Shark isn't killed, this Slime isn't immune and this Slime doesn't overlap with 
+	 * 			the Shark with his bottom perimeter, set the immunity status of the Slime to true.
+	 * 			| if ( !shark.isKilled() && !this.isImmune() && !this.doesOverlapWith(shark, Orientation.BOTTOM) )
+	 * 			|	then this.setImmune(true)
+	 * @effect	If the given Shark isn't killed, this Slime isn't immune and this Slime doesn't overlap with 
+	 * 			the Shark with his bottom perimeter, set the Slime's time since an enemy collision to 0.
+	 * 			| if ( !shark.isKilled() && !this.isImmune() && !this.doesOverlapWith(shark, Orientation.BOTTOM) )
+	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
 		if(!shark.isKilled() && !this.isImmune()){
 			this.takeDamage(SHARK_DAMAGE);
-			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
+			this.getTimer().setSinceEnemyCollision(0);
 		}
 	}
 	
@@ -522,7 +554,10 @@ public class Slime extends GameObject {
 	/**
 	 * Terminate a Slime.
 	 * 
-	 * @effect	TODO: final implementation
+	 * @effect	Break the relation of the Slime with his World.
+	 * 			| this.unsetWorld()
+	 * @effect	Break the relation of the Slime with his School.
+	 * 			| this.unsetSchool()
 	 * @post	| new.isTerminated == true
 	 */
 	@Override
