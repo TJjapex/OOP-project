@@ -117,12 +117,10 @@ public class Plant extends GameObject {
 	 */
 	@Override
 	public void configureTerrain(){
-		
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 0, 0, false));
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false));
 		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0, false));
 		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0, false));
-		
 	}
 
 	/******************************************************* MOVEMENT **************************************************/

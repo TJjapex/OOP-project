@@ -160,7 +160,7 @@ public class Shark extends GameObject{
 	 */
 	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
-		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 4.0, 1.5, sprites, 100, 100);
+		this(pixelLeftX, pixelBottomY, 0.0, 0.0, 4.0, 1.5, sprites, 100, 100);
 	}
 	
 	/******************************************************** TIMER ****************************************************/
@@ -170,6 +170,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @return	A double representing the current period time of a Shark.
 	 */
+	@Basic
 	public double getCurrentPeriodTime(){
 		return this.currentPeriodTime;
 	}
@@ -181,6 +182,7 @@ public class Shark extends GameObject{
 	 * 				The new period time of a Shark.
 	 * @post	| new.getCurrentPeriodTime() == newPeriodTime
 	 */
+	@Basic
 	private void setCurrentPeriodTime( double newPeriodTime ){
 		this.currentPeriodTime = newPeriodTime;
 	}
@@ -253,6 +255,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @return	A double representing the random acceleration of a Shark for diving or rising.
 	 */
+	@Basic
 	public double getRandomAcceleration(){
 		return this.randomAcceleration;
 	}
@@ -264,6 +267,7 @@ public class Shark extends GameObject{
 	 * 				The new random acceleration of a Shark for diving or rising.
 	 * @post	| new.getRandomAcceleration() == newRandomAcceleration
 	 */
+	@Basic
 	private void setRandomAcceleration( double newRandomAcceleration ){
 		this.randomAcceleration = newRandomAcceleration;
 	}
@@ -280,6 +284,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @return	result = ( this.jumping)
 	 */
+	@Basic
 	public boolean isJumping(){
 		return this.jumping;
 	}
@@ -291,6 +296,7 @@ public class Shark extends GameObject{
 	 * 				The new jumping status of a Shark.
 	 * @post	| new.isJumping() == jumping
 	 */
+	@Basic
 	private void setJumping(boolean jumping){
 		this.jumping = jumping;
 	}
@@ -358,6 +364,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @return	result == ( this.hasBeenOutWater )
 	 */
+	@Basic
 	public boolean getHasBeenOutWater(){
 		return this.hasBeenOutWater;
 	}
@@ -468,6 +475,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @return	The number of non-jumping periods of a Shark.
 	 */
+	@Basic
 	public int getNbNonJumpingPeriods(){
 		return this.nbNonJumpingPeriods;
 	}
@@ -574,7 +582,7 @@ public class Shark extends GameObject{
 	 */
 	@Override
 	public void processMazubOverlap(Mazub alien) {
-		if(!alien.isKilled()){
+		if(!alien.isKilled() && !this.isImmune()){
 			this.takeDamage(MAZUB_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
@@ -590,7 +598,7 @@ public class Shark extends GameObject{
 	 */
 	@Override
 	public void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled()){
+		if(!slime.isKilled()  && !this.isImmune()){
 			this.takeDamage(SLIME_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);

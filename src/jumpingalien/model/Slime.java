@@ -10,6 +10,7 @@ import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.terrain.TerrainProperties;
 import jumpingalien.util.Sprite;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of Slimes, enemy characters in the game world of Mazub.
@@ -162,6 +163,7 @@ public class Slime extends GameObject {
 	 * 
 	 * @return	A double representing the current period time of a Slime.
 	 */
+	@Basic
 	public double getCurrentPeriodTime(){
 		return this.currentPeriodTime;
 	}
@@ -173,6 +175,7 @@ public class Slime extends GameObject {
 	 * 				The new period time of a Slime.
 	 * @post	| new.getCurrentPeriodTime() == newPeriodTime
 	 */
+	@Basic
 	private void setCurrentPeriodTime( double newPeriodTime ){
 		this.currentPeriodTime = newPeriodTime;
 	}
@@ -209,6 +212,7 @@ public class Slime extends GameObject {
 	 * 
 	 * @return	The School to which a Slime belongs.
 	 */
+	@Basic
 	public School getSchool() {
 		return this.school;
 	}
@@ -238,6 +242,7 @@ public class Slime extends GameObject {
 	 * 				The School to which a Slime must belong.
 	 * @post	new.getSchool() == school
 	 */
+	@Basic
 	private void setSchool(School school) {
 		this.school = school;
 	}
@@ -273,8 +278,6 @@ public class Slime extends GameObject {
 	 */
 	private void unsetSchool(){
 		if(this.hasSchool()){
-//			this.getSchool().removeAsSlime(this);
-//			this.setSchool(null);	
 			School formerSchool = this.getSchool();
 			this.setSchool(null);
 			formerSchool.removeAsSlime(this);
@@ -462,7 +465,7 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	protected void processMazubOverlap(Mazub mazub){
-		if(!mazub.isKilled()){
+		if(!mazub.isKilled() && !this.isImmune()){
 			this.takeDamage(MAZUB_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);
@@ -496,7 +499,7 @@ public class Slime extends GameObject {
 	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
-		if(!shark.isKilled()){
+		if(!shark.isKilled() && !this.isImmune()){
 			this.takeDamage(SHARK_DAMAGE);
 			this.getTimer().setSinceEnemyCollision(0);
 			this.setImmune(true);

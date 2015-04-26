@@ -1,5 +1,8 @@
 package jumpingalien.model.terrain;
 
+
+import be.kuleuven.cs.som.annotate.*;
+
 /**
  * A class of Terrain properties for the game world of Mazub.
  * 
@@ -12,7 +15,8 @@ public class TerrainProperties {
 	
 	/**
 	 * Constructor for the class TerrainProperties.
-	 * 
+	 * @pre
+	 * 			| damageTime > 0 || (damageTime == 0 && damage == 0)
 	 * @param 	passable
 	 * 				A boolean representing whether or not a terrain is passable.
 	 * @param 	damage
@@ -24,6 +28,8 @@ public class TerrainProperties {
 	 * 			 	the damage time.
 	 */
 	public TerrainProperties(boolean passable, int damage, double damageTime, boolean instantDamage) {
+		assert damageTime > 0 || (damageTime == 0 && damage == 0);
+		
 		this.passable = passable;
 		this.damage = damage;
 		this.damageTime = damageTime;
@@ -37,6 +43,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	| result = ( this.passable )
 	 */
+	@Basic
 	public boolean isPassable(){
 		return this.passable;
 	}
@@ -51,6 +58,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	An integer representing the amount of damage a Game object should take when it's on this terrain.
 	 */
+	@Basic
 	public int getDamage(){
 		return this.damage;
 	}
@@ -65,6 +73,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	A double representing the time interval between different cycles of taking damage on this terrain.
 	 */
+	@Basic
 	public double getDamageTime(){
 		return this.damageTime;
 	}	
@@ -80,6 +89,7 @@ public class TerrainProperties {
 	 * @return	A boolean representing if a Game object takes instant damage on this terrain or only after
 	 * 			the damage time.
 	 */
+	@Basic
 	public boolean isInstantDamage(){
 		return this.instantDamage;
 	}	

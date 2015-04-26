@@ -15,6 +15,7 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.terrain.Terrain;
 
 public class Facade implements IFacadePart2 {
 
@@ -37,6 +38,7 @@ public class Facade implements IFacadePart2 {
 	 * 				| ( for some sprite in sprites: !Mazub.isValidWidth(sprite.getWidth()) ) ||
 	 * 				| ( for some sprite in sprites: !Mazub.isValidHeight(sprite.getHeight()) )
 	 */
+	@Override
 	public Mazub createMazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites) throws ModelException{
 		try{
 			return new Mazub(pixelLeftX, pixelBottomY, sprites);
@@ -57,6 +59,7 @@ public class Facade implements IFacadePart2 {
 	 * @return an array, consisting of 2 integers {x, y}, that represents the
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
+	@Override
 	public int[] getLocation(Mazub alien){
 		return new int[] {alien.getRoundedPositionX(), alien.getRoundedPositionY()};
 	}
@@ -71,6 +74,7 @@ public class Facade implements IFacadePart2 {
 	 *         horizontal and vertical components of the given alien's current
 	 *         velocity, in units of m/s.
 	 */
+	@Override
 	public double[] getVelocity(Mazub alien){
 		return new double[] {alien.getVelocityX(), alien.getVelocityY()};	
 	}
@@ -85,6 +89,7 @@ public class Facade implements IFacadePart2 {
 	 *         horizontal and vertical components of the given alien's current
 	 *         acceleration, in units of m/s^2.
 	 */
+	@Override
 	public double[] getAcceleration(Mazub alien){
 		return new double[] {alien.getAccelerationX(), alien.getAccelerationY()};
 	}
@@ -98,6 +103,7 @@ public class Facade implements IFacadePart2 {
 	 * @return An array, consisting of 2 integers {w, h}, that represents the
 	 *         current width and height of the given alien, in number of pixels.
 	 */
+	@Override
 	public int[] getSize(Mazub alien){
 		return new int[] {alien.getWidth(), alien.getHeight()};	
 	}
@@ -111,6 +117,7 @@ public class Facade implements IFacadePart2 {
 	 * @return The current sprite image for the given alien, determined by its
 	 *         state as defined in the assignment.
 	 */
+	@Override
 	public Sprite getCurrentSprite(Mazub alien){
 		return alien.getCurrentSprite();
 		
@@ -122,6 +129,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to start jumping.
 	 */
+	@Override
 	public void startJump(Mazub alien){
 		alien.startJump();
 	}
@@ -132,12 +140,12 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop jumping.
 	 */
+	@Override
 	public void endJump(Mazub alien){
 		try{
 			alien.endJump();
 		}catch( IllegalStateException exc ){
-		}
-		
+		}		
 	}
 
 	/**
@@ -156,6 +164,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop moving left.
 	 */
+	@Override
 	public void endMoveLeft(Mazub alien){
 		alien.endMove(Orientation.LEFT);
 	}
@@ -166,6 +175,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to start moving right.
 	 */
+	@Override
 	public void startMoveRight(Mazub alien){
 		alien.startMove(Orientation.RIGHT);
 	}
@@ -176,6 +186,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop moving right.
 	 */
+	@Override
 	public void endMoveRight(Mazub alien){
 		alien.endMove(Orientation.RIGHT);
 	}
@@ -186,6 +197,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to start ducking.
 	 */
+	@Override
 	public void startDuck(Mazub alien){
 		try{
 			alien.startDuck();
@@ -200,6 +212,7 @@ public class Facade implements IFacadePart2 {
 	 * @param alien
 	 *            The alien that has to stop ducking.
 	 */
+	@Override
 	public void endDuck(Mazub alien){
 		try{
 			alien.endDuck();
@@ -208,29 +221,6 @@ public class Facade implements IFacadePart2 {
 		
 	}
 
-	/**
-	 * Advance the state of the given alien by the given time period.
-	 * 
-	 * @param alien
-	 *            The alien whose time has to be advanced.
-	 * @param dt
-	 *            The time interval (in seconds) by which to advance the given
-	 *            alien's time.
-	 * @throws ModelException
-	 * 				The given dt is greater than 0.2 or smaller than 0
-	 * 				| dt < 0 || dt > 0.2
-	 */
-	
-	// TODO ik denk niet dat deze nog nodig is?
-	public void advanceTime(Mazub alien, double dt) throws ModelException{
-		try{
-			alien.advanceTime(dt);
-		}catch(IllegalArgumentException exc){
-			throw new ModelException("Illegal time amount given!");
-		}
-		
-	}
-	
 	/*************************************** PART 2 *****************************************/
 	
 	@Override
@@ -274,7 +264,12 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void advanceTime(World world, double dt) {
-		world.advanceTime(dt);	
+		try{
+			world.advanceTime(dt);	
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
+		
 	}
 
 	@Override
@@ -301,17 +296,28 @@ public class Facade implements IFacadePart2 {
 	@Override
 	public int getGeologicalFeature(World world, int pixelX, int pixelY)
 			throws ModelException {
-		return world.getGeologicalFeature(pixelX, pixelY).getId();
+		
+		try{
+			return world.getGeologicalFeature(pixelX, pixelY).getId();
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
+		
 	}
 
 	@Override
-	public void setGeologicalFeature(World world, int tileX, int tileY, int terrainType) {
-		world.setGeologicalFeature(tileX, tileY,  World.terrainIndexToType(terrainType));		
+	public void setGeologicalFeature(World world, int tileX, int tileY, int terrainTypeId) {
+		world.setGeologicalFeature(tileX, tileY,  Terrain.idToType(terrainTypeId));		
 	}
 
 	@Override
-	public void setMazub(World world, Mazub alien) {
-		alien.setWorldTo(world);
+	public void setMazub(World world, Mazub alien) throws ModelException{
+		try{
+			alien.setWorldTo(world);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
+	
 	}
 
 	@Override
@@ -323,13 +329,24 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Plant createPlant(int x, int y, Sprite[] sprites) {
-		return new Plant(x, y, sprites);
+		try{
+			return new Plant(x, y, sprites);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}	
 	}
 
 	@Override
-	public void addPlant(World world, Plant plant) {
-		plant.setWorldTo(world);
+	public void addPlant(World world, Plant plant) throws ModelException{
+		try{
+			plant.setWorldTo(world);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
 	}
+		
 
 	@Override
 	public Collection<Plant> getPlants(World world) {
@@ -350,12 +367,22 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Shark createShark(int x, int y, Sprite[] sprites) {
-		return new Shark(x, y, sprites);
+		try{
+			return new Shark(x, y, sprites);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}
 	}
 
 	@Override
-	public void addShark(World world, Shark shark) {
-		shark.setWorldTo(world);
+	public void addShark(World world, Shark shark) throws ModelException{
+		try{
+			shark.setWorldTo(world);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
 	}
 	
 	@Override
@@ -382,14 +409,24 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public Slime createSlime(int x, int y, Sprite[] sprites, School school) {
-		return new Slime(x,y,sprites,school);
+		try{
+			return new Slime(x,y,sprites,school);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}
 	}
 	
 	// Slimes
 
 	@Override
-	public void addSlime(World world, Slime slime) {
-		slime.setWorldTo(world);
+	public void addSlime(World world, Slime slime) throws ModelException{
+		try{
+			slime.setWorldTo(world);
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
 	}
 
 	@Override

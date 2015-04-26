@@ -740,7 +740,7 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void processSharkOverlap(Shark shark){
-		if(!shark.isKilled()){
+		if(!shark.isKilled() && !this.isImmune()){
 			if(!this.doesOverlapWith(shark, Orientation.BOTTOM)){
 				this.takeDamage(SHARK_DAMAGE);
 				this.setImmune(true);
@@ -758,7 +758,7 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void processSlimeOverlap(Slime slime){
-		if(!slime.isKilled()){
+		if(!slime.isKilled() && !this.isImmune()){
 			if(!this.doesOverlapWith(slime, Orientation.BOTTOM)){
 				this.takeDamage(SLIME_DAMAGE);
 				this.setImmune(true);
@@ -776,10 +776,9 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void processPlantOverlap(Plant plant){
-		System.out.println("plant overlap");
 		if(!plant.isKilled() && !this.isFullHitPoints()){
 			this.modifyNbHitPoints(PLANT_HP_INCREASE);
-			plant.kill(); // Mss is het eigenlijk niet goed dat een Mazub zo maar andere objecten kan killen. Mss in .kill() een extra check doen of ze overlappen ofzo?
+			plant.kill();
 		}
 	}
 	

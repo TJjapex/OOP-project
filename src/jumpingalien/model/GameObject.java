@@ -19,17 +19,31 @@ import jumpingalien.model.terrain.TerrainInteraction;
 import jumpingalien.model.terrain.TerrainProperties;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import be.kuleuven.cs.som.annotate.Model;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A superclass for Game objects in the game world of Mazub.
  * 
  * @author Thomas Verelst, Hans Cauwenbergh
  * 
- * TODO: invars
+ * @invar	The width of the Game object must be valid.
+ * 			|	isValidWidth( this.getWidth() )
+ * @invar	The height of the Game object must be valid.
+ * 			|	isValidHeight( this.getHeight() )
+ * @invar	The horizontal velocity must be valid.
+ * 			|	isValidVelocityX( this.getVelocityX() )
+ * @invar	The maximal horizontal velocity must be greater than the initial horizontal velocity.
+ * 			|	canHaveAsVelocityXMax( this.getVelocityXMax() )
+ * @invar	The timer object linked to a Game object instance is not null.
+ * 			| 	this.getTimer() != null
+ * @invar	The animation object linked to a Game object instance is not null.
+ * 			| 	this.getAnimation() != null
+ * @invar	The current orientation of this Game object is not null.
+ * 			|	this.getOrientation() != null
+ * @invar	The current orientation is valid.
+ * 			|	isValidOrientation( this.getOrientation() )
+ * @invar	The current number of this Game object's hit points is valid.
+ * 			|	isValidNbHitPoints( this.getNbHitPoints() )
  * 
  * @version 1.0
  */
@@ -193,7 +207,6 @@ public abstract class GameObject {
 	 * @return	A timer that keeps track of several times involving the behavior of a Game object.
 	 */
 	@Basic
-	@Raw
 	public Timer getTimer() {
 		return this.timer;
 	}
@@ -265,6 +278,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	The map of terrain properties for the different types of terrain.
 	 */
+	@Basic
 	public Map<Terrain, TerrainProperties> getAllTerrainProperties() {
 		return this.allTerrainProperties;
 	}
@@ -276,6 +290,7 @@ public abstract class GameObject {
 	 * 				The terrain type, as an element of the Terrain enumeration.
 	 * @return	The terrain properties, as instance of the class TerrainProperties.
 	 */
+	@Basic
 	public TerrainProperties getTerrainPropertiesOf(Terrain terrain) {
 		return this.allTerrainProperties.get(terrain);
 	}
@@ -291,6 +306,7 @@ public abstract class GameObject {
 	 * 			terrain properties.
 	 * 			| new.getTerrainPropertiesOf(terrain) == terrainProperties
 	 */
+	@Basic
 	protected void setTerrainPropertiesOf(Terrain terrain, TerrainProperties terrainProperties){
 		this.allTerrainProperties.put(terrain, terrainProperties);
 	}
@@ -303,6 +319,7 @@ public abstract class GameObject {
 	 * @return	True if and only if the given terrain type is configured.
 	 * 			| result == ( this.allTerrainProperties.containsKey(terrain) )
 	 */
+	@Basic
 	public boolean hasTerrainPropertiesOf(Terrain terrain){
 		return this.allTerrainProperties.containsKey(terrain);
 	}
@@ -325,14 +342,12 @@ public abstract class GameObject {
 	 * 			|		then this.getTimer().setTerrainOverlapDuration(terrain, 0)
 	 */
 	private void resetTerrainOverlapDuration(){
-		
 		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
 			if(!overlappingTerrainTypes.contains(terrain)){
 				this.getTimer().setTerrainOverlapDuration(terrain, 0);
 			}
 		}
-		
 	}
 	
 	/**
@@ -374,6 +389,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	The world of this Game object.
 	 */
+	@Basic
 	public World getWorld() {
 		return this.world;
 	}
@@ -406,6 +422,7 @@ public abstract class GameObject {
 	 * @post 	The new world of this Game object will be the given world.
 	 * 			| this.getWorld() == world
 	 */
+	@Basic
 	protected void setWorld(World world) {
 		this.world = world;
 	}
@@ -436,12 +453,12 @@ public abstract class GameObject {
 	/**
 	 * Unset the world, if any, from this Game object.
 	 * 
-	 * @effect	If the Game object has a World, remove the Game object from this World.
-	 * 			| if ( this.hasWorld() )
-	 * 			| 	then this.getWorld().removeAsGameObject(this)
-	 * @effect	If the Game object has a World, set his World to null.
-	 * 			| if ( this.hasWorld() )
-	 * 			|	then this.setWorld(null)
+	 * 
+	 * @post	The former world of the Game object will not have this game object anymore
+	 * 			|	this.getWorld().hasAsGameObject(this) == false
+	 * @post	The new world of this Game object is null
+	 * 			|	new.getWorld() == null
+	 * 
 	 */
 	protected void unsetWorld() {
 		if(this.hasWorld()){
@@ -549,7 +566,6 @@ public abstract class GameObject {
 	 * 			bottom left pixel in the world.
 	 */
 	@Basic
-	@Raw
 	public double getPositionX() {
 		return this.positionX;
 	}
@@ -574,6 +590,8 @@ public abstract class GameObject {
 	 * 				A double that represents the desired x-location of a Game object's bottom left pixel.
 	 * @effect	The active sprite gets updated according to the current status of the Game object.
 	 * 			| getAnimation().updateSpriteIndex()
+	 * @effect	Process the overlap of the Game object.
+	 * 			| processOverlap()
 	 * @post	The X position of a Game object is equal to positionX if the Game object doesn't collide
 	 *  		after the change.
 	 * 			| if (! this.doesCollide() )
@@ -596,11 +614,12 @@ public abstract class GameObject {
 		if( !canHaveAsPositionX(positionX)) 
 			throw new IllegalPositionXException(positionX);
 		if( this.doesCollide())
-			throw new IllegalStateException("Collision before updating x position");
+			throw new IllegalStateException("Collision before updating x position!");
 			
 		double oldPositionX = this.positionX;
 		this.positionX = positionX;
 		
+		processOverlap();
 		this.getAnimation().updateSpriteIndex();
 		if(this.doesCollide()){
 			this.positionX = oldPositionX;
@@ -647,7 +666,6 @@ public abstract class GameObject {
 	 * 			bottom left pixel in the world.
 	 */
 	@Basic
-	@Raw
 	public double getPositionY() {
 		return this.positionY;
 	}
@@ -674,8 +692,10 @@ public abstract class GameObject {
 	 * 			| getAnimation().updateSpriteIndex()
 	 * @post	The Y position of a Game object is equal to positionY if the Game object doesn't collide
 	 *  		after the change.
-	 * 			| if (! this.doesCollide() )
+	 * 			| if (! this.doesCollide() )  TODO eigenlijk klopt dit niet exact want da checkt da nog met de oude positie, dus moet dat er toch bij met die oldPosition enzo?
 	 * 			| 	then new.getPositionY() == positionY
+	 * @effect	Process the overlap of the Game object.
+	 * 			| processOverlap()
 	 * @throws	IllegalPositionYException
 	 * 				The Game object can't have the given position as his vertical position.
 	 * 				| ! canHaveAsPositionY(positionY)
@@ -688,15 +708,18 @@ public abstract class GameObject {
 	 */
 	@Basic
 	@Raw
-	protected void setPositionY(double positionY) throws IllegalPositionYException, CollisionException {
+	protected void setPositionY(double positionY) 
+			throws IllegalPositionYException, IllegalStateException, CollisionException {
+		
 		if( !canHaveAsPositionY(positionY)) 
 			throw new IllegalPositionYException(positionY);
 		if( this.doesCollide())
-			throw new IllegalStateException("Collision before updating y position");
+			throw new IllegalStateException("Collision before updating y position!");
 		
 		double oldPositionY = this.positionY;
 		this.positionY = positionY;
 		
+		processOverlap();
 		this.getAnimation().updateSpriteIndex();
 		if(this.doesCollide()){
 			this.positionY = oldPositionY;
@@ -773,8 +796,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the vertical velocity of a Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	public double getVelocityY() {
 		return this.velocityY;
 	}
@@ -787,8 +809,7 @@ public abstract class GameObject {
 	 * @post	The vertical velocity is equal to velocityY.
 	 * 			| new.getVelocityY() == velocityY
 	 */
-	@Basic
-	@Raw
+	@Basic	@Raw
 	protected void setVelocityY(double velocityY) {
 		this.velocityY = velocityY;
 	}
@@ -816,8 +837,7 @@ public abstract class GameObject {
 	 *  
 	 * @return	A double that represents the initial horizontal velocity of a Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Immutable
 	public double getVelocityXInit() {
 		return this.velocityXInit;
 	}
@@ -833,8 +853,7 @@ public abstract class GameObject {
 	 *  
 	 * @return	A double that represents the initial vertical velocity of a Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Immutable
 	public double getVelocityYInit(){
 		return this.velocityYInit;
 	}
@@ -968,6 +987,8 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the initial horizontal acceleration of this Game object.
 	 */
+	@Basic
+	@Immutable
 	public double getAccelerationXInit() {
 		return this.accelerationXInit;
 	}
@@ -1043,6 +1064,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	An integer that represents the current number of hit points of this Game object.
 	 */
+	@Basic
 	public int getNbHitPoints() {
 		return this.nbHitPoints;
 	}
@@ -1117,6 +1139,8 @@ public abstract class GameObject {
 	 * 
 	 * @return	An integer that represents the maximal number of hit points for this Game object.
 	 */
+	@Basic
+	@Immutable
 	public int getMaxNbHitPoints(){
 		return this.maxNbHitPoints;
 	}
@@ -1145,6 +1169,7 @@ public abstract class GameObject {
 	 * @return	A boolean that represents whether or not the Game object is currently immune.
 	 * 			| result == ( this.immune )
 	 */
+	@Basic
 	public boolean isImmune() {
 		return this.immune;
 	}
@@ -1157,6 +1182,7 @@ public abstract class GameObject {
 	 * @post	The immunity status of this Game object is equal to immune.
 	 * 			| new.isImmun() == immune
 	 */
+	@Basic
 	protected void setImmune( boolean immune ){
 		this.immune = immune;
 	}
@@ -1298,8 +1324,15 @@ public abstract class GameObject {
 	 * @param 	dt
 	 * 				A double that represents the elapsed in-game time.
 	 * @note	No further documentation was required for this method.
+	 * @throws
+	 * 		IllegalArgumentException
+	 * @throws
+	 * 		IllegalStateException
 	 */
-	public void advanceTime(double dt){
+	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
+			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
+		
 		// determine minDt		
 		double minDt;
 		
@@ -1328,26 +1361,28 @@ public abstract class GameObject {
 	 * 				| !this.isTerminated() && !this.hasProperWorld()
 	 */
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
-		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		if( !this.isTerminated() && !this.hasProperWorld())
 			throw new IllegalStateException("This object is not in a proper world!");
 		
-		this.processKilled(dt);
+		if(this.isKilled() && !this.isTerminated()){
+			this.processKilled(dt);
+		}
 				
-		if(this.isKilled()){
-			return;
+		if(!this.isKilled()){
+			
+			// Check last enemy collision and reset immunity status if needed
+			if (this.isImmune() && this.getTimer().getSinceEnemyCollision() > IMMUNE_TIME ){
+				this.setImmune(false);
+			}
+			
+			this.updateTimers(dt);
+			this.doMove(dt);
+			this.getAnimation().updateSpriteIndex();
 		}
 		
-		// Check last enemy collision and reset immunity status if needed
-		if (this.isImmune() && this.getTimer().getSinceEnemyCollision() > IMMUNE_TIME ){
-			this.setImmune(false);
-		}
-		
-		this.updateTimers(dt);
-		this.doMove(dt);
-		this.getAnimation().updateSpriteIndex();
+	
 	}
 
 	/**
@@ -1358,20 +1393,18 @@ public abstract class GameObject {
 	 * 				A double that represents the elapsed in-game time.
 	 * @effect	If the time since the Game object was killed is greater than 0.6s, the Game object
 	 * 			gets terminated.
-	 * 			| if ( this.isKilled() && !this.isTerminated() && this.getTimer().getSinceKilled() > 0.6 )
+	 * 			| if ( this.getTimer().getSinceKilled() > 0.6 )
 	 * 			|	then this.terminate()
 	 * @effect	If the time since the Game object was killed is smaller than 0.6s, the time since the
 	 * 			Game object was killed is increased with the given dt.
-	 * 			| if ( this.isKilled() && !this.isTerminated() && this.getTimer().getSinceKilled() <= 0.6 )
+	 * 			| if ( this.getTimer().getSinceKilled() <= 0.6 )
 	 * 			|	then this.getTimer().increaseSinceKilled(dt)
 	 */
 	protected void processKilled(double dt) {
-		if(this.isKilled() && !this.isTerminated()){
-			if(this.getTimer().getSinceKilled() > 0.6){
-				this.terminate();
-			}else{
-				this.getTimer().increaseSinceKilled(dt);
-			}
+		if(this.getTimer().getSinceKilled() > 0.6){
+			this.terminate();
+		}else{
+			this.getTimer().increaseSinceKilled(dt);
 		}
 	}
 	
@@ -1421,8 +1454,6 @@ public abstract class GameObject {
 	 * 			case is equal to 100.
 	 * 			| setPositionX( this.getPositionX() + 100*( this.getVelocityX() * dt +
 	 * 			| 						0.5 * this.getAccelerationX() * Math.pow( dt , 2 ) ) )
-	 * @effect	Process the overlap of the Game object.
-	 * 			| processOverlap()
 	 * @effect	If an IllegalPositionXException is thrown in the try part of this method, catch it and 
 	 * 			kill the Game object.
 	 * 			| kill();
@@ -1435,7 +1466,6 @@ public abstract class GameObject {
 		try{
 			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
 			this.setPositionX( this.getPositionX() + 100 * sx );
-			this.processOverlap();
 		}catch( IllegalPositionXException exc){
 			this.kill();
 		}catch( CollisionException exc ){
@@ -1470,8 +1500,6 @@ public abstract class GameObject {
 	 * 			equal to 100.
 	 * 			| setPositionY( this.getPositionY() + 100*( this.getVelocityY() * dt +
 	 * 			| 						0.5 * this.getAccelerationY() * Math.pow( dt , 2 ) ) )
-	 * @effect	Process the overlap of the Game object.
-	 * 			| processOverlap()
 	 * @effect	If an IllegalPositionYException is thrown in the try part of this method, catch it and 
 	 * 			kill the Game object.
 	 * 			| kill();
@@ -1484,7 +1512,6 @@ public abstract class GameObject {
 		try{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
 			this.setPositionY( this.getPositionY() + 100 * sy );
-			this.processOverlap();
 		}catch( IllegalPositionYException exc){
 			this.kill();
 		}catch( CollisionException exc){
@@ -1507,28 +1534,46 @@ public abstract class GameObject {
 	}
 		
 	/****************************************************** COLLISION **************************************************/
-	
+	/**
+	 * Checks if this object collides with impassable terrain or any other impassable Game object. 
+	 * Colliding means that only the outer perimeter may overlap with the other object or terrain.
+	 * 
+	 * @return
+	 * 		True if and only if this object collides with impassable terrain or an impassable Game object.
+	 * 		| doesCollide(Orientation.ALL)
+	 */
 	public boolean doesCollide(){
 		return doesCollide(Orientation.ALL);
 	}
 	
 	/**
-	 * Checks if this object collides with impassable terrain or any other impassable object.
+	 * Checks if this object collides with impassable terrain or any other impassable Game object in the given direction.
 	 * 
+	 * @param orientation	
+	 * 			The orientation to check collision with.
+	 * 			For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
 	 * @return
-	 * 		True if and only if this object collides with impassable terrain or an impassable object.
+	 * 		True if and only if this object collides with impassable terrain or an impassable Game object in the given direction.
+	 * 		|	doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
+				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);
 	 */
 	public boolean doesCollide(Orientation orientation){
 		return  doesInteractWithTerrain(TerrainInteraction.COLLIDE, orientation) || 
-				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);	}
+				doesInteractWithGameObjects(TerrainInteraction.COLLIDE, orientation);	
+	}
 
 	/**
-	 * Checks if this object collides with a given gameobject.
+	 * Checks if this Game object collides with a given Game object in the given orientation.
 	 * 
 	 * @param other
-	 * 		An instance of GameObject to check collision with
+	 * 		An instance of GameObject to check collision with.
+	 * @param orientation
+	 * 		The orientation to check collision with.
+	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
 	 * @return
-	 * 		True if and only if this object and the given gameobject collides.
+	 * 		True if and only if this object and the given Game object collides.
+	 * 		|	this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), 
+									 other.getWidth(), other.getHeight(), orientation)
 	 */
 	public boolean doesCollideWith(GameObject other, Orientation orientation){
 		return this.doesCollideWith(other.getRoundedPositionX(), other.getRoundedPositionY(), 
@@ -1536,17 +1581,23 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this object collides with the given region.
+	 * Checks if this Game object collides with the given rectangular region in the given orientation.
 	 * 
 	 * @param x
-	 * 		The horizontal position of the left bottom corner of the region
+	 * 		The horizontal position of the left bottom corner of the rectangular region.
 	 * @param y
-	 * 		The vertical position of the left bottom corner of the region
+	 * 		The vertical position of the left bottom corner of the rectangular region.
 	 * @param width
-	 * 		The width of the region
+	 * 		The width of the region.
 	 * @param height
-	 * 		The height of the region
+	 * 		The height of the region.
+	 * @param orientation
+	 * 		The orientation to check collision with.
+	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
 	 * @return
+	 * 		True if and only if the object collides with the given region, in the given orientation.
+	 * 		| GameObject.doRegionsOverlap( this.getRoundedPositionX() + 1 , this.getRoundedPositionY() + 1, this.getWidth() - 2, this.getHeight() - 2, 
+	 * 										x, y, width, height, orientation);
 	 */
 	public boolean doesCollideWith(int x, int y, int width, int height, Orientation orientation){
 		return GameObject.doRegionsOverlap(
@@ -1555,54 +1606,109 @@ public abstract class GameObject {
 				x, y, width, height, orientation);		
 	}
 	
+	/**
+	 * Defines the actions to do when the Game object collides horizontally.
+	 * 
+	 * @effect	
+	 * 		| this.endMove(this.getOrientation());
+	 */
 	protected void processHorizontalCollision(){
 		this.endMove(this.getOrientation());
 	}
 	
+	/**
+	 * Defines the actions to do when the Game object collides vertically.
+	 * 
+	 * @effect
+	 * 		| this.stopFall();
+	 */
 	protected void processVerticalCollision(){
 		this.stopFall();
 	}
 	
 	/******************************************************* OVERLAP **************************************************/
 	
+	/**
+	 * Returns true if and only if this Game object does overlap with another Game object or impassable terrain.
+	 * This means that this will return true if and only if at least one pixel overlaps.
+	 * 
+	 * @return
+	 * 		True if and only if this Game object does overlap with another Game object or impassable terrain.
+	 * 		| this.doesOverlap(Orientation.ALL);
+	 */
 	public boolean doesOverlap(){
 		return this.doesOverlap(Orientation.ALL);
 	}
 	
+	/**
+	 * 
+	 * @param orientation
+	 * 		The orientation to check overlap with.
+	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
+	 * @return
+	 */
 	public boolean doesOverlap(Orientation orientation){
 		return doesInteractWithTerrain(TerrainInteraction.OVERLAP, orientation) || 
 			   doesInteractWithGameObjects(TerrainInteraction.OVERLAP, orientation);
 	}
 	
 	/**
-	 * Checks if this object overlaps with the given gameobject
+	 * Checks if this object overlaps with the given Game object.
 	 * @param other
+	 * 			The Game object to check collision with.
 	 * @return
+	 * 			True if and only if this Game object overlaps with the other Game object.
+	 * 			|	this.doesOverlapWith(other, Orientation.ALL)
 	 */
 	public boolean doesOverlapWith(GameObject other){
 		return this.doesOverlapWith(other, Orientation.ALL);
 	}
 	
+	/**
+	 * Checks if this object overlaps with the given Game object, in the given orientation.
+	 * @param other
+	 * 			The Game object to check collision with.
+	 * @param orientation
+	 * 			The orientation to check overlap with.
+	 * 			For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
+	 * @return
+	 * 			True if and only if this Game object overlaps with the other Game object.
+	 *	 		|	this.doesOverlapWith(other, Orientation.ALL)
+	 */
 	public boolean doesOverlapWith(GameObject other, Orientation orientation){
 		return this.doesOverlapWith(other.getRoundedPositionX(), other.getRoundedPositionY(),
 									other.getWidth(), other.getHeight(), orientation);
 	}
 	
 	/**
-	 * Checks if this object overlaps in the given direction with the given object.
+	 * Checks if this Game object overlaps with the given object, in the given direction.
+	 * 
 	 * @param x
+	 * 		The horizontal position of the left bottom corner of the region.
 	 * @param y
+	 * 		The vertical position of the left bottom corner of the region.
 	 * @param width
+	 * 		The width of the region.
 	 * @param height
+	 * 		The height of the region.
 	 * @param orientation
+	 * 		The direction to check overlap with. 
+	 * 		For more details about the orientation, see the documentation of the method GameObject.doRegionsOverlap
 	 * @return
+	 * 		True if and only if the object overlaps with the given region, in the given orientation.
+	 * 		| GameObject.doRegionsOverlap(getRoundedPositionX(), getRoundedPositionY(), 
+	 * 			getWidth(), getHeight(), x, y, width, height, orientation);
 	 */
 	public boolean doesOverlapWith(int x, int y, int width, int height, Orientation orientation){
-		return GameObject.doRegionsOverlap(getRoundedPositionX(), getRoundedPositionY(), getWidth(), getHeight(), x, y, width, height, orientation);
+		return GameObject.doRegionsOverlap(getRoundedPositionX(), getRoundedPositionY(), 
+				getWidth(), getHeight(), x, y, width, height, orientation);
 	}
 	
 	/** 
-	 * Returns a set containing the overlapping terrain types 
+	 * Returns a set containing the overlapping Terrain types.
+	 *  
+	 * @return
+	 *  	A set containing the overlapping terrain types.
 	 */
 	public Set<Terrain> getOverlappingTerrainTypes(){
 		World world = this.getWorld();
@@ -1623,7 +1729,49 @@ public abstract class GameObject {
 		return overlappingTerrainTypes;
 	}
 	
-	/** Checks if the region 1 overlaps with the region 2 in the given direction*/
+	/**
+	 * Checks if one given region (region 1) overlaps with another given region (region 2), in the given direction	 * 
+	 * 
+	 * @param x1
+	 * 		The horizontal position of the left bottom corner of the first region.
+	 * @param y1
+	 * 		The vertical position of the left bottom corner of the first region.
+	 * @param width1
+	 * 		The width of the first region.
+	 * @param height1
+	 * 		The height of the first region.
+	 * @param x2
+	 * 		The horizontal position of the left bottom corner of the second region.
+	 * @param y2
+	 * 		The vertical position of the left bottom corner of the second region.
+	 * @param width2
+	 * 		The width of the second region.
+	 * @param height2
+	 * 		The height of the second region.
+	 * @param orientation
+	 * 		The orientation to check overlap in. 
+	 * @return
+	 * 		In case orientation is Orientation.ALL, 
+	 * 			this method will check if at least one pixel of region 1 overlaps with one pixel of region 2
+	 * 	 	In case orientation is Orientation.BOTTOM, 
+	 * 			this method will check if the bottom perimeter (as defined in the assignment) overlaps with any pixel of region 2 
+	 * 		In case orientation is Orientation.TOP, 
+	 * 			this method will check if the top perimeter (as defined in the assignment) overlaps with any pixel of region 2
+	 * 		In case orientation is Orientation.RIGHT, 
+	 * 			this method will check if the right perimeter (as defined in the assignment) overlaps with any pixel of region 2
+	 * 		In case orientation is Orientation.LEFT, 
+	 * 			this method will check if the left perimeter (as defined in the assignment) overlaps with any pixel of region 2
+	 * 
+	 * @note
+	 * 		The perimeters in the assignment are defined as follows:
+	 * 			bottom: x..x + Xg - 1, y
+	 * 			top:	x..x + Xg - 1, y + Yg - 1 
+	 * 			left:	x, y+1..y+Yg-2
+	 * 			right:	x+Xg-1, y+1..y+Yg-2
+	 * 
+	 * @throws IllegalArgumentException
+	 * 				If the given orientation is not implemented.
+	 */
 	public static boolean doRegionsOverlap(int x1, int y1, int width1, int height1, int x2, int y2,
 										   int width2, int height2, Orientation orientation) 
 							throws IllegalArgumentException{
@@ -1633,19 +1781,19 @@ public abstract class GameObject {
 			case RIGHT: 
 				return  x1 + width1 > x2 &&
 						x1 + width1 <= x2 + width2 &&
-						GameObject.getYOverlap(y1, height1, y2, height2);
+						GameObject.doPixelsOverlap(y1, height1, y2, height2);
 			case LEFT:
 				return  x1 >= x2 &&
 						x1 < x2 + width2 &&
-						GameObject.getYOverlap(y1, height1, y2, height2);
+						GameObject.doPixelsOverlap(y1, height1, y2, height2);
 			case TOP:
 				return 	y1 + height1 > y2 && 
 						y1 + height1 <= y2 + height2 &&
-						GameObject.getXOverlap(x1, width1, x2, width2);				
+						GameObject.doPixelsOverlap(x1, width1, x2, width2);				
 			case BOTTOM:
 				return 	y1 >= y2 &&
 						y1 < y2 + height2 &&
-						GameObject.getXOverlap(x1, width1, x2, width2);
+						GameObject.doPixelsOverlap(x1, width1, x2, width2);
 			case ALL:
 				return ! ( // Dus geeft true als elke deelexpressie false geeft
 						   (x1 + (width1 - 1) < x2) 
@@ -1659,104 +1807,32 @@ public abstract class GameObject {
 		}
 	}
 	
-	public static boolean getXOverlap(int x1, int width1, int x2, int width2){
+	/**
+	 * Checks whether two lines of pixels do overlap. The lines are defined by their most-left pixel (x) and width. 
+	 * This can also be used for vertical lines, since the condition is the same.
+	 * 
+	 * @param x1
+	 * 			The first pixel of the first line.
+	 * @param width1
+	 * 			The width of the first line.
+	 * @param x2
+	 * 			The first pixel of the second line
+	 * @param width2
+	 * 			The width of the second line
+	 * @return
+	 * 			True if and only if the given lines of pixels overlap, which means they have at least one overlapping pixel.
+	 * 		
+	 */
+	public static boolean doPixelsOverlap(int x1, int width1, int x2, int width2){
 		return	x1 < x2 + width2 && x1 + width1 > x2;
 	}
 	
-	public static boolean getYOverlap(int y1, int height1, int y2, int height2){
-		return	y1 < y2 + height2 && y1 + height1 > y2;
-	}
-	
-	protected void processOverlap(){
-		this.processTileOverlap();
-		this.processGameObjectOverlap();
-	}
-
-	protected void processTileOverlap(){
-		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
-		
-		// Check all terrain types that are overlapping
-		for(Terrain overlappingTerrain : overlappingTerrainTypes){
-			
-			// If this terrain type isn't configured, don't care
-			if(!this.hasTerrainPropertiesOf(overlappingTerrain)){
-				break;
-			}
-			
-			// Get configuration for this overlapping terrain type
-			TerrainProperties terrainProperties = this.getTerrainPropertiesOf(overlappingTerrain);
-			
-			// if the gameobject can lose hit points due to contact with this terrain type
-			if(  terrainProperties.getDamage() != 0 ){ 
-				// If the time since the last hitpoints detection is greater than the configured damage time
-				if( getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
-					
-					// Do damage if the terrain should do damage immediately after contact (for example, magma) 
-					// or if the overlapping duration is longer than the configured damage time
-					if(terrainProperties.isInstantDamage() || getTimer().getTerrainOverlapDuration(overlappingTerrain) > terrainProperties.getDamageTime() ){
-						this.takeDamage( terrainProperties.getDamage() );
-						getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0);
-					}
-				}
-			}
-		}
-	}	
-	
-	protected void processGameObjectOverlap(){
-		World world = this.getWorld();
-		
-		for(Mazub alien:  world.getAllMazubs()){
-			if(this.doesOverlapWith(alien) && !this.isImmune()){
-				this.processMazubOverlap(alien);
-			}
-		}
-		
-		for(Plant plant :  world.getAllPlants()){
-			if(this.doesOverlapWith(plant)){
-				this.processPlantOverlap(plant);
-			}
-		}
-		
-		for(Shark shark :  world.getAllSharks()){
-			if(this.doesOverlapWith(shark) && !this.isImmune()){
-				processSharkOverlap(shark);
-			}
-		}
-		
-		for(Slime slime :  world.getAllSlimes()){
-			if(this.doesOverlapWith(slime) && !this.isImmune()){
-				processSlimeOverlap(slime);
-			}
-		}
-		
-	}
-	
-	/**
-	 * Process an overlap of the Game object with a given Mazub. As this is an abstract method, this must
-	 * be implemented in the subclasses of this class, according to their specifications.
-	 */
-	protected abstract void processMazubOverlap(Mazub alien);
-	
-	/**
-	 * Process an overlap of the Game object with a given Plant. As this is an abstract method, this must
-	 * be implemented in the subclasses of this class, according to their specifications.
-	 */
-	protected abstract void processPlantOverlap(Plant plant);
-	
-	/**
-	 * Process an overlap of the Game object with a given Shark. As this is an abstract method, this must
-	 * be implemented in the subclasses of this class, according to their specifications.
-	 */
-	protected abstract void processSharkOverlap(Shark shark);
-	
-	/**
-	 * Process an overlap of the Game object with a given Slime. As this is an abstract method, this must
-	 * be implemented in the subclasses of this class, according to their specifications.
-	 */
-	protected abstract void processSlimeOverlap(Slime slime);
-	
 	/***************************************************** INTERACTION ************************************************/
-	
+	/**
+	 * Checks if this object interacts with any other impassable game object, in the given direction.
+	 * 
+	 * @return	True if and only if this object collides with impassable terrain.
+	 */
 	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld(); 
 		
@@ -1799,9 +1875,9 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Checks if this object collides in the given direction with any other impassable game object.
+	 * Checks if this object interacts with any other impassable Game object, in the given direction.
 	 * 
-	 * @return	True if and only if this object collides with an impassable object.
+	 * @return	True if and only if this object collides with an impassable Game object.
 	 */
 	public boolean doesInteractWithGameObjects(TerrainInteraction interaction, Orientation orientation){
 		assert hasProperWorld();
@@ -1829,6 +1905,125 @@ public abstract class GameObject {
 		return false;
 	}
 
+	
+	/*********************************************** OVERLAP PROCESSING ********************************************/
+	
+	/**
+	 * TODO: kan echt geen beschrijving bedenken behalve dan dat dat gewoon die methodes oproept... :/
+	 * 
+	 * @effect
+	 * 		| this.processTileOverlap();
+	 * @effect
+	 * 		| this.processGameObjectOverlap();
+	 */
+	protected void processOverlap(){
+		this.processTerrainOverlap();
+		this.processGameObjectOverlap();
+	}
+
+	/**
+	 * 
+	 */
+	protected void processTerrainOverlap(){
+		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
+		
+		// Check all terrain types that are overlapping
+		for(Terrain overlappingTerrain : overlappingTerrainTypes){
+			
+			// If this terrain type isn't configured, don't care
+			if(!this.hasTerrainPropertiesOf(overlappingTerrain)){
+				break;
+			}
+			
+			doTerrainDamage(overlappingTerrain);
+		}
+	}	
+	
+	/**
+	 * 
+	 * @param overlappingTerrain
+	 */
+	protected void doTerrainDamage(Terrain overlappingTerrain){
+		// Get configuration for this overlapping terrain type
+		TerrainProperties terrainProperties = this.getTerrainPropertiesOf(overlappingTerrain);
+		
+		// if the gameobject can lose hit points due to contact with this terrain type
+		if(  terrainProperties.getDamage() != 0 ){ 
+			// If the time since the last hitpoints detection is greater than the configured damage time
+			if( getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
+				
+				// Do damage if the terrain should do damage immediately after contact (for example, magma) 
+				// or if the overlapping duration is longer than the configured damage time
+				if(terrainProperties.isInstantDamage() || getTimer().getTerrainOverlapDuration(overlappingTerrain) > terrainProperties.getDamageTime() ){
+					this.takeDamage( terrainProperties.getDamage() );
+					getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Process the overlap of a Mazub, Plant, Shark or Slime with this Game object.
+	 * 
+	 * TODO: kunt ge @effect efficient uitschrijven hier? Dus bv
+	 * if this.doesOverlapWith(any alien)
+	 * 		then this.processMazubOverlap(alien)
+	 * 
+	 * of gewoon code copy pasten en effect voorzetten...
+	 * 	
+	 */
+	protected void processGameObjectOverlap(){
+		World world = this.getWorld();
+		
+		for(Mazub alien:  world.getAllMazubs()){
+			if(this.doesOverlapWith(alien)){
+				this.processMazubOverlap(alien);
+			}
+		}
+		
+		for(Plant plant :  world.getAllPlants()){
+			if(this.doesOverlapWith(plant)){
+				this.processPlantOverlap(plant);
+			}
+		}
+		
+		for(Shark shark :  world.getAllSharks()){
+			if(this.doesOverlapWith(shark)){
+				processSharkOverlap(shark);
+			}
+		}
+		
+		for(Slime slime :  world.getAllSlimes()){
+			if(this.doesOverlapWith(slime)){
+				processSlimeOverlap(slime);
+			}
+		}
+		
+	}
+	
+	/**
+	 * Process an overlap of the Game object with a given Mazub. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
+	protected abstract void processMazubOverlap(Mazub alien);
+	
+	/**
+	 * Process an overlap of the Game object with a given Plant. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
+	protected abstract void processPlantOverlap(Plant plant);
+	
+	/**
+	 * Process an overlap of the Game object with a given Shark. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
+	protected abstract void processSharkOverlap(Shark shark);
+	
+	/**
+	 * Process an overlap of the Game object with a given Slime. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
+	protected abstract void processSlimeOverlap(Slime slime);	
 
 	/***************************************************** TERMINATION *************************************************/
 	
@@ -1870,6 +2065,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	| result == ( this.terminated )
 	 */
+	@Basic
 	public boolean isTerminated(){
 		return this.terminated;
 	}

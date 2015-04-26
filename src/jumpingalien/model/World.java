@@ -6,8 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.Raw;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.helper.VectorInt;
+import jumpingalien.util.ModelException;
+import jumpingalien.util.Util;
 
 /**
  * A class of Worlds for Mazubs to move around in. 
@@ -16,52 +21,105 @@ import jumpingalien.model.helper.VectorInt;
  * 
  * @invar 	| getNbGameObjects() <= 101
  * @invar	| getNbSchools() <= 10
+ * @invar	| canHaveAsDisplayPositionX(getDisplayPositionX())
+ * @invar	| canHaveAsDisplayPositionY(getDisplayPositionY())	
+ * @invar	| canHaveAsTargetTileX(getTargetTileX())
+ * @invar	| canHaveAsTargetTileY(getTargetTileY())	
+ * @invar	| isValidTileLength(getTileLength())
+ * 			
  * 
  * @version 1.0
  */
 public class World {
 
 	/******************************************************* GENERAL ***************************************************/
-
+	/**
+	 * Returns whether this Game world is started
+	 * @return
+	 * 		|	this.hasStarted
+	 */
+	@Basic
 	private boolean hasStarted(){
 		return this.hasStarted;
 	}
 	
+	/**
+	 * Starts this Game world.
+	 * @post	Sets hasStarted to true.
+	 * 			| new.hasStarted() == true
+	 */
+	@Basic
 	public void start(){
 		this.hasStarted = true;
 	}
 	
+	/**
+	 * Variable registering whether the current world is already started or not.
+	 */
 	private boolean hasStarted = false;
 	
 	/***************************************************** CONSTRUCTOR *************************************************/
-	
-	public World(int tileSize, int nbTilesX, int nbTilesY,
-			int visibleWindowWidth, int visibleWindowHeight, int targetTileX,
-			int targetTileY) {
+	/**
+	 * A constructor for a world
+	 * 
+	 * @param tileSize
+	 * 			The length of a square tile side
+	 * @param nbTilesX
+	 * 			The total number of tiles in the horizontal direction
+	 * @param nbTilesY
+	 * 			The total number of tiles in the vertical direction
+	 * @param visibleWindowWidth
+	 * 			The width of the visible Game window in pixels
+	 * @param visibleWindowHeight
+	 * 			The Height of the visible Game window in pixels
+	 * @param targetTileX
+	 * 			The horizontal tile-coordinate of the target tile.
+	 * @param targetTileY
+	 * 			The Vertical tile-coordinate of the target tile.
+	 */
+	public World(int tileSize, int nbTilesX, int nbTilesY, int visibleWindowWidth, 
+			int visibleWindowHeight, int targetTileX, int targetTileY) {
 		
+		assert isValidTileLength(tileSize);
 		this.tileLength = tileSize;
+		
+		assert nbTilesX > 0;
+		assert nbTilesY > 0;
 		this.nbTilesX = nbTilesX;
 		this.nbTilesY = nbTilesY;
 		
 		assert canHaveAsDisplayWidth(visibleWindowWidth);
 		assert canHaveAsDisplayHeight(visibleWindowHeight);
-		
 		this.displayWidth = visibleWindowWidth;
 		this.displayHeight = visibleWindowHeight;
 		
 		this.setDisplayPositionX(0);
 		this.setDisplayPositionY(0);
 		
+		assert canHaveAsTargetTileX(targetTileX);
+		assert canHaveAsTargetTileY(targetTileY);
 		this.targetTileX = targetTileX;
 		this.targetTileY = targetTileY;
 	}
 
 	/******************************************************** SIZE *****************************************************/
 	
+	/**
+	 * Returns the width of this world.
+	 * 
+	 * @return	The width of this world
+	 * 			| result ==  ( this.getNbTilesX()) * getTileLength();
+	 */
 	public int getWorldWidth() {
 		return ( this.getNbTilesX()) * getTileLength();
 	}
 	
+	/**
+	 * Returns the height of this world.
+	 * 
+	 * @return	The height of this world
+	 * 			| result ==  ( this.getNbTilesY()) * getTileLength();
+	 */
 	public int getWorldHeight() {
 		return ( this.getNbTilesY()) * getTileLength();
 	}
@@ -70,20 +128,50 @@ public class World {
 	
 	/* Size */
 	
+	/**
+	 * Returns the width of the visible game window.
+	 *  
+	 * @return	The width of the visible game window.
+	 * 			| result ==  displayWidth;
+	 */
+	@Basic @Immutable
 	public int getDisplayWidth() {
 		return displayWidth;
 	}
 	
+	/**
+	 * Checks whether the given visible game window width if is valid.
+	 * 
+	 * @param displayWidth
+	 * 			The width of the visible game window
+	 * @return
+	 *			| displayWidth <= this.getWorldWidth() && displayWidth > 0;
+	 */
 	public boolean canHaveAsDisplayWidth(int displayWidth){
 		return displayWidth <= this.getWorldWidth() && displayWidth > 0;
 	}
 	
 	private final int displayWidth;
 	
+	/**
+	 * Returns the height of the visible game window.
+	 *  
+	 * @return	The height of the visible game window.
+	 * 			| result ==  displayHeight;
+	 */
+	@Basic @Immutable
 	public int getDisplayHeight() {
 		return displayHeight;
 	}
 	
+	/**
+	 * Checks whether the given visible game window height if is valid.
+	 * 
+	 * @param displayHeight
+	 * 			The height of the visible game window
+	 * @return
+	 *			| displayHeight <= this.getWorldHeight() && displayHeight > 0;
+	 */
 	public boolean canHaveAsDisplayHeight(int displayHeight){
 		return displayHeight <= this.getWorldHeight() && displayHeight > 0;
 	}
@@ -92,63 +180,140 @@ public class World {
 	
 	/* Position */
 	
+	/**
+	 * Updates the horizontal and vertical position of the visible game window.
+	 * 
+	 * @effect
+	 * 			| updateDisplayPositionX()
+	 * @effect
+	 * 			| updateDisplayPositionY()
+	 */
+	public void updateDisplayPosition(){
+		updateDisplayPositionX();
+		updateDisplayPositionY();
+	}
+	
+	// X
+	
+	/**
+	 * Returns the horizontal position of the visible game window.
+	 * @return
+	 * 			| result == this.displayPositionX
+	 */
+	@Basic
 	public int getDisplayPositionX(){
 		return this.displayPositionX;
 	}
 	
-	public void setDisplayPositionX(int displayPositionX) {
+	/**
+	 * Sets the horizontal position of the visible game window to the given value.
+	 * @param displayPositionX
+	 * 			The horizontal position of the visible game window
+	 * @post
+	 * 			| new.getDisplayPositionX() == displayPositionX
+	 */
+	@Basic
+	private void setDisplayPositionX(int displayPositionX) {
+		assert canHaveAsDisplayPositionX(displayPositionX);
+		
 		this.displayPositionX = displayPositionX;
 	}
 	
-	public void updateDisplayPositionX(){
-		// TODO beter / compacter uitwerken
-		
-		// ifs kunnen eventueel met min/max
+	/**
+	 * Checks whether the given horizontal position of the visible game window is valid for this game world.
+	 * 
+	 * @param displayPositionX
+	 * 			The horizontal position that needs to be checked
+	 * @return
+	 * 			| result == (displayPositionX >= 0 && displayPositionX + this.getDisplayWidth() <= this.getWorldWidth())
+	 */
+	public boolean canHaveAsDisplayPositionX(int displayPositionX){
+		return displayPositionX >= 0 && displayPositionX + this.getDisplayWidth() <= this.getWorldWidth(); 
+	}
+	
+	/**
+	 * Updates the horizontal position of the visible game window. 
+	 * TODO meer docs
+	 */
+	private void updateDisplayPositionX(){
+		int newDisplayPositionX = this.getDisplayPositionX();
 		
 		// Check right side of game window
-		if ( this.getDisplayPositionX() + this.getDisplayWidth() - 200 < this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() ){
-			this.setDisplayPositionX( this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() + 200 - this.getDisplayWidth() ); 
+		if ( newDisplayPositionX + this.getDisplayWidth() - 200 < this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() ){
+			newDisplayPositionX = this.getMazub().getRoundedPositionX() + this.getMazub().getWidth() + 200 - this.getDisplayWidth(); 
 		}
 		
 		// Check left side of game window
-		if ( this.getDisplayPositionX() + 200 > this.getMazub().getRoundedPositionX() ){
-			this.setDisplayPositionX( this.getMazub().getRoundedPositionX() - 200 ); 
+		if ( newDisplayPositionX + 200 > this.getMazub().getRoundedPositionX() ){
+			newDisplayPositionX = this.getMazub().getRoundedPositionX() - 200; 
 		}
 		
 		// Check borders of gameworld 
-		this.setDisplayPositionX( Math.max( 0, this.getDisplayPositionX() ) );
-		this.setDisplayPositionX( Math.min( this.getWorldWidth() - this.getDisplayWidth(), this.getDisplayPositionX() ) );
+		newDisplayPositionX =  Math.max( 0, newDisplayPositionX );
+		newDisplayPositionX =  Math.min( this.getWorldWidth() - this.getDisplayWidth(), newDisplayPositionX );
+		
+		this.setDisplayPositionX(newDisplayPositionX);
 	}
 	
 	private int displayPositionX;
 
+	// Y
+	
+	/**
+	 * Returns the vertical position of the visible game window.
+	 * @return
+	 * 			| result == this.displayPositionY
+	 */
+	@Basic
 	public int getDisplayPositionY(){
 		return this.displayPositionY;
 	}
 	
-	public void setDisplayPositionY(int displayPositionY) {
+	/**
+	 * Sets the vertical position of the visible game window to the given value.
+	 * @param displayPositionY
+	 * 			The vertical position of the visible game window
+	 * @post
+	 * 			| new.getDisplayPositionY() == displayPositionY
+	 */
+	@Basic
+	private void setDisplayPositionY(int displayPositionY) {
+		assert canHaveAsDisplayPositionY(displayPositionY);
+		
 		this.displayPositionY = displayPositionY;
 	}
 	
-	public void updateDisplayPositionY(){
-		// TODO beter uitwerken
-		
-		if ( this.getDisplayPositionY() + this.getDisplayHeight() - 200 < this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() ){
-			this.setDisplayPositionY( this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() + 200 - getDisplayHeight() ); 
-		}
-		
-		if ( this.getDisplayPositionY() + 200 > getMazub().getRoundedPositionY() ){
-			this.setDisplayPositionY( this.getMazub().getRoundedPositionY() - 200 ); 
-		}
-		
-		this.setDisplayPositionY( Math.max( 0, this.getDisplayPositionY() ) );
-		this.setDisplayPositionY( Math.min( this.getWorldHeight() - this.getDisplayHeight(), this.getDisplayPositionY() ) );
-		
+	/**
+	 * Checks whether the given vertical position of the visible game window is valid for this game world.
+	 * 
+	 * @param displayPositionY
+	 * 			The vertical position that needs to be checked
+	 * @return
+	 * 			| result == (displayPositionY >= 0 && displayPositionY + this.getDisplayHeight() <= this.getWorldHeight())
+	 */
+	private boolean canHaveAsDisplayPositionY(int displayPositionY){
+		return displayPositionY >= 0 && displayPositionY + this.getDisplayHeight() <= this.getWorldHeight(); 
 	}
 	
-	public void updateDisplayPosition(){
-		updateDisplayPositionX();
-		updateDisplayPositionY();
+	/**
+	 * Updates the vertical position of the visible game window. 
+	 * TODO meer docs
+	 */
+	private void updateDisplayPositionY(){		
+		int newDisplayPositionY = this.getDisplayPositionY();
+		
+		if ( newDisplayPositionY + this.getDisplayHeight() - 200 < this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() ){
+			newDisplayPositionY = this.getMazub().getRoundedPositionY() + this.getMazub().getHeight() + 200 - this.getDisplayHeight(); 
+		}
+		
+		if ( newDisplayPositionY + 200 > this.getMazub().getRoundedPositionY() ){
+			newDisplayPositionY = this.getMazub().getRoundedPositionY() - 200; 
+		}
+		
+		newDisplayPositionY = Math.max( 0, newDisplayPositionY );
+		newDisplayPositionY = Math.min( this.getWorldHeight() - this.getDisplayHeight(), newDisplayPositionY );
+		
+		this.setDisplayPositionY(newDisplayPositionY);
 	}
 	
 	private int displayPositionY;
@@ -164,9 +329,12 @@ public class World {
 	 * 		The number of horizontal tiles of the game world
 	 * 		| this.getWorldWidth() / this.getTileLength();
 	 */
+	@Basic
+	@Immutable
 	public int getNbTilesX() {
 		return nbTilesX;
 	}
+	
 	private final int nbTilesX ;
 	
 	/**
@@ -176,21 +344,38 @@ public class World {
 	 * 		The number of vertical tiles of the game world
 	 * 		| this.getWorldHeight() / this.getTileLength();
 	 */
+	@Basic
+	@Immutable
 	public int getNbTilesY(){
 		return nbTilesY;
 	}
+	
 	private final int nbTilesY;
 		
 	/* Target tile */
 	
+	@Basic
+	@Immutable
 	public int getTargetTileX() {
 		return targetTileX;
 	}
+	
+	public boolean canHaveAsTargetTileX(int targetTileX){
+		return targetTileX > 0 && targetTileX < this.getWorldWidth();
+	}	
+	
 	private final int targetTileX;
 	
+	@Basic
+	@Immutable
 	public int getTargetTileY() {
 		return targetTileY;
 	}
+	
+	public boolean canHaveAsTargetTileY(int targetTileY){
+		return targetTileY > 0 && targetTileY < this.getWorldHeight();
+	}	
+	
 	private final int targetTileY;
 	
 	/* Tile length */
@@ -199,9 +384,16 @@ public class World {
 	 * Returns the length of the side of a square tile
 	 * @return
 	 */
+	@Basic
+	@Immutable
 	public int getTileLength() {
 		return this.tileLength;
 	}
+	
+	public static boolean isValidTileLength(int tileLength){
+		return tileLength > 0;
+	}
+	
 	private final int tileLength;
 	
 	/* Position of tiles */
@@ -211,6 +403,7 @@ public class World {
 	 * @param tileX
 	 * @return
 	 */
+	@Raw
 	public int getPositionXOfTile(int tileX){
 		return tileX * getTileLength();
 	}
@@ -220,6 +413,7 @@ public class World {
 	 * @param tileY
 	 * @return
 	 */
+	@Raw
 	public int getPositionYOfTile(int tileY){
 		return tileY * getTileLength();
 	}	
@@ -268,10 +462,7 @@ public class World {
 	 *         bottom to top: all positions of the bottom row (ordered from
 	 *         small to large x_T) precede the positions of the row above that.
 	 * 
-	 */
-	
-	// Bij deze methode moet nog eens goed nagedacht worden over de randgevallen (zie opmerking <= of <). Of misschien moet getTileX(pixelTop - 1 ) ipv getTileX(pixelTop)
-	
+	 */	
 	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
 
 		ArrayList<int[]> positions = new ArrayList<int[]>(); 
@@ -288,98 +479,38 @@ public class World {
 	
 	/**************************************************** ADVANCE TIME *************************************************/
 	
-	//  * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
-	// NO DOCUMENTATION MUST BE WORKED OUT FOR THIS METHOD
-	public void advanceTime( double dt) {
-		System.out.println(this.getNbSchools());
+	/**
+	 * advanceTime to iteratively invoke advanceTime of all game objects in the world, starting with Mazub
+	 * 
+	 * @note No documentation must be worked out for this method
+	 * @param dt
+	 * @throws IllegalArgumentException
+	 */
+	public void advanceTime( double dt) throws IllegalArgumentException{
+		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
+			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
+		
 		for(Mazub alien: this.getAllMazubs()){
-			alien.advanceTime(dt);						
+			try{
+				alien.advanceTime(dt);	
+			}catch(IllegalStateException exc){
+				throw new ModelException("Mazub is not in a world anymore!");
+			}
+								
 		}
 
-		for(GameObject object: this.getAllEnemies()){	
-			object.advanceTime(dt);
+		for(GameObject object: this.getAllEnemies()){
+			try{
+				object.advanceTime(dt);
+			}catch(IllegalStateException exc){
+				throw new ModelException("Game object is not in a world anymore!");
+			}
 		}
 		
 		updateDisplayPosition();
 	}
-
-// Nog effe houden, misschien moeten we later nog voor iets weten aan welke kant er collision was
-//	public Set<Orientation> collidesWith(GameObject object){ // argument can be other than a Mazub (i.e. Shark, Slime, Plant)
-//		
-//		Set<Orientation> obstacleOrientations = new HashSet<Orientation>();
-//		
-//		for (Entry<VectorInt, Integer> feature: geologicalFeatures.entrySet()){
-//			if (feature.getValue() == 1){
-//				VectorInt featureVector = feature.getKey(); 
-//				
-//				if ( (object.getPositionX() + (object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
-//					 (object.getPositionX() + (object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
-//					 // check right-bottom pixel
-//				    (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
-//					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
-//					 // check right-top pixel
-//					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
-//					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
-//					obstacleOrientations.add(Orientation.RIGHT);
-//					}
-//				
-//				if ( (object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
-//					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1)) &&
-//					 // check left-bottom pixel
-//				   (((object.getPositionY()+1 >= getPositionOfTileY(featureVector.getY())) &&
-//					 (object.getPositionY()+1 <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))) ||
-//					 // check left-top pixel
-//					((object.getPositionY() + (object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
-//					 (object.getPositionY() + (object.getHeight()-1) <= getPositionOfTileY(featureVector.getY()) + (this.tileLength-1))))){
-//					obstacleOrientations.add(Orientation.LEFT);
-//				}
-//				
-//				if ( (object.getPositionY()+(object.getHeight()-1) >= getPositionOfTileY(featureVector.getY())) &&
-//					 (object.getPositionY()+(object.getHeight()-1) <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
-//					 // check left-top pixel
-//				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
-//					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
-//					 // check right-top pixel
-//					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
-//					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
-//					obstacleOrientations.add(Orientation.TOP);
-//				}
-//				
-//				if ( (object.getPositionY() >= getPositionOfTileY(featureVector.getY())) &&
-//					 (object.getPositionY() <= getPositionOfTileY(featureVector.getY())+ (this.tileLength-1)) &&
-//					 // check left-bottom pixel
-//				   (((object.getPositionX() >= getPositionOfTileX(featureVector.getX())) &&
-//					 (object.getPositionX() <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))) ||
-//					 // check right-bottom pixel
-//					((object.getPositionX() +(object.getWidth()-1) >= getPositionOfTileX(featureVector.getX())) &&
-//					 (object.getPositionX() +(object.getWidth()-1) <= getPositionOfTileX(featureVector.getX()) + (this.tileLength-1))))){
-//					obstacleOrientations.add(Orientation.BOTTOM);
-//					}
-//							
-//			}
-//		}
-//		//System.out.println(obstacleOrientations);
-//		
-//		return obstacleOrientations;
-//	}
 	
 	/************************************************* GEOLOGICAL FEATURES *********************************************/	
-	
-	public static Terrain terrainIndexToType(int terrainTypeIndex){ // Slechte naam	
-		switch(terrainTypeIndex){
-			case 0:
-				return Terrain.AIR;
-			case 1:
-				return Terrain.SOLID;
-			case 2:
-				return Terrain.WATER;
-			case 3:
-				return Terrain.MAGMA;
-				
-			default:
-				return Terrain.AIR;
-		}
-	}
 	
 	/**
 	 * Modify the geological type of a specific tile in the this world to a
@@ -399,13 +530,10 @@ public class World {
 	 *         		- the value 3 is returned for a magma tile
 	 */
 	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) throws IllegalStateException{
-		
-		if (this.hasStarted){
+		if (this.hasStarted)
 			throw new IllegalStateException("World already started!");
-		}
 		
-			geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
-		
+		geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
 	}
 	
 	/**
@@ -431,12 +559,9 @@ public class World {
 	 * @throw IllegalArgumentException if the given position does not correspond to the
 	 *        bottom left pixel of a tile.
 	 */
-	public Terrain getGeologicalFeature(int pixelX, int pixelY) {
-		// Checken of gegeven pixel in game-world ligt?
-		
-		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0){
+	public Terrain getGeologicalFeature(int pixelX, int pixelY) throws IllegalArgumentException{
+		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0)
 			throw new IllegalArgumentException("Given position does not correspond to the bottom left pixel of a tile");
-		}
 		
 		if(this.geologicalFeatures.containsKey( new VectorInt(getTileX(pixelX), getTileY(pixelY)))){
 			return this.geologicalFeatures.get( new VectorInt(getTileX(pixelX), getTileY(pixelY)));
@@ -454,22 +579,6 @@ public class World {
 		return this.canAddGameObject() && gameObject != null;
 	}
 	
-//	public boolean canHaveAsMazub(Mazub mazub){
-//		return this.canHaveAsGameObject(mazub);
-//	}
-//	
-//	public boolean canHaveAsShark(Shark shark){
-//		return this.canHaveAsGameObject(shark);
-//	}
-//	
-//	public boolean canHaveAsSlime(Slime slime){
-//		return this.canHaveAsGameObject(slime);
-//	}
-//	
-//	public boolean canHaveAsPlant(Plant plant){
-//		return this.canHaveAsGameObject(plant);
-//	}
-//	
 	public boolean hasProperGameObjects(){
 		if( (this.getNbMazubs() < 1) || (this.getNbGameObjects() - 1 > 100 )){
 			return false;
@@ -483,23 +592,13 @@ public class World {
 		return true;
 	}
 	
-	/**
-	 * Sets the given alien as the player's character in the given world.
-	 * 
-	 * @param world
-	 *            The world for which to set the player's character.
-	 * @param alien
-	 *            The alien to be set as the player's character.
-	 */
-	public Mazub getMazub(){
-		if(this.getNbMazubs() == 1){
-			return this.getAllMazubs().iterator().next();
-		}else{
-			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
-		}
-	}	
 	
-	public void addAsGameObject(GameObject gameObject){
+	public boolean canAddGameObject(){
+		return !this.hasStarted() && !this.isTerminated(); 
+	}
+	
+	@Basic
+	void addAsGameObject(GameObject gameObject){
 		assert canHaveAsGameObject(gameObject);
 		assert gameObject.getWorld() == this;
 		
@@ -513,7 +612,7 @@ public class World {
 			plants.add((Plant) gameObject);
 	}
 	
-	public void removeAsGameObject(GameObject gameObject){
+	void removeAsGameObject(GameObject gameObject){
 		assert gameObject != null && !gameObject.hasWorld();
 		
 		if (gameObject instanceof Mazub){
@@ -533,6 +632,23 @@ public class World {
 	
 	// Getters
 	
+	/**
+	 * Sets the given alien as the player's character in the given world.
+	 * 
+	 * @param world
+	 *            The world for which to set the player's character.
+	 * @param alien
+	 *            The alien to be set as the player's character.
+	 */
+	public Mazub getMazub(){
+		if(this.getNbMazubs() == 1){
+			return this.getAllMazubs().iterator().next();
+		}else{
+			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
+		}
+	}
+	
+	@Basic
 	public Set<Mazub> getAllMazubs(){
 		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(this.mazubs);
 		return mazubsClone;
@@ -553,16 +669,19 @@ public class World {
 		return allEnemies;
 	}
 
+	@Basic
 	public Set<Plant> getAllPlants(){
 		Set<Plant> plantsClone =  new HashSet<Plant>(this.plants);
 		return plantsClone;
 	}
 	
+	@Basic
 	public Set<Shark> getAllSharks(){
 		Set<Shark> sharksClone =  new HashSet<Shark>(this.sharks);
 		return sharksClone;
 	}
 	
+	@Basic
 	public Set<Slime> getAllSlimes(){
 		Set<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
 		return slimesClone;
@@ -570,20 +689,38 @@ public class World {
 	
 	// checkers
 	
+	@Basic
 	public boolean hasAsMazub(Mazub mazub){
 		return this.mazubs.contains(mazub);
 	}
 	
+	@Basic
 	public boolean hasAsPlant(Plant plant){
 		return this.plants.contains(plant);
 	}
 	
+	@Basic
 	public boolean hasAsShark(Shark shark){
 		return this.sharks.contains(shark);
 	}
 	
+	@Basic
 	public boolean hasAsSlime(Slime slime){
 		return this.slimes.contains(slime);
+	}
+	
+	public boolean hasAsGameObject(GameObject gameObject){
+		if (gameObject instanceof Mazub)
+			return hasAsMazub((Mazub) gameObject);
+		else if (gameObject instanceof Shark)
+			return hasAsShark((Shark) gameObject);
+		else if (gameObject instanceof Slime)
+			return hasAsSlime((Slime) gameObject);
+		else if (gameObject instanceof Plant)
+			return hasAsPlant((Plant) gameObject);
+		else 
+			assert(false);
+		return false;
 	}
 	
 	// Count
@@ -592,18 +729,19 @@ public class World {
 		return this.getNbMazubs() + this.getNbPlants() + this.getNbSharks() + this.getNbSlimes();
 	}
 	
+	@Basic
 	public int getNbMazubs(){
 		return this.mazubs.size();
 	}
-	
+	@Basic
 	public int getNbPlants(){
 		return this.plants.size();
 	}	
-		
+	@Basic	
 	public int getNbSharks(){
 		return this.sharks.size();
 	}
-	
+	@Basic
 	public int getNbSlimes(){
 		return this.slimes.size();
 	}
@@ -618,10 +756,10 @@ public class World {
 	
 	// Vars
 	
-	public Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
-	public Set<Plant> plants = new HashSet<Plant>();
-	public Set<Shark> sharks = new HashSet<Shark>();
-	public Set<Slime> slimes = new HashSet<Slime>();
+	private Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	private Set<Plant> plants = new HashSet<Plant>();
+	private Set<Shark> sharks = new HashSet<Shark>();
+	private Set<Slime> slimes = new HashSet<Slime>();
 	
 	/******************************************************* PLAYER ****************************************************/
 
@@ -635,16 +773,14 @@ public class World {
 	
 	/***************************************************** TERMINATION *************************************************/
 	
-	public void terminate(){
+	@Basic
+	private void terminate(){
 		this.terminated = true;
 	}
 	
+	@Basic
 	public boolean isTerminated(){
 		return this.terminated;
-	}
-	
-	public boolean canAddGameObject(){
-		return !this.hasStarted() && !this.isTerminated(); 
 	}
 	
 	private boolean terminated = false;

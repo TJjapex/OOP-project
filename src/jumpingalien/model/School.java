@@ -3,6 +3,8 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.*;
+
 /**
  * A class of Schools, groups of Slimes in the game world of Mazub.
  * 
@@ -57,8 +59,9 @@ public class School {
 	 * 				The slime to check.
 	 * @return	| result == ( this.getAllSlimes().contains(slime) )
 	 */
+	@Basic
 	public boolean hasAsSlime(Slime slime){
-		return this.getAllSlimes().contains(slime);
+		return this.slimes.contains(slime);
 	}
 	
 	/**
@@ -70,7 +73,8 @@ public class School {
 	 * @pre		| slime.getSchool() == this
 	 * @post	| new.hasAsSlime == true
 	 */
-	public void addAsSlime(Slime slime){
+	@Basic
+	void addAsSlime(Slime slime){
 		assert canHaveAsSlime(slime);
 		assert slime.getSchool() == this;
 
@@ -86,7 +90,8 @@ public class School {
 	 * @pre		| hasAsSlime(slime)
 	 * @post	| new.hasAsSlime == false
 	 */
-	public void removeAsSlime(Slime slime){
+	@Basic
+	void removeAsSlime(Slime slime){
 		assert slime != null && !slime.hasSchool();
 		assert this.hasAsSlime(slime);
 		
@@ -126,9 +131,10 @@ public class School {
 	 * @throws	IllegalStateException
 	 * 				| getNbSlimes() > 0
 	 */
-	public void terminate() throws IllegalStateException{
+	void terminate() throws IllegalStateException{
 		if(this.getNbSlimes() > 0)
 			throw new IllegalStateException("School still has slimes!");
+		
 		this.terminated = true;
 	}
 	
@@ -137,6 +143,7 @@ public class School {
 	 * 
 	 * @return	| result == ( this.terminated )
 	 */
+	@Basic
 	public boolean isTerminated(){
 		return this.terminated;
 	}

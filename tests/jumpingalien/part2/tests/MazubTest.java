@@ -14,21 +14,12 @@ import jumpingalien.util.Util;
 
 import org.junit.Test;
 
-public class PartialFacadeTest {
+public class MazubTest {
 
 	public static final int FEATURE_AIR = 0;
 	public static final int FEATURE_SOLID = 1;
 	public static final int FEATURE_WATER = 2;
 	public static final int FEATURE_MAGMA = 3;
-
-	@Test
-	public void testGetBottomLeftPixelOfRandomTile() {
-		IFacadePart2 facade = new Facade();
-
-		World world = facade.createWorld(5, 4, 3, 1, 1, 1, 1);
-		assertArrayEquals(intArray(15, 10),
-				facade.getBottomLeftPixelOfTile(world, 3, 2));
-	}
 
 	@Test
 	public void testZeroAccellerationOnGround() {
@@ -46,19 +37,6 @@ public class PartialFacadeTest {
 
 		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
 				Util.DEFAULT_EPSILON);
-	}
-
-	@Test
-	public void testTilesInRegion() {
-		IFacadePart2 facade = new Facade();
-
-		World world = facade.createWorld(50, 3, 3, 1, 1, 1, 1);
-
-		int[][] actualTiles = facade
-				.getTilePositionsIn(world, 20, 20, 105, 105);
-		int[][] expectedTiles = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 },
-				{ 1, 1 }, { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
-		assertArrayEquals(expectedTiles, actualTiles);
 	}
 
 	@Test
