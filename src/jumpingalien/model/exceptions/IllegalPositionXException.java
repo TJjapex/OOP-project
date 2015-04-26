@@ -19,10 +19,22 @@ public class IllegalPositionXException extends RuntimeException {
 	public IllegalPositionXException(double positionX) {
 		this.positionX = positionX;
 	}
-
+	
+	/**
+	 * Returns the position where this exception related to this exception.
+	 * @return
+	 * 		the position where this exception related to this exception.
+	 */
 	@Basic @Immutable
-	public double getPositionX() {
+	public double getPosition() {
 		return this.positionX;
+	}
+	
+	/**
+	 * Returns the position related to this exception.
+	 */
+	public String getMessage(){
+		return "Invalid x position: " + Double.toString(this.getPosition());
 	}
 
 	/**

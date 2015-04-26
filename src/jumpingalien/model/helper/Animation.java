@@ -2,21 +2,18 @@ package jumpingalien.model.helper;
 
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.model.GameObject;
-import jumpingalien.model.Mazub;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 
 /**
- * An Animation class, implemented with methods to serve as a helper class for the class Mazub.
+ * An Animation class, implemented with methods to serve as a helper class for the class Game object.
  * 
  * @note	For an Animation instance, the sprites can only be set once in the constructor. 
  * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  *
- * @invar	The sprites array of this animation has a length greater than or equal to 10 and is the length an even number
- * 			|	this.getNbSprites() >= 10 && (this.getNbSprites() % 2) == 0;
- * @invar	The number of frames for the walking animation should be greater than or equal to 1.
- * 			| 	this.getNbFrames() > 0
+ * @invar	The sprites array of this animation has a length greater than or equal to 0
+ * 			|	this.getNbSprites() >= 0
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @version 1.0
@@ -29,14 +26,9 @@ public class Animation {
 	 * @param 	sprites
 	 * 				The array of sprite images for the animation.
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
-	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
+	 * 			| (Array.getLength(sprites) >= 0)
 	 * @post	The initial sprites of the animation are equal to the given array sprites.
 	 * 			| this.sprites == sprites
-	 * @post	The initial animation index of the animation is equal to 0.
-	 * 			| new.getAnimationIndex() == 0
-	 * @post	The initial number of frames of the animation is equal to the length of the sprites array
-	 * 			decremented with 8 and afterwards divided by 2.
-	 * 			| new.nbFrames == (this.sprites.length - 8) / 2
 	 * @throws 	IllegalWidthException
 	 * 				The width of at least one sprite in the given array sprites is not a valid width.
 	 * 				| for some sprite in sprites:
@@ -47,12 +39,12 @@ public class Animation {
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
 	public Animation(GameObject gameObject, Sprite[] sprites) throws IllegalWidthException, IllegalHeightException{
-		assert sprites.length >= 0;
+		assert sprites != null && sprites.length >= 0;
 		
 		for (int i = 0; i < sprites.length; i++){
-			if( !Mazub.isValidWidth(sprites[i].getWidth()))
+			if( !GameObject.isValidWidth(sprites[i].getWidth()))
 				throw new IllegalWidthException(sprites[i].getWidth());
-			if ( !Mazub.isValidHeight(sprites[i].getHeight()))
+			if ( !GameObject.isValidHeight(sprites[i].getHeight()))
 				throw new IllegalHeightException(sprites[i].getHeight());
 		}
 		
@@ -61,17 +53,32 @@ public class Animation {
 		this.setSpriteIndex(0);
 	}
 	
+	/**
+	 * Returns the related game object
+	 * 
+	 * @return
+	 * 		The related game object
+	 */
+	@Basic
 	public GameObject getGameObject() {
 		return gameObject;
 	}
-	final GameObject gameObject;
+	
+	private final GameObject gameObject;
 
-	
-	
+	/**
+	 * Returns the current sprite
+	 * 
+	 * @return
+	 * 		The current sprite
+	 */
 	public Sprite getCurrentSprite(){
 		return this.getSpriteAt(this.getSpriteIndex());
 	}	
 	
+	/**
+	 * Updates the current sprite according to the state of the related Game object
+	 */
 	public void updateSpriteIndex(){
 		int currentIndex = this.getSpriteIndex();
 		
@@ -122,12 +129,25 @@ public class Animation {
 	 */
 	private final Sprite[] sprites;	
 	
-	
+	/**
+	 * Returns the current sprite index
+	 * 
+	 * @return
+	 * 		The current sprite index
+	 */
+	@Basic @Raw
 	public int getSpriteIndex() {
-		return spriteIndex;
+		return this.spriteIndex;
 	}
 
-	public void setSpriteIndex(int spriteIndex) {
+	/**
+	 * Sets the current sprite index to the given one
+	 * 
+	 * @param spriteIndex
+	 * 			The given sprite index
+	 */
+	@Basic @Raw
+	protected void setSpriteIndex(int spriteIndex) {
 		this.spriteIndex = spriteIndex;
 	}
 	

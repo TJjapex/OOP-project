@@ -202,12 +202,12 @@ public class TestCase {
 		IFacade facade = new Facade();
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		
-		assertTrue(alien.isValidVelocityX(0));
-		assertTrue(alien.isValidVelocityX(1.0));
-		assertTrue(alien.isValidVelocityX(-1.75));
-		assertTrue(alien.isValidVelocityX(3.0));
-		assertFalse(alien.isValidVelocityX(3.00001));
-		assertFalse(alien.isValidVelocityX(54.54));
+		assertTrue(alien.canHaveAsVelocityX(0));
+		assertTrue(alien.canHaveAsVelocityX(1.0));
+		assertTrue(alien.canHaveAsVelocityX(-1.75));
+		assertTrue(alien.canHaveAsVelocityX(3.0));
+		assertFalse(alien.canHaveAsVelocityX(3.00001));
+		assertFalse(alien.canHaveAsVelocityX(54.54));
 	}
 	
 	/**

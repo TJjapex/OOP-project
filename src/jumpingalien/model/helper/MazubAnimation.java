@@ -53,16 +53,36 @@ public class MazubAnimation extends Animation {
 		this.setAnimationIndex(0);
 	}
 	
+	/**
+	 * Returns the related Mazub game object
+	 * 
+	 * @return
+	 * 		The related Mazub game object
+	 */
+	@Basic
 	public Mazub getGameObject() {
 		return gameObject;
 	}
-	final Mazub gameObject;
+	
+	private final Mazub gameObject;
 	/**
-	 *  Return the correct sprite of the Mazub instance, depending on his current status.
+	 *  Return the correct sprite of the Mazub instance
 	 * 
 	 * @param 	alien
 	 * 				A valid instance of the class Mazub.
-	 * @return	A sprite located at index in sprites that fits the current status of the given Mazub instance.
+	 * @return	A sprite located at inde
+	 */
+	@Override
+	public Sprite getCurrentSprite(){
+		return this.getSpriteAt(this.getSpriteIndex());
+	}
+	
+	/**
+	 *  Updates the sprite index of the Mazub instance, depending on his current status.
+	 * 
+	 * @param 	alien
+	 * 				A valid instance of the class Mazub.
+	 * @return	The sprite index in sprites for the current status of the given Mazub instance.
 	 * 			The index represents a certain status of Mazub:
 	 * 			index = 0: 	Mazub is not moving horizontally, has not moved horizontally within the last 
 	 * 						second of in-game-time and is not ducking.
@@ -82,11 +102,6 @@ public class MazubAnimation extends Animation {
 	 * 						Mazub is neither ducking nor jumping and moving to the left.
 	 * @note	No formal documentation was required for this method.
 	 */
-	@Override
-	public Sprite getCurrentSprite(){
-		return this.getSpriteAt(this.getSpriteIndex());
-	}	
-	
 	@Override
 	public void updateSpriteIndex(){
 		int currentIndex = this.getSpriteIndex();
@@ -157,7 +172,7 @@ public class MazubAnimation extends Animation {
 	 */
 	@Basic @Immutable
 	public int getNbFrames(){
-		return ( this.getNbSprites() - 8) / 2; // TODO die -8 dmv een constante
+		return ( this.getNbSprites() - 8) / 2;
 	}	
 	
 	

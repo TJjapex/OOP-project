@@ -7,6 +7,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
+import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
 import jumpingalien.util.Sprite;
@@ -20,7 +21,7 @@ import org.junit.Test;
 
 public class WorldTest {
 	
-	World world;
+	private World world;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -223,6 +224,19 @@ public class WorldTest {
 				{ 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } };
 		assertArrayEquals(expectedTiles, actualTiles);
 	}	
+	
+	/*************************************** GEOLOGICAL FEATUER *****************************/
+	@Test
+	public void testGeologicalFeature_notSet(){
+		assertEquals(Terrain.AIR, world.getGeologicalFeature(world.getPositionXOfTile(17), world.getPositionYOfTile(15)));
+	}
+	
+	
+	@Test
+	public void testGeologicalFeature(){
+		world.setGeologicalFeature(1, 2, Terrain.SOLID);
+		assertEquals(Terrain.SOLID, world.getGeologicalFeature(world.getPositionXOfTile(1), world.getPositionYOfTile(2)));
+	}
 	
 
 }

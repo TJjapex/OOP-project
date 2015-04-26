@@ -44,6 +44,8 @@ import be.kuleuven.cs.som.annotate.*;
  * 			|	isValidOrientation( this.getOrientation() )
  * @invar	The current number of this Game object's hit points is valid.
  * 			|	isValidNbHitPoints( this.getNbHitPoints() )
+ * @invar	The game object does not collide
+ * 			| 	!doesCollide()
  * 
  * @version 1.0
  */
@@ -74,6 +76,8 @@ public abstract class GameObject {
 	/**
 	 * Constructor for the superclass Game object.
 	 * 
+	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
+	 * 			| (Array.getLength(sprites) >= 0)
 	 * @param 	pixelLeftX
 	 * 				The x-location of a Game object's bottom left pixel.
 	 * @param 	pixelBottomY
@@ -116,10 +120,10 @@ public abstract class GameObject {
 	 * 			| setNbHitPoints(nbHitPoints)
 	 * @throws	IllegalPositionXException
 	 * 				The X position of a Game object is not a valid X position.
-	 * 				| ! isValidPositionX(positionX)
+	 * 				| ! canHaveAsPositionX(positionX)
 	 * @throws	IllegalPositionYException
 	 * 				The Y position of a Game object is not a valid Y position.
-	 * 				| ! isValidPositionY(positionY)
+	 * 				| ! canHaveAsPositionY(positionY)
 	 * @throws	IllegalWidthException
 	 * 				The width of at least one sprite in the given array sprites is not a valid width.
 	 * 				| for some sprite in sprites:
@@ -133,10 +137,15 @@ public abstract class GameObject {
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
 					  int maxNbHitPoints)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
+		assert sprites != null && sprites.length >= 0;
 		
 		this.setTimer(new Timer());	
 		this.setAnimation(new Animation(this, sprites));
-		
+
+		if(!canHaveAsPositionX(pixelLeftX))
+			throw new IllegalPositionXException(pixelLeftX);
+		if(!canHaveAsPositionY(pixelBottomY))
+			throw new IllegalPositionYException(pixelBottomY);
 		this.positionX = pixelLeftX;
 		this.positionY = pixelBottomY;
 
@@ -397,11 +406,11 @@ public abstract class GameObject {
 	/**
 	 * Check whether this Game object is related to a proper Game world.
 	 * 
-	 * @return 	True if and only if this game object has a world.
-	 * 			| result == ( this.hasWorld() )
+	 * @return 	True if and only if this game object has a world and the world has this object as Game object
+	 * 			| result == ( this.hasWorld() )  && this.getWorld().hasAsGameObject(this)
 	 */
 	public boolean hasProperWorld(){
-		return this.hasWorld();
+		return this.hasWorld() && this.getWorld().hasAsGameObject(this);
 	}
 	
 	/**
@@ -448,6 +457,7 @@ public abstract class GameObject {
 		
 		this.setWorld(world);
 		world.addAsGameObject(this);
+		
 	}
 	
 	/**
@@ -533,7 +543,18 @@ public abstract class GameObject {
 	/*************************************************** CHARACTERISTICS ***********************************************/
 	
 	/* Horizontal position */
-	
+
+	/**
+	 * Return the x-location of a Game object's bottom left pixel.
+	 * 
+	 * @return	A double that represents the x-coordinate of a Game object's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic
+	public double getPositionX() {
+		return this.positionX;
+	}
+
 	/**
 	 * Return the rounded down x-location of a Game object's bottom left pixel.
 	 * 
@@ -553,23 +574,13 @@ public abstract class GameObject {
 	 * @return	True if and only if the given X position is not negative and if the Game object has
 	 * 			a proper World, the given X position should be smaller than the width of that World.
 	 * 			| result == ( positionX >= 0 && 
-	 * 			|			  (!hasProperWorld() || positionX < this.getWorld().getWorldWidth()) )
+	 * 			|			  (!hasProperWorld() || positionX + this.getWidth() < this.getWorld().getWorldWidth()) )
 	 */
+	@Raw
 	public boolean canHaveAsPositionX(int positionX){
-		return positionX >= 0 && (!hasProperWorld() || positionX < this.getWorld().getWorldWidth());
+		return positionX >= 0 && (!hasProperWorld() || positionX + this.getWidth() <= this.getWorld().getWorldWidth());
 	}
-
-	/**
-	 * Return the x-location of a Game object's bottom left pixel.
-	 * 
-	 * @return	A double that represents the x-coordinate of a Game object's
-	 * 			bottom left pixel in the world.
-	 */
-	@Basic
-	public double getPositionX() {
-		return this.positionX;
-	}
-
+	
 	/**
 	 * Check whether a Game object can have the given X position as his horizontal position.
 	 * 
@@ -579,6 +590,7 @@ public abstract class GameObject {
 	 * 			as his horizontal position.
 	 * 			| result == ( canHaveAsPositionX((int) Math.floor(positionX)) )
 	 */
+	@Raw
 	public boolean canHaveAsPositionX(double positionX) {
 		return this.canHaveAsPositionX((int) Math.floor(positionX));
 	}
@@ -594,7 +606,7 @@ public abstract class GameObject {
 	 * 			| processOverlap()
 	 * @post	The X position of a Game object is equal to positionX if the Game object doesn't collide
 	 *  		after the change.
-	 * 			| if (! this.doesCollide() )
+	 * 			| if (! new.doesCollide() )
 	 * 			| 	then new.getPositionX() == positionX
 	 * @throws	IllegalPositionXException
 	 * 				The Game object can't have the given position as his horizontal position.
@@ -607,7 +619,6 @@ public abstract class GameObject {
 	 * 				| doesCollide()
 	 */
 	@Basic
-	@Raw
 	protected void setPositionX(double positionX) 
 					throws IllegalStateException, IllegalPositionXException, CollisionException {
 		
@@ -635,6 +646,17 @@ public abstract class GameObject {
 	/* Vertical position*/
 	
 	/**
+	 * Return the y-location of a Game object's bottom left pixel.
+	 * 
+	 * @return	A double that represents the y-coordinate of a Game object's
+	 * 			bottom left pixel in the world.
+	 */
+	@Basic @Raw
+	public double getPositionY() {
+		return this.positionY;
+	}
+	
+	/**
 	 * Return the rounded down y-location of a Game object's bottom left pixel.
 	 * 
 	 * @return 	An integer that represents the y-coordinate of a Game object's
@@ -652,22 +674,12 @@ public abstract class GameObject {
 	 * 				An integer that represents the vertical position to check.
 	 * @return	True if and only if the given Y position is not negative and if the Game object has
 	 * 			a proper World, the given Y position should be smaller than the height of that World.
-	 * 			| result == ( positionX >= 0 && 
-	 * 			|			  (!hasProperWorld() || positionX < this.getWorld().getWorldWidth()) )
+	 * 			| result == ( positionY >= 0 && 
+	 * 			|			  (!hasProperWorld() || positionY + this.getHeight() < this.getWorld().getWorldHeight()) )
 	 */
+	@Raw
 	public boolean canHaveAsPositionY(int positionY){
-		return positionY >= 0 && (!hasProperWorld() || positionY < this.getWorld().getWorldHeight());
-	}
-	
-	/**
-	 * Return the y-location of a Game object's bottom left pixel.
-	 * 
-	 * @return	A double that represents the y-coordinate of a Game object's
-	 * 			bottom left pixel in the world.
-	 */
-	@Basic
-	public double getPositionY() {
-		return this.positionY;
+		return positionY >= 0 && (!hasProperWorld() || positionY + this.getHeight() <= this.getWorld().getWorldHeight());
 	}
 	
 	/**
@@ -679,6 +691,7 @@ public abstract class GameObject {
 	 * 			as his vertical position.
 	 * 			| result == ( canHaveAsPositionY((int) Math.floor(positionY)) )
 	 */
+	@Raw
 	public boolean canHaveAsPositionY(double positionY) {
 		return canHaveAsPositionY((int) Math.floor(positionY));
 	}
@@ -692,7 +705,7 @@ public abstract class GameObject {
 	 * 			| getAnimation().updateSpriteIndex()
 	 * @post	The Y position of a Game object is equal to positionY if the Game object doesn't collide
 	 *  		after the change.
-	 * 			| if (! this.doesCollide() )  TODO eigenlijk klopt dit niet exact want da checkt da nog met de oude positie, dus moet dat er toch bij met die oldPosition enzo?
+	 * 			| if (! new.doesCollide() )
 	 * 			| 	then new.getPositionY() == positionY
 	 * @effect	Process the overlap of the Game object.
 	 * 			| processOverlap()
@@ -707,7 +720,6 @@ public abstract class GameObject {
 	 * 				| doesCollide()
 	 */
 	@Basic
-	@Raw
 	protected void setPositionY(double positionY) 
 			throws IllegalPositionYException, IllegalStateException, CollisionException {
 		
@@ -739,8 +751,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the horizontal velocity of a Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	public double getVelocityX() {
 		return this.velocityX;
 	}
@@ -754,7 +765,8 @@ public abstract class GameObject {
 	 *  		the maximal horizontal velocity.
 	 * 			| result == ( Math.abs(velocityX) <= this.getVelocityXMax() )
 	 */
-	public boolean isValidVelocityX(double velocityX) {
+	@Raw
+	public boolean canHaveAsVelocityX(double velocityX) {
 		return Math.abs(velocityX) <= this.getVelocityXMax();
 	}
 
@@ -825,6 +837,7 @@ public abstract class GameObject {
 	 * Return the magnitude of the velocity of this Game object.
 	 * @return	The magnitude of the velocity of this Game object.
 	 */
+	@Raw
 	protected double getVelocityMagnitude(){
 		return Math.sqrt( Math.pow(this.getVelocityX(), 2) + Math.sqrt( Math.pow(this.getVelocityY(), 2)));
 	}
@@ -837,7 +850,7 @@ public abstract class GameObject {
 	 *  
 	 * @return	A double that represents the initial horizontal velocity of a Game object.
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public double getVelocityXInit() {
 		return this.velocityXInit;
 	}
@@ -853,7 +866,7 @@ public abstract class GameObject {
 	 *  
 	 * @return	A double that represents the initial vertical velocity of a Game object.
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public double getVelocityYInit(){
 		return this.velocityYInit;
 	}
@@ -870,8 +883,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the maximal horizontal velocity of a Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	public double getVelocityXMax() {
 		return this.velocityXMax;
 	}
@@ -888,8 +900,7 @@ public abstract class GameObject {
 	 * 			| else
 	 * 			|	new.getVelocityXMax() == this.getVelocityXInit()
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	protected void setVelocityXMax(double velocityXMax) {
 		this.velocityXMax = Math.max( this.getVelocityXInit() , velocityXMax );
 	}
@@ -903,6 +914,7 @@ public abstract class GameObject {
 	 * 			velocity of a Game object.
 	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
 	 */
+	@Raw
 	public boolean canHaveAsVelocityXMax(double velocityXMax) {
 		return  velocityXMax >= this.getVelocityXInit();
 	}
@@ -919,8 +931,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the horizontal acceleration of a Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	public double getAccelerationX() {
 		return this.accelerationX;
 	}
@@ -937,8 +948,7 @@ public abstract class GameObject {
 	 * 			| else
 	 * 			| 	new.getAccelerationX() == accelerationX
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	protected void setAccelerationX(double accelerationX) {
 		if (Double.isNaN(accelerationX)){
 			this.accelerationX = 0;
@@ -958,9 +968,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	If the Game object is on the ground, return 0. Else return ACCELERATION_Y.
 	 */
-	@Basic
-	@Raw
-	@Immutable
+	@Basic @Raw @Immutable
 	public double getAccelerationY() {
 		if(this.isOnGround()){
 			return 0;
@@ -976,6 +984,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	The magnitude of the acceleration of this Game object.
 	 */
+	@Raw
 	protected double getAccelerationMagnitude(){
 		 return Math.sqrt( Math.pow(this.getAccelerationX(), 2) + Math.sqrt( Math.pow(this.getAccelerationY(), 2)));
 	}
@@ -987,8 +996,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the initial horizontal acceleration of this Game object.
 	 */
-	@Basic
-	@Immutable
+	@Basic @Raw @Immutable
 	public double getAccelerationXInit() {
 		return this.accelerationXInit;
 	}
@@ -1005,8 +1013,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	An orientation that represents the current orientation of the Game object.
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	public Orientation getOrientation() {
 		return this.orientation;
 	}
@@ -1019,9 +1026,7 @@ public abstract class GameObject {
 	 * @post	The orientation of the Game object is equal to the given orientation.
 	 * 			| new.getOrientation() == orientation
 	 */
-	@Basic
-	@Raw
-	@Model
+	@Basic @Raw @Model
 	protected void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
@@ -1831,6 +1836,8 @@ public abstract class GameObject {
 	/**
 	 * Checks if this object interacts with any other impassable game object, in the given direction.
 	 * 
+	 * @pre		The game object must be in a proper world
+	 * 			| hasProperWorld()
 	 * @return	True if and only if this object collides with impassable terrain.
 	 */
 	public boolean doesInteractWithTerrain(TerrainInteraction interaction, Orientation orientation){

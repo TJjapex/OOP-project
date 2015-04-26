@@ -28,8 +28,15 @@ public class IllegalPositionYException extends RuntimeException {
 	 * 
 	 */
 	@Basic @Immutable
-	public double getPositionY() {
+	public double getPosition() {
 		return this.positionY;
+	}
+	
+	/**
+	 * Returns the position related to this exception.
+	 */
+	public String getMessage(){
+		return "Invalid y position: " + Double.toString(this.getPosition());
 	}
 
 	/**

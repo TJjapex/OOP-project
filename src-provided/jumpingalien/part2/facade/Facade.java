@@ -43,7 +43,7 @@ public class Facade implements IFacadePart2 {
 		try{
 			return new Mazub(pixelLeftX, pixelBottomY, sprites);
 		}catch( IllegalPositionXException | IllegalPositionYException exc){
-			throw new ModelException("Invalid position given.");
+			throw new ModelException( exc.getMessage() );
 		}catch( IllegalWidthException | IllegalHeightException exc){
 			throw new ModelException("Invalid sprite size given.");
 		}
@@ -307,7 +307,14 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void setGeologicalFeature(World world, int tileX, int tileY, int terrainTypeId) {
-		world.setGeologicalFeature(tileX, tileY,  Terrain.idToType(terrainTypeId));		
+		try{
+			world.setGeologicalFeature(tileX, tileY,  Terrain.idToType(terrainTypeId));
+		}catch(IllegalPositionXException  | IllegalPositionYException exc){
+			throw new ModelException(exc.getMessage());
+		}catch(IllegalStateException exc){
+			throw new ModelException("Invalid state exception!");
+		}
+				
 	}
 
 	@Override

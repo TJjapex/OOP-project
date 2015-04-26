@@ -10,6 +10,8 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 import jumpingalien.model.terrain.Terrain;
+import jumpingalien.model.exceptions.IllegalPositionXException;
+import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.helper.VectorInt;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Util;
@@ -38,7 +40,7 @@ public class World {
 	 * @return
 	 * 		|	this.hasStarted
 	 */
-	@Basic
+	@Basic @Raw
 	private boolean hasStarted(){
 		return this.hasStarted;
 	}
@@ -48,7 +50,7 @@ public class World {
 	 * @post	Sets hasStarted to true.
 	 * 			| new.hasStarted() == true
 	 */
-	@Basic
+	@Basic @Raw
 	public void start(){
 		this.hasStarted = true;
 	}
@@ -77,6 +79,7 @@ public class World {
 	 * @param targetTileY
 	 * 			The Vertical tile-coordinate of the target tile.
 	 */
+	@Raw
 	public World(int tileSize, int nbTilesX, int nbTilesY, int visibleWindowWidth, 
 			int visibleWindowHeight, int targetTileX, int targetTileY) {
 		
@@ -109,7 +112,8 @@ public class World {
 	 * 
 	 * @return	The width of this world
 	 * 			| result ==  ( this.getNbTilesX()) * getTileLength();
-	 */
+	 */ 
+	@Raw
 	public int getWorldWidth() {
 		return ( this.getNbTilesX()) * getTileLength();
 	}
@@ -120,6 +124,7 @@ public class World {
 	 * @return	The height of this world
 	 * 			| result ==  ( this.getNbTilesY()) * getTileLength();
 	 */
+	@Raw
 	public int getWorldHeight() {
 		return ( this.getNbTilesY()) * getTileLength();
 	}
@@ -134,7 +139,7 @@ public class World {
 	 * @return	The width of the visible game window.
 	 * 			| result ==  displayWidth;
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public int getDisplayWidth() {
 		return displayWidth;
 	}
@@ -147,6 +152,7 @@ public class World {
 	 * @return
 	 *			| displayWidth <= this.getWorldWidth() && displayWidth > 0;
 	 */
+	@Raw
 	public boolean canHaveAsDisplayWidth(int displayWidth){
 		return displayWidth <= this.getWorldWidth() && displayWidth > 0;
 	}
@@ -159,7 +165,7 @@ public class World {
 	 * @return	The height of the visible game window.
 	 * 			| result ==  displayHeight;
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public int getDisplayHeight() {
 		return displayHeight;
 	}
@@ -172,6 +178,7 @@ public class World {
 	 * @return
 	 *			| displayHeight <= this.getWorldHeight() && displayHeight > 0;
 	 */
+	@Raw
 	public boolean canHaveAsDisplayHeight(int displayHeight){
 		return displayHeight <= this.getWorldHeight() && displayHeight > 0;
 	}
@@ -200,7 +207,7 @@ public class World {
 	 * @return
 	 * 			| result == this.displayPositionX
 	 */
-	@Basic
+	@Basic @Raw
 	public int getDisplayPositionX(){
 		return this.displayPositionX;
 	}
@@ -212,7 +219,7 @@ public class World {
 	 * @post
 	 * 			| new.getDisplayPositionX() == displayPositionX
 	 */
-	@Basic
+	@Basic @Raw
 	private void setDisplayPositionX(int displayPositionX) {
 		assert canHaveAsDisplayPositionX(displayPositionX);
 		
@@ -227,6 +234,7 @@ public class World {
 	 * @return
 	 * 			| result == (displayPositionX >= 0 && displayPositionX + this.getDisplayWidth() <= this.getWorldWidth())
 	 */
+	@Raw
 	public boolean canHaveAsDisplayPositionX(int displayPositionX){
 		return displayPositionX >= 0 && displayPositionX + this.getDisplayWidth() <= this.getWorldWidth(); 
 	}
@@ -264,7 +272,7 @@ public class World {
 	 * @return
 	 * 			| result == this.displayPositionY
 	 */
-	@Basic
+	@Basic @Raw
 	public int getDisplayPositionY(){
 		return this.displayPositionY;
 	}
@@ -276,7 +284,7 @@ public class World {
 	 * @post
 	 * 			| new.getDisplayPositionY() == displayPositionY
 	 */
-	@Basic
+	@Basic @Raw
 	private void setDisplayPositionY(int displayPositionY) {
 		assert canHaveAsDisplayPositionY(displayPositionY);
 		
@@ -291,6 +299,7 @@ public class World {
 	 * @return
 	 * 			| result == (displayPositionY >= 0 && displayPositionY + this.getDisplayHeight() <= this.getWorldHeight())
 	 */
+	@Raw
 	private boolean canHaveAsDisplayPositionY(int displayPositionY){
 		return displayPositionY >= 0 && displayPositionY + this.getDisplayHeight() <= this.getWorldHeight(); 
 	}
@@ -329,10 +338,9 @@ public class World {
 	 * 		The number of horizontal tiles of the game world
 	 * 		| this.getWorldWidth() / this.getTileLength();
 	 */
-	@Basic
-	@Immutable
+	@Basic @Immutable @Raw
 	public int getNbTilesX() {
-		return nbTilesX;
+		return this.nbTilesX;
 	}
 	
 	private final int nbTilesX ;
@@ -344,34 +352,33 @@ public class World {
 	 * 		The number of vertical tiles of the game world
 	 * 		| this.getWorldHeight() / this.getTileLength();
 	 */
-	@Basic
-	@Immutable
+	@Basic @Immutable @Raw
 	public int getNbTilesY(){
-		return nbTilesY;
+		return this.nbTilesY;
 	}
 	
 	private final int nbTilesY;
 		
 	/* Target tile */
 	
-	@Basic
-	@Immutable
+	@Basic @Immutable @Raw
 	public int getTargetTileX() {
-		return targetTileX;
+		return this.targetTileX;
 	}
 	
+	@Raw
 	public boolean canHaveAsTargetTileX(int targetTileX){
 		return targetTileX > 0 && targetTileX < this.getWorldWidth();
 	}	
 	
 	private final int targetTileX;
 	
-	@Basic
-	@Immutable
+	@Basic  @Immutable @Raw
 	public int getTargetTileY() {
-		return targetTileY;
+		return this.targetTileY;
 	}
 	
+	@Raw
 	public boolean canHaveAsTargetTileY(int targetTileY){
 		return targetTileY > 0 && targetTileY < this.getWorldHeight();
 	}	
@@ -409,6 +416,19 @@ public class World {
 	}
 
 	/**
+	 * Checks whether the given horizontal position between in the game world boundaries.
+	 * 
+	 * @param positionX
+	 * 			The horizontal position that needs to be checked
+	 * @return
+	 * 			| positionX >= 0 && positionX < this.getWorldWidth()
+	 */
+	@Raw
+	public boolean canHaveAsPositionX(int positionX){
+		return positionX >= 0 && positionX < this.getWorldWidth();
+	}
+	
+	/**
 	 * Returns the horizontal position in pixels for a given y position of a tile.
 	 * @param tileY
 	 * @return
@@ -419,6 +439,19 @@ public class World {
 	}	
 	
 	/**
+	 * Checks whether the given vertical position between in the game world boundaries.
+	 * 
+	 * @param positionY
+	 * 			The vertical position that needs to be checked
+	 * @return
+	 * 			| positionY >= 0 && positionY < this.getWorldHeight()
+	 */
+	@Raw
+	public boolean canHaveAsPositionY(int positionY){
+		return positionY >= 0 && positionY < this.getWorldHeight();
+	}
+	
+	/**
 	 * Returns the horizontal tile position for a given horizontal pixel position.
 	 *
 	 * @param positionX
@@ -426,8 +459,9 @@ public class World {
 	 * @return
 	 * 			The horizontal tile position for the given horizontal pixel position
 	 */
+	@Raw
 	public int getTileX(int positionX){
-		return (int) Math.floor( positionX / getTileLength());
+		return (int) Math.floor( positionX / this.getTileLength());
 	}
 	
 	/**
@@ -438,8 +472,9 @@ public class World {
 	 * @return
 	 * 			The vertical tile position for the given vertical pixel position
 	 */
+	@Raw
 	public int getTileY(int positionY){
-		return (int) Math.floor( positionY / getTileLength());
+		return (int) Math.floor( positionY / this.getTileLength());
 	}
 	
 	/**
@@ -463,6 +498,7 @@ public class World {
 	 *         small to large x_T) precede the positions of the row above that.
 	 * 
 	 */	
+	@Raw
 	public int[][] getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop) {
 
 		ArrayList<int[]> positions = new ArrayList<int[]>(); 
@@ -528,10 +564,27 @@ public class World {
 	 *         		- the value 1 is returned for a solid ground tile
 	 *         		- the value 2 is returned for a water tile
 	 *         		- the value 3 is returned for a magma tile
+	 *         
+	 * @throws IllegalStateException
+	 * 				If world has already started
+	 * 				| this.hasStarted()
+	 * @throws IllegalPositionXException
+	 * 				If horizontal position is not valid
+	 * 				| !canHaveAsPositionX(getPositionXOfTile(tileX))
+	 * @throws IllegalPositionYException
+	 * 				If vertical position is not valid
+	 * 				| !canHaveAsPositionY(getPositionYOfTile(tileY))
 	 */
-	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) throws IllegalStateException{
-		if (this.hasStarted)
+	public void setGeologicalFeature(int tileX, int tileY, Terrain terrainType) 
+			throws IllegalStateException, IllegalPositionXException, IllegalPositionYException{
+		
+		if (this.hasStarted())
 			throw new IllegalStateException("World already started!");
+		if (!canHaveAsPositionX(getPositionXOfTile(tileX)))
+			throw new IllegalPositionXException(getPositionXOfTile(tileX));
+		if (!canHaveAsPositionY(getPositionYOfTile(tileY)))
+			throw new IllegalPositionYException(getPositionYOfTile(tileY));
+		
 		
 		geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
 	}
@@ -575,10 +628,32 @@ public class World {
 	
 	/**************************************************** GAME OBJECTS *************************************************/
 	
+	/**
+	 * Checks whether this world is in the right state to add a Game object. 
+	 * The world may not be started or termintated.
+	 * 
+	 * @return
+	 * 		result ==  !this.hasStarted() && !this.isTerminated(); 
+	 */
+	@Raw
+	public boolean canAddGameObject(){
+		return !this.hasStarted() && !this.isTerminated(); 
+	}
+	
+	/**
+	 * Checks whether this world can have the given Game object as Game Object
+	 * 
+	 * @param gameObject
+	 * 			The game object that needs to be checked
+	 * @return
+	 * 			| result == this.canAddGameObject() && gameObject != null; 
+	 */
+	@Raw
 	public boolean canHaveAsGameObject(GameObject gameObject){
 		return this.canAddGameObject() && gameObject != null;
 	}
 	
+	@Raw
 	public boolean hasProperGameObjects(){
 		if( (this.getNbMazubs() < 1) || (this.getNbGameObjects() - 1 > 100 )){
 			return false;
@@ -592,14 +667,10 @@ public class World {
 		return true;
 	}
 	
-	
-	public boolean canAddGameObject(){
-		return !this.hasStarted() && !this.isTerminated(); 
-	}
-	
 	@Basic
-	void addAsGameObject(GameObject gameObject){
-		assert canHaveAsGameObject(gameObject);
+	void addAsGameObject(GameObject gameObject) throws IllegalArgumentException{
+		if(!canHaveAsGameObject(gameObject))
+			throw new IllegalArgumentException("World can not have this game object!");
 		assert gameObject.getWorld() == this;
 		
 		if (gameObject instanceof Mazub)
@@ -689,27 +760,45 @@ public class World {
 	
 	// checkers
 	
-	@Basic
-	public boolean hasAsMazub(Mazub mazub){
+	@Basic @Raw
+	public boolean hasAsMazub(@Raw Mazub mazub){
 		return this.mazubs.contains(mazub);
 	}
 	
-	@Basic
-	public boolean hasAsPlant(Plant plant){
+	@Basic @Raw
+	public boolean hasAsPlant(@Raw Plant plant){
 		return this.plants.contains(plant);
 	}
 	
-	@Basic
-	public boolean hasAsShark(Shark shark){
+	@Basic @Raw
+	public boolean hasAsShark(@Raw Shark shark){
 		return this.sharks.contains(shark);
 	}
 	
-	@Basic
-	public boolean hasAsSlime(Slime slime){
+	@Basic @Raw
+	public boolean hasAsSlime(@Raw Slime slime){
 		return this.slimes.contains(slime);
 	}
 	
-	public boolean hasAsGameObject(GameObject gameObject){
+	/**
+	 * Checks whether this world has the given game object as object.
+	 * 
+	 * @pre		The given game object must be an instance of Mazub, Shark, Slime or Plant.
+	 * 			| gameObject instanceof Mazub || gameObject instanceof Shark || gameObject instanceof Slime || gameObject instanceof Plant 
+	 * @param gameObject 
+	 * 			The game object to check
+	 * @return
+	 * 		if (gameObject instanceof Mazub)
+	 *			return hasAsMazub((Mazub) gameObject);
+	 *		else if (gameObject instanceof Shark)
+	 *			return hasAsShark((Shark) gameObject);
+	 *		else if (gameObject instanceof Slime)
+	 *			return hasAsSlime((Slime) gameObject);
+	 *		else if (gameObject instanceof Plant)
+	 *			return hasAsPlant((Plant) gameObject);
+	 */
+	@Raw
+	public boolean hasAsGameObject(@Raw GameObject gameObject){
 		if (gameObject instanceof Mazub)
 			return hasAsMazub((Mazub) gameObject);
 		else if (gameObject instanceof Shark)
@@ -756,28 +845,53 @@ public class World {
 	
 	// Vars
 	
-	private Set<Mazub> mazubs = new HashSet<Mazub>(); // Geen idee of hashset hier wel het juiste type voor is...
+	private Set<Mazub> mazubs = new HashSet<Mazub>();
 	private Set<Plant> plants = new HashSet<Plant>();
 	private Set<Shark> sharks = new HashSet<Shark>();
 	private Set<Slime> slimes = new HashSet<Slime>();
 	
 	/******************************************************* PLAYER ****************************************************/
-
+	
+	/**
+	 * Checks if the game is over.
+	 * 
+	 * @return | (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() )
+	 * 			
+	 */
+	@Raw
 	public boolean isGameOver() {
 		return (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() );
 	}
-
+	
+	/**
+	 * Checks if the Mazub related to this world has won.
+	 * 
+	 * @return | this.getMazub().isOnTargetTile()
+	 * 			
+	 */
+	@Raw
 	public boolean didPlayerWin() {	
 		return this.getMazub().isOnTargetTile();	
 	}
 	
 	/***************************************************** TERMINATION *************************************************/
 	
+	/**
+	 * Terminated this world.
+	 * 
+	 * @post
+	 * 		| new.isTerminated() == true
+	 */
 	@Basic
 	private void terminate(){
 		this.terminated = true;
 	}
 	
+	/**
+	 * Checks if this world is terminated.
+	 * @return
+	 * 		| result == this.terminated
+	 */
 	@Basic
 	public boolean isTerminated(){
 		return this.terminated;
