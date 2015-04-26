@@ -7,6 +7,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
+import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
@@ -57,6 +58,14 @@ public class WorldTest {
 		assertEquals(150, world.getDisplayHeight());
 		assertEquals(4, world.getTargetTileX());
 		assertEquals(1, world.getTargetTileY());
+	}
+	
+	/****************************************************** GENERAL ********************************************************/
+	@Test
+	public void testWorldDimensions(){
+		assertEquals(50, world.getTileLength());
+		assertEquals(50*20, world.getWorldWidth());
+		assertEquals(50*15, world.getWorldHeight());
 	}
 	
 	
@@ -236,6 +245,11 @@ public class WorldTest {
 	public void testGeologicalFeature(){
 		world.setGeologicalFeature(1, 2, Terrain.SOLID);
 		assertEquals(Terrain.SOLID, world.getGeologicalFeature(world.getPositionXOfTile(1), world.getPositionYOfTile(2)));
+	}
+	
+	@Test(expected=IllegalPositionXException.class)
+	public void testGeologicalFeature_illegalPositionX(){
+		world.setGeologicalFeature(-1, 2, Terrain.SOLID);
 	}
 	
 

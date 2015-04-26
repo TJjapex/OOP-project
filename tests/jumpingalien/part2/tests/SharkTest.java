@@ -55,9 +55,9 @@ public class SharkTest {
 	
 	@Test
 	public void testConstructor(){
-		assertEquals(shark.getRoundedPositionX(), 10);
-		assertEquals(shark.getRoundedPositionY(), 12);
-		assertEquals(shark.getCurrentSprite(), sprites[0]);
+		assertEquals(10, shark.getRoundedPositionX());
+		assertEquals(12, shark.getRoundedPositionY());
+		assertEquals(sprites[0], shark.getCurrentSprite());
 	}
 	
 	/* General */
@@ -70,29 +70,34 @@ public class SharkTest {
 	
 	/* Test death */
 	
+	
+	/** Shark will fall until it is out of gameWorld, then it will be killed and after 0.6s it should be terminated */
 	@Test
 	public void deathOutOfGameWorld(){
 		
+		/* calculations -12 = -10/2 * t**2 -> t = 0.155 */
+		shark.advanceTime(0.17);
+		assertTrue(shark.getRoundedPositionY() == 0);
+		assertTrue(shark.isKilled());
+		assertFalse(shark.isTerminated());
 		shark.advanceTime(0.2);
 		shark.advanceTime(0.2);
 		shark.advanceTime(0.2);
-		shark.advanceTime(0.2);
-		System.out.println(shark.getRoundedPositionY());
+		assertTrue(shark.isTerminated());
 	}
 	
-	
-//	@Test
-	
-//	public void testTerminteWhenTerminatedWithinTheBounds(){
-//		assertTrue(shark.isAlive());
-//		shark.addHP(-100);
-//		//Terminates when HP goes below 0 HP
-//		assertTrue(shark.getHP() == 0);
-//		assertTrue(shark.isDying());
-//		for (int i=0; i<5; i += 1){
-//			shark.advanceTime(0.199);
-//		}
-//		assertTrue(shark.isDead());
-//		assertTrue(shark.getWorld() == null);		
-//	}
+	/** Tests if terminating after 0.6s works */
+	@Test
+	public void testTerminate(){
+		Shark deadShark = new Shark(12, 12, 0.0, 0.0, 4.0, 1.5, sprites, 0, 100);
+		deadShark.setWorldTo(world);
+		assertTrue(deadShark.isKilled());
+		
+		for (int i=0; i<3; i += 1){
+			deadShark.advanceTime(0.2);
+		}
+		deadShark.advanceTime(0.1);
+		assertTrue(deadShark.isTerminated());
+		assertFalse(deadShark.hasWorld());		
+	}
 }
