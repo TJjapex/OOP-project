@@ -111,6 +111,7 @@ public class Slime extends GameObject {
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
+	@Raw
 	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 		  		 double velocityXMax, double accelerationXInit, Sprite[] sprites, School school,
 		  		 int nbHitPoints, int maxNbHitPoints)
@@ -152,6 +153,7 @@ public class Slime extends GameObject {
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
+	@Raw
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
 		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100, 100);
@@ -213,7 +215,7 @@ public class Slime extends GameObject {
 	 * 
 	 * @post	| new.getWorld().hasAsGameObject(this) == true
 	 */
-	@Override
+	@Override @Raw
 	protected void addToWorld(){
 		this.getWorld().slimes.add(this);
 	}
@@ -227,7 +229,7 @@ public class Slime extends GameObject {
 	 * @pre		| world.hasAsGameObject(this)
 	 * @post	| world.hasAsGameObject(this) == false
 	 */
-	@Override
+	@Override @Raw
 	protected void removeFromWorld(World world){
 		assert this != null && !this.hasWorld();
 		assert world.hasAsGameObject(this);
@@ -287,6 +289,7 @@ public class Slime extends GameObject {
 	 * 
 	 * @return 	result == ( this.isTerminated() || this.hasSchool() )
 	 */
+	@Raw
 	public boolean hasProperSchool(){
 		return this.isTerminated() || this.hasSchool();
 	}
@@ -296,6 +299,7 @@ public class Slime extends GameObject {
 	 * 
 	 * @return 	result == ( this.getSchool() != null )
 	 */
+	@Raw
 	public boolean hasSchool(){
 		return this.getSchool() != null;
 	}
@@ -356,6 +360,7 @@ public class Slime extends GameObject {
 	 * 				The School to check.
 	 * @return 	result == ( ! this.hasSchool() ) && ( ! this.isTerminated() ) 
 	 */
+	@Raw
 	public boolean canHaveAsSchool(School school){
 		return !this.hasSchool() && !this.isTerminated();
 	}	

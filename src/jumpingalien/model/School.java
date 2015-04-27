@@ -45,6 +45,7 @@ public class School {
 	 * @return	| result == ( ! ( for some slime in this.getAllSlimes()
 	 * 								slime.getSchool != this				) )
 	 */
+	@Raw
 	public boolean hasProperSlimes(){
 		for(Slime slime: this.getAllSlimes()){
 			if(slime.getSchool() != this)
@@ -60,7 +61,7 @@ public class School {
 	 * 				The slime to check.
 	 * @return	| result == ( this.getAllSlimes().contains(slime) )
 	 */
-	@Basic
+	@Basic @Raw
 	public boolean hasAsSlime(Slime slime){
 		return this.slimes.contains(slime);
 	}
@@ -74,7 +75,7 @@ public class School {
 	 * @pre		| slime.getSchool() == this
 	 * @post	| new.hasAsSlime == true
 	 */
-	@Basic
+	@Basic @Raw
 	void addAsSlime(Slime slime){
 		assert canHaveAsSlime(slime);
 		assert slime.getSchool() == this;
@@ -91,7 +92,7 @@ public class School {
 	 * @pre		| hasAsSlime(slime)
 	 * @post	| new.hasAsSlime == false
 	 */
-	@Basic
+	@Basic @Raw
 	void removeAsSlime(Slime slime){
 		assert slime != null && !slime.hasSchool();
 		assert this.hasAsSlime(slime);

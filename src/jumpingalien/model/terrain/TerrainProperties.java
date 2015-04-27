@@ -48,7 +48,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	| result = ( this.passable )
 	 */
-	@Basic
+	@Basic @Immutable
 	public boolean isPassable(){
 		return this.passable;
 	}
@@ -63,7 +63,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	An integer representing the amount of damage a Game object should take when it's on this terrain.
 	 */
-	@Basic
+	@Basic @Immutable
 	public int getDamage(){
 		return this.damage;
 	}
@@ -78,7 +78,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	A double representing the time interval between different cycles of taking damage on this terrain.
 	 */
-	@Basic
+	@Basic @Immutable
 	public double getDamageTime(){
 		return this.damageTime;
 	}	
@@ -94,7 +94,7 @@ public class TerrainProperties {
 	 * @return	A boolean representing if a Game object takes instant damage on this terrain or only after
 	 * 			the damage time.
 	 */
-	@Basic
+	@Basic @Immutable
 	public boolean isInstantDamage(){
 		return this.instantDamage;
 	}	

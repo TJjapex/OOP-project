@@ -112,9 +112,12 @@ public class World {
 	 * 
 	 * @post	Set hasStarted to true.
 	 * 			| new.hasStarted() == true
+	 * @throws	IllegalStateException
+	 * 			| Mazub.getNbInWorld(this) != 1
 	 */
-	@Basic @Raw
-	public void start(){
+	@Basic
+	public void start() throws IllegalStateException{
+		this.getMazub();
 		this.hasStarted = true;
 	}
 	
@@ -881,7 +884,6 @@ public class World {
 	 * 
 	 * @return 	| result == ( (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() )	)
 	 */
-	@Raw
 	public boolean isGameOver() {
 		return (this.getMazub().isKilled()) || ( this.getMazub().isOnTargetTile() );
 	}
@@ -891,7 +893,6 @@ public class World {
 	 * 
 	 * @return 	| result == ( this.getMazub().isOnTargetTile() )
 	 */
-	@Raw
 	public boolean didPlayerWin() {	
 		return this.getMazub().isOnTargetTile();	
 	}

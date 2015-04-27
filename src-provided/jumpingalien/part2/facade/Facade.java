@@ -249,7 +249,11 @@ public class Facade implements IFacadePart2 {
 
 	@Override
 	public void startGame(World world) {
-		world.start();
+		try{
+			world.start();
+		}catch(IllegalStateException exc){
+			throw new ModelException("Illegal state exception: " + exc.getMessage());
+		}
 	}
 
 	@Override
