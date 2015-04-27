@@ -301,13 +301,25 @@ public class Mazub extends GameObject{
 	
 	/******************************************************** WORLD ****************************************************/
 	
-	// TODO: commentary
+	/**
+	 * Add the Mazub to his World.
+	 * 
+	 * @post	| new.getWorld().hasAsGameObject(this) == true
+	 */
 	@Override
 	protected void addToWorld(){
 		this.getWorld().mazubs.add(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Remove the Mazub from the given World.
+	 * 
+	 * @param	world
+	 * 				The World to remove the Mazub from.
+	 * @pre		| this != null && !this.hasWorld()
+	 * @pre		| world.hasAsGameObject(this)
+	 * @post	| world.hasAsGameObject(this) == false
+	 */
 	@Override
 	protected void removeFromWorld(World world){
 		assert this != null && !this.hasWorld();
@@ -316,19 +328,36 @@ public class Mazub extends GameObject{
 		world.mazubs.remove(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Check whether or not the Mazub has the given World as its World.
+	 * 
+	 * @param	world
+	 * 				The World to check.
+	 * @return	| result == ( Mazub.getAllInWorld(world).contains(this) )
+	 */
 	@Override
 	protected boolean hasAsWorld(World world){
-		// return world.getAllMazubs().contains(this);
 		return Mazub.getAllInWorld(world).contains(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Return the number of Mazubs in the given World.
+	 * 
+	 * @param 	world
+	 * 				The World to check the number of Mazubs for.
+	 * @return	| result == ( Mazub.getAllInWorld(world).size() )
+	 */
 	protected static int getNbInWorld(World world){
 		return Mazub.getAllInWorld(world).size();
 	}
 	
-	// TODO: commentary
+	/**
+	 * Return all Mazubs in the given World.
+	 * 
+	 * @param 	world
+	 * 				The World to check.
+	 * @return	A Hashset containing all Mazubs in the given World.
+	 */
 	public static Set<Mazub> getAllInWorld(World world){
 		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(world.mazubs);
 		return mazubsClone;

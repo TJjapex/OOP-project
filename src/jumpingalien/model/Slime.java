@@ -208,13 +208,25 @@ public class Slime extends GameObject {
 	
 	/******************************************************** WORLD ****************************************************/
 	
-	// TODO: commentary
+	/**
+	 * Add the Slime to his World.
+	 * 
+	 * @post	| new.getWorld().hasAsGameObject(this) == true
+	 */
 	@Override
 	protected void addToWorld(){
 		this.getWorld().slimes.add(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Remove the Slime from the given World.
+	 * 
+	 * @param	world
+	 * 				The World to remove the Slime from.
+	 * @pre		| this != null && !this.hasWorld()
+	 * @pre		| world.hasAsGameObject(this)
+	 * @post	| world.hasAsGameObject(this) == false
+	 */
 	@Override
 	protected void removeFromWorld(World world){
 		assert this != null && !this.hasWorld();
@@ -222,19 +234,37 @@ public class Slime extends GameObject {
 		
 		world.slimes.remove(this);
 	}
-	
-	// TODO: commentary
+
+	/**
+	 * Check whether or not the Slime has the given World as its World.
+	 * 
+	 * @param	world
+	 * 				The World to check.
+	 * @return	| result == ( Slime.getAllInWorld(world).contains(this) )
+	 */
 	@Override
 	protected boolean hasAsWorld(World world){
 		return Slime.getAllInWorld(world).contains(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Return the number of Slimes in the given World.
+	 * 
+	 * @param 	world
+	 * 				The World to check the number of Slimes for.
+	 * @return	| result == ( Slime.getAllInWorld(world).size() )
+	 */
 	protected static int getNbInWorld(World world){
 		return Slime.getAllInWorld(world).size();
 	}
 	
-	// TODO: commentary
+	/**
+	 * Return all Slimes in the given World.
+	 * 
+	 * @param 	world
+	 * 				The World to check.
+	 * @return	A Hashset containing all Slimes in the given World.
+	 */
 	public static Set<Slime> getAllInWorld(World world){
 		HashSet<Slime> slimesClone =  new HashSet<Slime>(world.slimes);
 		return slimesClone;

@@ -492,17 +492,23 @@ public abstract class GameObject {
 		return ( world != null && !this.isTerminated() && !this.hasWorld() );
 	}
 	
-	// TODO: commentary
+	/**
+	 * Add the Game object to his World. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract void addToWorld();
 	
-	// TODO: commentary
+	/**
+	 * Remove the Game object from the given World. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract void removeFromWorld(World world);
 	
-	// TODO: commentary
+	/**
+	 * Check whether or not the Game object has the given World as its World. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	protected abstract boolean hasAsWorld(World world);
-	
-	// TODO: commentary
-	//protected abstract int getNbInWorld(World world);
 	
 	/**
 	 * Variable registering the World of a Game object.

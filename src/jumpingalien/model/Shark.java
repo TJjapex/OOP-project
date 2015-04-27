@@ -215,13 +215,25 @@ public class Shark extends GameObject{
 	
 	/******************************************************** WORLD ****************************************************/
 	
-	// TODO: commentary
+	/**
+	 * Add the Shark to his World.
+	 * 
+	 * @post	| new.getWorld().hasAsGameObject(this) == true
+	 */
 	@Override
 	protected void addToWorld(){
 		this.getWorld().sharks.add(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Remove the Shark from the given World.
+	 * 
+	 * @param	world
+	 * 				The World to remove the Shark from.
+	 * @pre		| this != null && !this.hasWorld()
+	 * @pre		| world.hasAsGameObject(this)
+	 * @post	| world.hasAsGameObject(this) == false
+	 */
 	@Override
 	protected void removeFromWorld(World world){
 		assert this != null && !this.hasWorld();
@@ -230,18 +242,36 @@ public class Shark extends GameObject{
 		world.sharks.remove(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Check whether or not the Shark has the given World as its World.
+	 * 
+	 * @param	world
+	 * 				The World to check.
+	 * @return	| result == ( Shark.getAllInWorld(world).contains(this) )
+	 */
 	@Override
 	protected boolean hasAsWorld(World world){
 		return Shark.getAllInWorld(world).contains(this);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Return the number of Sharks in the given World.
+	 * 
+	 * @param 	world
+	 * 				The World to check the number of Sharks for.
+	 * @return	| result == ( Shark.getAllInWorld(world).size() )
+	 */
 	protected static int getNbInWorld(World world){
 		return Shark.getAllInWorld(world).size();
 	}
 	
-	// TODO: commentary
+	/**
+	 * Return all Sharks in the given World.
+	 * 
+	 * @param 	world
+	 * 				The World to check.
+	 * @return	A Hashset containing all Sharks in the given World.
+	 */
 	public static Set<Shark> getAllInWorld(World world){
 		HashSet<Shark> sharksClone =  new HashSet<Shark>(world.sharks);
 		return sharksClone;
