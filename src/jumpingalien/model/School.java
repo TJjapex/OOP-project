@@ -12,7 +12,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @note	See the class Mazub for further information about our project.
  * @version 1.0
  * 
- * @invar	| hasProperSlimes()
+ * @invar	| hasProperSlimes()é
  */
 public class School {
 	

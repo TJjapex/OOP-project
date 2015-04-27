@@ -17,6 +17,8 @@ import jumpingalien.util.Sprite;
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
  * @version 1.0
+ * 
+ * @note Class invariants of the class GameObject also apply to this subclass.
  */
 public class Plant extends GameObject {
 	

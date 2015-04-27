@@ -9,6 +9,10 @@ import be.kuleuven.cs.som.annotate.*;
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
  * @version 1.0
+ * 
+ * @invar | this.getDamage() >= 0
+ * @invar | this.getDamageTime() >= 0
+ * 
  */
 public class TerrainProperties {
 	
@@ -48,7 +52,7 @@ public class TerrainProperties {
 	 * 
 	 * @return	| result = ( this.passable )
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public boolean isPassable(){
 		return this.passable;
 	}
@@ -94,7 +98,7 @@ public class TerrainProperties {
 	 * @return	A boolean representing if a Game object takes instant damage on this terrain or only after
 	 * 			the damage time.
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public boolean isInstantDamage(){
 		return this.instantDamage;
 	}	
