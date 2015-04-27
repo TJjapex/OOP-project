@@ -1,13 +1,16 @@
 package jumpingalien.part2.tests;
 
 import static jumpingalien.tests.util.TestUtils.intArray;
+import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
+import jumpingalien.util.Sprite;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,8 +19,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class WorldTest {
-	
+		
+	private Sprite[] sprites;
+	private Mazub alien;
 	private World world;
+	private IFacadePart2 facade;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -30,8 +36,22 @@ public class WorldTest {
 
 	@Before
 	public void setUp() throws Exception {
-		world = new World(50, 20, 15, 200, 150, 4, 1);
+		// Initiliaze some often used variables. These will be reset each test.
+		
+		facade = new Facade();
+		
+		sprites = spriteArrayForSize(3, 3);
+		
+		alien = facade.createMazub(100, 50, sprites);
+		world = facade.createWorld(50, 20, 15, 200, 150, 4, 1);
+		
+		for(int i = 0; i < 20; i++){
+			facade.setGeologicalFeature(world, i, 0, FEATURE_SOLID);
+		}
+		
+		facade.setMazub(world, alien);
 	}
+
 
 	@After
 	public void tearDown() throws Exception {
@@ -53,6 +73,9 @@ public class WorldTest {
 		assertEquals(150, world.getDisplayHeight());
 		assertEquals(4, world.getTargetTileX());
 		assertEquals(1, world.getTargetTileY());
+		
+		assertEquals(50, facade.getTileLength(world));
+		assertArrayEquals(new int[] {1000, 750}, facade.getWorldSizeInPixels(world));
 	}
 	
 	/******************************************************* GENERAL ***************************************************/
@@ -90,6 +113,10 @@ public class WorldTest {
 		assertEquals(100, world.getPositionYOfTile(2));
 		assertEquals(50, world.getPositionYOfTile(1));
 		assertEquals(0, world.getPositionYOfTile(0));
+		
+		assertArrayEquals(new int[] {100, 50}, facade.getBottomLeftPixelOfTile(world, 2, 1));
+		assertArrayEquals(new int[] {50, 150}, facade.getBottomLeftPixelOfTile(world, 1, 3));
+
 	}
 	
 	// Predefined
@@ -232,7 +259,9 @@ public class WorldTest {
 	@Test
 	public void testGeologicalFeature_notSet(){
 		assertEquals(Terrain.AIR, world.getGeologicalFeature(world.getPositionXOfTile(17),
-								  world.getPositionYOfTile(15)));
+				  world.getPositionYOfTile(14)));
+		assertEquals(FEATURE_AIR, facade.getGeologicalFeature(world, world.getPositionXOfTile(17),
+				  world.getPositionYOfTile(14)));
 	}
 	
 	@Test
@@ -240,11 +269,30 @@ public class WorldTest {
 		world.setGeologicalFeature(1, 2, Terrain.SOLID);
 		assertEquals(Terrain.SOLID, world.getGeologicalFeature(world.getPositionXOfTile(1),
 								    world.getPositionYOfTile(2)));
+		assertEquals(FEATURE_SOLID, facade.getGeologicalFeature(world, world.getPositionXOfTile(1),
+				  world.getPositionYOfTile(2)));
 	}
 	
 	@Test(expected=IllegalPositionXException.class)
 	public void testGeologicalFeature_illegalPositionX(){
 		world.setGeologicalFeature(-1, 2, Terrain.SOLID);
 	}
-
+	
+	/******************************************************* VISIBLE WINDOW ******************************************/
+	
+	@Test
+	public void visibleWindow_leftBottom(){
+		assertArrayEquals(new int[]{0, 0, 200,150}, facade.getVisibleWindow(world));
+	}
+	
+	@Test
+	public void visibleWindow_middleBottom(){
+		facade.startGame(world);
+		facade.startMoveRight(alien);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		assertArrayEquals(new int[]{8, 0, 208, 150}, facade.getVisibleWindow(world));
+	}
 }
