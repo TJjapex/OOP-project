@@ -18,6 +18,8 @@ import jumpingalien.model.exceptions.IllegalHeightException;
  *
  * @invar	The sprites array of this animation has a length greater than or equal to 0
  * 			|	this.getNbSprites() >= 0
+ * @invar	Sprite index is always positive
+ * 			| 	this.getSpriteIndex() >= 0
  */
 public class Animation {
 	
@@ -67,7 +69,7 @@ public class Animation {
 	 * 
 	 * @return	The related Game object.
 	 */
-	@Basic
+	@Basic @Immutable
 	public GameObject getGameObject() {
 		return gameObject;
 	}

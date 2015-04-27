@@ -57,8 +57,9 @@ public class MazubTest {
 		facade = new Facade();
 		
 		sprites = spriteArrayForSize(3, 3);
+		
 		alien = new Mazub(100, 50, sprites);
-		world = new World(50, 20, 15, 200, 150, 4, 1);
+		world = new World(50, 60, 15, 200, 150, 4, 1);
 		
 		world.setGeologicalFeature(0, 0, Terrain.SOLID);
 		world.setGeologicalFeature(1, 0, Terrain.SOLID);
@@ -167,7 +168,7 @@ public class MazubTest {
 	
 	/************************************************ TIMERS ******************************************/
 	
-	/** Checks if the timers are updated correctly when time is advanced */
+	/** Check if the timers are updated correctly when time is advanced */
 	@Test
 	public void testTimers(){
 		alien.getTimer().setSinceEnemyCollision(0.0);
@@ -203,7 +204,7 @@ public class MazubTest {
 //	
 //	/* from test case 1 */
 	/**
-	 * Checks if Mazub is initialized with the right X position.
+	 * Check if Mazub is initialized with the right X position.
 	 */
 	@Test
 	public void constructorPositionX_LegalCase(){
@@ -212,7 +213,7 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if Mazub is initialized with the right Y position.
+	 * Check if Mazub is initialized with the right Y position.
 	 */
 	@Test
 	public void constructorPositionY_LegalCase(){
@@ -221,7 +222,7 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if Mazub cannot be initialized with an out of bound X position.
+	 * Check if Mazub cannot be initialized with an out of bound X position.
 	 */
 	@Test(expected=IllegalPositionXException.class)
 	public void constructorPositionX_IllegalCase() throws Exception{
@@ -229,7 +230,7 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if Mazub cannot be initialized with an out of bound Y position.
+	 * Check if Mazub cannot be initialized with an out of bound Y position.
 	 */
 	@Test(expected=IllegalPositionYException.class)
 	public void constructorPositionY_IllegalCase() throws Exception{
@@ -237,7 +238,7 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if Mazub's default initial horizontal velocity is equal to 1.0 .
+	 * Check if Mazub's default initial horizontal velocity is equal to 1.0 .
 	 */
 	@Test
 	public void correctDefaultVelocityXInit() {
@@ -245,15 +246,15 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if Mazub's default maximal horizontal velocity is equal to 3.0 .
+	 * Check if Mazub's default maximal horizontal velocity is equal to 3.0 .
 	 */
 	@Test
 	public void correctDefaultVelocityXMax() {
 		assertEquals(3.0, alien.getVelocityXMax(), Util.DEFAULT_EPSILON);
 	}
-//	
+	
 	/**
-	 * Checks if the helper classes (Timer and Animation) are properly initiated.
+	 * Check if the helper classes (Timer and Animation) are properly initiated.
 	 */
 	@Test
 	public void helperClassesCorrectlyInitiated(){
@@ -262,11 +263,20 @@ public class MazubTest {
 		assertNotNull(alien.getTimer());
 		assertNotNull(alien.getAnimation());
 	}
-//	
+	
+	/**
+	 * Check number of mazubs
+	 */
+	@Test
+	public void testMazubInWorld(){
+		assertEquals(1, Mazub.getNbInWorld(world));
+		assertEquals(alien, alien.getWorld().getMazub());
+	}
+
 	/*************************************** WIDTH AND HEIGHT ***************************************/
 
 	/**
-	 * Checks if the sprite width is correctly retrieved.
+	 * check if the sprite width is correctly retrieved.
 	 */
 	@Test
 	public void checkDefaultSpriteWidth() {
@@ -275,7 +285,7 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if the sprite height is correctly retrieved.
+	 * Check if the sprite height is correctly retrieved.
 	 */
 	@Test
 	public void checkDefaultSpriteHeight() {
@@ -286,7 +296,7 @@ public class MazubTest {
 //	/********************************************* POSITION ****************************************/
 //	
 	/**
-	 * Checks if the positions of Mazub are correctly rounded down to the right integer.
+	 * Check if the positions of Mazub are correctly rounded down to the right integer.
 	 */
 	@Test
 	public void positionsCorrectlyRounded(){
@@ -310,18 +320,18 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if canHaveAsPosition() correctly determines which positions are valid and which
+	 * Check if canHaveAsPosition() correctly determines which positions are valid and which
 	 * are not.
 	 * 
-	 * world width is 20*50 px = 1000 px, world height is 15 * 50 px = 750px
+	 * world width is 60*50 px = 3000 px, world height is 15 * 50 px = 750px
 	 */
 	@Test
 	public void correctValidRoundedPositions(){
 		assertFalse(alien.canHaveAsPositionX(-1));
 		assertTrue(alien.canHaveAsPositionX(0));
 		assertTrue(alien.canHaveAsPositionX(546));
-		assertTrue(alien.canHaveAsPositionX(1000 - alien.getWidth()));
-		assertFalse(alien.canHaveAsPositionX(1001 - alien.getWidth()));
+		assertTrue(alien.canHaveAsPositionX(3000 - alien.getWidth()));
+		assertFalse(alien.canHaveAsPositionX(3001 - alien.getWidth()));
 		
 		assertFalse(alien.canHaveAsPositionY(-1));
 		assertTrue(alien.canHaveAsPositionY(0));
@@ -331,7 +341,7 @@ public class MazubTest {
 	}
 	
 	/**
-	 * Checks if canHaveAsPosition() correctly determines which positions are valid and which
+	 * Check if canHaveAsPosition() correctly determines which positions are valid and which
 	 * are not.
 	 * 
 	 * world width is 20*50 px = 1000 px, world height is 15 * 50 px = 750px
@@ -341,8 +351,8 @@ public class MazubTest {
 		assertFalse(alien.canHaveAsPositionX(-0.001));
 		assertTrue(alien.canHaveAsPositionX(0.12));
 		assertTrue(alien.canHaveAsPositionX(546.654));
-		assertTrue(alien.canHaveAsPositionX(1000 - alien.getWidth()));
-		assertFalse(alien.canHaveAsPositionX(1001.0 - alien.getWidth()));
+		assertTrue(alien.canHaveAsPositionX(3000 - alien.getWidth()));
+		assertFalse(alien.canHaveAsPositionX(3001.0 - alien.getWidth()));
 		
 		assertFalse(alien.canHaveAsPositionY(-0.001));
 		assertTrue(alien.canHaveAsPositionY(0.12));
@@ -351,77 +361,88 @@ public class MazubTest {
 		assertFalse(alien.canHaveAsPositionY(751.0 - alien.getHeight()));
 	}
 
-//	/********************************************* VELOCITY ****************************************/
+	/********************************************* VELOCITY ****************************************/
+	
+	/**
+	 * Check if canHaveAsVelocityX() correctly determines which velocities are valid and which are not.
+	 */
+	@Test
+	public void correctValidVelocityX(){
+		IFacade facade = new Facade();
+		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
+		
+		assertTrue(alien.canHaveAsVelocityX(0));
+		assertTrue(alien.canHaveAsVelocityX(1.0));
+		assertTrue(alien.canHaveAsVelocityX(-1.75));
+		assertTrue(alien.canHaveAsVelocityX(3.0));
+		assertFalse(alien.canHaveAsVelocityX(3.00001));
+		assertFalse(alien.canHaveAsVelocityX(54.54));
+	}
+	
+	/**
+	 * Check if canHaveAsVelocityXMax() correctly determines which maximal velocities are valid for 
+	 * this instance.
+	 */
+	@Test
+	public void correctMaximalVelocityX(){
+		assertTrue( alien.canHaveAsVelocityXMax( alien.getVelocityXInit()));
+		assertFalse( alien.canHaveAsVelocityXMax( alien.getVelocityXInit() - 0.001  ));
+	}
+	
+	
+	/****************************************** ACCELERATION **************************************/
+	
+	/**
+	 * Check if the acceleration of Mazub is 0.9 while running to the right.
+	 */
+	@Test
+	public void checkAccelerationXWhileRunningRight(){
+		world.start();
+		facade.startMoveRight(alien);
+		assertEquals(0.9, facade.getAcceleration(alien)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Check if the acceleration of Mazub is 0 when running to the right is ended.
+	 */
+	@Test
+	public void checkAccelerationXWhenRunningRightEnded(){
+		world.start();
+
+		facade.startMoveRight(alien);
+		world.advanceTime(0.10);
+		facade.endMoveRight(alien);
+		assertEquals(0, facade.getAcceleration(alien)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Check if the horizontal velocity does not exceed the maximal horizontal 
+	 * velocity after some time.
+	 */
+	
+	// TODO Mazub loopt van die geological features, valt en gaat dood. in plaats van door te lopen. Dus eerst nog wat meer geo's zetten zeker :/
+	@Test
+	public void checkVelocityXNotExceedingVelocityXMax(){
+		world.start();
+
+		facade.startMoveRight(alien);
+		for (int i = 0; i < 40; i++) {
+			//System.out.println(Mazub.getAllInWorld(world));
+			world.advanceTime( 0.2 / 9);
+		}
+		
+		// Mazub reached his maximal velocity.
+		world.advanceTime( 0.1);
+		assertEquals(alien.getVelocityXMax(), alien.getVelocityX(), Util.DEFAULT_EPSILON);
+	}
 //	
 //	/**
-//	 * Checks if isValidVelocityX() correctly determines which velocities are valid and which are not.
-//	 */
-//	@Test
-//	public void correctValidVelocityX(){
-//		IFacade facade = new Facade();
-//		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
-//		
-//		assertTrue(alien.canHaveAsVelocityX(0));
-//		assertTrue(alien.canHaveAsVelocityX(1.0));
-//		assertTrue(alien.canHaveAsVelocityX(-1.75));
-//		assertTrue(alien.canHaveAsVelocityX(3.0));
-//		assertFalse(alien.canHaveAsVelocityX(3.00001));
-//		assertFalse(alien.canHaveAsVelocityX(54.54));
-//	}
-//	
-//	/**
-//	 * Checks if canHaveAsVelocityXMax() correctly determines which maximal velocities are valid for 
-//	 * this instance.
-//	 */
-//	@Test
-//	public void correctMaximalVelocityX(){
-//		assertTrue( alien_0_0.canHaveAsVelocityXMax( alien_0_0.getVelocityXInit()));
-//		assertFalse( alien_0_0.canHaveAsVelocityXMax( alien_0_0.getVelocityXInit() - 0.001  ));
-//	}
-//	
-//	
-//	/****************************************** ACCELERATION **************************************/
-//	
-//	/**
-//	 * Checks if the acceleration of Mazub is 0.9 while running to the right.
-//	 */
-//	@Test
-//	public void checkAccelerationXWhileRunningRight(){
-//		facade.startMoveRight(alien_0_0);
-//		assertEquals(0.9, facade.getAcceleration(alien_0_0)[0], Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/**
-//	 * Checks if the acceleration of Mazub is 0 when running to the right is ended.
-//	 */
-//	@Test
-//	public void checkAccelerationXWhenRunningRightEnded(){
-//		facade.startMoveRight(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.10);
-//		facade.endMoveRight(alien_0_0);
-//		assertEquals(0, facade.getAcceleration(alien_0_0)[0], Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/**
-//	 * Checks if the horizontal velocity does not exceed the maximal horizontal 
-//	 * velocity after some time.
-//	 */
-//	@Test
-//	public void checkVelocityXNotExceedingVelocityXMax(){
-//		facade.startMoveRight(alien_0_0);
-//		for (int i = 0; i < 100; i++) {
-//			facade.advanceTime(alien_0_0, 0.2 / 9);
-//		}
-//		// Mazub reached his maximal velocity.
-//		facade.advanceTime(alien_0_0, 0.1);
-//		assertEquals(alien_0_0.getVelocityXMax(), alien_0_0.getVelocityX(), Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/**
-//	 * Checks if the acceleration of Mazub is 0 when he reached his maximal velocity.
+//	 * Check if the acceleration of Mazub is 0 when he reached his maximal velocity.
 //	 */
 //	@Test
 //	public void checkAccelerationXAtMaxVelocityX(){
+//		world.start();
+
 //		facade.startMoveRight(alien_0_0);
 //		for (int i = 0; i < 100; i++) {
 //			facade.advanceTime(alien_0_0, 0.2 / 9);
@@ -433,7 +454,7 @@ public class MazubTest {
 //	/********************************************* JUMPING ****************************************/
 //
 //	/**
-//	 * Checks the y-position when jumping.
+//	 * Check the y-position when jumping.
 //	 */
 //	@Test
 //	public void jumpCorrectly() {
@@ -447,7 +468,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks endJump method.
+//	 * Check endJump method.
 //	 */
 //	@Test
 //	public void endJumpCorrectly() {
@@ -460,7 +481,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks if Mazub is back on the ground on the expected moment, after invoking endJump.
+//	 * Check if Mazub is back on the ground on the expected moment, after invoking endJump.
 //	 */
 //	@Test
 //	public void backOnGroundCorrectly() {
@@ -482,7 +503,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks if Mazub's vertical velocity is equal to zero at a certain moment during his jump. Also checks if
+//	 * Check if Mazub's vertical velocity is equal to zero at a certain moment during his jump. Also checks if
 //	 * Mazub is still jumping at that moment.
 //	 */
 //	@Test
@@ -503,7 +524,7 @@ public class MazubTest {
 //	/********************************************* DUCKING ****************************************/
 //	
 //	/**
-//	 * Checks if Mazub's maximal horizontal velocity while ducking is correct.
+//	 * Check if Mazub's maximal horizontal velocity while ducking is correct.
 //	 */
 //	@Test
 //	public void maxSpeedDuckingCorrectly() {
@@ -522,7 +543,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks if Mazub's acceleration is correct when he was moving right
+//	 * Check if Mazub's acceleration is correct when he was moving right
 //	 * whilst ducking and then stops ducking while still moving right.
 //	 */
 //	@Test
@@ -541,7 +562,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks if Mazub's maximal horizontal velocity is correct when he was moving right at maximum velocity
+//	 * Check if Mazub's maximal horizontal velocity is correct when he was moving right at maximum velocity
 //	 * whilst ducking and then stops ducking while still moving right.
 //	 */
 //	@Test
@@ -566,7 +587,7 @@ public class MazubTest {
 //	/********************************************* TIMERS ****************************************/
 //	
 //	/**
-//	 * Checks if the time since the last move by Mazub was made, is tracked correctly.
+//	 * Check if the time since the last move by Mazub was made, is tracked correctly.
 //	 */
 //	@Test
 //	public void correctTimeSinceLastMove() {
@@ -582,7 +603,7 @@ public class MazubTest {
 //	
 //
 //	/**
-//	 * Checks if the time since the last sprite by Mazub was selected, is tracked correctly.
+//	 * Check if the time since the last sprite by Mazub was selected, is tracked correctly.
 //	 */
 //	@Test
 //	public void correctTimeSinceLastSprite(){
@@ -603,7 +624,7 @@ public class MazubTest {
 //	/********************************************* SPRITES ****************************************/
 //
 //	/**
-//	 * Checks ducking sprite.
+//	 * Check ducking sprite.
 //	 */
 //	@Test
 //	public void spriteDucking(){		
@@ -624,7 +645,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks the sprite:
+//	 * Check the sprite:
 //	 * Mazub is not moving horizontally but its last horizontal movement was to the right
 //	 * 						(within 1s), and the character is not ducking. (index 2)
 //	 */
@@ -645,7 +666,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks if the sprite index is set back to 0 (which represents the idle sprite)
+//	 * Check if the sprite index is set back to 0 (which represents the idle sprite)
 //	 * just after the one second limit.
 //	 */
 //	@Test
@@ -667,7 +688,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks sprite for jumping and moving right.
+//	 * Check sprite for jumping and moving right.
 //	 */
 //	@Test
 //	public void spriteJumpingMovingRight(){
@@ -680,7 +701,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks sprite for ducking and moving right.
+//	 * Check sprite for ducking and moving right.
 //	 */
 //	@Test
 //	public void spriteDuckingMovingRight(){
@@ -695,7 +716,7 @@ public class MazubTest {
 //	
 //	/********************************************* ADVANCE TIME ****************************************/	
 //	/**
-//	 * Checks if advanceTime cannot be used with a negative time step.
+//	 * Check if advanceTime cannot be used with a negative time step.
 //	 */
 //	@Test(expected = IllegalArgumentException.class)
 //	public void advanceTime_SmallerThanZeroCase(){
@@ -703,7 +724,7 @@ public class MazubTest {
 //	}
 //	
 //	/**
-//	 * Checks if advanceTime cannot be used with a time step greater than 0.2.
+//	 * Check if advanceTime cannot be used with a time step greater than 0.2.
 //	 */
 //	@Test(expected = IllegalArgumentException.class)
 //	public void advanceTime_GreaterThanCase(){

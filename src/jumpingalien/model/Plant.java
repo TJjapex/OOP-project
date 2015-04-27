@@ -174,7 +174,7 @@ public class Plant extends GameObject {
 	 * 				The World to check the number of Plants for.
 	 * @return	| result == ( Plant.getAllInWorld(world).size() )
 	 */
-	protected static int getNbInWorld(World world){
+	public static int getNbInWorld(World world){
 		return Plant.getAllInWorld(world).size();
 	}
 	

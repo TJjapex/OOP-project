@@ -98,12 +98,12 @@ public class Shark extends GameObject{
 	 * 				The number of hit points of a Shark.
 	 * @param	maxNbHitPoints
 	 * 				The maximal number of hit points of a Shark.
-	 * @pre		| Array.getLength(sprites) == 2
+	 * @pre		| Array.getLength(sprites) == 2	 * 
+	 * @post	| new.getNbNonJumpingPeriods == 0
+	 * @post	| new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
+	 * @post	| new.isJumping == false
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
 	 * 					sprites,nbHitPoints, maxNbHitPoints)
-	 * @effect	| setNbNonJumpingPeriods(0)
-	 * @effect	| setJumping(false)
-	 * @effect	| setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
 	 * @effect	| startMove( this.getRandomOrientation() )
 	 * @effect	| startDiveRise()
 	 * @effect 	| configureTerrain()
@@ -261,7 +261,7 @@ public class Shark extends GameObject{
 	 * 				The World to check the number of Sharks for.
 	 * @return	| result == ( Shark.getAllInWorld(world).size() )
 	 */
-	protected static int getNbInWorld(World world){
+	public static int getNbInWorld(World world){
 		return Shark.getAllInWorld(world).size();
 	}
 	
@@ -284,9 +284,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @return	A double that represents the vertical acceleration of a Shark.
 	 */
-	@Basic
-	@Raw
-	@Immutable
+	@Basic @Raw @Immutable
 	public double getAccelerationY() {
 		return this.accelerationY;
 	}
@@ -301,8 +299,7 @@ public class Shark extends GameObject{
 	 * 			| else
 	 * 			| 	new.getAccelerationY() == accelerationY
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	protected void setAccelerationY(double accelerationY) {
 		if (Double.isNaN(accelerationY)){
 			this.accelerationY = 0;
@@ -375,7 +372,7 @@ public class Shark extends GameObject{
 	 * Make a Slime start jumping.
 	 * 
 	 * @effect	| setVelocityY( this.getVelocityYInit() )
-	 * @effect	| setJumping(true)
+	 * @post	| new.isJumping() == true
 	 */
 	@Override
 	public void startJump() {
@@ -388,7 +385,7 @@ public class Shark extends GameObject{
 	 * 
 	 * @effect	| if( Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 ))
 	 * 			|	then this.setVelocity(0)
-	 * @effect	| setJumping(false)
+	 * @post	| new.isJumping() == false
 	 */
 	@Override
 	public void endJump(){
@@ -462,8 +459,8 @@ public class Shark extends GameObject{
 	 * 			|	then this.periodicMovement();
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.getTimer().setSinceLastPeriod(0)
-	 * @effect 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
-	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
+	 * @post 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * 			|	then this.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| adjustGravitationalAcceleration()
 	 * @effect	| updatePositionX(dt)
 	 * @effect	| updateVelocityX(dt)
@@ -471,7 +468,7 @@ public class Shark extends GameObject{
 	 * @effect	| updateVelocityY(dt)
 	 */
 	@Override
-	public void doMove(double dt){
+	protected void doMove(double dt){
 
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
@@ -501,14 +498,14 @@ public class Shark extends GameObject{
 	 * @effect	| if ( this.isJumping())
 	 * 			|	then this.endJump()
 	 * @effect	| if ( ! this.isJumping())
-	 * 			|	then this.setNbNonJumpingPeriods( this.getNbNonJumpingPeriods() + 1 )
+	 * 			|	then new.getNbNonJumpingPeriods == this.getNbNonJumpingPeriods() + 1
 	 * @effect	| if ( ! this.isJumping())
 	 * 			|	then this.endDiveRise()
 	 * @effect	| startMove(this.getRandomOrientation())
 	 * @effect	| if ( (this.getNbNonJumpingPeriods() >= 4) && (Math.random() < 0.5) )
 	 * 			|	then this.startJump()
 	 * @effect	| if ( (this.getNbNonJumpingPeriods() >= 4) && (Math.random() < 0.5) )
-	 * 			|	then this.setNbNonJumpingPeriods(0)
+	 * 			|	then new.getNbNonJumpingPeriods() == 0
 	 * @effect	| if ( ( (!this.getNbNonJumpingPeriods() >= 4) || (Math.random() >= 0.5) ) 
 	 * 			|	   && this.isSubmergedIn(Terrain.WATER) )
 	 * 			|	then this.startDiveRise()

@@ -94,10 +94,10 @@ public class Slime extends GameObject {
 	 * @param	maxNbHitPoints
 	 * 				The maximal number of hit points of a Slime.
 	 * @pre		| Array.getLength(sprites) == 2
+	 * @post	| new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
 	 * 					sprites,nbHitPoints, maxNbHitPoints)
 	 * @effect	| setSchoolTo(school)
-	 * @effect	| setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
 	 * @effect	| startMove( this.getRandomOrientation() )
 	 * @effect 	| configureTerrain()
 	 * @throws 	IllegalPositionXException
@@ -254,7 +254,7 @@ public class Slime extends GameObject {
 	 * 				The World to check the number of Slimes for.
 	 * @return	| result == ( Slime.getAllInWorld(world).size() )
 	 */
-	protected static int getNbInWorld(World world){
+	public static int getNbInWorld(World world){
 		return Slime.getAllInWorld(world).size();
 	}
 	
@@ -446,19 +446,19 @@ public class Slime extends GameObject {
 	 * 
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
+	 * @post 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * 			|	then new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.periodicMovement();
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.getTimer().setSinceLastPeriod(0)
-	 * @effect 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
-	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
 	 * @effect	| updatePositionX(dt)
 	 * @effect	| updateVelocityX(dt)
 	 * @effect	| updatePositionY(dt)
 	 * @effect	| updateVelocityY(dt)
 	 */
 	@Override
-	public void doMove(double dt){
+	protected void doMove(double dt){
 		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){

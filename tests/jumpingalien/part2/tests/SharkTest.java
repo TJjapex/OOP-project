@@ -28,6 +28,8 @@ public class SharkTest {
 	
 	private Sprite[] sprites;
 	private Shark shark;
+
+	private Mazub alien;
 	private World world;
 	
 	@BeforeClass
@@ -44,8 +46,13 @@ public class SharkTest {
 		sprites = spriteArrayForSize(66, 42, 2);
 		shark = new Shark(10, 12, sprites);
 		world = new World(50, 20, 15, 200, 150, 4, 1);
+		
+		Sprite[] alienSprites = spriteArrayForSize(20, 20);
+		alien = new Mazub(100,100, alienSprites); // At least one alien in world
+		
+		alien.setWorldTo(world);
 		shark.setWorldTo(world);
-	}
+	} 
 
 	@After
 	public void tearDown() throws Exception {
@@ -83,31 +90,19 @@ public class SharkTest {
 	@Test
 	public void deathOutOfGameWorld(){
 		/* calculations -12 = -10/2 * t**2 -> t = 0.155 */
-		shark.advanceTime(0.17);
+		world.start();
+		world.advanceTime(0.17);
 		assertTrue(shark.getRoundedPositionY() == 0);
-		assertTrue(shark.isKilled());
-		assertFalse(shark.isTerminated());
-		shark.advanceTime(0.2);
-		shark.advanceTime(0.2);
-		shark.advanceTime(0.2);
-		assertTrue(shark.isTerminated());
-	}
-	
-	/**
-	 * Check if the Shark gets terminated after a 0.6s delay after he's killed.
-	 */
-	@Test
-	public void testTerminate(){
-		Shark deadShark = new Shark(12, 12, 0.0, 0.0, 4.0, 1.5, sprites, 0, 100);
-		deadShark.setWorldTo(world);
-		assertTrue(deadShark.isKilled());
 		
-		for (int i=0; i<3; i += 1){
-			deadShark.advanceTime(0.2);
+		for (int i=0; i<3; i ++){
+			assertTrue(shark.isKilled());
+			assertFalse(shark.isTerminated());
+			assertEquals(world, shark.getWorld());
+			world.advanceTime(0.2);
 		}
-		deadShark.advanceTime(0.1);
-		assertTrue(deadShark.isTerminated());
-		assertFalse(deadShark.hasWorld());		
+		assertTrue(shark.isTerminated());
+		assertFalse(shark.hasWorld());		
+
 	}
 	
 }

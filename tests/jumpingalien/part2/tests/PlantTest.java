@@ -30,6 +30,7 @@ public class PlantTest {
 
 	private Sprite[] sprites;
 	private Plant plant;
+	private Mazub alien;
 	private World world;
 	
 	@BeforeClass
@@ -46,6 +47,10 @@ public class PlantTest {
 		sprites = spriteArrayForSize(54, 27, 2);
 		plant = new Plant(160, 180, sprites);
 		world = new World(50, 20, 15, 400, 400, 4, 1);
+		
+		Sprite[] alienSprites = spriteArrayForSize(20, 20);
+		alien = new Mazub(100,100, alienSprites); // At least one alien in world
+		alien.setWorldTo(world);
 		plant.setWorldTo(world);
 	}
 
@@ -72,11 +77,15 @@ public class PlantTest {
 	 */
 	@Test
 	public void testAlternateMovement(){
-		plant.advanceTime(0.2);
+		world.start();
+		assertTrue(world.hasStarted());
+		
+		world.advanceTime(0.2);
+		
 		assertEquals(Orientation.LEFT, plant.getOrientation());
 		assertTrue(plant.isMoving());
 		for (int i=0; i<2; i += 1){
-			plant.advanceTime(0.2);
+			world.advanceTime(0.2);
 		}
 		// After 0.5s, the Plant should move to the other direction. ( Check after 0.6s )
 		assertEquals(Orientation.RIGHT, plant.getOrientation());
@@ -92,10 +101,13 @@ public class PlantTest {
 	public void testChangeDirectionUponHorizontalCollision(){
 		// Set a solid tile to the left of the plant
 		world.setGeologicalFeature(2, 4, Terrain.SOLID);
+		world.start();
+		assertTrue(world.hasStarted());
+
 		// Plant starts moving to the left
-		plant.advanceTime(0.2);
+		world.advanceTime(0.2);
 		// Plant collides with the solid tile and changes direction
-		plant.advanceTime(0.2);
+		world.advanceTime(0.2);
 		assertEquals(Orientation.RIGHT, plant.getOrientation());
 	}
 	
@@ -106,12 +118,20 @@ public class PlantTest {
 	 */
 	@Test
 	public void testKilledUponMazubOverlap(){
-		Mazub mazub = new Mazub(170, 210, spriteArrayForSize(66, 92, 10));
-		mazub.setWorldTo(world);
-		world.advanceTime(0.2);
+		World world2 = new World(50, 20, 15, 400, 400, 4, 1);
+		Mazub alien2 = new Mazub(170, 210, spriteArrayForSize(66, 92, 10));
+		Plant plant2 = new Plant(160, 180, sprites);
+
+		alien2.setWorldTo(world2);
+		plant2.setWorldTo(world2);
+		world2.start();
+		assertTrue(world2.hasStarted());
+		
+		world2.advanceTime(0.2);
+		
 		// Mazub falls on top of the plant and overlaps with the top row pixels of the plant
-		assertEquals(plant.getRoundedPositionY()+plant.getHeight()-1, mazub.getRoundedPositionY());
-		assertTrue(plant.isKilled());
+		assertEquals(plant2.getRoundedPositionY()+plant2.getHeight()-1, alien2.getRoundedPositionY());
+		assertTrue(plant2.isKilled());
 	}
 	
 }

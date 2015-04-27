@@ -103,7 +103,7 @@ public class World {
 	 * @return	| result == ( this.hasStarted )
 	 */
 	@Basic @Raw
-	private boolean hasStarted(){
+	public boolean hasStarted(){
 		return this.hasStarted;
 	}
 	
@@ -624,7 +624,7 @@ public class World {
 			try{
 				object.advanceTime(dt);
 			}catch(IllegalStateException exc){
-				throw new ModelException("Game object is not in a world anymore!");
+				throw new ModelException("Game object is not in a world anymore!"+object);
 			}
 		}
 		
@@ -766,7 +766,6 @@ public class World {
 	 * 				The Game object to add to the World.
 	 * @effect	| gameObject.addToWorld()
 	 */
-	@Basic
 	void addAsGameObject(GameObject gameObject){
 		gameObject.addToWorld();
 	}
@@ -788,17 +787,20 @@ public class World {
 	/**
 	 * Return the player's Mazub in the World.
 	 * 
-	 * @return	If there is only one Mazub in the World, return this Mazub.
-	 * @throws	| Mazub.getNbInWorld(this) != 1
+	 * @return	If there is only one Mazub in the World, return this Mazub. 
+	 * 			If there is no Mazub in this world, return null.
+	 * @throws	IllegalStateException
+	 * 			| Mazub.getNbInWorld(this) != 1
 	 */
 	public Mazub getMazub() throws IllegalStateException{
 		
 		if(Mazub.getNbInWorld(this) == 1){
 			return Mazub.getAllInWorld(this).iterator().next();
+		}else if(Mazub.getNbInWorld(this) == 0){
+			throw new IllegalStateException("No Mazub in this world!");
 		}else{
 			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
 		}
-		
 	}
 	
 	/**

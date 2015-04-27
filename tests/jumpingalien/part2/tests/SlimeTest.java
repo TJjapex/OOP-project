@@ -3,13 +3,13 @@ package jumpingalien.part2.tests;
 import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.School;
 import jumpingalien.model.Slime;
 import jumpingalien.model.World;
+import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
@@ -92,16 +92,28 @@ public class SlimeTest {
 		assertEquals(school, slime.getSchool());
 	}
 	
+	@Test
+	public void testNbSlimesInWorld(){
+		world.start();
+		assertEquals(3, Slime.getNbInWorld(world));
+	}
+	
 	/******************************************************** SCHOOL ***************************************************/
 	
 	@Test
 	public void testSwitchingSchool(){
+		world.start();
+		
 		// Iterate long enough to make sure the Slimes overlapped
-		for (int i=0; i<10; i += 1){
+		for (int i=0; i<30; i += 1){
 			world.advanceTime(0.2);
 		}
+		
+		assertTrue(slime.hasProperSchool());
 		assertEquals(secondSchool, slime.getSchool());
+		assertTrue(slime.getSchool().hasProperSlimes());
 	}
+	
 	
 	/******************************************************* MOVEMENT **************************************************/
 	

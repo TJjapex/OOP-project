@@ -122,8 +122,8 @@ public class Mazub extends GameObject{
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
 	 * @post	The constant VELOCITY_X_MAX_RUNNING is equal to velocityXMaxRunning.
 	 *  		| VELOCITY_X_MAX_RUNNING == velocityXMaxRunning
-	 * @effect	The initial ducking status of Mazub is set to false.
-	 * 			| setDucking(false)
+	 * @post	The initial ducking status of Mazub will be false.
+	 * 			| new.getDucking() == false
 	 * @post	The animation is initiated.
 	 * 			| new.getAnimation() != null
 	 * @effect 	The terrain is configured for a Mazub.
@@ -347,7 +347,7 @@ public class Mazub extends GameObject{
 	 * 				The World to check the number of Mazubs for.
 	 * @return	| result == ( Mazub.getAllInWorld(world).size() )
 	 */
-	protected static int getNbInWorld(World world){
+	public static int getNbInWorld(World world){
 		return Mazub.getAllInWorld(world).size();
 	}
 	
@@ -380,10 +380,10 @@ public class Mazub extends GameObject{
 	 * @effect	The horizontal acceleration of Mazub is set to the initial horizontal acceleration provided with
 	 * 			the sign of the given orientation.
 	 * 			| setAccelerationX( orientation.getSign() * accelerationXInit)
-	 * @effect	If the given orientation is LEFT, set the status telling if Mazub should move left to true.
-	 * 			| setShouldMoveLeft(true)
-	 * @effect	If the given orientation is RIGHT, set the status telling if Mazub should move right to true.
-	 * 			| setShouldMoveRight(true)
+	 * @post	If the given orientation is LEFT, the status telling if Mazub should move left will be true.
+	 * 			| new.getShouldMoveLeft() == true
+	 * @post	If the given orientation is RIGHT, the status telling if Mazub should move right will be true.
+	 * 			| new.getShouldMoveRight() == true
 	 */
 	@Override
 	public void startMove(Orientation orientation){
@@ -407,23 +407,23 @@ public class Mazub extends GameObject{
 	 * 				The direction in which Mazub ends moving.
 	 * @pre		The given orientation should be a valid orientation.
 	 * 			| isValidOrientation(orientation)
-	 * @effect	If the given orientation is LEFT, set the status telling if Mazub should move left to false.
-	 * 			| setShouldMoveLeft(false)
-	 * @effect	If the given orientation is LEFT, set the prolonged movement of Mazub to the left to false.
-	 * 			| setShouldMoveLeft(false)
-	 * @effect	If the given orientation is RIGHT, set the status telling if Mazub should move right to false.
-	 * 			| setShouldMoveRight(false)
-	 * @effect	If the given orientation is RIGHT, set the prolonged movement of Mazub to the right to false.
-	 * 			| setShouldMoveRight(false)
-	 * @effect	If Mazub shouldn't move left or right anymore, set his horizontal velocity to 0.
+	 * @post	If the given orientation is LEFT, set the status telling if Mazub should move left to false.
+	 * 			| new.getShouldMoveLeft() == false
+	 * @post	If the given orientation is LEFT, the prolonged movement of Mazubto the left will be false.
+	 * 			| new.getProlongedMovementLeft() == false
+	 * @post	If the given orientation is RIGHT, the status telling if Mazub should move right will be false.
+	 * 			| new.getShouldMoveRight() == false
+	 * @post	If the given orientation is RIGHT, the prolonged movement of Mazub to the right will be false.
+	 * 			| new.getShouldMoveRight() == false
+	 * @post	If Mazub shouldn't move left or right anymore, his horizontal velocity will be 0.
 	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
-	 * 			|	then this.setVelocityX(0)
-	 * @effect 	If Mazub shouldn't move left or right anymore, set his horizontal acceleration to 0.
+	 * 			|	then new.getVelocityX() == 0
+	 * @post 	If Mazub shouldn't move left or right anymore, his horizontal acceleration will be 0.
 	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
-	 * 			|	then this.setAccelerationX(0)
-	 * @effect 	If Mazub shouldn't move left or right anymore, set the time since his last move to 0.
+	 * 			|	then new.getAccelerationX() == 0
+	 * @post 	If Mazub shouldn't move left or right anymore, set the time since his last move will be 0.
 	 * 			| if (!this.getShouldMoveLeft() && !this.getShouldMoveRight())
-	 * 			|	then this.getTimer().setSinceLastMove(0)
+	 * 			|	then new.getTimer().getSinceLastMove() == 0
 	 */
 	@Override
 	public void endMove(Orientation orientation){
@@ -572,8 +572,8 @@ public class Mazub extends GameObject{
 	 * 
 	 * @effect	The maximal horizontal velocity of Mazub is set to VELOCITY_X_MAX_DUCKING.
 	 * 			| setVelocityXMax(VELOCITY_X_MAX_DUCKING)
-	 * @effect	The ducking status of Mazub is set to true.
-	 * 			| setDucking(true)
+	 * @post	The ducking status of Mazub will be true.
+	 * 			| new.getDucking() == true
 	 */
 	public void startDuck(){	
 		this.setVelocityXMax(VELOCITY_X_MAX_DUCKING);
@@ -587,17 +587,17 @@ public class Mazub extends GameObject{
 	 * 			| setVelocityXMax(VELOCITY_X_MAX_RUNNING)
 	 * @effect	If Mazub is moving, set his horizontal acceleration back to the default value.
 	 * 			| if ( this.isMoving() )
-	 * 			|	then this.setAccelerationX(this.getOrientation().getSign() * this.getAccelerationXInit())
-	 * @effect	Mazub should not end his duck anymore after this method is invoked.
-	 * 			| setShouldEndDucking(false)
-	 * @effect	The ducking status of Mazub is set to false.
-	 * 			| setDucking(false)
-	 * @effect	If the sprite of Mazub didn't change, Mazub should still be ducking.
+	 * 			|	then this.setAccelerationX(this.getOrientation().getSign() * this.getAccelerationXInit())	
+	 * @post	If the sprite of Mazub didn't change, Mazub should still be ducking.
 	 * 			| if ( this.getCurrentSprite() == new.getCurrentSprite() )
-	 * 			|	then this.setDucking(true)
-	 * @effect	If the sprite of Mazub didn't change, Mazub should end his duck.
+	 * 			|	then new.getDucking() == true
+	 * @post	If the sprite of Mazub didn't change, Mazub should end his duck.
 	 * 			| if ( this.getCurrentSprite() == new.getCurrentSprite() )
-	 * 			|	then this.setShouldEndDucking(true)
+	 * 			|	then new.getShouldEndDucking() == true
+	 * @post	The ducking status of Mazub will be false.
+	 * 			| new.getDucking() == false
+	 * @post	Mazub should not end his duck anymore after this method is invoked.
+	 * 			| new.getShouldEndDucking() == false
 	 * @throws	IllegalStateException
 	 * 				Mazub is not ducking.
 	 * 				| !this.isDucking()
@@ -702,18 +702,11 @@ public class Mazub extends GameObject{
 	 * 			make Mazub start moving to the right.
 	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
 	 * 			|	then this.startMove(Orientation.RIGHT)
-	 * @effect	If Mazub has a prolonged movement to the right and he doesn't overlap to the right,
-	 * 			set the prolonged movement of Mazub to the right to false.
-	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
-	 * 			|	then this.setProlongedMoveRight(false)
+
 	 * @effect	If Mazub has a prolonged movement to the left and he doesn't overlap to the left,
 	 * 			make Mazub start moving to the left.
 	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
 	 * 			|	then this.startMove(Orientation.LEFT)
-	 * @effect	If Mazub has a prolonged movement to the left and he doesn't overlap to the left,
-	 * 			set the prolonged movement of Mazub to the left to false.
-	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
-	 * 			|	then this.setProlongedMoveLeft(false)
 	 * @effect	The vertical position of Mazub is equal to the result of the formula used in the method
 	 * 			updatePositionY.
 	 * 			| updatePositionY(dt)
@@ -725,10 +718,18 @@ public class Mazub extends GameObject{
 	 * 			|	then this.endDuck()
 	 * @effect	Update Mazub's sprite according to his current status.
 	 * 			| getAnimation().updateSpriteIndex()
+	 * @post	If Mazub has a prolonged movement to the right and he doesn't overlap to the right,
+	 * 			the prolonged movement of Mazub to the right will be false.
+	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
+	 * 			|	then new.getProlongedMoveRight == false
+	 * @post	If Mazub has a prolonged movement to the left and he doesn't overlap to the left,
+	 * 			the prolonged movement of Mazub to the left will be false.
+	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
+	 * 			|	then new.getProlongedMoveLeft() == false
 	 */
 
 	@Override
-	public void doMove(double dt) {	
+	protected void doMove(double dt) {	
 
 		/* Horizontal */
 		this.updatePositionX(dt);
@@ -763,12 +764,12 @@ public class Mazub extends GameObject{
 	 * 
 	 * @effect	Make Mazub end his current movement.
 	 * 			| endMove(this.getOrientation())
-	 * @effect	If Mazub's current orientation is RIGHT, set his prolonged movement to the right to true.
+	 * @post	If Mazub's current orientation is RIGHT, his prolonged movement to the right will be true.
 	 * 			| if ( this.getOrientation() == Orientation.RIGHT )
-	 * 	 		|	then setProlongedMoveRight(true)
-	 * @effect	If Mazub's current orientation is LEFT, set his prolonged movement to the left to true.
+	 * 	 		|	then new.getProlongedMoveRight() == true
+	 * @post	If Mazub's current orientation is LEFT, set his prolonged movement to the left will be true.
 	 * 			| if ( this.getOrientation() == Orientation.LEFT )	
-	 * 			| 	then setProlongedMoveLeft(true)
+	 * 			| 	then new.getProlongedMoveLeft() == true
 	 */
 	@Override
 	protected void processHorizontalCollision(){

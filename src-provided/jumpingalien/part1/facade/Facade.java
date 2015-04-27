@@ -211,7 +211,7 @@ public class Facade implements IFacade {
 	 */
 	public void advanceTime(GameObject alien, double dt) throws ModelException{
 		try{
-			alien.advanceTime(dt);
+			//alien.advanceTime(dt);
 		}catch(IllegalArgumentException exc){
 			throw new ModelException("Illegal time amount given!");
 		}

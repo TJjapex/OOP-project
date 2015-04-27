@@ -31,8 +31,12 @@ import be.kuleuven.cs.som.annotate.*;
  * 			|	isValidWidth( this.getWidth() )
  * @invar	The height of the Game object must be valid.
  * 			|	isValidHeight( this.getHeight() )
+ * @invar	The horizontal position of the Game object must be valid
+ * 			|	canHaveAsPositionX( getRoundedPositionX())
+ * @invar	The vertical position of the Game object must be valid
+ * 			|	canHaveAsPositionY( getRoundedPositionY())
  * @invar	The horizontal velocity must be valid.
- * 			|	isValidVelocityX( this.getVelocityX() )
+ * 			|	canHaveAsVelocityX( this.getVelocityX() )
  * @invar	The Game object can have this maximal horizontal velocity as its maximal horizontal velocity.
  * 			|	canHaveAsVelocityXMax( this.getVelocityXMax() )
  * @invar	The timer object linked to a Game object instance is not null.
@@ -44,9 +48,11 @@ import be.kuleuven.cs.som.annotate.*;
  * @invar	The current orientation is valid.
  * 			|	isValidOrientation( this.getOrientation() )
  * @invar	The current number of this Game object's hit points is valid.
- * 			|	isValidNbHitPoints( this.getNbHitPoints() )
+ * 			|	canHaveAsNbHitPoints( this.getNbHitPoints() )
  * @invar	The game object does not collide
  * 			| 	!doesCollide()
+ * @invar	This game object is not in a world, or the world is valid
+ * 			|	!hasWorld() || hasProperWorld()
  * 
  * @version 1.0
  */
@@ -171,8 +177,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	An animation that consists of consecutive sprites.
 	 */
-	@Basic
-	@Raw
+	@Basic @Raw
 	public Animation getAnimation() {
 		return this.animation;
 	}
@@ -260,7 +265,7 @@ public abstract class GameObject {
 	 * 			| getTimer().increaseSinceLastTerrainDamage(dt)
 	 * @effect	Increase the time since the last period.
 	 * 			| getTimer().increaseSinceLastPeriod(dt)
-	 * @efect	Reset the terrain overlap duration.
+	 * @effect	Reset the terrain overlap duration.
 	 * 			| resetTerrainOverlapDuration()
 	 */
 	protected void updateTimers(double dt){
@@ -281,7 +286,7 @@ public abstract class GameObject {
 	/**
 	 * A map containing the properties for the different types of terrain. 
 	 */
-	public Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
+	private Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
 	
 	/**
 	 * Return the map of terrain properties for the different types of terrain.
@@ -351,6 +356,7 @@ public abstract class GameObject {
 	 * 			|	if (! this.getOverlappingTerrainTypes().contains(terrain) )
 	 * 			|		then this.getTimer().setTerrainOverlapDuration(terrain, 0)
 	 */
+	@Model
 	private void resetTerrainOverlapDuration(){
 		Set<Terrain> overlappingTerrainTypes = this.getOverlappingTerrainTypes();
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
@@ -471,6 +477,7 @@ public abstract class GameObject {
 	 * 			|	new.getWorld() == null
 	 * 
 	 */
+	@Model
 	protected void unsetWorld() {
 		if(this.hasWorld()){
 			World formerWorld = this.getWorld();
@@ -593,11 +600,11 @@ public abstract class GameObject {
 	 * @return	True if and only if the given X position is not negative and if the Game object has
 	 * 			a proper World, the given X position should be smaller than the width of that World.
 	 * 			| result == ( positionX >= 0 && 
-	 * 			|			  (!hasProperWorld() || positionX + this.getWidth() < this.getWorld().getWorldWidth()) )
+	 * 			|			  (!this.hasProperWorld() || positionX + this.getWidth() < this.getWorld().getWorldWidth()) )
 	 */
 	@Raw
 	public boolean canHaveAsPositionX(int positionX){
-		return positionX >= 0 && (!hasProperWorld() || positionX + this.getWidth() <= this.getWorld().getWorldWidth());
+		return positionX >= 0 && (!this.hasProperWorld() || positionX + this.getWidth() <= this.getWorld().getWorldWidth());
 	}
 	
 	/**
@@ -637,7 +644,6 @@ public abstract class GameObject {
 	 * 				The game object does collide after changing his horizontal position.
 	 * 				| doesCollide()
 	 */
-	@Basic
 	protected void setPositionX(double positionX) 
 					throws IllegalStateException, IllegalPositionXException, CollisionException {
 		
@@ -738,7 +744,6 @@ public abstract class GameObject {
 	 * 				The game object does collide after changing his vertical position.
 	 * 				| doesCollide()
 	 */
-	@Basic
 	protected void setPositionY(double positionY) 
 			throws IllegalPositionYException, IllegalStateException, CollisionException {
 		
@@ -770,7 +775,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the horizontal velocity of a Game object.
 	 */
-	@Basic @Raw
+	@Basic
 	public double getVelocityX() {
 		return this.velocityX;
 	}
@@ -806,7 +811,7 @@ public abstract class GameObject {
 	 * 			| if(Math.abs(velocityX) >= this.getVelocityXMax())
 	 * 			|	then new.getAccelerationX() == 0
 	 */
-	@Basic
+	@Basic @Model
 	protected void setVelocityX(double velocityX) {
 		if(Util.fuzzyGreaterThanOrEqualTo(Math.abs(velocityX), this.getVelocityXMax())){
 			this.setAccelerationX(0);
@@ -902,7 +907,7 @@ public abstract class GameObject {
 	 * 
 	 * @return	A double that represents the maximal horizontal velocity of a Game object.
 	 */
-	@Basic @Raw
+	@Basic
 	public double getVelocityXMax() {
 		return this.velocityXMax;
 	}
@@ -919,7 +924,7 @@ public abstract class GameObject {
 	 * 			| else
 	 * 			|	new.getVelocityXMax() == this.getVelocityXInit()
 	 */
-	@Basic @Raw
+	@Basic @Model
 	protected void setVelocityXMax(double velocityXMax) {
 		this.velocityXMax = Math.max( this.getVelocityXInit() , velocityXMax );
 	}
@@ -933,7 +938,6 @@ public abstract class GameObject {
 	 * 			velocity of a Game object.
 	 * 			| result == ( velocityXMax >= this.getVelocityXIinit() )
 	 */
-	@Raw
 	public boolean canHaveAsVelocityXMax(double velocityXMax) {
 		return  velocityXMax >= this.getVelocityXInit();
 	}
@@ -967,7 +971,7 @@ public abstract class GameObject {
 	 * 			| else
 	 * 			| 	new.getAccelerationX() == accelerationX
 	 */
-	@Basic @Raw
+	@Basic @Model
 	protected void setAccelerationX(double accelerationX) {
 		if (Double.isNaN(accelerationX)){
 			this.accelerationX = 0;
@@ -1110,6 +1114,7 @@ public abstract class GameObject {
 	 * 			| else
 	 * 			| 	new.getNbHitPoints() == nbHitPoints
 	 */
+	@Model
 	protected void setNbHitPoints(int nbHitPoints) {
 		this.nbHitPoints = Math.max( Math.min(nbHitPoints, this.getMaxNbHitPoints()), 0);
 	}
@@ -1149,7 +1154,7 @@ public abstract class GameObject {
 	 * 			number of hit points for this Game object.
 	 * 			| result == (0 <= nbHitPoints && nbHitPoints <= this.getMaxNbHitPoints())
 	 */
-	public boolean isValidNbHitPoints(int nbHitPoints) {
+	public boolean canHaveAsNbHitPoints(int nbHitPoints) {
 		return (0 <= nbHitPoints && nbHitPoints <= this.getMaxNbHitPoints());
 	}
 
@@ -1355,7 +1360,7 @@ public abstract class GameObject {
 	 * 				The Game object is already terminated or it has no proper World when advanceTimeOnce is invoked.
 	 * 				| !this.isTerminated() && !this.hasProperWorld()
 	 */
-	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
+	void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
 		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
@@ -1385,6 +1390,7 @@ public abstract class GameObject {
 	 * 				The Game object is already terminated or it has no proper World.
 	 * 				| !this.isTerminated() && !this.hasProperWorld()
 	 */
+	@Model
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
 		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
@@ -1438,7 +1444,7 @@ public abstract class GameObject {
 	 * Make the Game object execute his movement. As this is an abstract method, this must
 	 * be implemented in the subclasses of this class, according to their specifications.
 	 */
-	public abstract void doMove(double dt);
+	protected abstract void doMove(double dt);
 	
 	/**
 	 * Make a Game object change direction.
@@ -1487,7 +1493,6 @@ public abstract class GameObject {
 	 * 			the horizontal collision.
 	 * 			| processHorizontalCollision()	
 	 */
-	@Model
 	protected void updatePositionX(double dt) {
 		try{
 			double sx = this.getVelocityX() * dt + 0.5 * this.getAccelerationX() * Math.pow( dt , 2 );
@@ -1533,7 +1538,6 @@ public abstract class GameObject {
 	 * 			the vertical collision.
 	 * 			| processVerticalCollision()	
 	 */
-	@Model
 	protected void updatePositionY(double dt) {
 		try{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );

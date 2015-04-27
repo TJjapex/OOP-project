@@ -21,6 +21,10 @@ import jumpingalien.model.exceptions.IllegalHeightException;
  * 			|	this.getNbSprites() >= 10 && (this.getNbSprites() % 2) == 0;
  * @invar	The number of frames for the walking animation should be greater than 0.
  * 			| 	this.getNbFrames() > 0
+ * @invar	Sprite index is always positive
+ * 			| 	this.getSpriteIndex() >= 0
+ * @invar	Animation index is always positive
+ * 			| 	this.getAnimationIndex() >= 0
  */
 public class MazubAnimation extends Animation {
 	

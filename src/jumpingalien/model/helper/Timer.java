@@ -13,6 +13,17 @@ import be.kuleuven.cs.som.annotate.*;
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
  * @version 2.0
+ * 
+ * @invar	| this.getSinceLastMove() >= 0
+ * @invar 	| this.getSinceLastLastSprite() >= 0
+ * @invar 	| this.getSinceKilled() >= 0
+ * @invar	|	 this.getSinceEnemyCollision() >= 0
+ * @invar 	| this.getSinceLastPeriod() >= 0
+ * @invar	| for each Terrain.getAllTerrainTypes() as terrain: 
+ * 			|		this.getTerrainOverlapDuration(terrain) >= 0
+ * @invar	| for each Terrain.getAllTerrainTypes() as terrain: 
+ * 			|		this.getSinceLastTerrainDamage(terrain) >= 0
+ * 
  */
 public class Timer {
 	
@@ -145,8 +156,9 @@ public class Timer {
 	 * 
 	 * @return	A double that represents the elapsed time since the Game object was killed.
 	 */
+	@Basic
 	public double getSinceKilled() {
-		return sinceKilled;
+		return this.sinceKilled;
 	}
 
 	/**
@@ -157,6 +169,7 @@ public class Timer {
 	 * @post	The time since the Game object was killed is equal to dt.
 	 * 			| new.getSinceKilled() == dt
 	 */
+	@Basic
 	public void setSinceKilled(double dt) {
 		this.sinceKilled = dt;
 	}
@@ -186,6 +199,7 @@ public class Timer {
 	 * 
 	 * @return	A double that represents the elapsed time since the Game object collided with an enemy.
 	 */
+	@Basic
 	public double getSinceEnemyCollision() {
 		return sinceEnemyCollision;
 	}
@@ -198,6 +212,7 @@ public class Timer {
 	 * @post	The time since the Game object collided with an enemy is equal to dt.
 	 * 			| new.getSinceEnemyCollision() == dt
 	 */
+	@Basic
 	public void setSinceEnemyCollision(double dt) {
 		this.sinceEnemyCollision = dt;
 	}
@@ -227,6 +242,7 @@ public class Timer {
 	 * 
 	 * @return	A double that represents the elapsed time since the last period of a Game object was initiated.
 	 */
+	@Basic
 	public double getSinceLastPeriod() {
 		return this.sinceLastPeriod;
 	}
@@ -239,6 +255,7 @@ public class Timer {
 	 * @post	The time since the last period of a Game object was initiated, is equal to dt.
 	 * 			| new.getSinceLastPeriod() == dt
 	 */
+	@Basic
 	public void setSinceLastPeriod(double dt) {
 		this.sinceLastPeriod = dt;
 	}
@@ -286,6 +303,7 @@ public class Timer {
 	 * @throws 	IllegalArgumentException
 	 * 				The given Terrain is not in the collision map.
 	 */
+	@Basic
 	public double getTerrainOverlapDuration(Terrain terrain) throws IllegalArgumentException{
 		
 		if(!this.terrainOverlapDuration.containsKey(terrain))
@@ -304,6 +322,7 @@ public class Timer {
 	 * @post	The terrain overlap duration of the given Terrain is equal to dt.
 	 * 			| new.getTerrainOverlapDuration(terrain) == dt
 	 */
+	@Basic
 	public void setTerrainOverlapDuration(Terrain terrain, double dt){
 		this.terrainOverlapDuration.put(terrain, dt);
 	}
@@ -342,6 +361,7 @@ public class Timer {
 	 * @throws 	IllegalArgumentException
 	 * 				The given Terrain is not in the collision map.
 	 */
+	@Basic
 	public double getSinceLastTerrainDamage(Terrain terrain) throws IllegalArgumentException{
 		if(!this.sinceLastTerrainDamage.containsKey(terrain))
 			throw new IllegalArgumentException("Terrain not in collision map!");
@@ -362,6 +382,7 @@ public class Timer {
 	 *  		is equal to dt.
 	 * 			| new.getSinceLastTerrainDamage(terrain) == dt
 	 */
+	@Basic
 	public void setSinceLastTerrainDamage(Terrain terrain, double dt){
 		this.sinceLastTerrainDamage.put(terrain, dt);
 	}

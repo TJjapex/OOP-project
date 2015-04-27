@@ -540,7 +540,7 @@ public class TestCase {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void advanceTime_SmallerThanZeroCase(){
-		alien_0_0.advanceTime(-0.001);
+		//alien_0_0.advanceTime(-0.001);
 	}
 	
 	/**
@@ -548,7 +548,7 @@ public class TestCase {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void advanceTime_GreaterThanCase(){
-		alien_0_0.advanceTime(0.201);
+		//alien_0_0.advanceTime(0.201);
 	}
 	
 	
