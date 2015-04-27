@@ -299,6 +299,27 @@ public class MazubTest {
 
 		assertArrayEquals(intArray(39, 499), facade.getLocation(alien));
 	}
+	
+	/**
+	 * Move left & right test
+	 */
+	@Test
+	public void moveLeftRightEndCorrect(){
+		facade.startGame(world);
+		facade.advanceTime(world, 0.1);
+		
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		assertEquals(1.0, alien.getVelocityX(), Util.DEFAULT_EPSILON);
+		facade.advanceTime(world, 0.1);
+		facade.startMoveLeft(alien);
+		assertEquals(Orientation.LEFT, alien.getOrientation());
+		assertEquals(-1.0, alien.getVelocityX(), Util.DEFAULT_EPSILON);
+		facade.advanceTime(world, 0.1);
+		facade.endMoveLeft(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		assertEquals(1.0, alien.getVelocityX(), Util.DEFAULT_EPSILON);
+	}
 
 	/********************************************* VELOCITY ****************************************/
 	
@@ -428,7 +449,6 @@ public class MazubTest {
 	 * velocity after some time.
 	 */
 	
-	// TODO Mazub loopt van die geological features, valt en gaat dood. in plaats van door te lopen. Dus eerst nog wat meer geo's zetten zeker :/
 	@Test
 	public void checkVelocityXNotExceedingVelocityXMax(){
 		facade.startGame(world);
