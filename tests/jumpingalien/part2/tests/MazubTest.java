@@ -16,8 +16,8 @@ import jumpingalien.model.Shark;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
+import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.terrain.Terrain;
-import jumpingalien.part1.facade.IFacade;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
 import jumpingalien.util.Sprite;
@@ -39,7 +39,7 @@ public class MazubTest {
 	private Sprite[] sprites;
 	private Mazub alien;
 	private World world;
-	private IFacade facade;
+	private IFacadePart2 facade;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -61,10 +61,10 @@ public class MazubTest {
 		alien = new Mazub(100, 50, sprites);
 		world = new World(50, 60, 15, 200, 150, 4, 1);
 		
-		world.setGeologicalFeature(0, 0, Terrain.SOLID);
-		world.setGeologicalFeature(1, 0, Terrain.SOLID);
-		world.setGeologicalFeature(2, 0, Terrain.SOLID);
-		world.setGeologicalFeature(3, 0, Terrain.SOLID);
+		for(int i = 0; i < 60; i++){
+			world.setGeologicalFeature(i, 0, Terrain.SOLID);
+		}
+		
 		
 		alien.setWorldTo(world);
 	}
@@ -105,6 +105,7 @@ public class MazubTest {
 		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
 		facade.setMazub(world, alien);
 		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
 		facade.advanceTime(world, 0.1);
 
 		// x_new [m] = 0 + 1 [m/s] * 0.1 [s] + 1/2 0.9 [m/s^2] * (0.1 [s])^2 =
@@ -127,6 +128,7 @@ public class MazubTest {
 		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
 		facade.setMazub(world, alien);
 		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
 		// maximum speed reached after 20/9 seconds
 		for (int i = 0; i < 100; i++) {
 			facade.advanceTime(world, 0.2 / 9);
@@ -154,7 +156,8 @@ public class MazubTest {
 		facade.setMazub(world, alien);
 
 		facade.startMoveRight(alien);
-
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
 		facade.advanceTime(world, 0.005);
 		for (int i = 0; i < m; i++) {
 			facade.advanceTime(world, 0.075);
@@ -174,10 +177,10 @@ public class MazubTest {
 		alien.getTimer().setSinceEnemyCollision(0.0);
 		assertEquals( 0.0, alien.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
 		assertEquals( 0.0, alien.getTimer().getSinceEnemyCollision(), Util.DEFAULT_EPSILON);
-		world.advanceTime(0.005);
+		facade.advanceTime(world, 0.005);
 		assertEquals( 0.005, alien.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
 		assertEquals( 0.005, alien.getTimer().getSinceEnemyCollision(), Util.DEFAULT_EPSILON);
-		world.advanceTime(0.15); // exactly the time of 2 sprite changes
+		facade.advanceTime(world, 0.15); // exactly the time of 2 sprite changes
 		assertEquals( 0.005, alien.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
 		assertEquals( 0.155, alien.getTimer().getSinceEnemyCollision(), Util.DEFAULT_EPSILON);
 		
@@ -300,14 +303,16 @@ public class MazubTest {
 	 */
 	@Test
 	public void positionsCorrectlyRounded(){
-		world.advanceTime(0.1);
+		facade.advanceTime(world, 0.1);
 		assertTrue(alien.isOnGround());
 		assertEquals(49,alien.getRoundedPositionY());
 		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
 		facade.startJump(alien);
-		world.advanceTime(0.01);
+		facade.advanceTime(world, 0.01);
 		assertFalse(alien.isOnGround());
-		world.advanceTime(0.13);
+		facade.advanceTime(world, 0.13);
 
 		// x_new [m] = 1 [m] + 1 [m/s] * 0.14 [s] + 1/2 * 0.9 [m/s^2] * (0.14 [s]) ^2 =
 		// 1.14882 [m] = 114.882 [cm] 
@@ -368,7 +373,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void correctValidVelocityX(){
-		IFacade facade = new Facade();
+		IFacadePart2 facade = new Facade();
 		Mazub alien = facade.createMazub(0, 0, spriteArrayForSize(2, 2));
 		
 		assertTrue(alien.canHaveAsVelocityX(0));
@@ -398,8 +403,26 @@ public class MazubTest {
 	@Test
 	public void checkAccelerationXWhileRunningRight(){
 		world.start();
+		facade.advanceTime(world, 0.1);
+		
 		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
 		assertEquals(0.9, facade.getAcceleration(alien)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Check if the acceleration of Mazub is 0.9 while running to the left.
+	 */
+	@Test
+	public void checkAccelerationXWhileRunningLeft(){
+		world.start();
+		facade.advanceTime(world, 0.1);
+
+		facade.startMoveLeft(alien);
+		assertEquals(Orientation.LEFT, alien.getOrientation());
+		
+		assertEquals(-0.9, facade.getAcceleration(alien)[0], Util.DEFAULT_EPSILON);
 	}
 	
 	/**
@@ -410,7 +433,9 @@ public class MazubTest {
 		world.start();
 
 		facade.startMoveRight(alien);
-		world.advanceTime(0.10);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
+		facade.advanceTime(world, 0.10);
 		facade.endMoveRight(alien);
 		assertEquals(0, facade.getAcceleration(alien)[0], Util.DEFAULT_EPSILON);
 	}
@@ -426,320 +451,363 @@ public class MazubTest {
 		world.start();
 
 		facade.startMoveRight(alien);
-		for (int i = 0; i < 40; i++) {
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
+		for (int i = 0; i < 100; i++) {
 			//System.out.println(Mazub.getAllInWorld(world));
-			world.advanceTime( 0.2 / 9);
+			facade.advanceTime(world,  0.2 / 9);
 		}
 		
 		// Mazub reached his maximal velocity.
-		world.advanceTime( 0.1);
 		assertEquals(alien.getVelocityXMax(), alien.getVelocityX(), Util.DEFAULT_EPSILON);
+		assertEquals(544, alien.getRoundedPositionX());
+		assertEquals(alien.getAccelerationX(), 0, Util.DEFAULT_EPSILON);
 	}
-//	
-//	/**
-//	 * Check if the acceleration of Mazub is 0 when he reached his maximal velocity.
-//	 */
-//	@Test
-//	public void checkAccelerationXAtMaxVelocityX(){
-//		world.start();
 
-//		facade.startMoveRight(alien_0_0);
-//		for (int i = 0; i < 100; i++) {
-//			facade.advanceTime(alien_0_0, 0.2 / 9);
-//		}
-//		// Mazub reached his maximal velocity.
-//		assertEquals(alien_0_0.getAccelerationX(), 0, Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/********************************************* JUMPING ****************************************/
-//
-//	/**
-//	 * Check the y-position when jumping.
-//	 */
-//	@Test
-//	public void jumpCorrectly() {
-//		facade.startJump(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.1);
-//
-//		// y_new [m] = 0 [m] + 8 [m/s] * 0.1 [s] + 1/2 * (-10.0) [m/s^2] * (0.1 [s])^2 =
-//		// 0.75 [m] = 75.00 [cm], which falls into pixel (0, 75)
-//
-//		assertArrayEquals(intArray(0, 75), facade.getLocation(alien_0_0));
-//	}
-//	
-//	/**
-//	 * Check endJump method.
-//	 */
-//	@Test
-//	public void endJumpCorrectly() {
-//		facade.startJump(alien_0_0);
-//
-//		facade.advanceTime(alien_0_0, 0.1);
-//		facade.endJump(alien_0_0);
-//		
-//		assertTrue( Util.fuzzyEquals(0, facade.getVelocity(alien_0_0)[1]) );
-//	}
-//	
-//	/**
-//	 * Check if Mazub is back on the ground on the expected moment, after invoking endJump.
-//	 */
-//	@Test
-//	public void backOnGroundCorrectly() {
-//		facade.startJump(alien_0_0);
-//
-//		facade.advanceTime(alien_0_0, 0.025);
-//		facade.endJump(alien_0_0);
-//		
-//		// Height after 0.025 seconds:
-//		// y_new [m] = 0 + 8 [m/s] * 0.025 [s] + 1/2 * (-10.0) [m/s^2] * (0.025 [s])^2 =
-//		// 0.1968750 [m] = 19.68750 [cm], which falls into pixel (0, 20)
-//
-//		// Time step until Mazub has reached the ground:
-//		// 0.1968750 [m] + 0 [m/s] * dt [s] + 1/2 * (-10.0) [m/s^2] * (dt [s])^2 = 0
-//		// Solving the equation for a positive solution gives: dt = 0.1984313483
-//		
-//		facade.advanceTime(alien_0_0, 0.199);
-//		assertArrayEquals(intArray(0, 0), facade.getLocation(alien_0_0));
-//	}
-//	
-//	/**
-//	 * Check if Mazub's vertical velocity is equal to zero at a certain moment during his jump. Also checks if
-//	 * Mazub is still jumping at that moment.
-//	 */
-//	@Test
-//	public void midAirVelocityZero(){
-//		facade.startJump(alien_0_0);
-//			
-//		// velocity_y_new [m/s] = 8 [m/s] - 10 [m/s^2] * dt [s] = 0 [m/s]
-//		// solving for dt we find: dt = 0.8 s
-//		
-//		for (int i = 0; i < 10; i++){
-//			facade.advanceTime(alien_0_0, 0.08);
-//		}
-//		
-//		assertEquals(0, facade.getVelocity(alien_0_0)[0], Util.DEFAULT_EPSILON);	
-//		assert !alien_0_0.isOnGround();
-//	}
-//	
-//	/********************************************* DUCKING ****************************************/
-//	
-//	/**
-//	 * Check if Mazub's maximal horizontal velocity while ducking is correct.
-//	 */
-//	@Test
-//	public void maxSpeedDuckingCorrectly() {
-//		facade.startDuck(alien_0_0);
-//		assertTrue(alien_0_0.isDucking());
-//		
-//		facade.startMoveRight(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.1);	
-//		
-//		// Horizontal velocity after a time step of 0.1 seconds.
-//		// velocity_x_new [m/s] = 1.0 [m/s] + 0.9 [m/s^2] * 0.1 [s] = 1.09 [m/s]
-//		// However the velocity should be limited to 1 m/s whilst ducking, so the new velocity is equal 
-//		// to 1 m/s.
-//
-//		assertEquals(1, facade.getVelocity(alien_0_0)[0], Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/**
-//	 * Check if Mazub's acceleration is correct when he was moving right
-//	 * whilst ducking and then stops ducking while still moving right.
-//	 */
-//	@Test
-//	public void correctAccelerationStopDuckingWhileMoving() {
-//		facade.startDuck(alien_0_0);
-//		assertTrue(alien_0_0.isDucking());
-//		
-//		facade.startMoveRight(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.1);
-//		
-//		facade.endDuck(alien_0_0);
-//		assertFalse(alien_0_0.isDucking());
-//		facade.advanceTime(alien_0_0, 0.001);
-//		
-//		assertEquals(0.9, facade.getAcceleration(alien_0_0)[0], Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/**
-//	 * Check if Mazub's maximal horizontal velocity is correct when he was moving right at maximum velocity
-//	 * whilst ducking and then stops ducking while still moving right.
-//	 */
-//	@Test
-//	public void correctSpeedStopDuckingWhileMoving() {
-//		facade.startDuck(alien_0_0);
-//		assertTrue(alien_0_0.isDucking());
-//		
-//		facade.startMoveRight(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.1);
-//		
-//		// Horizontal velocity of Mazub is now equal to the maximal velocity while ducking, which is 1 m/s.
-//		
-//		facade.endDuck(alien_0_0);
-//		assertFalse(alien_0_0.isDucking());
-//		facade.advanceTime(alien_0_0, 0.05);
-//		
-//		// velocity_x_new [m/s] = 1 [m/s] + 0.9 [m/s^2] * 0.05[s] = 1.045 [m/s]
-//		
-//		assertEquals(1.045, facade.getVelocity(alien_0_0)[0], Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/********************************************* TIMERS ****************************************/
-//	
-//	/**
-//	 * Check if the time since the last move by Mazub was made, is tracked correctly.
-//	 */
-//	@Test
-//	public void correctTimeSinceLastMove() {
-//		facade.startMoveLeft(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.15);
-//		facade.endMoveLeft(alien_0_0);
-//		for (int i = 0; i < 4; i++){
-//			facade.advanceTime(alien_0_0, 0.10);
-//		}
-//		
-//		assertEquals(0.4, alien_0_0.getTimer().getSinceLastMove(), Util.DEFAULT_EPSILON);
-//	}
-//	
-//
-//	/**
-//	 * Check if the time since the last sprite by Mazub was selected, is tracked correctly.
-//	 */
-//	@Test
-//	public void correctTimeSinceLastSprite(){
-//		
-//		facade.advanceTime(alien_0_0, 0.020);
-//		
-//		assertEquals(0.020, alien_0_0.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
-//		
-//		for(int i = 0; i < 10; i++){
-//			facade.advanceTime(alien_0_0, 0.10);
-//		}
-//		
-//		// total time passed: 0.020 + 10 * 0.010 = 0.120;
-//		// calculated time since last sprite: 0.120 - 0.075 = 0.045
-//		assertEquals(0.045, alien_0_0.getTimer().getSinceLastSprite(),  Util.DEFAULT_EPSILON);
-//	}
-//	
-//	/********************************************* SPRITES ****************************************/
-//
-//	/**
-//	 * Check ducking sprite.
-//	 */
-//	@Test
-//	public void spriteDucking(){		
-//		// The sprite index should be 0
-//		assertEquals(sprites[0], facade.getCurrentSprite(alien_0_0));
-//		
-//		facade.startDuck(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.010);
-//		
-//		// The sprite index should be 1
-//		assertEquals(sprites[1], facade.getCurrentSprite(alien_0_0));
-//		
-//		facade.endDuck(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.010);
-//
-//		// The sprite index should be 0
-//		assertEquals(sprites[0], facade.getCurrentSprite(alien_0_0));
-//	}
-//	
-//	/**
-//	 * Check the sprite:
-//	 * Mazub is not moving horizontally but its last horizontal movement was to the right
-//	 * 						(within 1s), and the character is not ducking. (index 2)
-//	 */
-//	@Test
-//	public void spriteHasMovedRightAndNotDucking(){
-//		
-//		facade.startMoveRight(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.10);
-//		
-//		facade.endMoveRight(alien_0_0);
-//		for(int i = 0; i < 10 ; i ++){
-//			facade.advanceTime(alien_0_0, 0.10);
-//		}
-//		
-//		// Total time passed since last move right is one second.
-//		// Therefore, the sprite index should be 2.
-//		assertEquals(sprites[2], facade.getCurrentSprite(alien_0_0));
-//	}
-//	
-//	/**
-//	 * Check if the sprite index is set back to 0 (which represents the idle sprite)
-//	 * just after the one second limit.
-//	 */
-//	@Test
-//	public void spriteIdleAfterRunning(){
-//		
-//		facade.startMoveRight(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.10);
-//		
-//		facade.endMoveRight(alien_0_0);
-//		for(int i = 0; i < 10 ; i ++){
-//			facade.advanceTime(alien_0_0, 0.10);
-//		}
-//		
-//		facade.advanceTime(alien_0_0, 0.001);
-//		
-//		// Total time passed since last move right is one second.
-//		// Therefore, the sprite index should be 2.
-//		assertEquals(sprites[0], facade.getCurrentSprite(alien_0_0));
-//	}
-//	
-//	/**
-//	 * Check sprite for jumping and moving right.
-//	 */
-//	@Test
-//	public void spriteJumpingMovingRight(){
-//		facade.startMoveRight(alien_0_0);
-//		facade.startJump(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.10);
-//		
-//		// The sprite index should be 4.
-//		assertEquals(sprites[4], facade.getCurrentSprite(alien_0_0));
-//	}
-//	
-//	/**
-//	 * Check sprite for ducking and moving right.
-//	 */
-//	@Test
-//	public void spriteDuckingMovingRight(){
-//		facade.startMoveRight(alien_0_0);
-//		facade.startDuck(alien_0_0);
-//		facade.advanceTime(alien_0_0, 0.10);
-//		
-//		// The sprite index should be 6.
-//		assertEquals(sprites[6], facade.getCurrentSprite(alien_0_0));
-//	}
-//	
-//	
-//	/********************************************* ADVANCE TIME ****************************************/	
-//	/**
-//	 * Check if advanceTime cannot be used with a negative time step.
-//	 */
-//	@Test(expected = IllegalArgumentException.class)
-//	public void advanceTime_SmallerThanZeroCase(){
-//		alien_0_0.advanceTime(-0.001);
-//	}
-//	
-//	/**
-//	 * Check if advanceTime cannot be used with a time step greater than 0.2.
-//	 */
-//	@Test(expected = IllegalArgumentException.class)
-//	public void advanceTime_GreaterThanCase(){
-//		alien_0_0.advanceTime(0.201);
-//	}
-//	
-//	
-//	/********************************************* GIVEN TESTS ****************************************/
-//	@Test
-//	public void testAccellerationZeroWhenNotMoving() {
-//		IFacade facade = new Facade();
-//
-//		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien_0_0),
-//				Util.DEFAULT_EPSILON);
-//	}
+	
+	/********************************************* JUMPING ****************************************/
+
+	/**
+	 * Check the y-position when jumping.
+	 */
+	@Test
+	public void jumpCorrectly() {
+		world.start();
+		
+		// wait until mazub is on ground
+		facade.advanceTime(world, 0.1);
+		assertTrue(alien.isOnGround());
+		assertEquals(0, alien.getVelocityY(), Util.DEFAULT_EPSILON);
+		
+		facade.startJump(alien);
+		facade.advanceTime(world, 0.1);
+		assertFalse(alien.isOnGround());
+
+
+		// y_new [m] = 0.49 [m] + 8 [m/s] * 0.1 [s] + 1/2 * (-10.0) [m/s^2] * (0.1 [s])^2 =
+		// 1.24 [m] = 124.00 [cm], which falls into pixel (100, 124)µ
+		assertArrayEquals(intArray(100, 124), facade.getLocation(alien));
+		
+	}
+
+	/**
+	 * Check endJump method.
+	 */
+	@Test
+	public void endJumpCorrectly() {
+		world.start();
+		
+		// wait until mazub is on ground
+		facade.advanceTime(world, 0.1);
+		assertTrue(alien.isOnGround());
+		facade.startJump(alien);
+		facade.advanceTime(world, 0.05);
+		assertFalse(alien.isOnGround());
+		
+		facade.advanceTime(world,  0.05);
+		facade.endJump(alien);
+		assertFalse(alien.isOnGround());
+		assertTrue( Util.fuzzyEquals(0, facade.getVelocity(alien)[1]) );
+		assertEquals(0, alien.getVelocityY(), Util.DEFAULT_EPSILON );
+		
+		// Wait until mazub is on ground
+		facade.advanceTime(world, 0.05);
+		assertFalse(alien.isOnGround());
+		
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		assertTrue(alien.isOnGround());
+		
+		assertTrue( Util.fuzzyEquals(49, facade.getLocation(alien)[1]) );
+		assertEquals(0, alien.getVelocityY(), Util.DEFAULT_EPSILON );
+	}
+	
+	/**
+	 * Check if Mazub is back on the ground on the expected moment, after invoking endJump.
+	 */
+	@Test
+	public void backOnGroundCorrectly() {
+		world.start();
+		facade.advanceTime(world, 0.1);
+		
+		assertTrue(alien.isOnGround());
+		
+		facade.startJump(alien);
+		facade.advanceTime(world, 0.025);
+		assertFalse(alien.isOnGround());
+		facade.endJump(alien);
+		
+		// Height after 0.025 seconds:
+		// y_new [m] = 0.49 + 8 [m/s] * 0.025 [s] + 1/2 * (-10.0) [m/s^2] * (0.025 [s])^2 =
+		// 0.49+ 0.1968750 [m] = 49+19.68750 [cm], which falls into pixel (0, 49+20) = (0, 69)
+		assertArrayEquals(intArray(100, 49+20), facade.getLocation(alien));
+
+		facade.advanceTime(world, 0.199);
+		// Time step until Mazub has reached the ground:
+		// 0.1968750 [m] + 0 [m/s] * dt [s] + 1/2 * (-10.0) [m/s^2] * (dt [s])^2 = 0
+		// Solving the equation for a positive solution gives: dt = 0.1984313483
+		
+		facade.advanceTime(world, 0.199);
+		assertArrayEquals(intArray(100, 49), facade.getLocation(alien));
+	}
+	
+	/**
+	 * Check if Mazub's vertical velocity is equal to zero at a certain moment during his jump. Also checks if
+	 * Mazub is still jumping at that moment.
+	 */
+	@Test
+	public void midAirVelocityZero(){
+		world.start();
+		facade.advanceTime(world, 0.1);
+		
+		facade.startJump(alien);
+			
+		// velocity_y_new [m/s] = 8 [m/s] - 10 [m/s^2] * dt [s] = 0 [m/s]
+		// solving for dt we find: dt = 0.8 s
+		
+		for (int i = 0; i < 10; i++){
+			facade.advanceTime(world, 0.08);
+		}
+		
+		assertEquals(0, facade.getVelocity(alien)[0], Util.DEFAULT_EPSILON);	
+		assertFalse(alien.isOnGround());
+	}
+	
+	/********************************************* DUCKING ****************************************/
+	
+	/**
+	 * Check if Mazub's maximal horizontal velocity while ducking is correct.
+	 */
+	@Test
+	public void maxSpeedDuckingCorrectly() {
+		world.start();
+		facade.startDuck(alien);
+		assertTrue(alien.isDucking());
+		
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		facade.advanceTime(world, 0.1);	
+		
+		// Horizontal velocity after a time step of 0.1 seconds.
+		// velocity_x_new [m/s] = 1.0 [m/s] + 0.9 [m/s^2] * 0.1 [s] = 1.09 [m/s]
+		// However the velocity should be limited to 1 m/s whilst ducking, so the new velocity is equal 
+		// to 1 m/s.
+
+		assertEquals(1, facade.getVelocity(alien)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Check if Mazub's acceleration is correct when he was moving right
+	 * whilst ducking and then stops ducking while still moving right.
+	 */
+	@Test
+	public void correctAccelerationStopDuckingWhileMoving() {
+		world.start();
+		facade.startDuck(alien);
+		assertTrue(alien.isDucking());
+		
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		facade.advanceTime(world, 0.1);
+		
+		facade.endDuck(alien);
+		assertFalse(alien.isDucking());
+		facade.advanceTime(world, 0.001);
+		
+		assertEquals(0.9, facade.getAcceleration(alien)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/**
+	 * Check if Mazub's maximal horizontal velocity is correct when he was moving right at maximum velocity
+	 * whilst ducking and then stops ducking while still moving right.
+	 */
+	@Test
+	public void correctSpeedStopDuckingWhileMoving() {
+		world.start();
+		facade.startDuck(alien);
+		assertTrue(alien.isDucking());
+		
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		facade.advanceTime(world, 0.1);
+		
+		// Horizontal velocity of Mazub is now equal to the maximal velocity while ducking, which is 1 m/s.
+		
+		facade.endDuck(alien);
+		assertFalse(alien.isDucking());
+		facade.advanceTime(world, 0.05);
+		
+		// velocity_x_new [m/s] = 1 [m/s] + 0.9 [m/s^2] * 0.05[s] = 1.045 [m/s]
+		
+		assertEquals(1.045, facade.getVelocity(alien)[0], Util.DEFAULT_EPSILON);
+	}
+	
+	/********************************************* TIMERS ****************************************/
+	
+	/**
+	 * Check if the time since the last move by Mazub was made, is tracked correctly.
+	 */
+	@Test
+	public void correctTimeSinceLastMove() {
+		world.start();
+		facade.startMoveLeft(alien);
+		facade.advanceTime(world, 0.15);
+		facade.endMoveLeft(alien);
+		for (int i = 0; i < 4; i++){
+			facade.advanceTime(world, 0.10);
+		}
+		
+		assertEquals(0.4, alien.getTimer().getSinceLastMove(), Util.DEFAULT_EPSILON);
+	}
+	
+
+	/**
+	 * Check if the time since the last sprite by Mazub was selected, is tracked correctly.
+	 */
+	@Test
+	public void correctTimeSinceLastSprite(){
+		world.start();
+		facade.advanceTime(world, 0.020);
+		
+		assertEquals(0.020, alien.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
+		
+		for(int i = 0; i < 10; i++){
+			facade.advanceTime(world, 0.10);
+		}
+		
+		// total time passed: 0.020 + 10 * 0.010 = 0.120;
+		// calculated time since last sprite: 0.120 - 0.075 = 0.045
+		assertEquals(0.045, alien.getTimer().getSinceLastSprite(),  Util.DEFAULT_EPSILON);
+	}
+	
+	/********************************************* SPRITES ****************************************/
+
+	/**
+	 * Check ducking sprite.
+	 */
+	@Test
+	public void spriteDucking(){	
+		world.start();
+		// The sprite index should be 0
+		assertEquals(sprites[0], facade.getCurrentSprite(alien));
+		
+		facade.startDuck(alien);
+		facade.advanceTime(world, 0.010);
+		
+		// The sprite index should be 1
+		assertEquals(sprites[1], facade.getCurrentSprite(alien));
+		
+		facade.endDuck(alien);
+		facade.advanceTime(world, 0.010);
+
+		// The sprite index should be 0
+		assertEquals(sprites[0], facade.getCurrentSprite(alien));
+	}
+	
+	/**
+	 * Check the sprite:
+	 * Mazub is not moving horizontally but its last horizontal movement was to the right
+	 * 						(within 1s), and the character is not ducking. (index 2)
+	 */
+	@Test
+	public void spriteHasMovedRightAndNotDucking(){
+		world.start();
+		facade.startMoveRight(alien);
+	assertEquals(Orientation.RIGHT, alien.getOrientation());
+		facade.advanceTime(world, 0.10);
+		
+		facade.endMoveRight(alien);
+		for(int i = 0; i < 10 ; i ++){
+			facade.advanceTime(world, 0.10);
+		}
+		
+		// Total time passed since last move right is one second.
+		// Therefore, the sprite index should be 2.
+		assertEquals(sprites[2], facade.getCurrentSprite(alien));
+	}
+	
+	/**
+	 * Check if the sprite index is set back to 0 (which represents the idle sprite)
+	 * just after the one second limit.
+	 */
+	@Test
+	public void spriteIdleAfterRunning(){
+		world.start();
+		facade.startMoveRight(alien);
+		facade.advanceTime(world, 0.10);
+		
+		facade.endMoveRight(alien);
+		for(int i = 0; i < 10 ; i ++){
+			facade.advanceTime(world, 0.10);
+		}
+		
+		facade.advanceTime(world, 0.001);
+		
+		// Total time passed since last move right is one second.
+		// Therefore, the sprite index should be 2.
+		assertEquals(sprites[0], facade.getCurrentSprite(alien));
+	}
+	
+	/**
+	 * Check sprite for jumping and moving right.
+	 */
+	@Test
+	public void spriteJumpingMovingRight(){
+		world.start();
+		facade.advanceTime(world, 0.1);
+		assertTrue(alien.isOnGround());
+		
+		facade.startMoveRight(alien);
+		facade.startJump(alien);
+		facade.advanceTime(world, 0.10);
+		assertFalse(alien.isOnGround());
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
+		// The sprite index should be 4.
+		assertEquals(sprites[4], facade.getCurrentSprite(alien));
+	}
+	
+	/**
+	 * Check sprite for ducking and moving right.
+	 */
+	@Test
+	public void spriteDuckingMovingRight(){
+		world.start();
+		facade.startMoveRight(alien);
+		facade.startDuck(alien);
+		facade.advanceTime(world, 0.10);
+		
+		// The sprite index should be 6.
+		assertEquals(sprites[6], facade.getCurrentSprite(alien));
+	}
+	
+	
+	/********************************************* ADVANCE TIME ****************************************/	
+	/**
+	 * Check if advanceTime cannot be used with a negative time step.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void advanceTime_SmallerThanZeroCase(){
+		world.advanceTime(-0.001);
+	}
+	
+	/**
+	 * Check if advanceTime cannot be used with a time step greater than 0.2.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void advanceTime_GreaterThanCase(){
+		world.advanceTime(0.201);
+	}
+	
+	
+	/********************************************* GIVEN TESTS ****************************************/
+	@Test
+	public void testAccellerationZeroWhenNotMoving() {
+		world.start();
+		facade.advanceTime(world, 0.1);
+		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
+				Util.DEFAULT_EPSILON);
+	}
 
 
 }
