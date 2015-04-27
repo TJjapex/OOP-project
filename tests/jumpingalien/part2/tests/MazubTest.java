@@ -9,8 +9,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Array;
-
 import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalHeightException;
@@ -20,6 +18,7 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.helper.VectorInt;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
@@ -252,6 +251,8 @@ public class MazubTest {
 		assertFalse(alien.canHaveAsPositionY(751.0 - alien.getHeight()));
 	}
 	
+	
+	/************************************************** MOVEMENT ********************************************/
 
 	@Test
 	public void startMoveRightCorrect() {
@@ -319,6 +320,131 @@ public class MazubTest {
 		facade.endMoveLeft(alien);
 		assertEquals(Orientation.RIGHT, alien.getOrientation());
 		assertEquals(1.0, alien.getVelocityX(), Util.DEFAULT_EPSILON);
+	}	
+	
+	/** 
+	 * Checks if Mazub is on target tile 
+	 * */
+	
+	@Test
+	public void testTargetTile(){
+		facade.startGame(world);
+		facade.advanceTime(world, 0.1);
+		
+		// Target tile is on tile (4, 1) , which as as pixel coordinates (200, 50)
+		// Mazubs starts at (100, 50), so move 100 px to right (actually less because of the width of mazub)
+		// t = 0.75 s
+		
+		facade.startMoveRight(alien);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.15);
+		assertTrue(facade.isGameOver(world));
+		assertTrue(facade.didPlayerWin(world));
+		assertTrue(alien.isOnTargetTile());
+	}
+	
+
+	/** 
+	 * Checks if Mazub is water
+	 * */
+	
+	@Test
+	public void testInWater(){
+		facade.setGeologicalFeature(world, 3, 1, FEATURE_WATER);
+		facade.startGame(world);
+		facade.advanceTime(world, 0.1);
+		
+		// Water is on tile (3, 1) , which as as pixel coordinates (150, 50)
+		// Mazubs starts at (100, 50), so move 100 px to right (actually less because of the width of mazub)
+		// t = 0.43 s
+		
+		facade.startMoveRight(alien);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.03);
+		assertTrue(alien.isSubmergedIn(Terrain.WATER));
+	}
+
+	
+	/** 
+	 * Checks if Mazub is magma
+	 * */
+	
+	@Test
+	public void testInMagma(){
+		facade.setGeologicalFeature(world, 3, 1, FEATURE_MAGMA);
+		facade.startGame(world);
+		facade.advanceTime(world, 0.1);
+		
+		// Magma is on tile (3, 1) , which as as pixel coordinates (150, 50)
+		// Mazubs starts at (100, 50), so move 100 px to right (actually less because of the width of mazub)
+		// t = 0.43 s
+		
+		facade.startMoveRight(alien);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.2);
+		facade.advanceTime(world, 0.03);
+		assertTrue(alien.isSubmergedIn(Terrain.MAGMA));
+	}
+	
+	/********************************************* HITPOINTS ***************************************/
+	
+	/** 
+	 * Checks if hit-points are correctly changed when in water. Also checks termination.
+	 */
+	@Test
+	public void damageInWaterAndTerminate(){
+		facade.setGeologicalFeature(world, 2, 1, FEATURE_WATER);
+		facade.startGame(world);
+		assertTrue(alien.isSubmergedIn(Terrain.WATER));
+		facade.advanceTime(world, 0.01);
+		assertEquals(100, alien.getNbHitPoints()); // No hitpoints deduced at initial contact with water
+		facade.advanceTime(world, 0.191);
+		assertEquals(98, alien.getNbHitPoints()); // 2 hitpoints deduced
+		
+		for(int i = 96; i >= 0; i-=2){
+			facade.advanceTime(world, 0.10);
+			facade.advanceTime(world, 0.10);
+			assertEquals(0.0, alien.getTimer().getSinceLastTerrainDamage(Terrain.WATER), Util.DEFAULT_EPSILON);
+			assertEquals(i, alien.getNbHitPoints()); // No hitpoints deduced
+		}
+		
+		/* Termination */
+		assertTrue(alien.isKilled());
+		assertEquals(0.0, alien.getTimer().getSinceKilled(), Util.DEFAULT_EPSILON);
+		assertFalse(alien.isTerminated());	
+		assertTrue(alien.getWorld().isGameOver());
+		assertFalse(alien.getWorld().didPlayerWin());
+		
+		for(int i = 0; i < 3; i++){
+			facade.advanceTime(world, 0.10);
+			facade.advanceTime(world, 0.10);
+			assertEquals(0.20 * (i+1), alien.getTimer().getSinceKilled(), Util.DEFAULT_EPSILON);
+		}
+	}
+
+	/** 
+	 * Checks if hit-points are correctly changed when in Magma
+	 */
+	@Test
+	public void damageInMagma(){
+		facade.setGeologicalFeature(world, 2, 1, FEATURE_MAGMA);
+		facade.startGame(world);
+		
+		assertTrue(alien.isSubmergedIn(Terrain.MAGMA));
+		facade.advanceTime(world, 0.001);
+		assertEquals(0.0, alien.getTimer().getSinceLastTerrainDamage(Terrain.MAGMA), Util.DEFAULT_EPSILON);
+		assertEquals(50, alien.getNbHitPoints()); // 50 hitpoints deduced at initial contact with magma
+		facade.advanceTime(world, 0.010);
+		facade.advanceTime(world, 0.191);
+		assertEquals(0.0, alien.getTimer().getSinceLastTerrainDamage(Terrain.MAGMA), Util.DEFAULT_EPSILON);
+		assertEquals(0, alien.getNbHitPoints()); // 50 hitpoints deduced
+		
+		assertTrue(alien.isKilled());
+		assertEquals(0.0, alien.getTimer().getSinceKilled(), Util.DEFAULT_EPSILON);
+		assertFalse(alien.isTerminated());
 	}
 
 	/********************************************* VELOCITY ****************************************/
@@ -457,7 +583,6 @@ public class MazubTest {
 		assertEquals(Orientation.RIGHT, alien.getOrientation());
 		
 		for (int i = 0; i < 100; i++) {
-			//System.out.println(Mazub.getAllInWorld(world));
 			facade.advanceTime(world,  0.2 / 9);
 		}
 		
@@ -953,18 +1078,49 @@ public class MazubTest {
 		
 	}
 	
+	
+	// This test will only work when assertion errors are enabled in the run config
 	@Test(expected = AssertionError.class)
 	public void invalidNbOfSprites(){
-		Sprite[] sprites = spriteArrayForSize(5, 3, 2);
-		new MazubAnimation(alien, sprites);
+		try{
+			assert false;
+			System.out.println("Assertion errors disabled! Test not executed!");
+		}catch(AssertionError exc){
+			// Assertion errors are enabled!
+			Sprite[] sprites = spriteArrayForSize(5, 3, 2);
+			new MazubAnimation(alien, sprites);
+		}
 	}
 	
+	// This test will only work when assertion errors are enabled in the run config
 	@Test(expected = AssertionError.class)
 	public void oddNbOfSprites(){
-		Sprite[] sprites = spriteArrayForSize(5, 3, 11);
-		new MazubAnimation(alien, sprites);
+		try{
+			assert false;
+			System.out.println("Assertion errors disabled! Test not executed!");
+		}catch(AssertionError exc){
+			// Assertion errors are enabled!
+			Sprite[] sprites = spriteArrayForSize(5, 3, 11);
+			new MazubAnimation(alien, sprites);
+		}
 	}
 	
+	public void vectorIntEqualsOther(){
+		VectorInt vector1 = new VectorInt(20, 18);
+		VectorInt vector2 = new VectorInt(16, 18);
+		VectorInt vector3 = new VectorInt(20, 15);
+		VectorInt vector4 = new VectorInt(20, 18);
+		
+		assertTrue(vector1.equals(vector4));
+		assertFalse(vector1.equals(vector3));
+		assertFalse(vector1.equals(vector2));
+		assertFalse(vector1.equals(alien));
+	}
+	
+	public void vectorIntToArary(){
+		VectorInt vector1 = new VectorInt(20, 18);
+		assertArrayEquals(new int[] {20, 18}, vector1.toArray());
+	}
 
 
 }

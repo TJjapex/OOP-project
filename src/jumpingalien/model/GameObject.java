@@ -1425,7 +1425,7 @@ public abstract class GameObject {
 	 * 				A double that represents the elapsed in-game time.
 	 * @effect	If the time since the Game object was killed is greater than 0.6s, the Game object
 	 * 			gets terminated.
-	 * 			| if ( this.getTimer().getSinceKilled() > 0.6 )
+	 * 			| if ( this.getTimer().getSinceKilled() >= 0.6 )
 	 * 			|	then this.terminate()
 	 * @effect	If the time since the Game object was killed is smaller than 0.6s, the time since the
 	 * 			Game object was killed is increased with the given dt.
@@ -1433,7 +1433,7 @@ public abstract class GameObject {
 	 * 			|	then this.getTimer().increaseSinceKilled(dt)
 	 */
 	protected void processKilled(double dt) {
-		if(this.getTimer().getSinceKilled() > 0.6){
+		if(this.getTimer().getSinceKilled() >= 0.60){
 			this.terminate();
 		}else{
 			this.getTimer().increaseSinceKilled(dt);
@@ -2013,11 +2013,11 @@ public abstract class GameObject {
 		// if the gameobject can lose hit points due to contact with this terrain type
 		if(  terrainProperties.getDamage() != 0 ){ 
 			// If the time since the last hitpoints detection is greater than the configured damage time
-			if( this.getTimer().getSinceLastTerrainDamage(overlappingTerrain) > terrainProperties.getDamageTime() ){ 
+			if( this.getTimer().getSinceLastTerrainDamage(overlappingTerrain) >= terrainProperties.getDamageTime() ){ 
 				// Do damage if the terrain should do damage immediately after contact (for example, magma) 
 				// or if the overlapping duration is longer than the configured damage time
 				if(terrainProperties.isInstantDamage() || 
-				   this.getTimer().getTerrainOverlapDuration(overlappingTerrain) > terrainProperties.getDamageTime() ){
+				   this.getTimer().getTerrainOverlapDuration(overlappingTerrain) >= terrainProperties.getDamageTime() ){
 					
 					this.takeDamage( terrainProperties.getDamage() );
 					this.getTimer().setSinceLastTerrainDamage(overlappingTerrain, 0.0);
