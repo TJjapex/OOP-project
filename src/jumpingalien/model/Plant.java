@@ -206,7 +206,7 @@ public class Plant extends GameObject {
 	 */
 	@Override
 	public void doMove(double dt){		
-
+		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
 			this.periodicMovement();

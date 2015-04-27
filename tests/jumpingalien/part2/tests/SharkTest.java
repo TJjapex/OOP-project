@@ -41,7 +41,7 @@ public class SharkTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sprites = spriteArrayForSize(3, 3);
+		sprites = spriteArrayForSize(66, 42, 2);
 		shark = new Shark(10, 12, sprites);
 		world = new World(50, 20, 15, 200, 150, 4, 1);
 		shark.setWorldTo(world);
@@ -51,8 +51,11 @@ public class SharkTest {
 	public void tearDown() throws Exception {
 	}
 	
-	/* Test constructor */
+	/***************************************************** CONSTRUCTOR *************************************************/
 	
+	/**
+	 * Check if the Shark is correctly initiated.
+	 */
 	@Test
 	public void testConstructor(){
 		assertEquals(10, shark.getRoundedPositionX());
@@ -60,7 +63,11 @@ public class SharkTest {
 		assertEquals(sprites[0], shark.getCurrentSprite());
 	}
 	
-	/* General */
+	/******************************************************* TERRAIN ***************************************************/
+	
+	/**
+	 * Check if the submerged function for the Terrain works correctly.
+	 */
 	@Test
 	public void testOutOfWater(){
 		assertFalse(shark.isSubmergedIn(Terrain.WATER));
@@ -68,13 +75,13 @@ public class SharkTest {
 	}
 	
 	
-	/* Test death */
+	/***************************************************** TERMINATION *************************************************/
 	
-	
-	/** Shark will fall until it is out of gameWorld, then it will be killed and after 0.6s it should be terminated */
+	/**
+	 * Check if the Shark is killed and terminated after a 0.6s delay when he falls until he is out of the World.
+	 */
 	@Test
 	public void deathOutOfGameWorld(){
-		
 		/* calculations -12 = -10/2 * t**2 -> t = 0.155 */
 		shark.advanceTime(0.17);
 		assertTrue(shark.getRoundedPositionY() == 0);
@@ -86,7 +93,9 @@ public class SharkTest {
 		assertTrue(shark.isTerminated());
 	}
 	
-	/** Tests if terminating after 0.6s works */
+	/**
+	 * Check if the Shark gets terminated after a 0.6s delay after he's killed.
+	 */
 	@Test
 	public void testTerminate(){
 		Shark deadShark = new Shark(12, 12, 0.0, 0.0, 4.0, 1.5, sprites, 0, 100);
@@ -100,4 +109,5 @@ public class SharkTest {
 		assertTrue(deadShark.isTerminated());
 		assertFalse(deadShark.hasWorld());		
 	}
+	
 }

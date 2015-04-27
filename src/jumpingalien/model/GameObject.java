@@ -452,9 +452,9 @@ public abstract class GameObject {
 	public void setWorldTo(World world) throws IllegalArgumentException{
 		
 		if(!this.canHaveAsWorld(world))
-			throw new IllegalArgumentException("This plant cannot have given world as world!");
+			throw new IllegalArgumentException("This Game object cannot have given world as world!");
 		if(!world.canHaveAsGameObject(this))
-			throw new IllegalArgumentException("Given world cannot have this plant as plant!");
+			throw new IllegalArgumentException("Given world cannot have this Game object as Game object!");
 		
 		this.setWorld(world);
 		world.addAsGameObject(this);
