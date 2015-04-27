@@ -258,6 +258,7 @@ public class SlimeTest {
 			if ( slime.getNbHitPoints() == expectedNbHitPointsSlime - 50 ){
 				expectedNbHitPointsSlime -= 50;
 				nonDamageIterations = 1;
+				assertTrue(slime.isImmune());
 			} else {
 				nonDamageIterations += 1;
 			}

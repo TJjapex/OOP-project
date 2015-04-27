@@ -400,15 +400,15 @@ public class MazubTest {
 		facade.startGame(world);
 		assertTrue(alien.isSubmergedIn(Terrain.WATER));
 		facade.advanceTime(world, 0.01);
-		assertEquals(100, alien.getNbHitPoints()); // No hitpoints deduced at initial contact with water
+		assertEquals(100, facade.getNbHitPoints(alien)); // No hitpoints deduced at initial contact with water
 		facade.advanceTime(world, 0.191);
-		assertEquals(98, alien.getNbHitPoints()); // 2 hitpoints deduced
+		assertEquals(98, facade.getNbHitPoints(alien)); // 2 hitpoints deduced
 		
 		for(int i = 96; i >= 0; i-=2){
 			facade.advanceTime(world, 0.10);
 			facade.advanceTime(world, 0.10);
 			assertEquals(0.0, alien.getTimer().getSinceLastTerrainDamage(Terrain.WATER), Util.DEFAULT_EPSILON);
-			assertEquals(i, alien.getNbHitPoints()); // No hitpoints deduced
+			assertEquals(i, facade.getNbHitPoints(alien)); // No hitpoints deduced
 		}
 		
 		/* Termination */
@@ -436,11 +436,11 @@ public class MazubTest {
 		assertTrue(alien.isSubmergedIn(Terrain.MAGMA));
 		facade.advanceTime(world, 0.001);
 		assertEquals(0.0, alien.getTimer().getSinceLastTerrainDamage(Terrain.MAGMA), Util.DEFAULT_EPSILON);
-		assertEquals(50, alien.getNbHitPoints()); // 50 hitpoints deduced at initial contact with magma
+		assertEquals(50, facade.getNbHitPoints(alien)); // 50 hitpoints deduced at initial contact with magma
 		facade.advanceTime(world, 0.010);
 		facade.advanceTime(world, 0.191);
 		assertEquals(0.0, alien.getTimer().getSinceLastTerrainDamage(Terrain.MAGMA), Util.DEFAULT_EPSILON);
-		assertEquals(0, alien.getNbHitPoints()); // 50 hitpoints deduced
+		assertEquals(0, facade.getNbHitPoints(alien)); // 50 hitpoints deduced
 		
 		assertTrue(alien.isKilled());
 		assertEquals(0.0, alien.getTimer().getSinceKilled(), Util.DEFAULT_EPSILON);
