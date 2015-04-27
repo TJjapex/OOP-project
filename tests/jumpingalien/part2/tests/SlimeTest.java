@@ -36,7 +36,7 @@ public class SlimeTest {
 	private World world;
 	private School school;
 	private School secondSchool;
-	private Mazub dummyMazub;
+	private Mazub mazub;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -49,30 +49,26 @@ public class SlimeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		// The World needs at least one Mazub
-		dummyMazub = new Mazub(0, 110, spriteArrayForSize(66, 92, 10));
-		sprites = spriteArrayForSize(50,28, 2);
-		school = new School();
-		secondSchool = new School();
-		slime = new Slime(60, 60, sprites, school);
-		secondSlime = new Slime(120, 60, sprites, secondSchool);
-		thirdSlime = new Slime(180, 60, sprites, secondSchool);
+		IFacadePart2 facade = new Facade();
 		
-		world = new World(50, 20, 15, 400, 400, 4, 1);
-		// Create an area to lock up the Slimes
-		world.setGeologicalFeature(0, 0, Terrain.SOLID);
-		world.setGeologicalFeature(0, 1, Terrain.SOLID);
-		world.setGeologicalFeature(1, 0, Terrain.SOLID);
-		world.setGeologicalFeature(2, 0, Terrain.SOLID);
-		world.setGeologicalFeature(3, 0, Terrain.SOLID);
-		world.setGeologicalFeature(4, 0, Terrain.SOLID);
-		world.setGeologicalFeature(5, 0, Terrain.SOLID);
-		world.setGeologicalFeature(6, 0, Terrain.SOLID);
-		world.setGeologicalFeature(6, 1, Terrain.SOLID);
-		dummyMazub.setWorldTo(world);
-		slime.setWorldTo(world);
-		secondSlime.setWorldTo(world);
-		thirdSlime.setWorldTo(world);
+		// The World needs at least one Mazub
+		mazub = facade.createMazub(0, 110, spriteArrayForSize(66, 92, 10));
+		sprites = spriteArrayForSize(50,28, 2);
+		school = facade.createSchool();
+		slime = facade.createSlime(60, 60, sprites, school);
+		
+		world = facade.createWorld(50, 20, 15, 400, 400, 4, 1);
+		// Create an area to lock up the Slimes7
+		facade.setGeologicalFeature(world, 0, 0, 1);
+		facade.setGeologicalFeature(world, 0, 1, 1);
+		facade.setGeologicalFeature(world, 1, 0, 1);
+		facade.setGeologicalFeature(world, 2, 0, 1);
+		facade.setGeologicalFeature(world, 3, 0, 1);
+		facade.setGeologicalFeature(world, 4, 0, 1);
+		facade.setGeologicalFeature(world, 5, 0, 1);
+		facade.setGeologicalFeature(world, 6, 0, 1);
+		facade.setGeologicalFeature(world, 6, 1, 1);
+		facade.setMazub(world, mazub);	
 	}
 
 	@After
@@ -86,49 +82,217 @@ public class SlimeTest {
 	 */
 	@Test
 	public void testConstructor(){
-		assertEquals(60, slime.getRoundedPositionX());
-		assertEquals(60, slime.getRoundedPositionY());
-		assertEquals(sprites[0], slime.getCurrentSprite());
-		assertEquals(school, slime.getSchool());
+		IFacadePart2 facade = new Facade();
+		facade.addSlime(world, slime);
+		
+		assertEquals(60, facade.getLocation(slime)[0]);
+		assertEquals(60, facade.getLocation(slime)[1]);
+		assertEquals(sprites[0], facade.getCurrentSprite(slime));
+		assertEquals(school, facade.getSchool(slime));
 	}
 	
+	/**
+	 * Check if the number of Slimes in the World is right.
+	 */
 	@Test
 	public void testNbSlimesInWorld(){
-		world.start();
-		assertEquals(3, Slime.getNbInWorld(world));
+		IFacadePart2 facade = new Facade();
+		secondSchool = facade.createSchool();
+		secondSlime = facade.createSlime(120, 60, sprites, secondSchool);
+		thirdSlime = facade.createSlime(180, 60, sprites, secondSchool);
+		facade.addSlime(world, slime);
+		facade.addSlime(world, secondSlime);
+		facade.addSlime(world, thirdSlime);
+		
+		facade.startGame(world);;
+		assertEquals(3, facade.getSlimes(world).size());
 	}
 	
 	/******************************************************** SCHOOL ***************************************************/
 	
+	/**
+	 * Check if a Slime correctly switches from School.
+	 */
 	@Test
 	public void testSwitchingSchool(){
-		world.start();
+		IFacadePart2 facade = new Facade();
+		secondSchool = facade.createSchool();
+		secondSlime = facade.createSlime(120, 60, sprites, secondSchool);
+		thirdSlime = facade.createSlime(180, 60, sprites, secondSchool);
+		facade.addSlime(world, slime);
+		facade.addSlime(world, secondSlime);
+		facade.addSlime(world, thirdSlime);
+		
+		facade.startGame(world);
 		
 		// Iterate long enough to make sure the Slimes overlapped
 		for (int i=0; i<30; i += 1){
-			world.advanceTime(0.2);
+			facade.advanceTime(world,0.2);
 		}
 		
 		assertTrue(slime.hasProperSchool());
-		assertEquals(secondSchool, slime.getSchool());
+		assertEquals(secondSchool, facade.getSchool(slime));
 		assertTrue(slime.getSchool().hasProperSlimes());
+		assertEquals(100, slime.getNbHitPoints());
+		assertEquals(99, secondSlime.getNbHitPoints());
+		assertEquals(99, thirdSlime.getNbHitPoints());
 	}
 	
+	/**
+	 * Check that if a Slime member of a School takes damage, the other members do too.
+	 */
+	@Test
+	public void testTakeDamageWithSchool(){
+		IFacadePart2 facade = new Facade();
+		secondSchool = facade.createSchool();
+		secondSlime = facade.createSlime(120, 60, sprites, secondSchool);
+		thirdSlime = facade.createSlime(180, 60, sprites, secondSchool);
+		facade.addSlime(world, slime);
+		facade.addSlime(world, secondSlime);
+		facade.addSlime(world, thirdSlime);
+		
+		facade.startGame(world);
+		
+		// Iterate long enough to make sure the Slimes overlapped
+		for (int i=0; i<30; i += 1){
+			facade.advanceTime(world,0.2);
+		}
+		
+		int expectedNbHitPointsFirstSlime = slime.getNbHitPoints();
+		int expectedNbHitPointsSecondSlime = secondSlime.getNbHitPoints();
+		int expectedNbHitPointsThirdSlime = thirdSlime.getNbHitPoints();
+		
+		facade.startMoveRight(mazub);
+		for (int i=0; i<5; i += 1){
+			facade.advanceTime(world,0.2);
+		}
+		
+		if (slime.getNbHitPoints() <= expectedNbHitPointsFirstSlime - 50){ // first slime took damage from mazub 
+			expectedNbHitPointsFirstSlime -= 50;
+			expectedNbHitPointsSecondSlime -= 1;
+			expectedNbHitPointsThirdSlime -= 1;
+		}
+		
+		if (secondSlime.getNbHitPoints() <= expectedNbHitPointsSecondSlime - 50){ // second slime took damage from mazub 
+			expectedNbHitPointsFirstSlime -= 1;
+			expectedNbHitPointsSecondSlime -= 50;
+			expectedNbHitPointsThirdSlime -= 1;
+		}
+		
+		if (thirdSlime.getNbHitPoints() <= expectedNbHitPointsThirdSlime - 50){ // third slime took damage from mazub 
+			expectedNbHitPointsFirstSlime -= 1;
+			expectedNbHitPointsSecondSlime -= 1;
+			expectedNbHitPointsThirdSlime -= 50;
+		}
+		
+		assertEquals(expectedNbHitPointsFirstSlime, slime.getNbHitPoints());
+		assertEquals(expectedNbHitPointsSecondSlime, secondSlime.getNbHitPoints());
+		assertEquals(expectedNbHitPointsThirdSlime, thirdSlime.getNbHitPoints());
+		
+	}
 	
 	/******************************************************* MOVEMENT **************************************************/
 	
-	
+	/**
+	 * Check that a slime can never move upwards.
+	 */
+	@Test
+	public void testNoPositiveChangeInYPosition(){
+		IFacadePart2 facade = new Facade();
+		facade.addSlime(world, slime);
+		double oldPositionYFirstSlime = slime.getPositionY();
+		
+		facade.startGame(world);
+		
+		// Check for each slime that no upwards movement has taken place
+		for (int i=0; i<50; i += 1){
+			facade.advanceTime(world,0.2);	
+			assertTrue(oldPositionYFirstSlime >= slime.getPositionY());
+			oldPositionYFirstSlime = slime.getPositionY();
+		}
+	}
 	
 	/****************************************************** COLLISION **************************************************/
 	
-	
+	/**
+	 * Check if the Slime changes direction upon horizontal collision.
+	 */
+	@Test
+	public void testChangeDirectionUponHorizontalCollision(){
+		IFacadePart2 facade = new Facade();
+		facade.addSlime(world, slime);
+		facade.setGeologicalFeature(world, 3, 1, 1);
+
+		facade.advanceTime(world, 0.01); // to start the random movement of the slime
+		if (slime.getOrientation() == Orientation.RIGHT){
+			facade.advanceTime(world,0.2);	
+			facade.advanceTime(world,0.2);	
+			assertEquals(Orientation.LEFT, slime.getOrientation());
+		} else{
+			facade.advanceTime(world,0.2);	
+			facade.advanceTime(world,0.2);	
+			assertEquals(Orientation.RIGHT, slime.getOrientation());
+		}
+	}
 	
 	/******************************************************* OVERLAP **************************************************/
 	
-	
+	/**
+	 * Check if the Slime takes damage when a Mazub overlaps with it and is immune for 0.6s after taking damage.
+	 */
+	@Test
+	public void testDamageUponMazubOverlap(){
+		IFacadePart2 facade = new Facade();
+		slime = facade.createSlime(200, 60, sprites, school);
+		facade.addSlime(world, slime);
+		int initialNbHitPointsSlime = slime.getNbHitPoints();
+		int expectedNbHitPointsSlime = slime.getNbHitPoints();
+		int nonDamageIterations = 3;
+		
+		facade.startGame(world);
+		
+		facade.startMoveRight(mazub);
+		
+		// Check if slime took damage and if so, check that the previous damage the slime got was more than 0.6s ago.
+		for (int i=0; i<20; i += 1){
+			facade.advanceTime(world,0.2);
+			assertTrue(slime.getNbHitPoints() == expectedNbHitPointsSlime ||
+					   ( slime.getNbHitPoints() == expectedNbHitPointsSlime - 50 &&
+						 nonDamageIterations >= 3 )	);
+			if ( slime.getNbHitPoints() == expectedNbHitPointsSlime - 50 ){
+				expectedNbHitPointsSlime -= 50;
+				nonDamageIterations = 1;
+			} else {
+				nonDamageIterations += 1;
+			}
+		}
+		
+		// Make sure that slime took damage at all due to an overlap with mazub
+		assertFalse(slime.getNbHitPoints() == initialNbHitPointsSlime);
+		
+	}
 	
 	/***************************************************** TERMINATION *************************************************/
 	
-	
+	/**
+	 * Check that the Slime gets terminated with a 0.6s delay after he's killed.
+	 */
+	@Test
+	public void testTerminate(){
+		IFacadePart2 facade = new Facade();
+		Slime deadSlime = new Slime(60, 60, 1.0, 0.0, 2.5, 0.7, sprites, school, 0, 100);
+		facade.addSlime(world, deadSlime);
+		
+		facade.startGame(world);
+		
+		assertTrue(deadSlime.isKilled());
+		
+		for (int i=0; i<3; i += 1){
+			facade.advanceTime(world,0.2);
+		}
+		facade.advanceTime(world, 0.1);
+		assertTrue(deadSlime.isTerminated());
+		assertFalse(deadSlime.hasWorld());		
+	}
 	
 }
