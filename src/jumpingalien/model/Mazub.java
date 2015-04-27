@@ -34,24 +34,7 @@ import jumpingalien.model.terrain.TerrainProperties;
  * 
  * @version 2.0
  *
- * @invar	The width of the character must be valid.
- * 			|	isValidWidth( this.getWidth() )
- * @invar	The height of the character must be valid.
- * 			|	isValidHeight( this.getHeight() )
- * @invar	The horizontal velocity must be valid.
- * 			|	isValidVelocityX( this.getVelocityX() )
- * @invar	The maximal horizontal velocity must be greater than the initial horizontal velocity.
- * 			|	canHaveAsVelocityXMax( this.getVelocityXMax() )
- * @invar	The timer object linked to a Mazub instance is not null.
- * 			| 	this.getTimer() != null
- * @invar	The animation object linked to a Mazub instance is not null.
- * 			| 	this.getAnimation() != null
- * @invar	The current orientation of Mazub is not null.
- * 			|	this.getOrientation() != null
- * @invar	The current orientation is valid.
- * 			|	isValidOrientation( this.getOrientation() )
- * @invar	The current number of Mazub's hit points is valid.
- * 			|	isValidNbHitPoints( this.getNbHitPoints() )
+ * @note Class invariants of the class GameObject also apply to this subclass.
  */
 public class Mazub extends GameObject{
 		
