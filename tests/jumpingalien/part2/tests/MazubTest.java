@@ -9,13 +9,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.function.ToDoubleBiFunction;
+import java.lang.reflect.Array;
 
 import jumpingalien.model.Mazub;
-import jumpingalien.model.Shark;
 import jumpingalien.model.World;
+import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
+import jumpingalien.model.exceptions.IllegalWidthException;
+import jumpingalien.model.helper.Animation;
+import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
@@ -58,116 +61,19 @@ public class MazubTest {
 		
 		sprites = spriteArrayForSize(3, 3);
 		
-		alien = new Mazub(100, 50, sprites);
-		world = new World(50, 60, 15, 200, 150, 4, 1);
+		alien = facade.createMazub(100, 50, sprites);
+		world = facade.createWorld(50, 60, 15, 200, 150, 4, 1);
 		
 		for(int i = 0; i < 60; i++){
-			world.setGeologicalFeature(i, 0, Terrain.SOLID);
+			facade.setGeologicalFeature(world, i, 0, FEATURE_SOLID);
 		}
 		
-		
-		alien.setWorldTo(world);
+		facade.setMazub(world, alien);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public void testZeroAccellerationOnGround() {
-		IFacadePart2 facade = new Facade();
-
-		// 2 vertical tiles, size 500px
-		// ....
-		// a...
-		// XXXX
-		// XXXX
-		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
-		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
-		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
-		facade.setMazub(world, alien);
-
-		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
-				Util.DEFAULT_EPSILON);
-	}
-
-	@Test
-	public void startMoveRightCorrect() {
-		IFacadePart2 facade = new Facade();
-
-		// 2 vertical tiles, size 500px
-		// ....
-		// a...
-		// XXXX
-		// XXXX
-		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
-		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
-		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
-		facade.setMazub(world, alien);
-		facade.startMoveRight(alien);
-		assertEquals(Orientation.RIGHT, alien.getOrientation());
-		facade.advanceTime(world, 0.1);
-
-		// x_new [m] = 0 + 1 [m/s] * 0.1 [s] + 1/2 0.9 [m/s^2] * (0.1 [s])^2 =
-		// 0.1045 [m] = 10.45 [cm], which falls into pixel (10, 0)
-
-		assertArrayEquals(intArray(10, 499), facade.getLocation(alien));
-	}
-
-	@Test
-	public void startMoveRightMaxSpeedAtRightTime() {
-		IFacadePart2 facade = new Facade();
-
-		// 2 vertical tiles, size 500px
-		// ....
-		// a...
-		// XXXX
-		// XXXX
-		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
-		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
-		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
-		facade.setMazub(world, alien);
-		facade.startMoveRight(alien);
-		assertEquals(Orientation.RIGHT, alien.getOrientation());
-		// maximum speed reached after 20/9 seconds
-		for (int i = 0; i < 100; i++) {
-			facade.advanceTime(world, 0.2 / 9);
-		}
-
-		assertArrayEquals(doubleArray(3, 0), facade.getVelocity(alien),
-				Util.DEFAULT_EPSILON);
-	}
-
-	@Test
-	public void testWalkAnimationLastFrame() {
-		IFacadePart2 facade = new Facade();
-
-		// 2 vertical tiles, size 500px
-		// ....
-		// a...
-		// XXXX
-		// XXXX
-		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
-		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
-
-		int m = 10;
-		Sprite[] sprites = spriteArrayForSize(3, 3, 10 + 2 * m);
-		Mazub alien = facade.createMazub(0, 499, sprites);
-		facade.setMazub(world, alien);
-
-		facade.startMoveRight(alien);
-		assertEquals(Orientation.RIGHT, alien.getOrientation());
-		
-		facade.advanceTime(world, 0.005);
-		for (int i = 0; i < m; i++) {
-			facade.advanceTime(world, 0.075);
-		}
-
-		assertEquals(sprites[8 + m], facade.getCurrentSprite(alien));
-	}
-	
-	
-	
+	}	
 	
 	/************************************************ TIMERS ******************************************/
 	
@@ -183,29 +89,9 @@ public class MazubTest {
 		facade.advanceTime(world, 0.15); // exactly the time of 2 sprite changes
 		assertEquals( 0.005, alien.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
 		assertEquals( 0.155, alien.getTimer().getSinceEnemyCollision(), Util.DEFAULT_EPSILON);
-		
-		/* TODO meer timers testen eventueel */
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	
-//	
-//	
-//	/* from test case 1 */
+		
+	/* from test case 1 */
 	/**
 	 * Check if Mazub is initialized with the right X position.
 	 */
@@ -365,8 +251,80 @@ public class MazubTest {
 		assertTrue(alien.canHaveAsPositionY(750 - alien.getHeight()));
 		assertFalse(alien.canHaveAsPositionY(751.0 - alien.getHeight()));
 	}
+	
+
+	@Test
+	public void startMoveRightCorrect() {
+		IFacadePart2 facade = new Facade();
+
+		// 2 vertical tiles, size 500px
+		// ....
+		// a...
+		// XXXX
+		// XXXX
+		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
+		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
+		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
+		facade.setMazub(world, alien);
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		facade.advanceTime(world, 0.1);
+
+		// x_new [m] = 0 + 1 [m/s] * 0.1 [s] + 1/2 0.9 [m/s^2] * (0.1 [s])^2 =
+		// 0.1045 [m] = 10.45 [cm], which falls into pixel (10, 0)
+
+		assertArrayEquals(intArray(10, 499), facade.getLocation(alien));
+	}
+	
+
+	@Test
+	public void startMoveLeftCorrect() {
+		IFacadePart2 facade = new Facade();
+
+		// 2 vertical tiles, size 500px
+		// ....
+		// a...
+		// XXXX
+		// XXXX
+		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
+		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
+		Mazub alien = facade.createMazub(50, 499, spriteArrayForSize(3, 3));
+		facade.setMazub(world, alien);
+		facade.startMoveLeft(alien);
+		assertEquals(Orientation.LEFT, alien.getOrientation());
+		facade.advanceTime(world, 0.1);
+
+		// x_new [m] = 0.5 + 1 [m/s] * 0.1 [s] + 1/2 0.9 [m/s^2] * (0.1 [s])^2 =
+		// 0.5-0.1045 [m] = 0.5 - 10.45 [cm], which falls into pixel (39, 0)
+
+		assertArrayEquals(intArray(39, 499), facade.getLocation(alien));
+	}
 
 	/********************************************* VELOCITY ****************************************/
+	
+	@Test
+	public void startMoveRightMaxSpeedAtRightTime() {
+		IFacadePart2 facade = new Facade();
+
+		// 2 vertical tiles, size 500px
+		// ....
+		// a...
+		// XXXX
+		// XXXX
+		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
+		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
+		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
+		facade.setMazub(world, alien);
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		// maximum speed reached after 20/9 seconds
+		for (int i = 0; i < 100; i++) {
+			facade.advanceTime(world, 0.2 / 9);
+		}
+
+		assertArrayEquals(doubleArray(3, 0), facade.getVelocity(alien),
+				Util.DEFAULT_EPSILON);
+	}
 	
 	/**
 	 * Check if canHaveAsVelocityX() correctly determines which velocities are valid and which are not.
@@ -396,13 +354,38 @@ public class MazubTest {
 	
 	
 	/****************************************** ACCELERATION **************************************/
+	@Test
+	public void testZeroAccellerationOnGround() {
+		IFacadePart2 facade = new Facade();
+
+		// 2 vertical tiles, size 500px
+		// ....
+		// a...
+		// XXXX
+		// XXXX
+		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
+		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
+		Mazub alien = facade.createMazub(0, 499, spriteArrayForSize(3, 3));
+		facade.setMazub(world, alien);
+
+		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
+				Util.DEFAULT_EPSILON);
+	}	
+	
+	@Test
+	public void testAccellerationZeroWhenNotMoving() {
+		facade.startGame(world);
+		facade.advanceTime(world, 0.1);
+		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
+				Util.DEFAULT_EPSILON);
+	}
 	
 	/**
 	 * Check if the acceleration of Mazub is 0.9 while running to the right.
 	 */
 	@Test
 	public void checkAccelerationXWhileRunningRight(){
-		world.start();
+		facade.startGame(world);
 		facade.advanceTime(world, 0.1);
 		
 		facade.startMoveRight(alien);
@@ -416,7 +399,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void checkAccelerationXWhileRunningLeft(){
-		world.start();
+		facade.startGame(world);
 		facade.advanceTime(world, 0.1);
 
 		facade.startMoveLeft(alien);
@@ -430,7 +413,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void checkAccelerationXWhenRunningRightEnded(){
-		world.start();
+		facade.startGame(world);
 
 		facade.startMoveRight(alien);
 		assertEquals(Orientation.RIGHT, alien.getOrientation());
@@ -448,7 +431,7 @@ public class MazubTest {
 	// TODO Mazub loopt van die geological features, valt en gaat dood. in plaats van door te lopen. Dus eerst nog wat meer geo's zetten zeker :/
 	@Test
 	public void checkVelocityXNotExceedingVelocityXMax(){
-		world.start();
+		facade.startGame(world);
 
 		facade.startMoveRight(alien);
 		assertEquals(Orientation.RIGHT, alien.getOrientation());
@@ -472,7 +455,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void jumpCorrectly() {
-		world.start();
+		facade.startGame(world);
 		
 		// wait until mazub is on ground
 		facade.advanceTime(world, 0.1);
@@ -495,7 +478,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void endJumpCorrectly() {
-		world.start();
+		facade.startGame(world);
 		
 		// wait until mazub is on ground
 		facade.advanceTime(world, 0.1);
@@ -527,7 +510,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void backOnGroundCorrectly() {
-		world.start();
+		facade.startGame(world);
 		facade.advanceTime(world, 0.1);
 		
 		assertTrue(alien.isOnGround());
@@ -557,7 +540,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void midAirVelocityZero(){
-		world.start();
+		facade.startGame(world);
 		facade.advanceTime(world, 0.1);
 		
 		facade.startJump(alien);
@@ -580,7 +563,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void maxSpeedDuckingCorrectly() {
-		world.start();
+		facade.startGame(world);
 		facade.startDuck(alien);
 		assertTrue(alien.isDucking());
 		
@@ -602,7 +585,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void correctAccelerationStopDuckingWhileMoving() {
-		world.start();
+		facade.startGame(world);
 		facade.startDuck(alien);
 		assertTrue(alien.isDucking());
 		
@@ -623,7 +606,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void correctSpeedStopDuckingWhileMoving() {
-		world.start();
+		facade.startGame(world);
 		facade.startDuck(alien);
 		assertTrue(alien.isDucking());
 		
@@ -649,7 +632,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void correctTimeSinceLastMove() {
-		world.start();
+		facade.startGame(world);
 		facade.startMoveLeft(alien);
 		facade.advanceTime(world, 0.15);
 		facade.endMoveLeft(alien);
@@ -666,7 +649,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void correctTimeSinceLastSprite(){
-		world.start();
+		facade.startGame(world);
 		facade.advanceTime(world, 0.020);
 		
 		assertEquals(0.020, alien.getTimer().getSinceLastSprite(), Util.DEFAULT_EPSILON);
@@ -681,13 +664,40 @@ public class MazubTest {
 	}
 	
 	/********************************************* SPRITES ****************************************/
+	@Test
+	public void testWalkAnimationLastFrame() {
+		IFacadePart2 facade = new Facade();
 
+		// 2 vertical tiles, size 500px
+		// ....
+		// a...
+		// XXXX
+		// XXXX
+		World world = facade.createWorld(500, 1, 2, 1, 1, 1, 1);
+		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
+
+		int m = 10;
+		Sprite[] sprites = spriteArrayForSize(3, 3, 10 + 2 * m);
+		Mazub alien = facade.createMazub(0, 499, sprites);
+		facade.setMazub(world, alien);
+
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
+		
+		facade.advanceTime(world, 0.005);
+		for (int i = 0; i < m; i++) {
+			facade.advanceTime(world, 0.075);
+		}
+
+		assertEquals(sprites[8 + m], facade.getCurrentSprite(alien));
+	}
+	
 	/**
 	 * Check ducking sprite.
 	 */
 	@Test
 	public void spriteDucking(){	
-		world.start();
+		facade.startGame(world);
 		// The sprite index should be 0
 		assertEquals(sprites[0], facade.getCurrentSprite(alien));
 		
@@ -711,7 +721,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void spriteHasMovedRightAndNotDucking(){
-		world.start();
+		facade.startGame(world);
 		facade.startMoveRight(alien);
 	assertEquals(Orientation.RIGHT, alien.getOrientation());
 		facade.advanceTime(world, 0.10);
@@ -732,7 +742,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void spriteIdleAfterRunning(){
-		world.start();
+		facade.startGame(world);
 		facade.startMoveRight(alien);
 		facade.advanceTime(world, 0.10);
 		
@@ -753,7 +763,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void spriteJumpingMovingRight(){
-		world.start();
+		facade.startGame(world);
 		facade.advanceTime(world, 0.1);
 		assertTrue(alien.isOnGround());
 		
@@ -772,7 +782,7 @@ public class MazubTest {
 	 */
 	@Test
 	public void spriteDuckingMovingRight(){
-		world.start();
+		facade.startGame(world);
 		facade.startMoveRight(alien);
 		facade.startDuck(alien);
 		facade.advanceTime(world, 0.10);
@@ -781,8 +791,56 @@ public class MazubTest {
 		assertEquals(sprites[6], facade.getCurrentSprite(alien));
 	}
 	
+	/**
+	 * Check sprite for ducking and moving left.
+	 */
+	@Test
+	public void spriteDuckingMovingLeft(){
+		facade.startGame(world);
+		facade.startMoveLeft(alien);
+		facade.startDuck(alien);
+		facade.advanceTime(world, 0.10);
+		
+		// The sprite index should be 7.
+		assertEquals(sprites[7], facade.getCurrentSprite(alien));
+	}
+	
+	
+	/**
+	 * Check sprite for ducking after moving right.
+	 */
+	@Test
+	public void spriteDuckingAfterMovingRight(){
+		facade.startGame(world);
+		facade.startMoveRight(alien);
+		facade.startDuck(alien);
+		facade.advanceTime(world, 0.10);
+		facade.endMoveRight(alien);
+		facade.advanceTime(world, 0.10);
+		// The sprite index should be 6.
+		assertEquals(sprites[6], facade.getCurrentSprite(alien));
+	}
+	
+	/**
+	 * Check sprite for ducking after moving left.
+	 */
+	@Test
+	public void spriteDuckingAfterMovingLeft(){
+		facade.startGame(world);
+		facade.startMoveLeft(alien);
+		facade.startDuck(alien);
+		facade.advanceTime(world, 0.10);
+		facade.endMoveLeft(alien);
+		facade.advanceTime(world, 0.10);
+		// The sprite index should be 7.
+		assertEquals(sprites[7], facade.getCurrentSprite(alien));
+	}
+	
 	
 	/********************************************* ADVANCE TIME ****************************************/	
+	
+	// TODO MOET NAAR WORLD
+	
 	/**
 	 * Check if advanceTime cannot be used with a negative time step.
 	 */
@@ -799,15 +857,94 @@ public class MazubTest {
 		world.advanceTime(0.201);
 	}
 	
-	
-	/********************************************* GIVEN TESTS ****************************************/
+	/******************************************* COLLISION ****************************************/
+	/**
+	 * Check if horizontal speed is 0 after collision with a wall
+	 *
+	 */
+
 	@Test
-	public void testAccellerationZeroWhenNotMoving() {
-		world.start();
+	public void collisionRight() {
+		IFacadePart2 facade = new Facade();
+
+		// 2 vertical tiles, size 500px
+		// ....X
+		// a...X
+		// XXXXX
+		// XXXXX
+		World world = facade.createWorld(50, 4, 2, 1, 1, 1, 1);
+		facade.setGeologicalFeature(world, 0, 0, FEATURE_SOLID);
+		facade.setGeologicalFeature(world, 1, 0, FEATURE_SOLID);
+		facade.setGeologicalFeature(world, 2, 0, FEATURE_SOLID);
+		facade.setGeologicalFeature(world, 3, 0, FEATURE_SOLID);
+		facade.setGeologicalFeature(world, 3, 1, FEATURE_SOLID);
+		Mazub alien = facade.createMazub(0, 49, spriteArrayForSize(3, 3));
+		facade.setMazub(world, alien);
+		facade.startGame(world);
+		
+		facade.startMoveRight(alien);
+		assertEquals(Orientation.RIGHT, alien.getOrientation());
 		facade.advanceTime(world, 0.1);
-		assertArrayEquals(doubleArray(0.0, 0.0), facade.getAcceleration(alien),
-				Util.DEFAULT_EPSILON);
+
+		// x_new [m] = 0 + 1 [m/s] * 0.1 [s] + 1/2 0.9 [m/s^2] * (0.1 [s])^2 =
+		// 0.1045 [m] = 10.45 [cm], which falls into pixel (10, 0)
+		assertArrayEquals(intArray(10, 49), facade.getLocation(alien));
+		
+		for(int i = 0; i < 10; i++){
+			facade.advanceTime(world, 0.2);
+		}
+		assertTrue(alien.doesOverlap(Orientation.RIGHT));
+		assertEquals(3 * 50 - alien.getWidth() + 1, alien.getRoundedPositionX()); // +1 is because it may overlap one pixel
+		
 	}
+	
+	/********************************************* HELPER CLASSES ***********************************************/
+	@Test(expected = IllegalWidthException.class)
+	public void invalidSpriteWidth(){
+		Sprite[] sprites = spriteArrayForSize(-5, 3);
+		new Animation(alien, sprites);
+	}
+	
+	@Test
+	public void invalidSpriteWidth_checkException(){
+		Sprite[] sprites = spriteArrayForSize(-5, 3);
+		try{
+			new MazubAnimation(alien, sprites);
+		}catch(IllegalWidthException exc){
+			assertEquals(-5, exc.getWidth(), Util.DEFAULT_EPSILON);
+		}
+		
+	}
+	
+	@Test(expected = IllegalHeightException.class)
+	public void invalidSpriteHeight(){
+		Sprite[] sprites = spriteArrayForSize(5, -3);
+		new Animation(alien, sprites);
+	}
+	
+	@Test
+	public void invalidSpriteHeight_checkException(){
+		Sprite[] sprites = spriteArrayForSize(5, -3);
+		try{
+			new MazubAnimation(alien, sprites);
+		}catch(IllegalHeightException exc){
+			assertEquals(-3, exc.getHeight(), Util.DEFAULT_EPSILON);
+		}
+		
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void invalidNbOfSprites(){
+		Sprite[] sprites = spriteArrayForSize(5, 3, 2);
+		new MazubAnimation(alien, sprites);
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void oddNbOfSprites(){
+		Sprite[] sprites = spriteArrayForSize(5, 3, 11);
+		new MazubAnimation(alien, sprites);
+	}
+	
 
 
 }
