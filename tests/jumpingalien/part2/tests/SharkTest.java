@@ -1,7 +1,5 @@
 package jumpingalien.part2.tests;
 
-import static jumpingalien.tests.util.TestUtils.doubleArray;
-import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 import jumpingalien.model.Mazub;
@@ -11,7 +9,6 @@ import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
 import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,15 +40,17 @@ public class SharkTest {
 
 	@Before
 	public void setUp() throws Exception {
+		IFacadePart2 facade = new Facade();
+		
 		sprites = spriteArrayForSize(66, 42, 2);
-		shark = new Shark(10, 12, sprites);
-		world = new World(50, 20, 15, 200, 150, 4, 1);
+		shark = facade.createShark(10, 12, sprites);
+		world = facade.createWorld(50, 20, 15, 200, 150, 4, 1);
 		
 		Sprite[] alienSprites = spriteArrayForSize(20, 20);
-		alien = new Mazub(100,100, alienSprites); // At least one alien in world
+		alien = facade.createMazub(100,100, alienSprites); // At least one alien in world
 		
-		alien.setWorldTo(world);
-		shark.setWorldTo(world);
+		facade.setMazub(world, alien);
+		facade.addShark(world, shark);
 	} 
 
 	@After
@@ -65,9 +64,12 @@ public class SharkTest {
 	 */
 	@Test
 	public void testConstructor(){
-		assertEquals(10, shark.getRoundedPositionX());
-		assertEquals(12, shark.getRoundedPositionY());
-		assertEquals(sprites[0], shark.getCurrentSprite());
+		IFacadePart2 facade = new Facade();
+		facade.startGame(world);
+		
+		assertEquals(10, facade.getLocation(shark)[0]);
+		assertEquals(12, facade.getLocation(shark)[1]);
+		assertEquals(sprites[0], facade.getCurrentSprite(shark));
 	}
 	
 	/******************************************************* TERRAIN ***************************************************/
@@ -77,6 +79,9 @@ public class SharkTest {
 	 */
 	@Test
 	public void testOutOfWater(){
+		IFacadePart2 facade = new Facade();
+		facade.startGame(world);
+		
 		assertFalse(shark.isSubmergedIn(Terrain.WATER));
 		assertTrue(shark.isSubmergedIn(Terrain.AIR));
 	}
@@ -89,16 +94,18 @@ public class SharkTest {
 	 */
 	@Test
 	public void deathOutOfGameWorld(){
+		IFacadePart2 facade = new Facade();
+		facade.startGame(world);
+		
 		/* calculations -12 = -10/2 * t**2 -> t = 0.155 */
-		world.start();
-		world.advanceTime(0.17);
+		facade.advanceTime(world,0.17);
 		assertTrue(shark.getRoundedPositionY() == 0);
 		
 		for (int i=0; i<3; i ++){
 			assertTrue(shark.isKilled());
 			assertFalse(shark.isTerminated());
 			assertEquals(world, shark.getWorld());
-			world.advanceTime(0.2);
+			facade.advanceTime(world,0.2);
 		}
 		assertTrue(shark.isTerminated());
 		assertFalse(shark.hasWorld());		

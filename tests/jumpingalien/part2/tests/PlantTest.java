@@ -1,19 +1,14 @@
 package jumpingalien.part2.tests;
 
-import static jumpingalien.tests.util.TestUtils.doubleArray;
-import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
-import jumpingalien.model.Shark;
 import jumpingalien.model.World;
 import jumpingalien.model.helper.Orientation;
-import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
 import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,14 +39,16 @@ public class PlantTest {
 
 	@Before
 	public void setUp() throws Exception {
+		IFacadePart2 facade = new Facade();
+		
 		sprites = spriteArrayForSize(54, 27, 2);
-		plant = new Plant(160, 180, sprites);
-		world = new World(50, 20, 15, 400, 400, 4, 1);
+		plant = facade.createPlant(160, 180, sprites);
+		world = facade.createWorld(50, 20, 15, 400, 400, 4, 1);
 		
 		Sprite[] alienSprites = spriteArrayForSize(20, 20);
-		alien = new Mazub(100,100, alienSprites); // At least one alien in world
-		alien.setWorldTo(world);
-		plant.setWorldTo(world);
+		alien = facade.createMazub(100,100, alienSprites); // At least one alien in world
+		facade.setMazub(world, alien);
+		facade.addPlant(world, plant);
 	}
 
 	@After
@@ -65,9 +62,12 @@ public class PlantTest {
 	 */
 	@Test
 	public void testConstructor(){
-		assertEquals(160, plant.getRoundedPositionX());
-		assertEquals(180, plant.getRoundedPositionY());
-		assertEquals(sprites[0], plant.getCurrentSprite());
+		IFacadePart2 facade = new Facade();
+		facade.startGame(world);
+		
+		assertEquals(160, facade.getLocation(plant)[0]);
+		assertEquals(180, facade.getLocation(plant)[1]);
+		assertEquals(sprites[0], facade.getCurrentSprite(plant));
 	}
 	
 	/******************************************************* MOVEMENT **************************************************/
@@ -77,15 +77,17 @@ public class PlantTest {
 	 */
 	@Test
 	public void testAlternateMovement(){
-		world.start();
+		IFacadePart2 facade = new Facade();
+		facade.startGame(world);
+		
 		assertTrue(world.hasStarted());
 		
-		world.advanceTime(0.2);
+		facade.advanceTime(world, 0.2);
 		
 		assertEquals(Orientation.LEFT, plant.getOrientation());
 		assertTrue(plant.isMoving());
 		for (int i=0; i<2; i += 1){
-			world.advanceTime(0.2);
+			facade.advanceTime(world, 0.2);
 		}
 		// After 0.5s, the Plant should move to the other direction. ( Check after 0.6s )
 		assertEquals(Orientation.RIGHT, plant.getOrientation());
@@ -99,15 +101,18 @@ public class PlantTest {
 	 */
 	@Test
 	public void testChangeDirectionUponHorizontalCollision(){
+		IFacadePart2 facade = new Facade();
+		
 		// Set a solid tile to the left of the plant
-		world.setGeologicalFeature(2, 4, Terrain.SOLID);
-		world.start();
+		facade.setGeologicalFeature(world,2, 4, 1);
+		
+		facade.startGame(world);
 		assertTrue(world.hasStarted());
 
 		// Plant starts moving to the left
-		world.advanceTime(0.2);
+		facade.advanceTime(world, 0.2);
 		// Plant collides with the solid tile and changes direction
-		world.advanceTime(0.2);
+		facade.advanceTime(world, 0.2);
 		assertEquals(Orientation.RIGHT, plant.getOrientation());
 	}
 	
@@ -118,20 +123,45 @@ public class PlantTest {
 	 */
 	@Test
 	public void testKilledUponMazubOverlap(){
-		World world2 = new World(50, 20, 15, 400, 400, 4, 1);
-		Mazub alien2 = new Mazub(170, 210, spriteArrayForSize(66, 92, 10));
-		Plant plant2 = new Plant(160, 180, sprites);
+		IFacadePart2 facade = new Facade();
+		
+		World world2 = facade.createWorld(50, 20, 15, 400, 400, 4, 1);
+		Mazub alien2 = facade.createMazub(170, 210, spriteArrayForSize(66, 92, 10));
+		Plant plant2 = facade.createPlant(160, 180, sprites);
+		facade.addPlant(world2, plant2);
+		facade.setMazub(world2, alien2);
 
-		alien2.setWorldTo(world2);
-		plant2.setWorldTo(world2);
-		world2.start();
+		facade.startGame(world2);
 		assertTrue(world2.hasStarted());
 		
-		world2.advanceTime(0.2);
+		facade.advanceTime(world2, 0.2);
 		
 		// Mazub falls on top of the plant and overlaps with the top row pixels of the plant
 		assertEquals(plant2.getRoundedPositionY()+plant2.getHeight()-1, alien2.getRoundedPositionY());
 		assertTrue(plant2.isKilled());
+	}
+	
+	/***************************************************** TERMINATION *************************************************/
+	
+	/**
+	 * Check that the Plant gets terminated with a 0.6s delay after it's killed.
+	 */
+	@Test
+	public void testTerminate(){
+		IFacadePart2 facade = new Facade();
+		Plant deadPlant = new Plant(60, 60, 0.5, 0, 0.5, 0, sprites, 0, 1);
+		facade.addPlant(world, deadPlant);
+		
+		facade.startGame(world);
+		
+		assertTrue(deadPlant.isKilled());
+		
+		for (int i=0; i<3; i += 1){
+			facade.advanceTime(world,0.2);
+		}
+		facade.advanceTime(world, 0.1);
+		assertTrue(deadPlant.isTerminated());
+		assertFalse(deadPlant.hasWorld());		
 	}
 	
 }

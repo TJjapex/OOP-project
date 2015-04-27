@@ -1,18 +1,13 @@
 package jumpingalien.part2.tests;
 
-import static jumpingalien.tests.util.TestUtils.doubleArray;
 import static jumpingalien.tests.util.TestUtils.intArray;
-import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
-import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -47,7 +42,7 @@ public class WorldTest {
 	public static final int FEATURE_WATER = 2;
 	public static final int FEATURE_MAGMA = 3;
 	
-	/*************************************************** CONSTRUCTOR *******************************************************/
+	/***************************************************** CONSTRUCTOR *************************************************/
 	
 	@Test
 	public void testConstructor(){
@@ -60,7 +55,8 @@ public class WorldTest {
 		assertEquals(1, world.getTargetTileY());
 	}
 	
-	/****************************************************** GENERAL ********************************************************/
+	/******************************************************* GENERAL ***************************************************/
+	
 	@Test
 	public void testWorldDimensions(){
 		assertEquals(50, world.getTileLength());
@@ -68,8 +64,7 @@ public class WorldTest {
 		assertEquals(50*15, world.getWorldHeight());
 	}
 	
-	
-	/******************************************************* TILES *********************************************************/
+	/******************************************************** TILES ****************************************************/
 	
 	@Test
 	public void positionToTile(){
@@ -97,8 +92,6 @@ public class WorldTest {
 		assertEquals(0, world.getPositionYOfTile(0));
 	}
 	
-	
-	
 	// Predefined
 	@Test
 	public void testGetBottomLeftPixelOfRandomTile() {
@@ -108,8 +101,8 @@ public class WorldTest {
 		assertArrayEquals(intArray(15, 10),
 				facade.getBottomLeftPixelOfTile(world, 3, 2));
 	}
-
-	/********************************************* TILES IN REGION ******************************************************/
+	
+	/*************************************************** TILES IN REGION ***********************************************/
 	
 	/* getTilePositionsIn(int pixelLeft, int pixelBottom, int pixelRight, int pixelTop)  */
 	
@@ -234,23 +227,24 @@ public class WorldTest {
 		assertArrayEquals(expectedTiles, actualTiles);
 	}	
 	
-	/*************************************** GEOLOGICAL FEATUER *****************************/
+	/************************************************** GEOLOGICAL FEATURE *********************************************/
+	
 	@Test
 	public void testGeologicalFeature_notSet(){
-		assertEquals(Terrain.AIR, world.getGeologicalFeature(world.getPositionXOfTile(17), world.getPositionYOfTile(15)));
+		assertEquals(Terrain.AIR, world.getGeologicalFeature(world.getPositionXOfTile(17),
+								  world.getPositionYOfTile(15)));
 	}
-	
 	
 	@Test
 	public void testGeologicalFeature(){
 		world.setGeologicalFeature(1, 2, Terrain.SOLID);
-		assertEquals(Terrain.SOLID, world.getGeologicalFeature(world.getPositionXOfTile(1), world.getPositionYOfTile(2)));
+		assertEquals(Terrain.SOLID, world.getGeologicalFeature(world.getPositionXOfTile(1),
+								    world.getPositionYOfTile(2)));
 	}
 	
 	@Test(expected=IllegalPositionXException.class)
 	public void testGeologicalFeature_illegalPositionX(){
 		world.setGeologicalFeature(-1, 2, Terrain.SOLID);
 	}
-	
 
 }

@@ -1,20 +1,15 @@
 package jumpingalien.part2.tests;
 
-import static jumpingalien.tests.util.TestUtils.doubleArray;
-import static jumpingalien.tests.util.TestUtils.intArray;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 import jumpingalien.model.Mazub;
-import jumpingalien.model.Plant;
 import jumpingalien.model.School;
 import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.helper.Orientation;
-import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
 import jumpingalien.util.Sprite;
-import jumpingalien.util.Util;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -84,6 +79,7 @@ public class SlimeTest {
 	public void testConstructor(){
 		IFacadePart2 facade = new Facade();
 		facade.addSlime(world, slime);
+		facade.startGame(world);
 		
 		assertEquals(60, facade.getLocation(slime)[0]);
 		assertEquals(60, facade.getLocation(slime)[1]);
@@ -104,7 +100,7 @@ public class SlimeTest {
 		facade.addSlime(world, secondSlime);
 		facade.addSlime(world, thirdSlime);
 		
-		facade.startGame(world);;
+		facade.startGame(world);
 		assertEquals(3, facade.getSlimes(world).size());
 	}
 	
