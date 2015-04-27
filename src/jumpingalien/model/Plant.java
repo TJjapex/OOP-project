@@ -205,7 +205,7 @@ public class Plant extends GameObject {
 	 * @effect	| updatePositionX(dt)
 	 */
 	@Override
-	public void doMove(double dt){		
+	protected void doMove(double dt){		
 		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
@@ -222,7 +222,7 @@ public class Plant extends GameObject {
 	 * 
 	 * @effect	| changeDirection()
 	 */
-	public void periodicMovement(){
+	private void periodicMovement(){
 		this.changeDirection();
 	}
 	
@@ -261,7 +261,7 @@ public class Plant extends GameObject {
 	 * 				The Mazub with whom this Plant overlaps.
 	 */
 	@Override
-	public void processMazubOverlap(Mazub mazub) {
+	protected void processMazubOverlap(Mazub mazub) {
 		
 	}
 
@@ -272,7 +272,7 @@ public class Plant extends GameObject {
 	 * 				The other Plant with which this Plant overlaps.
 	 */
 	@Override
-	public void processPlantOverlap(Plant plant) {
+	protected void processPlantOverlap(Plant plant) {
 
 	}
 
@@ -283,7 +283,7 @@ public class Plant extends GameObject {
 	 * 				The shark with which this Plant overlaps.
 	 */
 	@Override
-	public void processSharkOverlap(Shark shark) {
+	protected void processSharkOverlap(Shark shark) {
 
 	}
 
@@ -294,7 +294,7 @@ public class Plant extends GameObject {
 	 * 				The slime with which this Plant overlaps.
 	 */
 	@Override
-	public void processSlimeOverlap(Slime slime) {
+	protected void processSlimeOverlap(Slime slime) {
 
 	}
 		

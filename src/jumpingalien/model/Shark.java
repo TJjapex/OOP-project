@@ -510,7 +510,7 @@ public class Shark extends GameObject{
 	 * 			|	   && this.isSubmergedIn(Terrain.WATER) )
 	 * 			|	then this.startDiveRise()
 	 */
-	public void periodicMovement(){
+	private void periodicMovement(){
 		
 		this.endMove(this.getOrientation());
 		

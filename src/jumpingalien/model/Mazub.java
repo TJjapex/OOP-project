@@ -727,7 +727,6 @@ public class Mazub extends GameObject{
 	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
 	 * 			|	then new.getProlongedMoveLeft() == false
 	 */
-
 	@Override
 	protected void doMove(double dt) {	
 

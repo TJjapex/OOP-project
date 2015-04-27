@@ -8,6 +8,7 @@ import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -906,7 +907,7 @@ public class World {
 	 * 			|	gameObject.unsetWorld()
 	 * @post	| new.isTerminated() == true
 	 */
-	@Basic
+	@Basic @Model
 	private void terminate(){
 		for (GameObject gameObject: this.getAllGameObjects()){
 			gameObject.unsetWorld();

@@ -326,6 +326,7 @@ public class Slime extends GameObject {
 	 * @effect	| setSchool(school)
 	 * @effect	| school.addAsSlime(this)
 	 */
+	@Model
 	private void setSchoolTo(School school) throws IllegalArgumentException{ // In ownable voorbeeld public ?	
 		
 		if(!canHaveAsSchool(school))
@@ -345,6 +346,7 @@ public class Slime extends GameObject {
 	 * @effect	| if (this.hasSchool())
 	 * 			|	then this.setSchool(null)
 	 */
+	@Model
 	private void unsetSchool(){
 		if(this.hasSchool()){
 			School formerSchool = this.getSchool();
