@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import jumpingalien.model.Mazub;
 import jumpingalien.model.World;
 import jumpingalien.model.exceptions.IllegalHeightException;
@@ -18,7 +17,7 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Orientation;
-import jumpingalien.model.helper.VectorInt;
+import jumpingalien.model.helper.Vector;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
@@ -1106,10 +1105,10 @@ public class MazubTest {
 	}
 	
 	public void vectorIntEqualsOther(){
-		VectorInt vector1 = new VectorInt(20, 18);
-		VectorInt vector2 = new VectorInt(16, 18);
-		VectorInt vector3 = new VectorInt(20, 15);
-		VectorInt vector4 = new VectorInt(20, 18);
+		Vector<Integer> vector1 = new Vector<Integer>(20, 18);
+		Vector<Integer> vector2 = new Vector<Integer>(16, 18);
+		Vector<Integer> vector3 = new Vector<Integer>(20, 15);
+		Vector<Integer> vector4 = new Vector<Integer>(20, 18);
 		
 		assertTrue(vector1.equals(vector4));
 		assertFalse(vector1.equals(vector3));
@@ -1118,8 +1117,8 @@ public class MazubTest {
 	}
 	
 	public void vectorIntToArary(){
-		VectorInt vector1 = new VectorInt(20, 18);
-		assertArrayEquals(new int[] {20, 18}, vector1.toArray());
+		Vector<Integer> vector1 = new Vector<Integer>(20, 18);
+		assertArrayEquals(new Object[] {20, 18}, vector1.toArray());
 	}
 
 

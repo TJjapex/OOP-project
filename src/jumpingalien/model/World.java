@@ -13,7 +13,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
-import jumpingalien.model.helper.VectorInt;
+import jumpingalien.model.helper.Vector;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Util;
 
@@ -668,7 +668,7 @@ public class World {
 		if (!canHaveAsPositionY(getPositionYOfTile(tileY)))
 			throw new IllegalPositionYException(getPositionYOfTile(tileY));
 		
-		this.geologicalFeatures.put(new VectorInt(tileX,  tileY), terrainType);
+		this.geologicalFeatures.put(new Vector(tileX,  tileY), terrainType);
 	}
 	
 	/**
@@ -693,8 +693,8 @@ public class World {
 		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0)
 			throw new IllegalArgumentException("Given position does not correspond to the bottom left pixel of a tile");
 		
-		if(this.geologicalFeatures.containsKey( new VectorInt(getTileX(pixelX), getTileY(pixelY)))){
-			return this.geologicalFeatures.get( new VectorInt(getTileX(pixelX), getTileY(pixelY)));
+		if(this.geologicalFeatures.containsKey( new Vector(getTileX(pixelX), getTileY(pixelY)))){
+			return this.geologicalFeatures.get( new Vector(getTileX(pixelX), getTileY(pixelY)));
 		}else{
 			return Terrain.AIR;
 		}
@@ -704,7 +704,7 @@ public class World {
 	/**
 	 * Map registering the geological features of this World.
 	 */
-	private Map<VectorInt, Terrain> geologicalFeatures = new HashMap<VectorInt, Terrain>();
+	private Map<Vector, Terrain> geologicalFeatures = new HashMap<Vector, Terrain>();
 	
 	/**************************************************** GAME OBJECTS *************************************************/
 	

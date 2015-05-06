@@ -9,7 +9,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @note	See the class Mazub for further information about our project.
  * @version 1.0
  */
-public class VectorInt {
+public class Vector<T extends Number> {
 	
 	/***************************************************** CONSTRUCTOR *************************************************/
 	
@@ -23,7 +23,7 @@ public class VectorInt {
 	 * @effect	| setX(x)
 	 * @effect	| setY(y)
 	 */
-	public VectorInt(int x, int y){
+	public Vector(T x,T y){
 		this.setX(x);
 		this.setY(y);
 	}
@@ -38,7 +38,7 @@ public class VectorInt {
 	 * @return	An integer representing the x coordinate of the vector.
 	 */
 	@Basic
-	public int getX() {
+	public T getX() {
 		return x;
 	}
 	/**
@@ -49,14 +49,14 @@ public class VectorInt {
 	 * @post	| new.getX() = x
 	 */
 	@Basic
-	public void setX(int x) {
+	public void setX(T x) {
 		this.x = x;
 	}
 	
 	/**
 	 * Variable registering the x coordinate of the vector.
 	 */
-	private int x;
+	private T x;
 	
 	/* Y component */
 	
@@ -66,7 +66,7 @@ public class VectorInt {
 	 * @return	An integer representing the y coordinate of the vector.
 	 */
 	@Basic
-	public int getY() {
+	public T getY() {
 		return y;
 	}
 	
@@ -78,24 +78,24 @@ public class VectorInt {
 	 * @post	| new.getY() = y
 	 */
 	@Basic
-	public void setY(int y) {
+	public void setY(T y) {
 		this.y = y;
 	}
 	
 	/**
 	 * Variable registering the y coordinate of the vector.
 	 */
-	private int y;
+	private T y;
 	
 	/**
-	 * Convert the x and y coordinate of this vector to an array with as first element the x coordinate and
+	 * Convert the x and y coordinate of this vector to an array with aT first element the x coordinate and
 	 * second element the y coordinate.
 	 * 
 	 * @return 	An array with as first element the x coordinate and
 	 * 			second element the y coordinate.
 	 */
-	public int[] toArray(){
-		return new int[]{getX(), getY()};
+	public Object[] toArray(){
+		return new Object[]{getX(), getY()};
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class VectorInt {
 	 */
 	@Override
 	public int hashCode() {
-		return this.getX() + this.getY();
+		return (int) this.getX() + (int) this.getY();
 	}
 
 	/**
@@ -115,15 +115,17 @@ public class VectorInt {
 	 * 				A vector of the class VectorInt to compare with this vector.
 	 * @return	| result == ( this.getX() == ((VectorInt) other).getX() && this.getY() == ((VectorInt) other).getY() )
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean equals(Object other) {
+	public boolean equals(final Object other) {
 		
-		if(!(other instanceof VectorInt)){
+		if(!(other instanceof Vector)){
 			return false;
 		}
 		
-		return  this.getX() == ((VectorInt) other).getX() && 
-				this.getY() == ((VectorInt) other).getY();
+		return  this.getX() == ((Vector<T>) other).getX() && 
+				this.getY() == ((Vector<T>) other).getY();
 	}
 
 }
+
