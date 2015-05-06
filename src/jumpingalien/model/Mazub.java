@@ -63,6 +63,14 @@ public class Mazub extends GameObject{
 	 * 			| result == 50
 	 */
 	private static final int SLIME_DAMAGE = 50;
+	
+	/**
+	 * Constant reflecting the amount of damage an Alien should take when he overlaps with another Alien.
+	 * 
+	 * @return	The amount of damage an Alien should take when he overlaps with a Slime is equal to 50.
+	 * 			| result == 50
+	 */
+	private static final int ALIEN_DAMAGE = 50;
 
 
 	/**
@@ -808,7 +816,13 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void processMazubOverlap(Mazub alien){
-		
+		if(!alien.isKilled() && !this.isImmune()){
+			if(!this.doesOverlapWith(alien, Orientation.BOTTOM)){
+				this.takeDamage(ALIEN_DAMAGE);
+				this.setImmune(true);
+				this.getTimer().setSinceEnemyCollision(0);
+			}	
+		}
 	}
 	
 	/**

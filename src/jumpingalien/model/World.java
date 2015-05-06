@@ -118,7 +118,8 @@ public class World {
 	 */
 	@Basic
 	public void start() throws IllegalStateException{
-		this.getMazub();
+		if(!hasProperMazub())
+			throw new IllegalStateException("No mazub yet in this world!");
 		this.hasStarted = true;
 	}
 	
@@ -797,15 +798,36 @@ public class World {
 	 * 			| Mazub.getNbInWorld(this) != 1
 	 */
 	public Mazub getMazub() throws IllegalStateException{
-		
-		if(Mazub.getNbInWorld(this) == 1){
-			return Mazub.getAllInWorld(this).iterator().next();
-		}else if(Mazub.getNbInWorld(this) == 0){
-			throw new IllegalStateException("No Mazub in this world!");
-		}else{
-			throw new IllegalStateException("Not defined in assignment how to handle multiple Mazubs!");
-		}
+		return this.mazub;
 	}
+	
+	/**
+	 * Check if this world has a controlled Mazub instance
+	 * 
+	 * @return
+	 * 		| this.getMazub() != null
+	 */
+	public boolean hasProperMazub(){
+		return this.getMazub() != null;
+	}	
+	
+	/**
+	 * Sets the given alien as the Mazub instance controlled by the player
+	 * 
+	 * @param alien
+	 * 			The alien to be controlled
+	 * @throws IllegalStateException
+	 * 				| hasProperWorld() || alien.getWorld() != this
+	 */
+	public void setMazub(Mazub alien) throws IllegalStateException{
+		if(hasProperMazub())
+			throw new IllegalStateException("Already a Mazub in this world!");
+		if(alien.getWorld() != this)
+			throw new IllegalStateException("Alien not in world yet!");
+		this.mazub = alien;
+	}
+	
+	private Mazub mazub;
 	
 	/**
 	 * Return all the Game objects in the World.
