@@ -203,7 +203,7 @@ public class Shark extends GameObject{
 	 * @effect	| setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2, false))
 	 * @effect	| setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false))
 	 * @effect	| setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2, false))
-	 * @effect	| setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2, false))
+	 * @effect	| setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true))
 	 */
 	@Override
 	public void configureTerrain(){
@@ -211,7 +211,7 @@ public class Shark extends GameObject{
 		this.setTerrainPropertiesOf(Terrain.AIR,   new TerrainProperties(true, 6, 0.2, false));
 		this.setTerrainPropertiesOf(Terrain.SOLID, new TerrainProperties(false, 0, 0, false));
 		this.setTerrainPropertiesOf(Terrain.WATER, new TerrainProperties(true, 0, 0.2, false));
-		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 0, 0.2, false));
+		this.setTerrainPropertiesOf(Terrain.MAGMA, new TerrainProperties(true, 50, 0.2, true));
 		
 	}
 	
