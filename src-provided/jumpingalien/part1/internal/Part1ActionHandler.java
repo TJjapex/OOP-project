@@ -62,6 +62,6 @@ public class Part1ActionHandler extends AbstractActionHandler<Mazub, IFacade> {
 
 	@Override
 	protected Mazub getAlien() {
-		return (Mazub) getGame().getAlien();
+		return getGame().getAlien();
 	}
 }

@@ -668,7 +668,7 @@ public class World {
 		if (!canHaveAsPositionY(getPositionYOfTile(tileY)))
 			throw new IllegalPositionYException(getPositionYOfTile(tileY));
 		
-		this.geologicalFeatures.put(new Vector(tileX,  tileY), terrainType);
+		this.geologicalFeatures.put(new Vector<Integer>(tileX,  tileY), terrainType);
 	}
 	
 	/**
@@ -693,8 +693,8 @@ public class World {
 		if(pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0)
 			throw new IllegalArgumentException("Given position does not correspond to the bottom left pixel of a tile");
 		
-		if(this.geologicalFeatures.containsKey( new Vector(getTileX(pixelX), getTileY(pixelY)))){
-			return this.geologicalFeatures.get( new Vector(getTileX(pixelX), getTileY(pixelY)));
+		if(this.geologicalFeatures.containsKey( new Vector<Integer>(getTileX(pixelX), getTileY(pixelY)))){
+			return this.geologicalFeatures.get( new Vector<Integer>(getTileX(pixelX), getTileY(pixelY)));
 		}else{
 			return Terrain.AIR;
 		}
@@ -704,7 +704,7 @@ public class World {
 	/**
 	 * Map registering the geological features of this World.
 	 */
-	private Map<Vector, Terrain> geologicalFeatures = new HashMap<Vector, Terrain>();
+	private Map<Vector<Integer>, Terrain> geologicalFeatures = new HashMap<Vector<Integer>, Terrain>();
 	
 	/**************************************************** GAME OBJECTS *************************************************/
 	
