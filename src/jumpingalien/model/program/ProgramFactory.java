@@ -7,7 +7,7 @@ import jumpingalien.model.GameObject;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class ProgramFactory implements IProgramFactory<Expression, Statement, Type, Program>{
+public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression, Statement, Type, Program>{
 
 	@Override
 	public Expression createReadVariable(String variableName,

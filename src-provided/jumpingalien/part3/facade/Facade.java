@@ -2,6 +2,8 @@ package jumpingalien.part3.facade;
 
 import java.util.Collection;
 
+import org.antlr.runtime.ANTLRStringStream;
+
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Buzam;
@@ -16,7 +18,11 @@ import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.program.Expression;
 import jumpingalien.model.program.Program;
+import jumpingalien.model.program.ProgramFactory;
+import jumpingalien.model.program.Statement;
+import jumpingalien.model.program.Type;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part3.programs.ParseOutcome;
 import jumpingalien.part3.programs.ProgramParser;
@@ -43,8 +49,7 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 	@Override
 	public Buzam createBuzamWithProgram(int pixelLeftX, int pixelBottomY,
 			Sprite[] sprites, Program program) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.createBuzam(pixelLeftX, pixelBottomY, sprites);
 	}
 
 	@Override
@@ -70,8 +75,11 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 
 	@Override
 	public ParseOutcome<?> parse(String text) {
-		// TODO
-		return null;
+		ProgramFactory factory = new ProgramFactory();
+		ProgramParser<Expression, Statement, Type<?>, Program> programParser = new ProgramParser<Expression, Statement, Type<?>, Program>(factory);
+		
+		// TODO: ik zie niet in hoe er hier ParseOutcome kan uitkomen
+		return programParser.parseString(text);
 	}
 
 	@Override
