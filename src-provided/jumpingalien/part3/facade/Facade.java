@@ -1,8 +1,11 @@
 package jumpingalien.part3.facade;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.v4.runtime.misc.*;
 
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
@@ -24,6 +27,7 @@ import jumpingalien.model.program.ProgramFactory;
 import jumpingalien.model.program.Statement;
 import jumpingalien.model.program.Type;
 import jumpingalien.model.terrain.Terrain;
+import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
 import jumpingalien.part3.programs.ProgramParser;
 
@@ -31,8 +35,12 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 	
 	@Override
 	public void advanceTime(Mazub alien, double dt) {
-		// TODO Auto-generated method stub
-		
+		try{
+			alien.getWorld().advanceTime(dt);	
+		}catch(IllegalArgumentException exc){
+			throw new ModelException("Illegal argument exception: " + exc.getMessage());
+		}
+		// TODO: bedoelen ze dit?
 	}
 
 	@Override
@@ -49,43 +57,67 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 	@Override
 	public Buzam createBuzamWithProgram(int pixelLeftX, int pixelBottomY,
 			Sprite[] sprites, Program program) {
-		return this.createBuzam(pixelLeftX, pixelBottomY, sprites);
+		try{
+			return new Buzam(pixelLeftX, pixelBottomY, sprites, program);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException( exc.getMessage() );
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}
 	}
 
 	@Override
 	public Plant createPlantWithProgram(int x, int y, Sprite[] sprites,
 			Program program) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			return new Plant(x, y, sprites, program);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}	
 	}
 
 	@Override
 	public Shark createSharkWithProgram(int x, int y, Sprite[] sprites,
 			Program program) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			return new Shark(x, y, sprites, program);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}
 	}
 
 	@Override
 	public Slime createSlimeWithProgram(int x, int y, Sprite[] sprites,
 			School school, Program program) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			return new Slime(x,y,sprites,school, program);
+		}catch( IllegalPositionXException | IllegalPositionYException exc){
+			throw new ModelException("Invalid position given.");
+		}catch( IllegalWidthException | IllegalHeightException exc){
+			throw new ModelException("Invalid sprite size given.");
+		}
 	}
 
 	@Override
 	public ParseOutcome<?> parse(String text) {
-		ProgramFactory factory = new ProgramFactory();
-		ProgramParser<Expression, Statement, Type<?>, Program> programParser = new ProgramParser<Expression, Statement, Type<?>, Program>(factory);
-		
-		// TODO: ik zie niet in hoe er hier ParseOutcome kan uitkomen
-		return programParser.parseString(text);
+		IProgramFactory<Expression, Statement, Type<?>, Program> factory = new ProgramFactory();
+		ProgramParser<Expression, Statement, Type<?>, Program> parser = new ProgramParser<>(factory);
+		Optional<Program> parseResult = parser.parseString(text);
+		if (parseResult.isPresent()){	
+			return ParseOutcome.success(parseResult.get());
+		} else {
+			return ParseOutcome.failure(parser.getErrors());
+		}
 	}
 
 	@Override
 	public boolean isWellFormed(Program program) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

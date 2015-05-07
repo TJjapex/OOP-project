@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.CollisionException;
 import jumpingalien.model.exceptions.IllegalHeightException;
@@ -125,6 +126,7 @@ public abstract class GameObject {
 	 * 			| new.maxNbHitPoints == maxNbHitPoints
 	 * @effect	Set the initial number of hit points to nbHitPoints.
 	 * 			| setNbHitPoints(nbHitPoints)
+	 * TODO: program documentation
 	 * @throws	IllegalPositionXException
 	 * 				The Game object can't have positionX as his horizontal position.
 	 * 				| ! canHaveAsPositionX(positionX)
@@ -142,7 +144,7 @@ public abstract class GameObject {
 	 */
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
-					  int maxNbHitPoints)
+					  int maxNbHitPoints, Program program)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{			
 		assert sprites != null && sprites.length >= 2;
 		
@@ -167,6 +169,8 @@ public abstract class GameObject {
 		
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
+		
+		this.program = program;
 		
 	}
 
@@ -280,6 +284,10 @@ public abstract class GameObject {
 		
 		this.resetTerrainOverlapDuration();
 	}
+	
+	/******************************************************* PROGRAM ***************************************************/
+	
+	protected final Program program; 
 	
 	/******************************************************* TERRAIN ***************************************************/
 	
@@ -1410,10 +1418,12 @@ public abstract class GameObject {
 			}
 			
 			this.updateTimers(dt);
-			this.doMove(dt);
+			
+			if (this.program == null)
+				this.doMove(dt);
+			
 			this.getAnimation().updateSpriteIndex();
-		}
-		
+		}	
 	
 	}
 

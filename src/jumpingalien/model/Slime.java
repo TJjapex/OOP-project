@@ -3,6 +3,7 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -101,6 +102,7 @@ public class Slime extends GameObject {
 	 * @effect	| setSchoolTo(school)
 	 * @effect	| startMove( this.getRandomOrientation() )
 	 * @effect 	| configureTerrain()
+	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -115,11 +117,11 @@ public class Slime extends GameObject {
 	@Raw
 	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 		  		 double velocityXMax, double accelerationXInit, Sprite[] sprites, School school,
-		  		 int nbHitPoints, int maxNbHitPoints)
+		  		 int nbHitPoints, int maxNbHitPoints, Program program)
 		  	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites,
-			  nbHitPoints, maxNbHitPoints);
+			  nbHitPoints, maxNbHitPoints, program);
 
 		this.setSchoolTo(school);
 		
@@ -127,6 +129,34 @@ public class Slime extends GameObject {
 		this.startMove(this.getRandomOrientation());
 		
 		this.configureTerrain();
+		
+	}
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param velocityXInit
+	 * @param velocityYInit
+	 * @param velocityXMax
+	 * @param accelerationXInit
+	 * @param sprites
+	 * @param school
+	 * @param nbHitPoints
+	 * @param maxNbHitPoints
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
+	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+	  		 double velocityXMax, double accelerationXInit, Sprite[] sprites, School school,
+	  		 int nbHitPoints, int maxNbHitPoints)
+	  	throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	
+		this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites,
+			 school, nbHitPoints, maxNbHitPoints, null);
 		
 	}
 	
@@ -143,6 +173,7 @@ public class Slime extends GameObject {
 	 * @param 	school
 	 * 				The school to which the Slime belongs upon initialization.
 	 * @pre		| Array.getLength(sprites) == 2
+	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -155,9 +186,26 @@ public class Slime extends GameObject {
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	@Raw
+	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school, Program program)
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
+		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100, 100, program);
+	}
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param sprites
+	 * @param school
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
-		this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100, 100);
+		this(pixelLeftX, pixelBottomY, sprites, school, null);
 	}
 	
 	/******************************************************** TIMER ****************************************************/

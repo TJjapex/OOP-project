@@ -3,6 +3,7 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
@@ -67,7 +68,7 @@ public class Mazub extends GameObject{
 	/**
 	 * Constant reflecting the amount of damage an Alien should take when he overlaps with another Alien.
 	 * 
-	 * @return	The amount of damage an Alien should take when he overlaps with a Slime is equal to 50.
+	 * @return	The amount of damage an Alien should take when he overlaps with another Alien is equal to 50.
 	 * 			| result == 50
 	 */
 	private static final int ALIEN_DAMAGE = 50;
@@ -119,6 +120,7 @@ public class Mazub extends GameObject{
 	 * 			| new.getAnimation() != null
 	 * @effect 	The terrain is configured for a Mazub.
 	 * 			| configureTerrain()
+	 * TODO: program documentation
 	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
 	 * 				| ! isValidPositionX(positionX)
@@ -136,11 +138,11 @@ public class Mazub extends GameObject{
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 				 double velocityXMaxRunning, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
-				 int maxNbHitPoints)
+				 int maxNbHitPoints, Program program)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMaxRunning, accelerationXInit, sprites,
-			  nbHitPoints, maxNbHitPoints);
+			  nbHitPoints, maxNbHitPoints, program);
 		
 		assert sprites.length >= 10 && sprites.length % 2 == 0;
 		
@@ -152,6 +154,34 @@ public class Mazub extends GameObject{
 		
 		this.configureTerrain();
 			
+	}
+	
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param velocityXInit
+	 * @param velocityYInit
+	 * @param velocityXMaxRunning
+	 * @param accelerationXInit
+	 * @param sprites
+	 * @param nbHitPoints
+	 * @param maxNbHitPoints
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
+	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+			 double velocityXMaxRunning, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
+			 int maxNbHitPoints)
+		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	
+		this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMaxRunning, accelerationXInit, sprites,
+			 nbHitPoints, maxNbHitPoints, null);
+		
 	}
 	
 	/**
@@ -299,7 +329,8 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void addToWorld(){
-		this.getWorld().mazubs.add(this);
+		this.getWorld().mazubs.add(this); // TODO: misschien beter aanpassen zodat er maar 1 echte Mazub kan zijn?
+		this.getWorld().setMazub(this);
 	}
 	
 	/**

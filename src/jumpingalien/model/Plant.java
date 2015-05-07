@@ -3,6 +3,7 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -70,16 +71,43 @@ public class Plant extends GameObject {
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Plant(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
-			  	 double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
+			  	 double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints,
+			  	 Program program)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit, sprites, 
-			  nbHitPoints, 1);
+			  nbHitPoints, 1, program);
 
 		assert sprites.length == 2;
 		
 		this.configureTerrain();
 
+	}	
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param velocityXInit
+	 * @param velocityYInit
+	 * @param velocityXMax
+	 * @param accelerationXInit
+	 * @param sprites
+	 * @param nbHitPoints
+	 * @param maxNbHitPoints
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
+	public Plant(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+		  	 double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
+		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	
+	this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites, 
+		 nbHitPoints, maxNbHitPoints, null);
+	
 	}	
 	
 	/**
@@ -94,6 +122,7 @@ public class Plant extends GameObject {
 	 * 				The array of sprite images for a Plant.
 	 * @pre		| Array.getLength(sprites) == 2
 	 * @effect	| this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1)
+	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -105,9 +134,25 @@ public class Plant extends GameObject {
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
+	public Plant(int pixelLeftX, int pixelBottomY, Sprite[] sprites, Program program) 
+			throws IllegalPositionXException, IllegalPositionYException,IllegalWidthException, IllegalHeightException{
+		this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1, program);
+	}
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param sprites
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
 	public Plant(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
 			throws IllegalPositionXException, IllegalPositionYException,IllegalWidthException, IllegalHeightException{
-		this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1);
+		this(pixelLeftX, pixelBottomY, sprites, null);
 	}
 	
 	/******************************************************* TERRAIN ***************************************************/

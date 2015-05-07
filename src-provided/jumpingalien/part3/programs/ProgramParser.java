@@ -27,7 +27,7 @@ import org.antlr.v4.runtime.Recognizer;
  * 
  * <pre>
  * <code>
- * IProgramFactory&lt;MyExpression, MyStatement, MyType, MyProgram&gt; factory = new ProgramFactory<>();
+ * IProgramFactory&lt;MyExpression, MyStatement, MyType, MyProgram&gt; factory = new ProgramFactory();
  * </code>
  * </pre>
  * 

@@ -19,8 +19,7 @@ import jumpingalien.model.terrain.Terrain;
 
 public class Facade implements IFacadePart2 {
 
-	
-	/*************************************** PART 1 *****************************************/
+	/******************************************************** PART 1 ***************************************************/
 	
 	/**
 	 * Create an instance of Mazub.
@@ -221,7 +220,7 @@ public class Facade implements IFacadePart2 {
 		
 	}
 
-	/*************************************** PART 2 *****************************************/
+	/******************************************************** PART 2 ***************************************************/
 	
 	@Override
 	public int getNbHitPoints(Mazub alien) {
@@ -459,4 +458,5 @@ public class Facade implements IFacadePart2 {
 	public School getSchool(Slime slime) {
 		return slime.getSchool();
 	}
+	
 }

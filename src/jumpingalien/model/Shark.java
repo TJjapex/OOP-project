@@ -3,6 +3,7 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
@@ -109,6 +110,7 @@ public class Shark extends GameObject{
 	 * @effect	| startMove( this.getRandomOrientation() )
 	 * @effect	| startDiveRise()
 	 * @effect 	| configureTerrain()
+	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -122,11 +124,11 @@ public class Shark extends GameObject{
 	 */
 	public Shark(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 			  	double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
-			  	int maxNbHitPoints)
+			  	int maxNbHitPoints, Program program)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites,
-			  nbHitPoints, maxNbHitPoints);
+			  nbHitPoints, maxNbHitPoints, program);
 		
 		this.setNbNonJumpingPeriods(0);
 		this.setJumping(false);
@@ -136,6 +138,33 @@ public class Shark extends GameObject{
 		this.startDiveRise();
 	
 		this.configureTerrain();
+		
+	}
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param velocityXInit
+	 * @param velocityYInit
+	 * @param velocityXMax
+	 * @param accelerationXInit
+	 * @param sprites
+	 * @param nbHitPoints
+	 * @param maxNbHitPoints
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
+	public Shark(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
+		  	double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
+		  	int maxNbHitPoints)
+		throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
+	
+		this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites,
+			 nbHitPoints, maxNbHitPoints, null);
 		
 	}
 	
@@ -150,6 +179,7 @@ public class Shark extends GameObject{
 	 * @param 	sprites
 	 * 				The array of sprite images for a Shark.
 	 * @pre		| Array.getLength(sprites) == 2
+	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -161,9 +191,25 @@ public class Shark extends GameObject{
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
+	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites, Program program) 
+			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
+		this(pixelLeftX, pixelBottomY, 0.0, 0.0, 4.0, 1.5, sprites, 100, 100, program);
+	}
+	
+	/**
+	 * TODO: documentation
+	 * 
+	 * @param pixelLeftX
+	 * @param pixelBottomY
+	 * @param sprites
+	 * @throws IllegalPositionXException
+	 * @throws IllegalPositionYException
+	 * @throws IllegalWidthException
+	 * @throws IllegalHeightException
+	 */
 	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
-		this(pixelLeftX, pixelBottomY, 0.0, 0.0, 4.0, 1.5, sprites, 100, 100);
+		this(pixelLeftX, pixelBottomY, sprites, null);
 	}
 	
 	/******************************************************** TIMER ****************************************************/
