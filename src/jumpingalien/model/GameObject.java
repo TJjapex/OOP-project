@@ -2061,25 +2061,25 @@ public abstract class GameObject {
 		World world = this.getWorld();
 		
 		for(Mazub mazub:  Mazub.getAllInWorld(world)){
-			if(this.doesOverlapWith(mazub)){
+			if(mazub != this && this.doesOverlapWith(mazub)){
 				this.processMazubOverlap(mazub);
 			}
 		}
 		
 		for(Plant plant :  Plant.getAllInWorld(world)){
-			if(this.doesOverlapWith(plant)){
+			if(plant != this && this.doesOverlapWith(plant)){
 				this.processPlantOverlap(plant);
 			}
 		}
 		
 		for(Shark shark :  Shark.getAllInWorld(world)){
-			if(this.doesOverlapWith(shark)){
+			if(shark != this && this.doesOverlapWith(shark)){
 				processSharkOverlap(shark);
 			}
 		}
 		
 		for(Slime slime :  Slime.getAllInWorld(world)){
-			if(this.doesOverlapWith(slime)){
+			if(slime != this && this.doesOverlapWith(slime)){
 				processSlimeOverlap(slime);
 			}
 		}

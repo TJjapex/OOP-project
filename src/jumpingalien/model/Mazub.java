@@ -848,8 +848,12 @@ public class Mazub extends GameObject{
 	@Override
 	protected void processMazubOverlap(Mazub alien){
 		if(!alien.isKilled() && !this.isImmune()){
-			if(!this.doesOverlapWith(alien, Orientation.BOTTOM)){
+			if(!this.doesOverlapWith(alien, Orientation.BOTTOM) || this.getRoundedPositionY() == alien.getRoundedPositionY()){
 				this.takeDamage(ALIEN_DAMAGE);
+				if(this instanceof Buzam){
+					System.out.println("buzam take damage");
+				}
+				
 				this.setImmune(true);
 				this.getTimer().setSinceEnemyCollision(0);
 			}	
