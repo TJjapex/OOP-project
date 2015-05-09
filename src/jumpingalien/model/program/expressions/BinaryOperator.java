@@ -13,6 +13,7 @@ public class BinaryOperator<T> extends Operator<T>{
 
 		this.leftOperand = left;
 		this.rightOperand = right;
+		this.operator = operator;
 	}
 
 	@Basic @Immutable
@@ -28,6 +29,12 @@ public class BinaryOperator<T> extends Operator<T>{
 	}
 	
 	private final Expression<T> rightOperand;
+	
+	private final BiFunction<T, T, T> operator;
+	
+	public T getResult() {
+		 return operator.apply(getLeftOperand().getResult(), getRightOperand().getResult());
+	}
 	
 	@Override @Immutable @Basic
 	public final int getNbOperands() {

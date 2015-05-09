@@ -7,15 +7,17 @@ import java.util.function.BiFunction;
 import jumpingalien.model.GameObject;
 import jumpingalien.model.program.expressions.BinaryOperator;
 import jumpingalien.model.program.expressions.Expression;
+import jumpingalien.model.program.expressions.Variable;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 
 public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, Statement, Type<?>, Program>{
 
 	@Override
-	public Expression createReadVariable(String variableName,
+	public Expression<T> createReadVariable(String variableName,
 			Type variableType, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
+		
+		// TODO hier moet ge dus uit de variable hashmap die in Program zou moeten zijn het juiste Variable object teruggeven.
 		return null;
 	}
 
@@ -431,7 +433,10 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type<?>> globalVariables) {
-		// TODO Auto-generated method stub
+		
+		// TODO
+		// TODO Let op! Hier wordt nog geen waarde meegegeven!
+		// Er zijn alleen maar globale variabelen, en die worden dus in de map in Program opgeslagen.
 		return null;
 	}
 
