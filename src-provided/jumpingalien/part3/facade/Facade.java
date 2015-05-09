@@ -104,8 +104,8 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 
 	@Override
 	public ParseOutcome<?> parse(String text) {
-		IProgramFactory<Expression, Statement, Type<?>, Program> factory = new ProgramFactory();
-		ProgramParser<Expression, Statement, Type<?>, Program> parser = new ProgramParser<>(factory);
+		IProgramFactory<Expression<?>, Statement, Type<?>, Program> factory = new ProgramFactory<>();
+		ProgramParser<Expression<?>, Statement, Type<?>, Program> parser = new ProgramParser<>(factory);
 		Optional<Program> parseResult = parser.parseString(text);
 		if (parseResult.isPresent()){	
 			return ParseOutcome.success(parseResult.get());

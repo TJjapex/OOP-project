@@ -9,8 +9,8 @@ import jumpingalien.part3.programs.SourceLocation;
 public class BinaryOperator<T> extends Operator<T>{
 	
 	public BinaryOperator(Expression<T> left, Expression<T> right, BiFunction<T, T, T> operator, SourceLocation sourceLocation){
-		
 		super( operator.apply(right.getResult(), left.getResult()), sourceLocation);
+
 		this.leftOperand = left;
 		this.rightOperand = right;
 	}

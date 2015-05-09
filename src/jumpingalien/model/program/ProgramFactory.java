@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import jumpingalien.model.GameObject;
-import jumpingalien.model.program.expressions.Addition;
 import jumpingalien.model.program.expressions.BinaryOperator;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.part3.programs.IProgramFactory;
