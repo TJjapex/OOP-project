@@ -9,5 +9,6 @@ public class Program {
 	
 	//private HashMap<String, Variable<?>> variables = new HashMap<>();
 	// TODO bovenstaande is fout! Want ge moet ook nog u type opslaan (zie ProgramFactory createProgram) dus tzal eerder iets zijn als
-	//  Map<String, Map<Type, Variable>>
+	//  Map<String, array(Type, Variable)>
+	// Want er kan per string maar variabele zijn
 }
