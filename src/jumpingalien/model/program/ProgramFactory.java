@@ -2,12 +2,16 @@ package jumpingalien.model.program;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import jumpingalien.model.GameObject;
+import jumpingalien.model.program.expressions.Addition;
+import jumpingalien.model.program.expressions.BinaryOperator;
+import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression, Statement, Type, Program>{
+public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, Statement, Type<?>, Program>{
 
 	@Override
 	public Expression createReadVariable(String variableName,
@@ -56,10 +60,16 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression, Stat
 	}
 
 	@Override
-	public Expression createAddition(Expression left, Expression right,
+	public Expression<Double> createAddition(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			return new BinaryOperator<Double>( (Expression<Double>) left, (Expression<Double>) right,
+					(l, r) ->  l + r, sourceLocation);
+			
+		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
+			throw new IllegalArgumentException();
+		}
+		
 	}
 
 	@Override
@@ -399,32 +409,29 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression, Stat
 	}
 
 	@Override
-	public Type getDoubleType() {
-		// TODO Auto-generated method stub
+	// TODO we gebruiken Double ipv Type<Double>
+	public Type<Double> getDoubleType() {
 		return null;
 	}
 
 	@Override
-	public Type getBoolType() {
-		// TODO Auto-generated method stub
+	public Type<Boolean> getBoolType() {
 		return new Type<Boolean>();
 	}
 
 	@Override
-	public Type getGameObjectType() {
-		// TODO Auto-generated method stub
+	public Type<GameObject> getGameObjectType() {
 		return new Type<GameObject>();
 	}
 
 	@Override
-	public Type getDirectionType() {
-		// TODO Auto-generated method stub
+	public Type<Direction> getDirectionType() {
 		return new Type<Direction>();
 	}
 
 	@Override
 	public Program createProgram(Statement mainStatement,
-			Map<String, Type> globalVariables) {
+			Map<String, Type<?>> globalVariables) {
 		// TODO Auto-generated method stub
 		return null;
 	}
