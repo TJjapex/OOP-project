@@ -43,6 +43,7 @@ public class BinaryOperator<T> extends Operator<T>{
 
 	@Override @Immutable
 	public final String getOperatorSymbol() {
-		return "+";
+		return "+"; // method abstract maken? ook toepassen voor subtraction, division en multiplication
+					// denk niet dat deze methode mogelijk is voor alle gevallen? symbool kunt ge nie uit operator halen?
 	}
 }
