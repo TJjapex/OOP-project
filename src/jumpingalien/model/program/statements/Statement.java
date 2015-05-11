@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import jumpingalien.model.program.Program;
+
 public abstract class Statement {
 
 	public Statement(){
@@ -49,12 +51,12 @@ public abstract class Statement {
 		};
 	}
 	
-	void executeAll(){
+	void executeAll(Program program){
 		while (this.iterator().hasNext()){
-			( (Statement) this.iterator().next() ).execute();
+			( (Statement) this.iterator().next() ).execute(program);
 		}
 	}
 	
-	abstract void execute();
+	abstract void execute(Program program);
 	
 }

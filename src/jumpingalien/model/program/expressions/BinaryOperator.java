@@ -3,6 +3,7 @@ package jumpingalien.model.program.expressions;
 import java.util.function.BiFunction;
 
 import be.kuleuven.cs.som.annotate.*;
+import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -32,8 +33,8 @@ public class BinaryOperator<T> extends Operator<T>{
 	
 	private final BiFunction<T, T, T> operator;
 	
-	public T getResult() {
-		 return operator.apply(getLeftOperand().getResult(), getRightOperand().getResult());
+	public T execute(Program program) {
+		 return operator.apply(getLeftOperand().execute(program), getRightOperand().execute(program));
 	}
 	
 	@Override @Immutable @Basic

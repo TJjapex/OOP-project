@@ -15,7 +15,7 @@ public class Print extends Statement {
 	Expression<?> expression;
 	
 	void execute(){
-		System.out.println(expression.getResult());
+		System.out.println(expression.execute());
 	}
 	
 }

@@ -29,7 +29,7 @@ public class IfThen extends Statement {
 	Statement elseBody;
 	
 	void execute(){
-		if( this.getCondition().getResult() == true){
+		if( this.getCondition().execute() == true){
 			this.getIfBody().executeAll();
 		} else{
 			this.getElseBody().executeAll();

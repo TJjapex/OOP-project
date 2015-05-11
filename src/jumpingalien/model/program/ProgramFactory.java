@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 import jumpingalien.model.GameObject;
 import jumpingalien.model.program.expressions.BinaryOperator;
 import jumpingalien.model.program.expressions.Expression;
+import jumpingalien.model.program.expressions.ReadVariable;
 import jumpingalien.model.program.expressions.Variable;
 import jumpingalien.model.program.statements.Assignment;
 import jumpingalien.model.program.statements.Print;
@@ -19,11 +20,9 @@ import jumpingalien.model.program.types.*;
 public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, Statement, Type, Program>{
 
 	@Override
-	public Expression<T> createReadVariable(String variableName,
+	public Expression<Type> createReadVariable(String variableName,
 			Type variableType, SourceLocation sourceLocation) {
-		
-		// TODO hier moet ge dus uit de variable hashmap die in Program zou moeten zijn het juiste Variable object teruggeven.
-		return null;
+		return new ReadVariable<Type>( variableName , variableType, sourceLocation);
 	}
 
 	@Override
@@ -312,10 +311,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createAssignment(String variableName, Type variableType,
 			Expression<?> value, SourceLocation sourceLocation) {
-	//	VariableIdentifier id = new VariableIdentifier(variableName, variableType);
-	//	Variable<? extends Type> var = new Variable<variableType>(variableType, variableName, value.getResult(), sourceLocation);
-		
-		return new Assignment(variableName, variableType, value, sourceLocation);
+		return new Assignment(variableName, variableType, (Expression<? extends Type>) value, sourceLocation);
 		
 	}
 
@@ -437,11 +433,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type> globalVariables) {
-		
-		// TODO
-		// TODO Let op! Hier wordt nog geen waarde meegegeven!
-		// Er zijn alleen maar globale variabelen, en die worden dus in de map in Program opgeslagen.
-		return null;
+		return new Program(mainStatement, globalVariables);
 	}
 
 }

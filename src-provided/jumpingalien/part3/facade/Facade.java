@@ -23,8 +23,8 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.ProgramFactory;
-import jumpingalien.model.program.Statement;
-import jumpingalien.model.program.Type;
+import jumpingalien.model.program.statements.*;
+import jumpingalien.model.program.types.*;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part3.programs.IProgramFactory;
@@ -104,8 +104,8 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 
 	@Override
 	public ParseOutcome<?> parse(String text) {
-		IProgramFactory<Expression<?>, Statement, Type<?>, Program> factory = new ProgramFactory<>();
-		ProgramParser<Expression<?>, Statement, Type<?>, Program> parser = new ProgramParser<>(factory);
+		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
+		ProgramParser<Expression<?>, Statement, Type, Program> parser = new ProgramParser<>(factory);
 		Optional<Program> parseResult = parser.parseString(text);
 		if (parseResult.isPresent()){	
 			return ParseOutcome.success(parseResult.get());

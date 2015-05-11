@@ -22,7 +22,7 @@ public class WhileDo extends Statement {
 	Statement body;
 	
 	void execute(){
-		while ( this.getCondition().getResult() == true ){
+		while ( this.getCondition().execute() == true ){
 			this.getBody().executeAll();
 		}
 	}
