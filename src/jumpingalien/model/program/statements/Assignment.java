@@ -1,28 +1,28 @@
 package jumpingalien.model.program.statements;
 
+import jumpingalien.model.program.VariableIdentifier;
 import jumpingalien.model.program.expressions.*;
+import jumpingalien.model.program.types.*;
+import jumpingalien.part3.programs.SourceLocation;
 
 public class Assignment extends Statement {
 
-	public Assignment(Variable variable, Expression expression){
-		this.variable = variable;
-		this.expression = expression;
+	public Assignment(String variableName, Type variableType,
+			Expression<?> value, SourceLocation sourceLocation){
+		this.variableName = variableName;
+		this.variableType = variableType;
+		this.value = value;
+		this.sourceLocation = sourceLocation;
 	}
 	
-	public Variable getVariable(){
-		return this.variable;
-	}
-	
-	Variable variable;
-	
-	public Expression getExpression(){
-		return this.expression;
-	}
-	
-	Expression expression;
+	private final String variableName;
+	private final Type variableType;
+	private final Expression<?> value;
+	private final SourceLocation sourceLocation;
 	
 	void execute(){
-		this.getVariable().setValue(expression);
+		VariableIdentifier id = new VariableIdentifier(variableName, variableType);
+		Class theClass = variableType.getClass();
+		Variable<? extends Type> var = new Variable<theClass>(value.getResult(), sourceLocation);
 	}
-	
 }

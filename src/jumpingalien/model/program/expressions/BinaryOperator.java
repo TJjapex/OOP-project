@@ -3,13 +3,13 @@ package jumpingalien.model.program.expressions;
 import java.util.function.BiFunction;
 
 import be.kuleuven.cs.som.annotate.*;
-import jumpingalien.model.program.Type;
+import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
 public class BinaryOperator<T> extends Operator<T>{
 	
 	public BinaryOperator(Expression<T> left, Expression<T> right, BiFunction<T, T, T> operator, SourceLocation sourceLocation){
-		super( operator.apply(right.getResult(), left.getResult()), sourceLocation);
+		super( sourceLocation);
 
 		this.leftOperand = left;
 		this.rightOperand = right;

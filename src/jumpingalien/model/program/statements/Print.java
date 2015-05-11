@@ -4,18 +4,18 @@ import jumpingalien.model.program.expressions.*;
 
 public class Print extends Statement {
 
-	public Print(Expression expression){
+	public Print(Expression<?> expression){
 		this.expression = expression;
 	}
 	
-	public Expression getExpression(){
+	public Expression<?> getExpression(){
 		return this.expression;
 	}
 	
-	Expression expression;
+	Expression<?> expression;
 	
 	void execute(){
-		System.out.println(expression);
+		System.out.println(expression.getResult());
 	}
 	
 }

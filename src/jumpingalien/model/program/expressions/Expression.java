@@ -4,16 +4,11 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public abstract class Expression<T> {
 	
-	protected Expression(T result, SourceLocation sourceLocation){ // result kunt ge nog nie meegeven in constructor, moet berekend worden?
+	protected Expression(SourceLocation sourceLocation){ // result kunt ge nog nie meegeven in constructor, moet berekend worden?
 		this.sourceLocation = sourceLocation;
-		//this.result = result;
 	}
 	
-	public T getResult(){
-		return this.result;
-	}
-	
-	private T result;
+	public abstract T getResult();
 	
 	public SourceLocation getSourceLocation() {
 		return sourceLocation;

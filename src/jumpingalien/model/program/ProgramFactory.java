@@ -8,10 +8,15 @@ import jumpingalien.model.GameObject;
 import jumpingalien.model.program.expressions.BinaryOperator;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.expressions.Variable;
+import jumpingalien.model.program.statements.Assignment;
+import jumpingalien.model.program.statements.Print;
+import jumpingalien.model.program.statements.Statement;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
+import jumpingalien.model.program.types.*;
 
-public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, Statement, Type<?>, Program>{
+
+public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, Statement, Type, Program>{
 
 	@Override
 	public Expression<T> createReadVariable(String variableName,
@@ -22,28 +27,26 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression createDoubleConstant(double value,
+	public Expression<DoubleType> createDoubleConstant(double value,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Variable<DoubleType>(new DoubleType(value), sourceLocation);
 	}
 
 	@Override
-	public Expression createTrue(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<BooleanType> createTrue(SourceLocation sourceLocation) {
+		return new Variable<BooleanType>(new BooleanType(true), sourceLocation);
 	}
 
 	@Override
-	public Expression createFalse(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<BooleanType> createFalse(SourceLocation sourceLocation) {
+		return new Variable<BooleanType>(new BooleanType(false), sourceLocation);
+
 	}
 
 	@Override
-	public Expression createNull(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<ObjectType> createNull(SourceLocation sourceLocation) {
+		return new Variable<ObjectType>(new ObjectType(null), sourceLocation);
+
 	}
 
 	@Override
@@ -300,7 +303,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression createIsJumping(Expression expr,
+	public Expression createIsJumping(Expression<?> expr,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
@@ -308,9 +311,12 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Statement createAssignment(String variableName, Type variableType,
-			Expression value, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+			Expression<?> value, SourceLocation sourceLocation) {
+	//	VariableIdentifier id = new VariableIdentifier(variableName, variableType);
+	//	Variable<? extends Type> var = new Variable<variableType>(variableType, variableName, value.getResult(), sourceLocation);
+		
+		return new Assignment(variableName, variableType, value, sourceLocation);
+		
 	}
 
 	@Override
@@ -346,9 +352,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Statement createPrint(Expression value, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Statement createPrint(Expression<?> value, SourceLocation sourceLocation) {
+		return new Print(value);
 	}
 
 	@Override
@@ -410,29 +415,28 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	// TODO we gebruiken Double ipv Type<Double>
-	public Type<Double> getDoubleType() {
+	public DoubleType getDoubleType() {
 		return null;
 	}
 
 	@Override
-	public Type<Boolean> getBoolType() {
-		return new Type<Boolean>();
+	public BooleanType getBoolType() {
+		return new BooleanType();
 	}
 
 	@Override
-	public Type<GameObject> getGameObjectType() {
-		return new Type<GameObject>();
+	public ObjectType getGameObjectType() {
+		return new ObjectType();
 	}
 
 	@Override
-	public Type<Direction> getDirectionType() {
-		return new Type<Direction>();
+	public DirectionType getDirectionType() {
+		return new DirectionType();
 	}
 
 	@Override
 	public Program createProgram(Statement mainStatement,
-			Map<String, Type<?>> globalVariables) {
+			Map<String, Type> globalVariables) {
 		
 		// TODO
 		// TODO Let op! Hier wordt nog geen waarde meegegeven!
