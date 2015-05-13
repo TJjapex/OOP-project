@@ -26,5 +26,9 @@ public class DoubleType extends Type{
 		
 		return false;
 	}
+	
+	public BooleanType equalsAsBooleanType(Object o){
+		return new BooleanType(this.equals(o));
+	}
 
 }

@@ -7,9 +7,9 @@ import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class BinaryOperator<T> extends Operator<T>{
+public class BinaryOperator<T, I> extends Operator<T>{
 	
-	public BinaryOperator(Expression<T> left, Expression<T> right, BiFunction<T, T, T> operator, SourceLocation sourceLocation){
+	public BinaryOperator(Expression<I> left, Expression<I> right, BiFunction<I, I, T> operator, SourceLocation sourceLocation){
 		super( sourceLocation);
 
 		this.leftOperand = left;
@@ -18,20 +18,20 @@ public class BinaryOperator<T> extends Operator<T>{
 	}
 
 	@Basic @Immutable
-	public Expression<T> getLeftOperand() {
+	public Expression<I> getLeftOperand() {
 		return leftOperand;
 	}
 
-	private final Expression<T> leftOperand;
+	private final Expression<I> leftOperand;
 	
 	@Basic @Immutable
-	public Expression<T> getRightOperand() {
+	public Expression<I> getRightOperand() {
 		return rightOperand;
 	}
 	
-	private final Expression<T> rightOperand;
+	private final Expression<I> rightOperand;
 	
-	private final BiFunction<T, T, T> operator;
+	private final BiFunction<I, I, T> operator;
 	
 	@Override
 	public T execute(Program program) {

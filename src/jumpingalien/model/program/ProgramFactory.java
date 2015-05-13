@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import org.antlr.v4.tool.LeftRecursionCyclesMessage;
 import org.hamcrest.SelfDescribing;
 
 import jumpingalien.model.GameObject;
@@ -62,7 +63,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		return new Self<>(sourceLocation);
 	}
 
-	@Override
+	@Overrideequ
 	public Expression createDirectionConstant(
 			jumpingalien.part3.programs.IProgramFactory.Direction value,
 			SourceLocation sourceLocation) {
@@ -74,7 +75,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	public Expression<Double> createAddition(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
 		try{
-			return new BinaryOperator<Double>( (Expression<Double>) left, (Expression<Double>) right,
+			return new BinaryOperator<Double, Double>( (Expression<Double>) left, (Expression<Double>) right,
 					(l, r) ->  l + r, sourceLocation);
 			
 		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
@@ -169,7 +170,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	public Expression<BooleanType> createEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
 		try{
-			return new Equals<BooleanType>( left, right, sourceLocation);
+			return new BinaryOperator<BooleanType, Type>( (Expression<Type>) left, (Expression<Type>) right, (l,  r) -> (l == r), sourceLocation);
 			
 		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
 			throw new IllegalArgumentException();
