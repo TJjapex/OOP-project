@@ -4,18 +4,34 @@ import jumpingalien.model.GameObject;
 
 public class ObjectType extends Type {
 
-	public ObjectType(Kind value){
+	// Geen idee of da wel lekker werkt met die Kind enzo want dan meot ge een GameObject omzetten naar zo'n kind ofzo? Heb het tijdelijk weggedaan
+	
+//	public ObjectType(Kind value){
+//		this.value = value;
+//	}
+//	
+//	public ObjectType(){
+//		this(null);
+//	}
+//	
+//	public Kind getValue() {
+//		return this.value;
+//	}
+//
+//	private final Kind value;
+	
+
+	public ObjectType(GameObject value){
 		this.value = value;
 	}
-	
+		
 	public ObjectType(){
-		this(null);
+			this(null);
 	}
 	
-	public Kind getValue() {
-		return this.value;
+	public GameObject getValue() {
+			return this.value;
 	}
-
-	private final Kind value;
-
+	
+	private final GameObject value;
 }

@@ -29,7 +29,7 @@ public abstract class Statement {
 			public boolean hasNext(){
 				if ( !(Statement.this instanceof List) && singleStatementUsed == false)
 					return true;
-				else if ( Statement.this instanceof List && (currentIndex != ( (List) Statement.this).size() ||
+				else if ( Statement.this instanceof List && (currentIndex < ( (List) Statement.this).size() ||
 							subStatementIterator.hasNext())){
 					return true;
 				} else {
@@ -40,11 +40,14 @@ public abstract class Statement {
 			@Override
 			public Object next() throws NoSuchElementException{
 				if ( !(Statement.this instanceof List) && this.hasNext()){
+					System.out.println("single statement returned, this: "+this);
 					singleStatementUsed = true;
 					return Statement.this;
 				}
 				else if ( Statement.this instanceof List && this.hasNext()){
+					
 					subStatementIterator = ( (Statement) ( (List) Statement.this).get(currentIndex)).iterator();
+					currentIndex++;
 					return subStatementIterator.next();
 				} else{
 					throw new NoSuchElementException();
@@ -58,12 +61,12 @@ public abstract class Statement {
 		};
 	}
 	
-	void executeAll(Program program){
-		while (this.iterator().hasNext()){
-			( (Statement) this.iterator().next() ).execute(program);
-		}
-	}
+//	void executeAll(Program program){
+//		while (this.iterator().hasNext()){
+//			( (Statement) this.iterator().next() ).execute(program);
+//		}
+//	}
 	
-	abstract void execute(Program program);
+	public abstract void execute(Program program);
 	
 }

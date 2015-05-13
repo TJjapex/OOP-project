@@ -1,7 +1,7 @@
 package jumpingalien.model.program.types;
 
 public class DoubleType extends Type{
-	public DoubleType(Double value){
+	public DoubleType(double value){
 		this.value = value;
 	}
 	
@@ -9,10 +9,22 @@ public class DoubleType extends Type{
 		this(0.0);
 	}
 	
-	public Double getValue() {
+	public double getValue() {
 		return value;
 	}
 
-	private final Double value;
+	private final double value;
+	
+	public boolean equals(Object o){
+		if(! ( o instanceof DoubleType ) ){
+			return false; // TODO eventueel comparen met de overeenkomstige echte types (dus BooleanType met Boolean enzo)
+		}
+		
+		if(this.getValue() == ((DoubleType) o).getValue()){
+			return true;
+		}
+		
+		return false;
+	}
 
 }

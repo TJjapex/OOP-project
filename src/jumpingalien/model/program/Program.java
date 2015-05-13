@@ -3,6 +3,7 @@ package jumpingalien.model.program;
 import java.util.HashMap;
 import java.util.Map;
 
+import jumpingalien.model.GameObject;
 import jumpingalien.model.program.expressions.Variable;
 import jumpingalien.model.program.statements.Statement;
 import jumpingalien.model.program.types.Type;
@@ -11,25 +12,29 @@ public class Program {
 	
 	// OUDE VERSIE
 	
-//	public Program(Statement mainStatement, Map<String, Type> globalVariables){
-//		this.mainStatement = mainStatement;
-//		this.globalVariables = globalVariables;
-//	}
-//	
-//	private Map<String, Type> globalVariables = new HashMap<>();
-//	
-//	public Type getVariable(String name){
-//		if(!this.globalVariables.containsKey(name))
-//			return null;
-//		return this.globalVariables.get(name);
-//		
-//	}
-//	
-//	public void setVariable(String name, Type value){
-//		if(!globalVariables.containsKey(name))
-//			throw new IllegalArgumentException();
-//		this.globalVariables.put(name, value);
-//	}
+	public Program(Statement mainStatement, Map<String, Type> globalVariables){
+		assert mainStatement != null;
+		assert globalVariables != null;
+		
+		this.mainStatement = mainStatement;
+		this.globalVariables = globalVariables;
+	}
+	
+	private Map<String, Type> globalVariables = new HashMap<>();
+	
+	public Type getVariable(String name){
+		if(!this.globalVariables.containsKey(name))
+			return null;
+		return this.globalVariables.get(name);
+		
+	}
+	
+	public void setVariable(String name, Type value){
+		if(!globalVariables.containsKey(name))
+			throw new IllegalArgumentException();
+		System.out.println("Program, variable set "+name+ " to " + value);
+		this.globalVariables.put(name, value);
+	}
 	
 	// NIEUWE VERSIE
 	//
@@ -39,30 +44,58 @@ public class Program {
 	// -> BELANGRIJKE VERANDERING
 	//  Keys van globalvariables: String
 	//	Values van globalvariables: ArrayList(Type,Variable)
+//	
+//	public Program(Statement mainStatement, Map<String, Object[]> globalVariables){
+//		this.mainStatement = mainStatement;
+//		this.globalVariables = globalVariables;
+//	}
+//	
+//	
+	// GameObject relation 
 	
-	public Program(Statement mainStatement, Map<String, Object[]> globalVariables){
-		this.mainStatement = mainStatement;
-		this.globalVariables = globalVariables;
+	public GameObject getGameObject() {
+		return gameObject;
 	}
 	
-	private Map<String, Object[]> globalVariables = new HashMap<>();
-	
-	public Variable<?> getVariable(String name){
-		if(!this.globalVariables.containsKey(name))
-			return null;
-		return (Variable<?>) this.globalVariables.get(name)[1]; // is er een andere methode dan dit met een cast te doen?
+	public void setGameObject(GameObject gameObject){
+		this.gameObject = gameObject;
 	}
+
+	private GameObject gameObject;
 	
-	public void setVariable(String name, Object[] typeAndVariable){
-//		if(!globalVariables.containsKey(name))
-//			throw new IllegalArgumentException(); -> het moet ook nog mogelijk zijn om variables toe te voegen tijdens het 
-//													 programma, e.g. loopvariable
-		if(!(typeAndVariable[0] instanceof Type || typeAndVariable[0] instanceof Integer)
-		   || !(typeAndVariable[1] instanceof Variable) )
-			throw new IllegalArgumentException();
-		this.globalVariables.put(name, typeAndVariable);
-	}
+	// Variables
+	
+//	private Map<String, Object[]> globalVariables = new HashMap<>();
+//	
+//	public Variable<?> getVariable(String name){
+//		if(!this.globalVariables.containsKey(name))
+//			return null;
+//		return (Variable<?>) this.globalVariables.get(name)[1]; // is er een andere methode dan dit met een cast te doen?
+//	}
+//	
+//	public void setVariable(String name, Object[] typeAndVariable){
+////		if(!globalVariables.containsKey(name))
+////			throw new IllegalArgumentException(); -> het moet ook nog mogelijk zijn om variables toe te voegen tijdens het 
+////													 programma, e.g. loopvariable
+//		if(!(typeAndVariable[0] instanceof Type || typeAndVariable[0] instanceof Integer)
+//		   || !(typeAndVariable[1] instanceof Variable) )
+//			throw new IllegalArgumentException();
+//		this.globalVariables.put(name, typeAndVariable);
+//	}
 	
 	private final Statement mainStatement;
+	
+	public void executeNext(){
+		if(mainStatement.iterator().hasNext()){
+			System.out.println("executing");
+			( (Statement) mainStatement.iterator().next() ).execute(this);
+		}else{
+			System.out.println("no next statement in mainstatement -> execution finished");
+		}
+		
+	}
+	
+	
+	
 }
 

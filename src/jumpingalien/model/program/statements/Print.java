@@ -18,7 +18,7 @@ public class Print extends Statement {
 	Expression<?> expression;
 	
 	@Override
-	void execute(Program program){
+	public void execute(Program program){
 		System.out.println(this.getExpression().execute(program));
 	}
 	

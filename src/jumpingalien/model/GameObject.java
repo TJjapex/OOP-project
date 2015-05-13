@@ -170,8 +170,14 @@ public abstract class GameObject {
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
 		
-		this.program = program;
 		
+		// TODO better relation asserts between this and program (not important, only when rest is finished)
+		if(program != null){
+			System.out.println("GameObejct: got program in constructor");
+			program.setGameObject(this);
+		}
+	
+		this.program = program;
 	}
 
 	/****************************************************** ANIMATION **************************************************/
@@ -286,6 +292,14 @@ public abstract class GameObject {
 	}
 	
 	/******************************************************* PROGRAM ***************************************************/
+	
+	protected Program getProgram(){
+		return this.program;
+	}
+	
+	public boolean hasProgram(){
+		return this.getProgram() != null;
+	}
 	
 	protected final Program program; 
 	
@@ -1400,6 +1414,11 @@ public abstract class GameObject {
 	 */
 	@Model
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
+		if(this.hasProgram()){
+			this.advanceProgram();
+		}
+		
+		
 		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
@@ -1425,6 +1444,11 @@ public abstract class GameObject {
 			this.getAnimation().updateSpriteIndex();
 		}	
 	
+	}
+	
+	protected void advanceProgram(){
+		// TODO moet nog met tijd enzo rekening gehouden worden, maar kzal al blij zijn als het gewoon iets doet nu
+		this.getProgram().executeNext();
 	}
 
 	/**

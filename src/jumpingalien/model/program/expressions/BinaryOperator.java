@@ -35,6 +35,7 @@ public class BinaryOperator<T> extends Operator<T>{
 	
 	@Override
 	public T execute(Program program) {
+		System.out.println(getLeftOperand().execute(program));
 		 return operator.apply(getLeftOperand().execute(program), getRightOperand().execute(program));
 	}
 	

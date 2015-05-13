@@ -11,10 +11,16 @@ import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.program.expressions.BinaryOperator;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.expressions.ReadVariable;
+import jumpingalien.model.program.expressions.Self;
 import jumpingalien.model.program.expressions.Variable;
+import jumpingalien.model.program.expressions.comparisons.Equals;
+import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
+import jumpingalien.model.program.statements.IfThen;
 import jumpingalien.model.program.statements.Print;
+import jumpingalien.model.program.statements.Sequence;
 import jumpingalien.model.program.statements.Statement;
+import jumpingalien.model.program.statements.WhileDo;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 import jumpingalien.model.program.types.*;
@@ -47,14 +53,13 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Expression<ObjectType> createNull(SourceLocation sourceLocation) {
-		return new Variable<ObjectType>(new ObjectType(null), sourceLocation);
-
+		//return new Variable<ObjectType>(new ObjectType(null), sourceLocation);
+		return null;
 	}
 
 	@Override
-	public Expression createSelf(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<GameObject> createSelf(SourceLocation sourceLocation) {
+		return new Self<>(sourceLocation);
 	}
 
 	@Override
@@ -161,10 +166,14 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression createEquals(Expression left, Expression right,
+	public Expression<BooleanType> createEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			return new Equals<BooleanType>( left, right, sourceLocation);
+			
+		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override
@@ -321,8 +330,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createWhile(Expression condition, Statement body,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("ProgramFactory: createWhile()");
+		return new WhileDo(condition, body, sourceLocation);
 	}
 
 	@Override
@@ -344,22 +353,22 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Statement createIf(Expression condition, Statement ifBody,
+	public Statement createIf(Expression<?> condition, Statement ifBody,
 			Statement elseBody, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IfThen(condition, ifBody, elseBody, sourceLocation);
 	}
 
 	@Override
 	public Statement createPrint(Expression<?> value, SourceLocation sourceLocation) {
-		return new Print(value);
+		return new Print(value, sourceLocation);
 	}
 
 	@Override
 	public Statement createStartRun(Expression direction,
 			SourceLocation sourceLocation) {
 		try{
-			return new Action( x -> x.startMove(direction.execute()), self, sourceLocation); // How to call 'self'?
+			return null;
+			//return new Action( x -> x.startMove( (Orientation) direction.execute(null)), createSelf(sourceLocation), sourceLocation); // How to call 'self'?
 		}catch( ClassCastException exc){
 			throw new IllegalArgumentException();
 		}
@@ -412,8 +421,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createSequence(List<Statement> statements,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("ProgramFactory, createSequence: statements "+statements);
+		return new Sequence(statements, sourceLocation);
 	}
 
 	@Override
@@ -439,6 +448,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type> globalVariables) {
+		System.out.println("ProgramFactory, createProgram: mainStatement"+mainStatement);
+		System.out.println(mainStatement);
 		return new Program(mainStatement, globalVariables);
 	}
 
