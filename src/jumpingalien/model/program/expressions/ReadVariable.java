@@ -4,14 +4,12 @@ import jumpingalien.model.program.*;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class ReadVariable<Type> extends Expression<Type>{	
+public class ReadVariable<T extends Type> extends Expression<Type>{	
 
 	public ReadVariable(String variableName, Type variableType, SourceLocation sourceLocation) {
 		super(sourceLocation);
-//		this.value = value;
 		this.variableName = variableName;
 		this.variableType = variableType;
-//		this.type = type;
 	}
 	
 //	public Variable(T value, SourceLocation sourceLocation) {
@@ -36,7 +34,7 @@ public class ReadVariable<Type> extends Expression<Type>{
 
 	@Override
 	public Type execute(Program program) {
-		return (Type) program.getVariable(variableName);
+		return program.getVariable(variableName);
 	}
 	
 }

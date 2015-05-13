@@ -7,7 +7,7 @@ import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class BinaryOperator<T, I> extends Operator<T>{
+public class BinaryOperator<T extends Type, I extends Type> extends Operator<T>{
 	
 	public BinaryOperator(Expression<I> left, Expression<I> right, BiFunction<I, I, T> operator, SourceLocation sourceLocation){
 		super( sourceLocation);
@@ -35,18 +35,17 @@ public class BinaryOperator<T, I> extends Operator<T>{
 	
 	@Override
 	public T execute(Program program) {
-		System.out.println(getLeftOperand().execute(program));
 		 return operator.apply(getLeftOperand().execute(program), getRightOperand().execute(program));
 	}
-	
-	@Override @Immutable @Basic
-	public final int getNbOperands() {
-		return 2;
-	}
-
-	@Override @Immutable
-	public final String getOperatorSymbol() {
-		return "+"; // method abstract maken? ook toepassen voor subtraction, division en multiplication
-					// denk niet dat deze methode mogelijk is voor alle gevallen? symbool kunt ge nie uit operator halen?
-	}
+//	
+//	@Override @Immutable @Basic
+//	public final int getNbOperands() {
+//		return 2;
+//	}
+//
+//	@Override @Immutable
+//	public final String getOperatorSymbol() {
+//		return "+"; // method abstract maken? ook toepassen voor subtraction, division en multiplication
+//					// denk niet dat deze methode mogelijk is voor alle gevallen? symbool kunt ge nie uit operator halen?
+//	}
 }

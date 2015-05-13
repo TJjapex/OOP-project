@@ -30,7 +30,9 @@ public class WhileDo extends Statement {
 		System.out.println("WhileDo, executing, evaluating condition: "+this.getCondition()+",  result of evalution: "+ this.getCondition().execute(program));
 		
 		// While hier mag niet want dan doet hij meerdere statements per execute
-		// TODO volgens mij moet dit dan ook met een iterator, en hasNext()
+		// TODO zie docs
+		
+		// TODO dit gaat ervanuit dat this.getCondition().execute() een Type teruggeeft, wat bij een illegale code ook een expression kan zijn. Check doen?
 		if ( this.getCondition().execute(program).getValue() ){
 			System.out.println("WhileDo, executing body"+this.getBody());
 			this.getBody().execute(program);

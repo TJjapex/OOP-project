@@ -15,6 +15,18 @@ public class BooleanType extends Type{
 
 	private final Boolean value;
 
+	@Override
+	public String toString() {
+		return String.valueOf(this.getValue());
+	}
+	
+	public BooleanType equals(Type o){
+		if(! ( o instanceof BooleanType ) ){
+			return new BooleanType(false);
+		}
+		
+		return new BooleanType(((BooleanType) o).getValue() == this.getValue());
+	}
 	
 	// TODO dirty ma 't moet gewoon zo snel mogelijk werken allemaal :)
 //	@Override

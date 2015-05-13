@@ -14,7 +14,6 @@ import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.expressions.ReadVariable;
 import jumpingalien.model.program.expressions.Self;
 import jumpingalien.model.program.expressions.Variable;
-import jumpingalien.model.program.expressions.comparisons.Equals;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
 import jumpingalien.model.program.statements.IfThen;
@@ -59,11 +58,11 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression<GameObject> createSelf(SourceLocation sourceLocation) {
+	public Expression<ObjectType> createSelf(SourceLocation sourceLocation) {
 		return new Self<>(sourceLocation);
 	}
 
-	@Overrideequ
+	@Override
 	public Expression createDirectionConstant(
 			jumpingalien.part3.programs.IProgramFactory.Direction value,
 			SourceLocation sourceLocation) {
@@ -72,11 +71,11 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression<Double> createAddition(Expression<?> left, Expression<?> right,
+	public Expression<DoubleType> createAddition(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
 		try{
-			return new BinaryOperator<Double, Double>( (Expression<Double>) left, (Expression<Double>) right,
-					(l, r) ->  l + r, sourceLocation);
+			return new BinaryOperator<DoubleType, DoubleType>( (Expression<DoubleType>) left, (Expression<DoubleType>) right,
+					(l, r) ->  l.add(r), sourceLocation);
 			
 		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
 			throw new IllegalArgumentException();
@@ -170,8 +169,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	public Expression<BooleanType> createEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
 		try{
-			return new BinaryOperator<BooleanType, Type>( (Expression<Type>) left, (Expression<Type>) right, (l,  r) -> (l == r), sourceLocation);
-			
+			return new BinaryOperator<BooleanType, Type>( (Expression<Type>) left, (Expression<Type>) right, (l,  r) -> (l.equals(r)), sourceLocation);	
 		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
 			throw new IllegalArgumentException();
 		}

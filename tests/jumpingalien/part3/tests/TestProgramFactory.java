@@ -66,11 +66,11 @@ public class TestProgramFactory {
 		
 		ParseOutcome<?> parseOutcome = facade.parse(
 				  "double a; "
-				+ "while 5 == 5 do "
-				//+ "if (5 == 5) then "
-				//+ "a := 5;"
-				//+ "fi "
-				+ "a := 6; " // Twee statements na elkaar zorgt voor stackoverflow
+				+ "while true do "
+				+ "if (5 == 5) then "
+				+ "a := 5;"
+				//+ "a := 6; " // Twee niet-geneste statements na elkaar zorgt voor stackoverflow (sequence met List<Statemement>.size() > 1)
+				+ "fi "
 				+ "done ");
 		if(!parseOutcome.isSuccess()){
 			throw new IllegalArgumentException("Program parsing failed");
@@ -82,8 +82,5 @@ public class TestProgramFactory {
 		
 		
 		facade.advanceTime(world, 0.2);
-		//ProgramParser<Expression<?>, Statement, Type, Program> parser = new ProgramParser<>(factory);
-		//Optional<Program> parseResult = parser.parseString("double x;");
-		//parseResult
 	}
 }

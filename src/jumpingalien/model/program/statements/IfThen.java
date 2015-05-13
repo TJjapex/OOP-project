@@ -30,14 +30,23 @@ public class IfThen extends Statement {
 		return this.elseBody;
 	}
 	
+	public boolean hasElseBody(){
+		return this.elseBody != null;
+	}
+	
 	Statement elseBody;
 	
 	@Override
 	public void execute(Program program){
 		System.out.println("IfThen, executing, evaluating condition result: "+ this.getCondition().execute(program));
+		
+		// TODO zie docs
+		
+		// TODO dit gaat ervanuit dat this.getCondition().execute() een Type teruggeeft, wat bij een illegale code ook een expression kan zijn. Check doen?
 		if( this.getCondition().execute(program).getValue() ){
 			this.getIfBody().execute(program);
-		} else{
+			
+		} else if(this.hasElseBody()){
 			this.getElseBody().execute(program);
 		}
 	}

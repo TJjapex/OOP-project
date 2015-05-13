@@ -12,23 +12,41 @@ public class DoubleType extends Type{
 	public double getValue() {
 		return value;
 	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(this.getValue());
+	}
 
 	private final double value;
+//	
+//	public boolean equals(Object o){
+//		if(! ( o instanceof DoubleType ) ){
+//			return false; // TODO eventueel comparen met de overeenkomstige echte types (dus BooleanType met Boolean enzo)
+//		}
+//		
+//		if(this.getValue() == ((DoubleType) o).getValue()){
+//			return true;
+//		}
+//		
+//		return false;
+//	}
+//	
+//	public BooleanType equalsAsBooleanType(Object o){
+//		return new BooleanType(this.equals(o));
+//	}
 	
-	public boolean equals(Object o){
+	public DoubleType add(DoubleType o){
+		return new DoubleType( this.getValue() + o.getValue() );
+	}
+	
+	public BooleanType equals(Type o){
 		if(! ( o instanceof DoubleType ) ){
-			return false; // TODO eventueel comparen met de overeenkomstige echte types (dus BooleanType met Boolean enzo)
+			return new BooleanType(false);
 		}
 		
-		if(this.getValue() == ((DoubleType) o).getValue()){
-			return true;
-		}
-		
-		return false;
-	}
+		return new BooleanType(((DoubleType) o).getValue() == this.getValue());
+	}	
 	
-	public BooleanType equalsAsBooleanType(Object o){
-		return new BooleanType(this.equals(o));
-	}
 
 }

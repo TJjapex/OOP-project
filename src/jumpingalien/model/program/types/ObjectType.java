@@ -34,4 +34,17 @@ public class ObjectType extends Type {
 	}
 	
 	private final GameObject value;
+	
+	@Override
+	public String toString() {
+		return this.getValue().toString();
+	}
+	
+	public BooleanType equals(Type o){
+		if(! ( o instanceof Object ) ){
+			return new BooleanType(false);
+		}
+		
+		return new BooleanType(((ObjectType) o).getValue() == this.getValue());
+	}
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import jumpingalien.model.GameObject;
 import jumpingalien.model.program.expressions.Variable;
 import jumpingalien.model.program.statements.Statement;
+import jumpingalien.model.program.types.ObjectType;
 import jumpingalien.model.program.types.Type;
 
 public class Program {
@@ -54,7 +55,7 @@ public class Program {
 	// GameObject relation 
 	
 	public GameObject getGameObject() {
-		return gameObject;
+		return this.gameObject;
 	}
 	
 	public void setGameObject(GameObject gameObject){
