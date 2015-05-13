@@ -4,7 +4,7 @@ import jumpingalien.model.GameObject;
 
 public class ObjectType extends Type {
 
-	public ObjectType(GameObject value){
+	public ObjectType(Kind value){
 		this.value = value;
 	}
 	
@@ -12,11 +12,10 @@ public class ObjectType extends Type {
 		this(null);
 	}
 	
-	public GameObject getValue() {
+	public Kind getValue() {
 		return this.value;
 	}
 
-	private final GameObject value;
+	private final Kind value;
 
-	
 }

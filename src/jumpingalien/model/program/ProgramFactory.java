@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import org.hamcrest.SelfDescribing;
+
 import jumpingalien.model.GameObject;
+import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.program.expressions.BinaryOperator;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.expressions.ReadVariable;
@@ -355,8 +358,11 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createStartRun(Expression direction,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			return new Action( x -> x.startMove(direction.execute()), self, sourceLocation); // How to call 'self'?
+		}catch( ClassCastException exc){
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override

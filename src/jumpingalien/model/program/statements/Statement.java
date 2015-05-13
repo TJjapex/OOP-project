@@ -5,12 +5,19 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import jumpingalien.model.program.Program;
+import jumpingalien.part3.programs.SourceLocation;
 
 public abstract class Statement {
 
-	public Statement(){
-		
+	public Statement( SourceLocation sourceLocation ){
+		this.sourceLocation = sourceLocation;
 	}
+	
+	public SourceLocation getSourceLocation(){
+		return this.sourceLocation;
+	}
+	
+	private final SourceLocation sourceLocation;
 	
 	// iterator om te itereren over substatements
 	// casten is hier sowieso nog omslachtig gedaan, moet met generics..

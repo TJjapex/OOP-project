@@ -1,6 +1,5 @@
 package jumpingalien.model.program.statements;
 
-
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.*;
@@ -8,21 +7,35 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public class Assignment extends Statement {
 
-	public Assignment(String variableName, Type variableType,
+	public Assignment(String name, Type type,
 			Expression<? extends Type> value, SourceLocation sourceLocation){
-		this.variableName = variableName;
-		this.variableType = variableType;
+		super(sourceLocation);
+		this.name = name;
+		this.type = type;
 		this.value = value;
-		this.sourceLocation = sourceLocation;
 	}
 	
-	private final String variableName;
-	private final Type variableType;
+	public Type getType(){
+		return this.type;
+	}
+	
+	private final Type type;
+	
+	public String getName(){
+		return this.name;
+	}
+	
+	private final String name;
+	
+	public Expression<? extends Type> getValue(){
+		return this.value;
+	}
+	
 	private final Expression<? extends Type> value;
-	private final SourceLocation sourceLocation;
 	
 	@Override
 	void execute(Program program){
-		program.setVariable(this.variableName, this.value.execute(program));
+		program.setVariable(this.getName(), new Object[]{ this.getType() , 
+		                                                  new Variable<>(this.getValue(), this.getSourceLocation())});
 	}
 }

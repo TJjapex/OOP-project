@@ -1,29 +1,33 @@
 package jumpingalien.model.program.statements;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
+import jumpingalien.part3.programs.SourceLocation;
 
 public class WhileDo extends Statement {
 
-	public WhileDo(Expression condition, Statement Body){
+	public WhileDo(Expression<?> condition, Statement body, SourceLocation sourceLocation){
+		super(sourceLocation);
 		this.condition = condition;
 		this.body = body;
 	}
 	
-	public Expression getCondition(){
+	public Expression<?> getCondition(){
 		return this.condition;
 	}
 	
-	Expression condition;
+	private final Expression<?> condition;
 	
 	public Statement getBody(){
 		return this.body;
 	}
 	
-	Statement body;
+	private final Statement body;
 	
-	void execute(){
-		while ( this.getCondition().execute() == true ){
-			this.getBody().executeAll();
+	@Override
+	void execute(Program program){
+		while ( (Boolean) this.getCondition().execute(program) ){
+			this.getBody().executeAll(program);
 		}
 	}
 	

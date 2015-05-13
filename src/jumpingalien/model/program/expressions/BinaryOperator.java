@@ -33,6 +33,7 @@ public class BinaryOperator<T> extends Operator<T>{
 	
 	private final BiFunction<T, T, T> operator;
 	
+	@Override
 	public T execute(Program program) {
 		 return operator.apply(getLeftOperand().execute(program), getRightOperand().execute(program));
 	}

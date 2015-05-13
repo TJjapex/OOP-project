@@ -1,20 +1,23 @@
 package jumpingalien.model.program.statements;
 
+import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
+import jumpingalien.part3.programs.SourceLocation;
 
 public class IfThen extends Statement {
 
-	public IfThen(Expression condition, Statement ifBody, Statement elseBody){
+	public IfThen(Expression<?> condition, Statement ifBody, Statement elseBody, SourceLocation sourceLocation){
+		super(sourceLocation);
 		this.condition = condition;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;
 	}
 	
-	public Expression getCondition(){
+	public Expression<?> getCondition(){
 		return this.condition;
 	}
 	
-	Expression condition;
+	Expression<?> condition;
 	
 	public Statement getIfBody(){
 		return this.ifBody;
@@ -28,11 +31,12 @@ public class IfThen extends Statement {
 	
 	Statement elseBody;
 	
-	void execute(){
-		if( this.getCondition().execute() == true){
-			this.getIfBody().executeAll();
+	@Override
+	void execute(Program program){
+		if( (Boolean) this.getCondition().execute(program) ){
+			this.getIfBody().executeAll(program);
 		} else{
-			this.getElseBody().executeAll();
+			this.getElseBody().executeAll(program);
 		}
 	}
 	

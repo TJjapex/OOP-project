@@ -5,7 +5,7 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public abstract class Expression<T> {
 	
-	protected Expression(SourceLocation sourceLocation){ // result kunt ge nog nie meegeven in constructor, moet berekend worden?
+	protected Expression(SourceLocation sourceLocation){
 		this.sourceLocation = sourceLocation;
 	}
 	
