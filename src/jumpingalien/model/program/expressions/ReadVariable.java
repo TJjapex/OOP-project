@@ -28,7 +28,6 @@ public class ReadVariable<T extends Type> extends Expression<Type>{
 	
 //	private Type type;
 	
-	
 	private final String variableName;
 	private final Type variableType;
 

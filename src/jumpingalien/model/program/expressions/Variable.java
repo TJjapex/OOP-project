@@ -11,11 +11,15 @@ public class Variable<T extends Type> extends Expression<T>{
 		this.value = value;
 	}
 	
+	public T getValue(){
+		return this.value;
+	}
+	
 	private final T value;
 
 	@Override
 	public T execute(Program program) {
-		return this.value;
+		return this.getValue();
 	}
 	
 }

@@ -1,12 +1,11 @@
 package jumpingalien.model.program;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import jumpingalien.model.GameObject;
-import jumpingalien.model.program.expressions.Variable;
-import jumpingalien.model.program.statements.Statement;
-import jumpingalien.model.program.types.ObjectType;
+import jumpingalien.model.program.statements.*;
 import jumpingalien.model.program.types.Type;
 
 public class Program {
@@ -19,6 +18,7 @@ public class Program {
 		
 		this.mainStatement = mainStatement;
 		this.globalVariables = globalVariables;
+		this.mainStatementIterator = ((Statement) mainStatement).iterator();
 	}
 	
 	private Map<String, Type> globalVariables = new HashMap<>();
@@ -63,40 +63,21 @@ public class Program {
 	}
 
 	private GameObject gameObject;
-	
-	// Variables
-	
-//	private Map<String, Object[]> globalVariables = new HashMap<>();
-//	
-//	public Variable<?> getVariable(String name){
-//		if(!this.globalVariables.containsKey(name))
-//			return null;
-//		return (Variable<?>) this.globalVariables.get(name)[1]; // is er een andere methode dan dit met een cast te doen?
-//	}
-//	
-//	public void setVariable(String name, Object[] typeAndVariable){
-////		if(!globalVariables.containsKey(name))
-////			throw new IllegalArgumentException(); -> het moet ook nog mogelijk zijn om variables toe te voegen tijdens het 
-////													 programma, e.g. loopvariable
-//		if(!(typeAndVariable[0] instanceof Type || typeAndVariable[0] instanceof Integer)
-//		   || !(typeAndVariable[1] instanceof Variable) )
-//			throw new IllegalArgumentException();
-//		this.globalVariables.put(name, typeAndVariable);
-//	}
-	
+
 	private final Statement mainStatement;
 	
 	public void executeNext(){
-		if(mainStatement.iterator().hasNext()){
-			System.out.println("executing");
-			( (Statement) mainStatement.iterator().next() ).execute(this);
+		
+		if( mainStatementIterator.hasNext() ){
+			System.out.println("EXECUTING NEXT STATEMENT:");
+			((Statement) mainStatementIterator.next()).execute(this);
 		}else{
 			System.out.println("no next statement in mainstatement -> execution finished");
 		}
 		
 	}
 	
-	
+	private Iterator<Statement> mainStatementIterator;
 	
 }
 

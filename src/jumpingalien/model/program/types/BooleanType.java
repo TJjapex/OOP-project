@@ -1,6 +1,7 @@
 package jumpingalien.model.program.types;
 
 public class BooleanType extends Type{
+	
 	public BooleanType(Boolean value){
 		this.value = value;
 	}

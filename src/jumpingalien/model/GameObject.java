@@ -173,7 +173,7 @@ public abstract class GameObject {
 		
 		// TODO better relation asserts between this and program (not important, only when rest is finished)
 		if(program != null){
-			System.out.println("GameObejct: got program in constructor");
+			System.out.println("GameObject: got program in constructor");
 			program.setGameObject(this);
 		}
 	

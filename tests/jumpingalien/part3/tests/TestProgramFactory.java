@@ -66,10 +66,15 @@ public class TestProgramFactory {
 		
 		ParseOutcome<?> parseOutcome = facade.parse(
 				  "double a; "
+				//+ "double b; "
 				+ "while true do "
 				+ "if (5 == 5) then "
 				+ "a := 5;"
-				//+ "a := 6; " // Twee niet-geneste statements na elkaar zorgt voor stackoverflow (sequence met List<Statemement>.size() > 1)
+				+ "a := 6; "
+				//+ "while true do "
+				//+ "b := 4; "
+				//+ "done "  -> een while loop vlak op het einde in de body van een andere while loop werkt nog niet correct,
+				//				de buitenste while loop wordt te vroeg gereset
 				+ "fi "
 				+ "done ");
 		if(!parseOutcome.isSuccess()){

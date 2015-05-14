@@ -1,6 +1,5 @@
 package jumpingalien.model.program.statements;
 
-import java.util.List;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -19,54 +18,36 @@ public abstract class Statement {
 	
 	private final SourceLocation sourceLocation;
 	
-	// iterator om te itereren over substatements
-	// casten is hier sowieso nog omslachtig gedaan, moet met generics..
-	public Iterator iterator() {
+	public Iterator<Statement> iterator() {
 		
-		return new Iterator(){
+		return new Iterator<Statement>(){
 			
 			@Override
 			public boolean hasNext(){
-				if ( !(Statement.this instanceof List) && singleStatementUsed == false)
-					return true;
-				else if ( Statement.this instanceof List && (currentIndex < ( (List) Statement.this).size() ||
-							subStatementIterator.hasNext())){
-					return true;
-				} else {
-					return false;
-				}				
+				return !statementUsed;
 			}
 			
 			@Override
-			public Object next() throws NoSuchElementException{
-				if ( !(Statement.this instanceof List) && this.hasNext()){
+			public Statement next() throws NoSuchElementException{
+				if ( this.hasNext() ){
 					System.out.println("single statement returned, this: "+this);
-					singleStatementUsed = true;
+					statementUsed = true;
 					return Statement.this;
+				} else {
+					throw new NoSuchElementException();		
 				}
-				else if ( Statement.this instanceof List && this.hasNext()){
-					
-					subStatementIterator = ( (Statement) ( (List) Statement.this).get(currentIndex)).iterator();
-					currentIndex++;
-					return subStatementIterator.next();
-				} else{
-					throw new NoSuchElementException();
-				}
-					
 			}
+
 			
-			boolean singleStatementUsed = false;
-			Iterator subStatementIterator;
-			int currentIndex = 0;
 		};
+		
 	}
 	
-//	void executeAll(Program program){
-//		while (this.iterator().hasNext()){
-//			( (Statement) this.iterator().next() ).execute(program);
-//		}
-//	}
+	private boolean statementUsed = false;
 	
 	public abstract void execute(Program program);
 	
+	public void resetIterator(){
+		this.statementUsed = false;
+	}
 }

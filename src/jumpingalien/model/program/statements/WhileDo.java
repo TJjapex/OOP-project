@@ -1,5 +1,10 @@
 package jumpingalien.model.program.statements;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
+
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
@@ -11,6 +16,7 @@ public class WhileDo extends Statement {
 		super(sourceLocation);
 		this.condition = (Expression<BooleanType>) condition;
 		this.body = body;
+		this.bodyIterator = this.getBody().iterator();
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -27,16 +33,61 @@ public class WhileDo extends Statement {
 	
 	@Override
 	public void execute(Program program){
-		System.out.println("WhileDo, executing, evaluating condition: "+this.getCondition()+",  result of evalution: "+ this.getCondition().execute(program));
 		
-		// While hier mag niet want dan doet hij meerdere statements per execute
-		// TODO zie docs
+		if (!conditionChecked){
+			conditionResult = this.getCondition().execute(program).getValue();
+		}
 		
-		// TODO dit gaat ervanuit dat this.getCondition().execute() een Type teruggeeft, wat bij een illegale code ook een expression kan zijn. Check doen?
-		if ( this.getCondition().execute(program).getValue() ){
-			System.out.println("WhileDo, executing body"+this.getBody());
-			this.getBody().execute(program);
+		System.out.println("WhileDo, condition result: "+ this.conditionResult);
+		
+		if ( conditionResult && this.bodyIterator.hasNext() ){
+			System.out.println("WhileDo, body");
+			((Statement) this.bodyIterator.next()).execute(program);
+			
+			if (!this.bodyIterator.hasNext()){
+				conditionResult = this.getCondition().execute(program).getValue();
+				if (conditionResult){
+					this.resetIterator();
+					this.bodyIterator = this.getBody().iterator();
+				}
+				System.out.println("while loop reset: " + this.bodyIterator.hasNext());
+				System.out.println(this.bodyIterator.next());
+			}
+			
 		}
 	}
 	
+	@Override
+	public Iterator<Statement> iterator() {
+		
+		return new Iterator<Statement>(){
+			
+			@Override
+			public boolean hasNext(){
+				return bodyIterator.hasNext();
+			}
+			
+			@Override
+			public Statement next() throws NoSuchElementException{
+				if ( this.hasNext() ){
+					return WhileDo.this;
+				} else {
+					throw new NoSuchElementException();		
+				}
+			}
+
+			
+		};
+		
+	}
+	
+	@Override
+	public void resetIterator(){
+		this.getBody().resetIterator();
+		this.bodyIterator = this.getBody().iterator();
+	}
+	
+	private boolean conditionResult;
+	private Iterator<Statement> bodyIterator;
+	private boolean conditionChecked = false;
 }

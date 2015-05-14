@@ -40,6 +40,7 @@ public class ObjectType extends Type {
 		return this.getValue().toString();
 	}
 	
+	@Override
 	public BooleanType equals(Type o){
 		if(! ( o instanceof Object ) ){
 			return new BooleanType(false);
@@ -47,4 +48,5 @@ public class ObjectType extends Type {
 		
 		return new BooleanType(((ObjectType) o).getValue() == this.getValue());
 	}
+	
 }
