@@ -45,19 +45,19 @@ public class IfThen extends Statement {
 	
 	@Override
 	public void execute(Program program){
-	
-		if (!conditionChecked){
-			conditionResult = this.getCondition().execute(program).getValue();
-		}
-		
-		System.out.println("IfThen, condition result: "+ this.conditionResult);
-		
+			
 		if( conditionResult && this.ifBodyIterator.hasNext() ){
 			System.out.println("IfThen, if body");
 			((Statement) this.ifBodyIterator.next()).execute(program);
 		} else if( !conditionResult && this.hasElseBody() && this.elseBodyIterator.hasNext()){
 			System.out.println("IfThen, else body");
 			((Statement) this.elseBodyIterator.next()).execute(program);
+		}
+		
+		if (!conditionChecked){
+			conditionResult = this.getCondition().execute(program).getValue();
+			conditionChecked = true;
+			System.out.println("IfThen, condition result: "+ this.conditionResult);
 		}
 		
 	}

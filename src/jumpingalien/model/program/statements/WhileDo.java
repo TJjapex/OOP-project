@@ -35,6 +35,7 @@ public class WhileDo extends Statement {
 	public void execute(Program program){
 		
 		if (!conditionChecked){
+			System.out.println("WhileDo, checking condition");
 			conditionResult = this.getCondition().execute(program).getValue();
 		}
 		

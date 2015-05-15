@@ -29,22 +29,48 @@ public class TestProgramFactory {
 
 	@Test
 	public void testAddition() {
-//		ProgramFactory<Expression<?>, Statement, Type, Program> programFactory = new ProgramFactory<>();
-//		Program 
-//		BooleanType fak = new BooleanType(true);
-//		
-//		Variable<Double> left = new Variable<Double>(new DoubleType(), 1.5, new SourceLocation(0, 0));
-//		assertEquals(1.5, left.execute(), Util.DEFAULT_EPSILON);
-//		programFactory.createPrint(left, new SourceLocation(0, 0));
-//		
-//		Variable<Double> right = new Variable<Double>(2.2, new SourceLocation(0, 0));
-//		assertEquals(2.2, right.execute(), Util.DEFAULT_EPSILON);
-//		
-//		Expression<Double> sumExpression = programFactory.createAddition(left, right, new SourceLocation(0, 0));
-//		assertEquals(3.7, sumExpression.execute(), Util.DEFAULT_EPSILON);
 		
-		//ProgramFactory<Expression<?>, Statement, Type, Program> programFactory = new ProgramFactory<>();
-		//Program program = programFactory.createProgram(mainStatement, globalVariables);
+		// TODO hier wat debug programmas bijhouden :)
+		
+		// Werkt, test if en meerdere statements in if, er mag maar één statement per executeNext gedaan worden -> ok nu
+		String testIf = 
+		"double a; "
+		+ "if (5 == 5) then "
+		+ "a := 5;"
+		+ "print a;"
+		+ "a := 6; "
+		+ "print a;"
+		+ "fi ";
+		
+		// Werkt nog niet correct -> conditie in aparte executeNext + blijft in ergens op een vreemde manier in z'n body hangen + conditie wordt iedere executeNext gecheckt (denk ik, nog niet goed bekeken)
+		String testWhile = 
+		"double a; "
+		+ "while true do "
+		+ "a := 5;"
+		+ "print a;"
+		+ "a := 6; "
+		+ "print a;"
+		+ "done ";
+		
+		String testWhileExt = 
+		  "double a; "
+		//+ "double b; "
+		+ "while true do "
+		+ "if (5 == 5) then "
+		+ "a := 5;"
+		+ "a := 6; "
+		//+ "while true do "
+		//+ "b := 4; "
+		//+ "done "  -> een while loop vlak op het einde in de body van een andere while loop werkt nog niet correct,
+		//				de buitenste while loop wordt te vroeg gereset
+		+ "fi "
+		+ "done ";
+		
+		
+		// Selecteer programma
+		String testProgram = testIf;
+		
+		
 		
 		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
 		
@@ -63,20 +89,8 @@ public class TestProgramFactory {
 		
 		facade.setMazub(world, alien);
 		
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
 		
-		ParseOutcome<?> parseOutcome = facade.parse(
-				  "double a; "
-				//+ "double b; "
-				+ "while true do "
-				+ "if (5 == 5) then "
-				+ "a := 5;"
-				+ "a := 6; "
-				//+ "while true do "
-				//+ "b := 4; "
-				//+ "done "  -> een while loop vlak op het einde in de body van een andere while loop werkt nog niet correct,
-				//				de buitenste while loop wordt te vroeg gereset
-				+ "fi "
-				+ "done ");
 		if(!parseOutcome.isSuccess()){
 			throw new IllegalArgumentException("Program parsing failed");
 		}
