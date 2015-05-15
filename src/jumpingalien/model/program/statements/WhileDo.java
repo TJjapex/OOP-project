@@ -2,9 +2,6 @@ package jumpingalien.model.program.statements;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
-
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
@@ -52,7 +49,7 @@ public class WhileDo extends Statement {
 					this.bodyIterator = this.getBody().iterator();
 				}
 				System.out.println("while loop reset: " + this.bodyIterator.hasNext());
-				System.out.println(this.bodyIterator.next());
+				//System.out.println(this.bodyIterator.next());
 			}
 			
 		}

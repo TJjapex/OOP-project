@@ -68,7 +68,7 @@ public class TestProgramFactory {
 		
 		
 		// Selecteer programma
-		String testProgram = testIf;
+		String testProgram = testWhile;
 		
 		
 		
