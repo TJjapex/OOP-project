@@ -1107,6 +1107,15 @@ public abstract class GameObject {
 	 */
 	protected Orientation orientation;
 	
+	/**
+	 * Check if the GameObject is ducking. 
+	 * @return
+	 * 		result == false
+	 */
+	public boolean isDucking(){
+		return false;
+	}
+
 	/****************************************************** HIT POINTS *************************************************/
 	
 	/**

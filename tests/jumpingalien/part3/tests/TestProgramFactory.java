@@ -67,8 +67,19 @@ public class TestProgramFactory {
 		+ "done ";
 		
 		
+		// Werkt nog niet, hij gaat niet voort na wait
+		String testWait =
+		"double a; "
+		+ "a := 5;"
+		+" wait 0.003;"
+		+ "print a;"
+		+ "a := 6;"
+		;
+							
+		
+		
 		// Selecteer programma
-		String testProgram = testWhile;
+		String testProgram = testWait;
 		
 		
 		

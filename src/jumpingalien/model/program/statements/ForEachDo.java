@@ -6,7 +6,7 @@ import jumpingalien.model.World;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.expressions.Variable;
-import jumpingalien.model.program.types.ObjectType;
+import jumpingalien.model.program.types.GameObjectType;
 import jumpingalien.part3.programs.SourceLocation;
 
 public class ForEachDo extends Statement {
@@ -62,7 +62,7 @@ public class ForEachDo extends Statement {
 		for (Kind kind: World.getAll(kind)){ 
 			if ( (Boolean) this.getWhereCondition().execute(program)){
 				program.setVariable(this.getLoopVariableName(),
-									new Object[]{ new ObjectType() , new Variable<ObjectType>(kind, this.getSourceLocation())});
+									new Object[]{ new GameObjectType() , new Variable<GameObjectType>(kind, this.getSourceLocation())});
 				this.getBody().executeAll(program);
 			}
 		}
@@ -77,7 +77,7 @@ public class ForEachDo extends Statement {
 		}
 		Stream<?> stream = builder.build();
 		stream.forEach( e -> program.setVariable(this.getLoopVariableName(),
-												 new Object[]{ new ObjectType() , new Variable<ObjectType>(ObjectType((Kind)e), this.getSourceLocation())}))
+												 new Object[]{ new GameObjectType() , new Variable<GameObjectType>(ObjectType((Kind)e), this.getSourceLocation())}))
 			  .filter( () -> (Boolean) this.getWhereCondition().execute()); // geen idee of dit zou werken: dat hij eerst da variabele verandert en dan voor elke verandere variabele filtert (goed!) of eerst alle variabelen verzet en dan pas filtert (fout!)
 	
 		// stream = stream.filter( () -> this.getWhereCondition()).sorted( (e1, e2) -> this.getSortCondition().execute(program).compareTo(

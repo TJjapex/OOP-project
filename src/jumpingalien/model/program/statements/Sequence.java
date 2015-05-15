@@ -59,10 +59,10 @@ public class Sequence extends Statement{
 	// wordt niet meer gebruikt, Statements in de sequence worden meteen door de iterator aangeroepen
 	@Override
 	public void execute(Program program) {
-		System.out.println("SEQUENCE EXECUTE: " + sequenceIterator.hasNext());
-		if(sequenceIterator.hasNext()){
-			( (Statement) sequenceIterator.next() ).execute(program);
-		}
+//		System.out.println("SEQUENCE EXECUTE: " + sequenceIterator.hasNext());
+//		if(sequenceIterator.hasNext()){
+//			( (Statement) sequenceIterator.next() ).execute(program);
+//		}
 	}
 	
 	@Override

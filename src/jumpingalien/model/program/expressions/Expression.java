@@ -17,4 +17,14 @@ public abstract class Expression<T extends Type> {
 	}
 
 	private final SourceLocation sourceLocation;
+	
+
+    @SuppressWarnings("unchecked")
+    public static <R> R cast(Object obj) throws IllegalArgumentException{
+    	try{
+    		return (R) obj;
+    	}catch(ClassCastException exc){
+    		throw new IllegalArgumentException();
+    	}
+    }
 }

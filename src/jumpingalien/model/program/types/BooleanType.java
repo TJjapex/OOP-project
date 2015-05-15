@@ -28,6 +28,10 @@ public class BooleanType extends Type{
 		
 		return new BooleanType(((BooleanType) o).getValue() == this.getValue());
 	}
+
+	public BooleanType not() {
+		return new BooleanType(!this.getValue());
+	}
 	
 	// TODO dirty ma 't moet gewoon zo snel mogelijk werken allemaal :)
 //	@Override

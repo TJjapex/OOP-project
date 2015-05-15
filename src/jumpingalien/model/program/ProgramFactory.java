@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import javax.security.auth.x500.X500Principal;
+
 import org.antlr.v4.tool.LeftRecursionCyclesMessage;
 import org.hamcrest.SelfDescribing;
 
 import jumpingalien.model.GameObject;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.program.expressions.BinaryOperator;
+import jumpingalien.model.program.expressions.Checker;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.expressions.ReadVariable;
 import jumpingalien.model.program.expressions.Self;
+import jumpingalien.model.program.expressions.UnaryOperator;
 import jumpingalien.model.program.expressions.Variable;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
@@ -20,6 +24,7 @@ import jumpingalien.model.program.statements.IfThen;
 import jumpingalien.model.program.statements.Print;
 import jumpingalien.model.program.statements.Sequence;
 import jumpingalien.model.program.statements.Statement;
+import jumpingalien.model.program.statements.Wait;
 import jumpingalien.model.program.statements.WhileDo;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
@@ -52,12 +57,12 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression<ObjectType> createNull(SourceLocation sourceLocation) {
-		return new Variable<>(new ObjectType(null), sourceLocation);
+	public Expression<GameObjectType> createNull(SourceLocation sourceLocation) {
+		return new Variable<>(new GameObjectType(null), sourceLocation);
 	}
 
 	@Override
-	public Expression<ObjectType> createSelf(SourceLocation sourceLocation) {
+	public Expression<GameObjectType> createSelf(SourceLocation sourceLocation) {
 		return new Self<>(sourceLocation);
 	}
 
@@ -71,13 +76,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<DoubleType> createAddition(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		try{
-			return new BinaryOperator<DoubleType, DoubleType>( (Expression<DoubleType>) left, (Expression<DoubleType>) right,
+		return new BinaryOperator<DoubleType, DoubleType>( Expression.cast(left), Expression.cast(right),
 					(l, r) ->  l.add(r), sourceLocation);
-			
-		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
-			throw new IllegalArgumentException();
-		}
 		
 	}
 
@@ -166,44 +166,35 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<BooleanType> createEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		try{
-			return new BinaryOperator<BooleanType, Type>( (Expression<Type>) left, (Expression<Type>) right, (l,  r) -> (l.equals(r)), sourceLocation);	
-		}catch( ClassCastException exc){ // TODO waarom pakt deze exception bovenstaande warnings niet?
-			throw new IllegalArgumentException();
-		}
+		return new BinaryOperator<Type, BooleanType>( Expression.cast(left), Expression.cast(right), (l,  r) -> l.equals(r), sourceLocation);	
 	}
 
 	@Override
-	public Expression createNotEquals(Expression left, Expression right,
+	public Expression<BooleanType> createNotEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BinaryOperator<Type, BooleanType>( Expression.cast(left), Expression.cast(right), (l,  r) ->  (l.equals(r)).not(), sourceLocation);	
 	}
 
 	@Override
-	public Expression createGetX(Expression expr, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<DoubleType> createGetX(Expression<?> expr, SourceLocation sourceLocation) {
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getRoundedPositionX())), sourceLocation);
 	}
 
 	@Override
-	public Expression createGetY(Expression expr, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<DoubleType> createGetY(Expression<?> expr, SourceLocation sourceLocation) {
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getRoundedPositionY())), sourceLocation);
 	}
 
 	@Override
-	public Expression createGetWidth(Expression expr,
+	public Expression<DoubleType> createGetWidth(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getWidth())), sourceLocation);
 	}
 
 	@Override
-	public Expression createGetHeight(Expression expr,
+	public Expression<DoubleType> createGetHeight(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getHeight())), sourceLocation);
 	}
 
 	@Override
@@ -291,41 +282,46 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression createIsAir(Expression expr, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
+	public Expression<BooleanType> createIsAir(Expression<?> expr, SourceLocation sourceLocation) {
+		//return new Checker( expr, x->x.isMoving(), sourceLocation);
 		return null;
 	}
 
 	@Override
-	public Expression createIsMoving(Expression expr, Expression direction,
+	public Expression<BooleanType> createIsMoving(Expression<?> expr, Expression<?> direction,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
+		// TODO ik denk niet dat dit gaat met die Checker (of UnaryOperator) omdat ge die direction niet kunt evalueren bij de lambda functie hier...
+		
+		//return new Checker( Expression.cast(expr), x-> (x.isMoving(... ? )), sourceLocation);
 		return null;
+
 	}
 
 	@Override
-	public Expression createIsDucking(Expression expr,
+	public Expression<BooleanType> createIsDucking(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Checker( Expression.cast(expr), x->x.isDucking(), sourceLocation);
+	
+		//kan ook zo met UnaryOperator maar is omslachtiger
+		//return new UnaryOperator<ObjectType, BooleanType>( ( Expression<ObjectType>) expr, (x-> new BooleanType(((GameObject) x.getValue()).isDucking())), sourceLocation);
 	}
 
 	@Override
-	public Expression createIsJumping(Expression<?> expr,
+	public Expression<BooleanType> createIsJumping(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Checker( Expression.cast(expr), x->!x.isOnGround(), sourceLocation);
+		//return new UnaryOperator<ObjectType, BooleanType>( ( Expression<ObjectType>) expr, (x-> new BooleanType(!((GameObject) x.getValue()).isOnGround())), sourceLocation);
 	}
 
 	@Override
 	public Statement createAssignment(String variableName, Type variableType,
 			Expression<?> value, SourceLocation sourceLocation) {
-		return new Assignment(variableName, variableType, (Expression<? extends Type>) value, sourceLocation);
+		return new Assignment(variableName, variableType, Expression.cast(value), sourceLocation);
 		
 	}
 
 	@Override
-	public Statement createWhile(Expression condition, Statement body,
+	public Statement createWhile(Expression<?> condition, Statement body,
 			SourceLocation sourceLocation) {
 		System.out.println("ProgramFactory: createWhile()");
 		return new WhileDo(condition, body, sourceLocation);
@@ -335,8 +331,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	public Statement createForEach(
 			String variableName,
 			jumpingalien.part3.programs.IProgramFactory.Kind variableKind,
-			Expression where,
-			Expression sort,
+			Expression<?> where,
+			Expression<?> sort,
 			jumpingalien.part3.programs.IProgramFactory.SortDirection sortDirection,
 			Statement body, SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
@@ -352,7 +348,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createIf(Expression<?> condition, Statement ifBody,
 			Statement elseBody, SourceLocation sourceLocation) {
-		return new IfThen(condition, ifBody, elseBody, sourceLocation);
+		return new IfThen(Expression.cast(condition), ifBody, elseBody, sourceLocation);
 	}
 
 	@Override
@@ -371,7 +367,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Statement createStopRun(Expression direction,
+	public Statement createStopRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
@@ -402,16 +398,14 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Statement createWait(Expression duration,
+	public Statement createWait(Expression<?> duration,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Wait(Expression.cast(duration), sourceLocation);
 	}
 
 	@Override
 	public Statement createSkip(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Wait(new Variable<DoubleType>(new DoubleType(0.001), sourceLocation), sourceLocation);
 	}
 
 	@Override
@@ -432,8 +426,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public ObjectType getGameObjectType() {
-		return new ObjectType();
+	public GameObjectType getGameObjectType() {
+		return new GameObjectType();
 	}
 
 	@Override

@@ -1,13 +1,14 @@
 package jumpingalien.model.program.expressions;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class BinaryOperator<T extends Type, I extends Type> extends Operator<T>{
+public class BinaryOperator<I extends Type, T extends Type> extends Operator<T>{
 	
 	public BinaryOperator(Expression<I> left, Expression<I> right, BiFunction<I, I, T> operator, SourceLocation sourceLocation){
 		super( sourceLocation);
@@ -31,11 +32,17 @@ public class BinaryOperator<T extends Type, I extends Type> extends Operator<T>{
 	
 	private final Expression<I> rightOperand;
 	
+	
+	@Basic @Immutable
+	public BiFunction<I, I, T> getOperator(){
+		return this.operator;
+	}
+	
 	private final BiFunction<I, I, T> operator;
 	
 	@Override
 	public T execute(Program program) {
-		 return operator.apply(getLeftOperand().execute(program), getRightOperand().execute(program));
+		 return getOperator().apply(getLeftOperand().execute(program), getRightOperand().execute(program));
 	}
 //	
 //	@Override @Immutable @Basic

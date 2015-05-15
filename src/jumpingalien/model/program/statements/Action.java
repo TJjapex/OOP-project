@@ -5,12 +5,12 @@ import java.util.function.BiConsumer;
 import jumpingalien.model.GameObject;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.Expression;
-import jumpingalien.model.program.types.ObjectType;
+import jumpingalien.model.program.types.GameObjectType;
 import jumpingalien.part3.programs.SourceLocation;
 
 public class Action extends Statement {
 
-	public Action(BiConsumer<GameObject, Program> operator, Expression<ObjectType> gameObject, SourceLocation sourceLocation){
+	public Action(BiConsumer<GameObject, Program> operator, Expression<GameObjectType> gameObject, SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.operator = operator;
 		this.gameObject = gameObject;
@@ -41,11 +41,11 @@ public class Action extends Statement {
 	
 	private final BiConsumer<GameObject, Program> operator;
 	
-	public Expression<ObjectType> getGameObject(){
+	public Expression<GameObjectType> getGameObject(){
 		return this.gameObject;
 	}
 	
-	private final Expression<ObjectType> gameObject;
+	private final Expression<GameObjectType> gameObject;
 	
 	@Override
 	public void execute(Program program) {

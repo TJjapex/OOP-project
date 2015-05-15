@@ -10,9 +10,9 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public class IfThen extends Statement {
 
-	public IfThen(Expression<?> condition, Statement ifBody, Statement elseBody, SourceLocation sourceLocation){
+	public IfThen(Expression<BooleanType> condition, Statement ifBody, Statement elseBody, SourceLocation sourceLocation){
 		super(sourceLocation);
-		this.condition = (Expression<BooleanType> ) condition;
+		this.condition = condition;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;
 		this.ifBodyIterator = this.getIfBody().iterator();

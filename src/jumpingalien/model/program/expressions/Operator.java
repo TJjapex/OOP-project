@@ -8,9 +8,5 @@ public abstract class Operator<T extends Type> extends Expression<T> {
 	protected Operator(SourceLocation sourceLocation){
 		super(sourceLocation);
 	}
-	
-//	public abstract int getNbOperands();
-//	
-//	public abstract String getOperatorSymbol();
 
 }

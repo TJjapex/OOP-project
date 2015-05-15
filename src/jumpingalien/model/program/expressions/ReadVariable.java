@@ -9,7 +9,7 @@ public class ReadVariable<T extends Type> extends Expression<Type>{
 	public ReadVariable(String variableName, Type variableType, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.variableName = variableName;
-		this.variableType = variableType;
+//		this.variableType = variableType;
 	}
 	
 //	public Variable(T value, SourceLocation sourceLocation) {
@@ -29,7 +29,7 @@ public class ReadVariable<T extends Type> extends Expression<Type>{
 //	private Type type;
 	
 	private final String variableName;
-	private final Type variableType;
+//	private final Type variableType;
 
 	@Override
 	public Type execute(Program program) {

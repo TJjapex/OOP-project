@@ -2,7 +2,7 @@ package jumpingalien.model.program.types;
 
 import jumpingalien.model.GameObject;
 
-public class ObjectType extends Type {
+public class GameObjectType extends Type {
 
 	// Geen idee of da wel lekker werkt met die Kind enzo want dan meot ge een GameObject omzetten naar zo'n kind ofzo? Heb het tijdelijk weggedaan
 	
@@ -21,11 +21,11 @@ public class ObjectType extends Type {
 //	private final Kind value;
 	
 
-	public ObjectType(GameObject value){
+	public GameObjectType(GameObject value){
 		this.value = value;
 	}
 		
-	public ObjectType(){
+	public GameObjectType(){
 			this(null);
 	}
 	
@@ -46,7 +46,7 @@ public class ObjectType extends Type {
 			return new BooleanType(false);
 		}
 		
-		return new BooleanType(((ObjectType) o).getValue() == this.getValue());
+		return new BooleanType(((GameObjectType) o).getValue() == this.getValue());
 	}
 	
 }

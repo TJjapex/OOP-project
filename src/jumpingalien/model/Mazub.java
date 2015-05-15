@@ -654,7 +654,7 @@ public class Mazub extends GameObject{
 	 * @return	A boolean that represents if Mazub is ducking or not.
 	 * 			| result == ( this.ducking )
 	 */
-	@Basic
+	@Basic @Override
 	public boolean isDucking(){
 		return this.ducking;
 	}

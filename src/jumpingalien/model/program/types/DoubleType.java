@@ -6,6 +6,10 @@ public class DoubleType extends Type{
 		this.value = value;
 	}
 	
+	public DoubleType(int value){
+		this.value = (double) value;
+	}
+	
 	public DoubleType(){
 		this(0.0);
 	}
