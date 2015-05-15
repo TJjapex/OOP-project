@@ -8,6 +8,25 @@ public class DirectionType extends Type {
 		this.value = value;
 	}
 	
+	public DirectionType(jumpingalien.part3.programs.IProgramFactory.Direction value) throws IllegalArgumentException{
+		switch(value){
+		case LEFT:
+			this.value = Orientation.LEFT;
+		break;
+		case RIGHT:
+			this.value = Orientation.RIGHT;
+		break;
+		case UP:
+			this.value = Orientation.TOP;
+		break;
+		case DOWN:
+			this.value = Orientation.BOTTOM;
+		break;
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	public DirectionType(){
 		this(Orientation.RIGHT);
 	}

@@ -31,30 +31,29 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<Type> createReadVariable(String variableName,
 			Type variableType, SourceLocation sourceLocation) {
-		return new ReadVariable<Type>( variableName , variableType, sourceLocation);
+		return new ReadVariable<>( variableName , variableType, sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createDoubleConstant(double value,
 			SourceLocation sourceLocation) {
-		return new Variable<DoubleType>(new DoubleType(value), sourceLocation);
+		return new Variable<>(new DoubleType(value), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createTrue(SourceLocation sourceLocation) {
-		return new Variable<BooleanType>(new BooleanType(true), sourceLocation);
+		return new Variable<>(new BooleanType(true), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createFalse(SourceLocation sourceLocation) {
-		return new Variable<BooleanType>(new BooleanType(false), sourceLocation);
+		return new Variable<>(new BooleanType(false), sourceLocation);
 
 	}
 
 	@Override
 	public Expression<ObjectType> createNull(SourceLocation sourceLocation) {
-		//return new Variable<ObjectType>(new ObjectType(null), sourceLocation);
-		return null;
+		return new Variable<>(new ObjectType(null), sourceLocation);
 	}
 
 	@Override
@@ -63,11 +62,10 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression createDirectionConstant(
+	public Expression<DirectionType> createDirectionConstant(
 			jumpingalien.part3.programs.IProgramFactory.Direction value,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Variable<>(new DirectionType(value), sourceLocation);
 	}
 
 	@Override
@@ -363,11 +361,10 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Statement createStartRun(Expression direction,
+	public Statement createStartRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
 		try{
-			return null;
-			//return new Action( x -> x.startMove( (Orientation) direction.execute(null)), createSelf(sourceLocation), sourceLocation); // How to call 'self'?
+			return new Action( (x, program) -> x.startMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); // How to call 'self'?
 		}catch( ClassCastException exc){
 			throw new IllegalArgumentException();
 		}
@@ -420,7 +417,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createSequence(List<Statement> statements,
 			SourceLocation sourceLocation) {
-		System.out.println("ProgramFactory, createSequence: statements "+statements);
+		//System.out.println("ProgramFactory, createSequence: statements "+statements);
 		return new Sequence(statements, sourceLocation);
 	}
 
@@ -447,7 +444,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type> globalVariables) {
-		System.out.println("ProgramFactory, createProgram: mainStatement"+mainStatement);
+		//System.out.println("ProgramFactory, createProgram: mainStatement"+mainStatement);
 		System.out.println(mainStatement);
 		return new Program(mainStatement, globalVariables);
 	}
