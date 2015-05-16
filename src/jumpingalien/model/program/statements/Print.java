@@ -20,6 +20,7 @@ public class Print extends Statement {
 	@Override
 	public void execute(Program program){
 		System.out.println("Print " + this.getExpression().execute(program));
+		this.statementUsed = true;
 	}
 	
 }

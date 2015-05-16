@@ -15,10 +15,10 @@ public class IfThen extends Statement {
 		this.condition = condition;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;
-		this.ifBodyIterator = this.getIfBody().iterator();
-		if (this.hasElseBody()){
-			this.elseBodyIterator = this.getElseBody().iterator();
-		}
+		//this.ifBodyIterator = this.getIfBody().iterator();
+		//if (this.hasElseBody()){
+			//this.elseBodyIterator = this.getElseBody().iterator();
+		//}
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -50,7 +50,10 @@ public class IfThen extends Statement {
 			this.conditionResult = this.getCondition().execute(program).getValue();
 			this.conditionChecked = true;
 			System.out.println("IfThen, checked condition: "+ this.conditionResult);
-		} 
+		}else{
+			if(this.iterator().hasNext())
+				this.iterator().next().execute(program);
+		}
 
 	}
 	
@@ -65,9 +68,14 @@ public class IfThen extends Statement {
 				if (!IfThen.this.conditionChecked)
 					return true;
 				else if (IfThen.this.conditionResult)
-					return ifBodyIterator.hasNext();
+					//return ifBodyIterator.hasNext();
+					return getIfBody().iterator().hasNext();
 				else
-					return elseBodyIterator.hasNext();
+					if(hasElseBody()){
+						return getElseBody().iterator().hasNext();
+					}
+				return false;
+					//return elseBodyIterator.hasNext();
 				
 			}
 			
@@ -77,9 +85,9 @@ public class IfThen extends Statement {
 				if ( !IfThen.this.conditionChecked )
 					return IfThen.this;
 				else if (IfThen.this.conditionResult){
-					return IfThen.this.ifBodyIterator.next();
+					return IfThen.this.getIfBody();
 				} else{
-					return IfThen.this.elseBodyIterator.next();
+					return IfThen.this.getElseBody();
 				}		
 				
 			}
@@ -88,18 +96,18 @@ public class IfThen extends Statement {
 		
 	}
 	
-	private Iterator<Statement> ifBodyIterator;
-	private Iterator<Statement> elseBodyIterator;
+//	private Iterator<Statement> ifBodyIterator;
+//	private Iterator<Statement> elseBodyIterator;
 	
 	@Override
 	public void resetIterator(){
 		conditionChecked = false;
-		System.out.println(this.hasElseBody());
+		//System.out.println(this.hasElseBody());
 		if (this.conditionResult){
-			this.ifBodyIterator = this.getIfBody().iterator();
+			//this.ifBodyIterator = this.getIfBody().iterator();
 			this.getIfBody().resetIterator();
 		} else if (this.hasElseBody()){
-			this.elseBodyIterator = this.getElseBody().iterator();
+			//this.elseBodyIterator = this.getElseBody().iterator();
 			this.getElseBody().resetIterator();
 		}
 	}

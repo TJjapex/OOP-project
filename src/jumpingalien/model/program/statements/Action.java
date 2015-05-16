@@ -50,7 +50,7 @@ public class Action extends Statement {
 	@Override
 	public void execute(Program program) {
 		this.getOperator().accept(this.getGameObject().execute(program).getValue(), program);
-		// TODO: implement skip and wait actions! -> in nieuwe klasse
+		this.statementUsed = true;
 	}
 	
 }

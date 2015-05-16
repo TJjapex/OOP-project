@@ -20,18 +20,14 @@ public class Wait extends Statement{
 	
 	@Override
 	public void execute(Program program) {
-		if (!amountValueSet){
-			this.amountValue = this.getAmount().execute(program).getValue();
-			this.amountValueSet = true;
-		}
-		System.out.println("Statement, WAITING, cycles:"+this.cycles);
+		System.out.println("Statement, WAITING, cycle:"+this.cycles);
+		this.iterator().next();
 		
-		//this.timePassed = ! ( this.getCycles() < this.getAmount().execute(program).getValue() * 1000);
-		//System.out.println("Time passed: " + this.timePassed);
+		if(this.getCycles() >= this.getAmount().execute(program).getValue() * 1000 ){
+			this.setTimePassed(true);
+		}	
+		
 	}
-	
-	private double amountValue;
-	private boolean amountValueSet;
 	
 	/* Iterator */
 	
@@ -48,7 +44,7 @@ public class Wait extends Statement{
 			@Override
 			public Statement next() throws NoSuchElementException{
 				if ( this.hasNext() ){
-					Wait.this.increaseCycles();
+					increaseCycles();
 					return Wait.this;
 				}
 				else{
@@ -71,11 +67,11 @@ public class Wait extends Statement{
 	}
 	
 	public boolean hasTimePassed(){
-		return (this.amountValue*1000 == this.getCycles() && amountValueSet);
+		return this.timePassed;
 	}
 	
 	// True if and only if the given time amount has passed
-	private boolean timePassed;
+	private boolean timePassed = false;
 
 	/* Amount */
 	

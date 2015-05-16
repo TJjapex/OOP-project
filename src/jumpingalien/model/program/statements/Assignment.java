@@ -36,6 +36,7 @@ public class Assignment extends Statement {
 	@Override
 	public void execute(Program program){
 		program.setVariable(this.variableName, this.value.execute(program));
+		this.statementUsed = true;
 	}
 	
 }

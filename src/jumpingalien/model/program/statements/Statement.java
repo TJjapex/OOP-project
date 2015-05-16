@@ -40,7 +40,7 @@ public abstract class Statement {
 		
 	}
 	
-	private boolean statementUsed = false;
+	protected boolean statementUsed = false;
 	
 	public abstract void execute(Program program);
 	

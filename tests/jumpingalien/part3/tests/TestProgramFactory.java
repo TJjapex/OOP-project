@@ -32,6 +32,14 @@ public class TestProgramFactory {
 		// TODO hier wat debug programmas bijhouden :)
 		
 		// Werkt, test if en meerdere statements in if, er mag maar één statement per executeNext gedaan worden -> ok nu
+		String testSequence = 
+		"double a; "
+		+ "a := 5;"
+		+ "print a;"
+		+ "a := 6; "
+		+ "print a;";
+		
+
 		String testIf = 
 		"double a; "
 		+ "if (5 == 5) then "
@@ -39,6 +47,10 @@ public class TestProgramFactory {
 		+ "print a;"
 		+ "a := 6; "
 		+ "print a;"
+		+ "fi "
+		+ "if (6 == 5) then "
+		+ "a := 7;"
+		+ "print 7;"
 		+ "fi ";
 		
 		// Werkt nog niet correct -> conditie in aparte executeNext + blijft in ergens op een vreemde manier in z'n body hangen + conditie wordt iedere executeNext gecheckt (denk ik, nog niet goed bekeken)
@@ -62,6 +74,7 @@ public class TestProgramFactory {
 		+ "b := 4;"
 		+ "a := a + 1; "
 		+ "done "
+		+ "print b;"
 		+ "fi "
 		+ "done ";
 		
@@ -75,7 +88,7 @@ public class TestProgramFactory {
 		+ "a := 7;";
 							
 		// Selecteer programma
-		String testProgram = testWait;
+		String testProgram = testWhile;
 		
 		
 		
@@ -106,7 +119,7 @@ public class TestProgramFactory {
 		Plant plant = facade.createPlantWithProgram(80, 80, plantSprites, program);
 		facade.addPlant(world, plant);
 		
-		for (int i=0; i<3; i++){
+		for (int i=0; i<7; i++){
 			facade.advanceTime(world, 0.2);
 		}
 		

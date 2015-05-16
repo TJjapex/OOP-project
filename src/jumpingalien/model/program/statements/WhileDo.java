@@ -12,9 +12,9 @@ public class WhileDo extends Statement {
 
 	public WhileDo(Expression<?> condition, Statement body, SourceLocation sourceLocation){
 		super(sourceLocation);
-		this.condition = (Expression<BooleanType>) condition;
+		this.condition = Expression.cast(condition);
 		this.body = body;
-		this.bodyIterator = WhileDo.this.getBody().iterator();
+		//this.bodyIterator = WhileDo.this.getBody().iterator();
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -36,7 +36,11 @@ public class WhileDo extends Statement {
 			this.conditionResult = this.getCondition().execute(program).getValue();
 			this.conditionChecked = true;
 			System.out.println("WhileDo, checked condition: "+ this.conditionResult);
-		} 
+		}else{
+			if(this.iterator().hasNext()){
+				this.iterator().next().execute(program);
+			}
+		}
 		
 	}
 	
@@ -51,7 +55,7 @@ public class WhileDo extends Statement {
 				if (!WhileDo.this.conditionChecked)
 					return true;
 				else if (WhileDo.this.conditionResult)
-					if (bodyIterator.hasNext())
+					if (getBody().iterator().hasNext())
 						return true;
 					else{
 						WhileDo.this.resetIterator();
@@ -67,9 +71,12 @@ public class WhileDo extends Statement {
 				if ( !WhileDo.this.conditionChecked )
 					return WhileDo.this;
 				else if (WhileDo.this.conditionResult){
-					return WhileDo.this.bodyIterator.next();
-				} else
-					throw new NoSuchElementException();
+					if(WhileDo.this.getBody().iterator().hasNext()){
+						return WhileDo.this.getBody();
+					}	
+				}
+					
+				throw new NoSuchElementException();
 				
 			}
 			
@@ -77,12 +84,12 @@ public class WhileDo extends Statement {
 		
 	}
 	
-	private Iterator<Statement> bodyIterator;
+//	private Iterator<Statement> bodyIterator;
 	
 	@Override
 	public void resetIterator(){
 		this.conditionChecked = false;
-		this.bodyIterator = this.getBody().iterator();
+		//this.bodyIterator = this.getBody().iterator();
 		this.getBody().resetIterator();
 	}
 	
