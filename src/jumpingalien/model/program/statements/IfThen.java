@@ -10,28 +10,33 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public class IfThen extends Statement {
 
-	public IfThen(Expression<BooleanType> condition, Statement ifBody, Statement elseBody, SourceLocation sourceLocation){
+	public IfThen(final Expression<BooleanType> condition, final Statement ifBody, final Statement elseBody, SourceLocation sourceLocation){
 		super(sourceLocation);
+		
 		this.condition = condition;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;
-		//this.ifBodyIterator = this.getIfBody().iterator();
-		//if (this.hasElseBody()){
-			//this.elseBodyIterator = this.getElseBody().iterator();
-		//}
 	}
 	
 	public Expression<BooleanType> getCondition(){
 		return this.condition;
 	}
 	
-	private Expression<BooleanType> condition;
+	private final Expression<BooleanType> condition;
+	
+	private boolean conditionResult;
+	private boolean conditionChecked = false;
+	
+	
+	/* If body */
 	
 	public Statement getIfBody(){
 		return this.ifBody;
 	}
 	
-	private Statement ifBody;
+	private final Statement ifBody;
+	
+	/* Else body */
 	
 	public Statement getElseBody(){
 		return this.elseBody;
@@ -41,7 +46,9 @@ public class IfThen extends Statement {
 		return this.elseBody != null;
 	}
 	
-	private Statement elseBody;
+	private final Statement elseBody;
+	
+	/* Execute */
 	
 	@Override
 	public void execute(Program program){
@@ -57,6 +64,8 @@ public class IfThen extends Statement {
 
 	}
 	
+	/* Iterator */
+	
 	@Override
 	public Iterator<Statement> iterator() {
 		
@@ -68,14 +77,10 @@ public class IfThen extends Statement {
 				if (!IfThen.this.conditionChecked)
 					return true;
 				else if (IfThen.this.conditionResult)
-					//return ifBodyIterator.hasNext();
 					return getIfBody().iterator().hasNext();
-				else
-					if(hasElseBody()){
-						return getElseBody().iterator().hasNext();
-					}
+				else if(hasElseBody())
+					return getElseBody().iterator().hasNext();
 				return false;
-					//return elseBodyIterator.hasNext();
 				
 			}
 			
@@ -96,23 +101,13 @@ public class IfThen extends Statement {
 		
 	}
 	
-//	private Iterator<Statement> ifBodyIterator;
-//	private Iterator<Statement> elseBodyIterator;
-	
 	@Override
 	public void resetIterator(){
 		conditionChecked = false;
-		//System.out.println(this.hasElseBody());
 		if (this.conditionResult){
-			//this.ifBodyIterator = this.getIfBody().iterator();
 			this.getIfBody().resetIterator();
 		} else if (this.hasElseBody()){
-			//this.elseBodyIterator = this.getElseBody().iterator();
 			this.getElseBody().resetIterator();
 		}
 	}
-	
-	private boolean conditionResult;
-	private boolean conditionChecked = false;
-	
 }

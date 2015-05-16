@@ -7,7 +7,7 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public abstract class Statement {
 
-	public Statement( SourceLocation sourceLocation ){
+	public Statement(final SourceLocation sourceLocation ){
 		this.sourceLocation = sourceLocation;
 	}
 	
@@ -16,6 +16,8 @@ public abstract class Statement {
 	}
 	
 	private final SourceLocation sourceLocation;
+	
+	/* Iterator */
 	
 	public Iterator<Statement> iterator() {
 		
@@ -35,17 +37,15 @@ public abstract class Statement {
 					throw new NoSuchElementException();		
 				}
 			}
-	
 		};
 		
 	}
 	
-	protected boolean statementUsed = false;
-	
-	public abstract void execute(Program program);
-	
-	public void resetIterator(){
+	protected void resetIterator(){
 		this.statementUsed = false;
 	}
 	
+	protected boolean statementUsed = false;
+	
+	public abstract void execute(Program program);	
 }

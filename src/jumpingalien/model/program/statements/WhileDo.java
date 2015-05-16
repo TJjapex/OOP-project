@@ -14,7 +14,6 @@ public class WhileDo extends Statement {
 		super(sourceLocation);
 		this.condition = Expression.cast(condition);
 		this.body = body;
-		//this.bodyIterator = WhileDo.this.getBody().iterator();
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -83,13 +82,10 @@ public class WhileDo extends Statement {
 		};
 		
 	}
-	
-//	private Iterator<Statement> bodyIterator;
-	
+		
 	@Override
 	public void resetIterator(){
 		this.conditionChecked = false;
-		//this.bodyIterator = this.getBody().iterator();
 		this.getBody().resetIterator();
 	}
 	
