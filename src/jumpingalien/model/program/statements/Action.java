@@ -49,6 +49,7 @@ public class Action extends Statement {
 	
 	@Override
 	public void execute(Program program) {
+		System.out.println("Program, ACTION");
 		this.getOperator().accept(this.getGameObject().execute(program).getValue(), program);
 		this.statementUsed = true;
 	}

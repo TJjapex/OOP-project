@@ -17,7 +17,7 @@ public class ForEachDo extends Statement {
 	public ForEachDo(Kind kind, String loopVariableName, Expression<?> whereCondition,
 				   	 Expression<?> sortCondition, Boolean ascending, Statement body, SourceLocation sourceLocation){
 		super(sourceLocation);
-		assert (sortCondition.execute(program) instanceof Double);
+	//	assert (sortCondition.execute(program) instanceof Double);
 		this.loopVariableName = loopVariableName;
 		this.whereCondition = whereCondition;
 		this.sortCondition = sortCondition;
@@ -58,7 +58,7 @@ public class ForEachDo extends Statement {
 	// no ordering, no lambda expressions
 	
 	@Override
-	void execute(Program program){
+	public void execute(Program program){
 		for (Kind kind: World.getAll(kind)){ 
 			if ( (Boolean) this.getWhereCondition().execute(program)){
 				program.setVariable(this.getLoopVariableName(),
