@@ -18,7 +18,6 @@ public class Program {
 		
 		this.mainStatement = mainStatement;
 		this.globalVariables = globalVariables;
-		this.mainStatementIterator = ((Statement) mainStatement).iterator();
 	}
 	
 	private Map<String, Type> globalVariables = new HashMap<>();
@@ -37,21 +36,6 @@ public class Program {
 		this.globalVariables.put(name, value);
 	}
 	
-	// NIEUWE VERSIE
-	//
-	// private HashMap<String, Variable<?>> variables = new HashMap<>();
-	//  bovenstaande is fout! Want ge moet ook nog u type opslaan (zie ProgramFactory createProgram) dus tzal eerder iets zijn als
-	//  Map<String, array(Type, Variable)> want er kan per string maar één variabele zijn
-	// -> BELANGRIJKE VERANDERING
-	//  Keys van globalvariables: String
-	//	Values van globalvariables: ArrayList(Type,Variable)
-//	
-//	public Program(Statement mainStatement, Map<String, Object[]> globalVariables){
-//		this.mainStatement = mainStatement;
-//		this.globalVariables = globalVariables;
-//	}
-//	
-//	
 	// GameObject relation 
 	
 	public GameObject getGameObject() {
@@ -67,16 +51,13 @@ public class Program {
 	private final Statement mainStatement;
 	
 	public void executeNext(){
-		if( mainStatementIterator.hasNext() ){
+		if( mainStatement.iterator().hasNext() ){
 			System.out.println("EXECUTING NEXT STATEMENT:");
-			((Statement) mainStatementIterator.next()).execute(this);
+			mainStatement.execute(this);
 		}else{
 			System.out.println("no next statement in mainstatement -> execution finished");
 		}
 		
-	}
-	
-	private Iterator<Statement> mainStatementIterator;
-	
+	}	
 }
 

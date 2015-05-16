@@ -406,6 +406,5 @@ public class Timer {
 	/**
 	 * Map registering the elapsed time since a Game object has taken damage from each terrain for the last time.
 	 */
-	private Map<Terrain, Double> sinceLastTerrainDamage = new HashMap<Terrain, Double>();
-	
+	private Map<Terrain, Double> sinceLastTerrainDamage = new HashMap<Terrain, Double>();	
 }

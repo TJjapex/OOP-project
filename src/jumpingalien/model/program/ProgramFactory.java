@@ -316,7 +316,6 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createWhile(Expression<?> condition, Statement body,
 			SourceLocation sourceLocation) {
-		System.out.println("ProgramFactory: createWhile()");
 		return new WhileDo(condition, body, sourceLocation);
 	}
 

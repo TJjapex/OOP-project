@@ -88,7 +88,7 @@ public class TestProgramFactory {
 		+ "a := 7;";
 							
 		// Selecteer programma
-		String testProgram = testWhile;
+		String testProgram = testWhileExt;
 		
 		
 		

@@ -34,9 +34,14 @@ public class Assignment extends Statement {
 	private final Expression<? extends Type> value;
 	
 	@Override
-	public void execute(Program program){
-		program.setVariable(this.variableName, this.value.execute(program));
-		this.statementUsed = true;
+	public void execute(Program program) throws IllegalStateException{
+		if(this.iterator().hasNext()){
+			program.setVariable(this.variableName, this.value.execute(program));
+			this.statementUsed = true;
+		}else{
+			throw new IllegalStateException("Statement executed while not having next useful statement!");
+		}
+		
 	}
 	
 }

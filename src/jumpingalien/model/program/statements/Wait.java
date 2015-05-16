@@ -19,10 +19,13 @@ public class Wait extends Statement{
 	}
 	
 	@Override
-	public void execute(Program program) {
+	public void execute(Program program) throws IllegalStateException{
 		System.out.println("Statement, WAITING, cycle:"+this.cycles);
-		this.iterator().next();
-		
+		if(this.iterator().hasNext())
+			this.iterator().next();
+		else
+			throw new IllegalStateException("Statement executed while not having next useful statement!");
+
 		if(this.getCycles() >= this.getAmount().execute(program).getValue() * 1000 ){
 			this.setTimePassed(true);
 		}	

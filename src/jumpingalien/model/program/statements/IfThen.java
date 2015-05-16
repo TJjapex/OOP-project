@@ -51,7 +51,7 @@ public class IfThen extends Statement {
 	/* Execute */
 	
 	@Override
-	public void execute(Program program){
+	public void execute(Program program) throws IllegalStateException{
 		
 		if (!conditionChecked){
 			this.conditionResult = this.getCondition().execute(program).getValue();
@@ -60,6 +60,8 @@ public class IfThen extends Statement {
 		}else{
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);
+			else 
+				throw new IllegalStateException("Statement executed while not having next useful statement!");
 		}
 
 	}

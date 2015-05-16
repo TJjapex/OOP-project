@@ -29,16 +29,18 @@ public class WhileDo extends Statement {
 	private final Statement body;
 	
 	@Override
-	public void execute(Program program){
+	public void execute(Program program) throws IllegalStateException{
 		
 		if (!conditionChecked){
 			this.conditionResult = this.getCondition().execute(program).getValue();
 			this.conditionChecked = true;
 			System.out.println("WhileDo, checked condition: "+ this.conditionResult);
 		}else{
-			if(this.iterator().hasNext()){
+			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);
-			}
+			else
+				throw new IllegalStateException("Statement executed while not having next useful statement!");
+			
 		}
 		
 	}

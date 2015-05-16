@@ -24,6 +24,23 @@ public class Sequence extends Statement{
 	
 	private final List<Statement> statements;
 	
+	
+	/* Current index */
+	
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+	
+	public void increaseCurrentIndex(){
+		setCurrentIndex(getCurrentIndex() + 1 );
+	}
+	
+	private int currentIndex = 0;
+	
 	/* Iterator */
 	
 	@Override
@@ -66,28 +83,14 @@ public class Sequence extends Statement{
 		setCurrentIndex(0);
 	}
 	
-	/* Current index */
-	
-	public int getCurrentIndex() {
-		return currentIndex;
-	}
-
-	public void setCurrentIndex(int currentIndex) {
-		this.currentIndex = currentIndex;
-	}
-	
-	public void increaseCurrentIndex(){
-		setCurrentIndex(getCurrentIndex() + 1 );
-	}
-	
-	private int currentIndex = 0;
-	
 	/* Execute */
 
 	@Override
-	public void execute(Program program) {
+	public void execute(Program program) throws IllegalStateException{
 		if(this.iterator().hasNext()){
 			this.iterator().next().execute(program);
+		}else{
+			throw new IllegalStateException("Statement executed while not having next useful statement!");
 		}
 	}
 }

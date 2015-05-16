@@ -21,9 +21,14 @@ public class Print extends Statement {
 	private final Expression<?> expression;
 	
 	@Override
-	public void execute(Program program){
-		System.out.println("Print " + this.getExpression().execute(program));
-		this.statementUsed = true;
+	public void execute(Program program) throws IllegalStateException{
+		if(this.iterator().hasNext()){
+			System.out.println("Print " + this.getExpression().execute(program));
+			this.statementUsed = true;
+		}else{
+			throw new IllegalStateException("Statement executed while not having next useful statement!");
+		}
+		
 	}
 	
 }
