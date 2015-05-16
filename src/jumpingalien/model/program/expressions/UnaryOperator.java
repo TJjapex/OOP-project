@@ -9,7 +9,7 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public class UnaryOperator<I extends Type, T extends Type> extends Operator<T>{
 	
-	public UnaryOperator(Expression<I> expr, Function<I, T> operator, SourceLocation sourceLocation){
+	public UnaryOperator(final Expression<I> expr, final Function<I, T> operator, final SourceLocation sourceLocation){
 		super( sourceLocation);
 
 		this.operand = expr;

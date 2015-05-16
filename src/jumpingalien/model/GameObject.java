@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.antlr.v4.parse.ANTLRParser.throwsSpec_return;
+
 import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.CollisionException;
@@ -18,6 +20,7 @@ import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.terrain.TerrainInteraction;
 import jumpingalien.model.terrain.TerrainProperties;
+import jumpingalien.part3.programs.internal.generated.JumpingAlienProgParser.StartDuckStatementContext;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import be.kuleuven.cs.som.annotate.*;
@@ -1115,6 +1118,14 @@ public abstract class GameObject {
 	public boolean isDucking(){
 		return false;
 	}
+	
+	public void startDuck() throws IllegalStateException{
+		throw new IllegalStateException("This object cannot duck!");
+	}
+	
+	public void endDuck() throws IllegalStateException{
+		throw new IllegalStateException("This object cannot duck!");
+	}
 
 	/****************************************************** HIT POINTS *************************************************/
 	
@@ -1314,6 +1325,21 @@ public abstract class GameObject {
 	public boolean isMoving() {
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
 	}
+	
+	/**
+	 * Check whether the Game object is moving in the given direction.
+	 * 
+	 * @param orientation
+	 * 			The direction to check for
+	 * 
+	 * @return 	True if and only if the horizontal velocity is not equal to 0 and the current direction is the given orientation.
+	 * 			| result == ( !Util.fuzzyEquals(this.getVelocityX(), 0) ) && this.getOrientation
+	 */
+	@Raw
+	public boolean isMoving(Orientation orientation) {
+		return this.getOrientation() == orientation;
+	}
+	
 	
 	/************************************************* JUMPING AND FALLING *********************************************/
 

@@ -2,15 +2,13 @@ package jumpingalien.model.program;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
-import javax.security.auth.x500.X500Principal;
-
-import org.antlr.v4.tool.LeftRecursionCyclesMessage;
-import org.hamcrest.SelfDescribing;
-
+import jumpingalien.model.Buzam;
 import jumpingalien.model.GameObject;
-import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.Mazub;
+import jumpingalien.model.Plant;
+import jumpingalien.model.Shark;
+import jumpingalien.model.Slime;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
@@ -104,8 +102,8 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<DoubleType> createRandom(Expression<?> maxValue,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new UnaryOperator<DoubleType, DoubleType>( Expression.cast(maxValue),
+				x ->  new DoubleType( Math.random()*x.getValue()), sourceLocation);
 	}
 
 	@Override
@@ -170,105 +168,102 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Expression<DoubleType> createGetX(Expression<?> expr, SourceLocation sourceLocation) {
-		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getRoundedPositionX())), sourceLocation);
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getRoundedPositionX())), sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createGetY(Expression<?> expr, SourceLocation sourceLocation) {
-		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getRoundedPositionY())), sourceLocation);
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getRoundedPositionY())), sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createGetWidth(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getWidth())), sourceLocation);
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType((x.getValue()).getWidth())), sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createGetHeight(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x-> new DoubleType(((GameObject) x.getValue()).getHeight())), sourceLocation);
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getHeight())), sourceLocation);
 	}
 
 	@Override
-	public Expression createGetHitPoints(Expression expr,
+	public Expression<DoubleType> createGetHitPoints(Expression<?> expr,
+			SourceLocation sourceLocation) {
+		return new UnaryOperator<GameObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getNbHitPoints())), sourceLocation);
+	}
+
+	@Override
+	public Expression<DoubleType> createGetTile(Expression<?> x, Expression<?> y,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		
+		// Tile object? uuhm?
+		return null;
+	}
+
+	@Override
+	public Expression createSearchObject(Expression<?> direction,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createGetTile(Expression x, Expression y,
+	public Expression<BooleanType> createIsMazub(Expression<?> expr,
+			SourceLocation sourceLocation) {
+		// TODO dit geeft niet Buzam, zou dat moeten?
+		return new Checker( Expression.cast(expr), (x, program)-> (x instanceof Mazub && ! (x instanceof Buzam)), sourceLocation);
+	}
+
+	@Override
+	public Expression<BooleanType> createIsShark(Expression<?> expr,
+			SourceLocation sourceLocation) {
+		return new Checker( Expression.cast(expr), (x, program)-> (x instanceof Shark), sourceLocation);
+	}
+
+	@Override
+	public Expression<BooleanType> createIsSlime(Expression<?> expr,
+			SourceLocation sourceLocation) {
+		return new Checker( Expression.cast(expr), (x, program)-> (x instanceof Slime), sourceLocation);
+	}
+
+	@Override
+	public Expression<BooleanType> createIsPlant(Expression<?> expr,
+			SourceLocation sourceLocation) {
+		return new Checker( Expression.cast(expr), (x, program)-> (x instanceof Plant), sourceLocation);
+	}
+
+	@Override
+	public Expression<BooleanType> createIsDead(Expression<?> expr,
+			SourceLocation sourceLocation) {
+		return new Checker( Expression.cast(expr), (x, program)-> (x.isKilled()), sourceLocation);
+	}
+
+	@Override
+	public Expression<BooleanType> createIsTerrain(Expression<?> expr,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createSearchObject(Expression direction,
+	public Expression<BooleanType> createIsPassable(Expression<?> expr,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createIsMazub(Expression expr,
+	public Expression<BooleanType> createIsWater(Expression<?> expr,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createIsShark(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsSlime(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsPlant(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsDead(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsTerrain(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsPassable(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsWater(Expression expr,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createIsMagma(Expression expr,
+	public Expression<BooleanType> createIsMagma(Expression<?> expr,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
@@ -276,34 +271,27 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Expression<BooleanType> createIsAir(Expression<?> expr, SourceLocation sourceLocation) {
-		//return new Checker( expr, x->x.isMoving(), sourceLocation);
+		// TODO
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Expression<BooleanType> createIsMoving(Expression<?> expr, Expression<?> direction,
-			SourceLocation sourceLocation) {
-		// TODO ik denk niet dat dit gaat met die Checker (of UnaryOperator) omdat ge die direction niet kunt evalueren bij de lambda functie hier...
-		
-		//return new Checker( Expression.cast(expr), x-> (x.isMoving(... ? )), sourceLocation);
-		return null;
-
+			SourceLocation sourceLocation) {		
+		return new Checker( Expression.cast(expr), (x, program)-> (x.isMoving(((Expression<DirectionType>) direction).execute(program).getValue())), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsDucking(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new Checker( Expression.cast(expr), x->x.isDucking(), sourceLocation);
-	
-		//kan ook zo met UnaryOperator maar is omslachtiger
-		//return new UnaryOperator<ObjectType, BooleanType>( ( Expression<ObjectType>) expr, (x-> new BooleanType(((GameObject) x.getValue()).isDucking())), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program)->x.isDucking(), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsJumping(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new Checker( Expression.cast(expr), x->!x.isOnGround(), sourceLocation);
-		//return new UnaryOperator<ObjectType, BooleanType>( ( Expression<ObjectType>) expr, (x-> new BooleanType(!((GameObject) x.getValue()).isOnGround())), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program)->!x.isOnGround(), sourceLocation);
 	}
 
 	@Override
@@ -348,6 +336,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		return new Print(value, sourceLocation);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Statement createStartRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
@@ -358,6 +347,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Statement createStopRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
@@ -366,26 +356,24 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Statement createStartJump(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Action( (x, program) -> x.startJump(), createSelf(sourceLocation), sourceLocation); 
 	}
 
 	@Override
 	public Statement createStopJump(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Action( (x, program) -> x.endJump(), createSelf(sourceLocation), sourceLocation); 
+
 	}
 
 	@Override
 	public Statement createStartDuck(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Action( (x, program) -> x.startDuck(), createSelf(sourceLocation), sourceLocation); 
+
 	}
 
 	@Override
 	public Statement createStopDuck(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Action( (x, program) -> x.endDuck(), createSelf(sourceLocation), sourceLocation); 
 	}
 
 	@Override
@@ -402,7 +390,6 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Statement createSequence(List<Statement> statements,
 			SourceLocation sourceLocation) {
-		//System.out.println("ProgramFactory, createSequence: statements "+statements);
 		return new Sequence(statements, sourceLocation);
 	}
 

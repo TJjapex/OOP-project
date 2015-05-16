@@ -14,26 +14,7 @@ public class Action extends Statement {
 		super(sourceLocation);
 		this.operator = operator;
 		this.gameObject = gameObject;
-//		this.waitTime = waitTime.execute(program);
-//		this.skip = skip;
 	}
-	
-//	public Action(Function<GameObject, Void> operator, Expression<ObjectType> expression, SourceLocation sourceLocation){
-//		this(operator, expression, 0.0,false, sourceLocation); // waitTime moet expression zijn! bv. new constant(0.0) -> moet nog geimplementeerd worden
-//	}
-//	
-	// TODO, wait in aparte klasse, skip is gewoon wait 1 (? nog niet gecheckt) dus kan met dezelfde klasse (gewoon in programfactory time = 1 zetten)
-//	public Double getWaitTime(){
-//		return this.waitTime;
-//	}
-//	
-//	private Double waitTime;
-//	
-//	public Boolean getSkip(){
-//		return this.skip;
-//	}
-//	
-//	private Boolean skip;
 	
 	public BiConsumer<GameObject, Program> getOperator(){
 		return this.operator;
