@@ -21,6 +21,14 @@ public class BooleanType extends Type{
 		return String.valueOf(this.getValue());
 	}
 	
+	public BooleanType conjunct(BooleanType o){
+		return new BooleanType( this.getValue() && o.getValue());
+	}
+	
+	public BooleanType disjunct(BooleanType o){
+		return new BooleanType( this.getValue() || o.getValue());
+	}
+	
 	public BooleanType equals(Type o){
 		if(! ( o instanceof BooleanType ) ){
 			return new BooleanType(false);

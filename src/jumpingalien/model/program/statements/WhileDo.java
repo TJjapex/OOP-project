@@ -2,6 +2,7 @@ package jumpingalien.model.program.statements;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
@@ -13,7 +14,7 @@ public class WhileDo extends Statement {
 		super(sourceLocation);
 		this.condition = (Expression<BooleanType>) condition;
 		this.body = body;
-		this.bodyIterator = this.getBody().iterator();
+		this.bodyIterator = WhileDo.this.getBody().iterator();
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -32,27 +33,11 @@ public class WhileDo extends Statement {
 	public void execute(Program program){
 		
 		if (!conditionChecked){
-			System.out.println("WhileDo, checking condition");
-			conditionResult = this.getCondition().execute(program).getValue();
-		}
+			this.conditionResult = this.getCondition().execute(program).getValue();
+			this.conditionChecked = true;
+			System.out.println("WhileDo, checked condition: "+ this.conditionResult);
+		} 
 		
-		System.out.println("WhileDo, condition result: "+ this.conditionResult);
-		
-		if ( conditionResult && this.bodyIterator.hasNext() ){
-			System.out.println("WhileDo, body");
-			((Statement) this.bodyIterator.next()).execute(program);
-			
-			if (!this.bodyIterator.hasNext()){
-				conditionResult = this.getCondition().execute(program).getValue();
-				if (conditionResult){
-					this.resetIterator();
-					this.bodyIterator = this.getBody().iterator();
-				}
-				System.out.println("while loop reset: " + this.bodyIterator.hasNext());
-				//System.out.println(this.bodyIterator.next());
-			}
-			
-		}
 	}
 	
 	@Override
@@ -62,30 +47,46 @@ public class WhileDo extends Statement {
 			
 			@Override
 			public boolean hasNext(){
-				return bodyIterator.hasNext();
+				
+				if (!WhileDo.this.conditionChecked)
+					return true;
+				else if (WhileDo.this.conditionResult)
+					if (bodyIterator.hasNext())
+						return true;
+					else{
+						WhileDo.this.resetIterator();
+						return true;
+					}
+				else
+					return false;
 			}
 			
 			@Override
-			public Statement next() throws NoSuchElementException{
-				if ( this.hasNext() ){
+			public Statement next() throws NoSuchElementException{				
+				
+				if ( !WhileDo.this.conditionChecked )
 					return WhileDo.this;
-				} else {
-					throw new NoSuchElementException();		
-				}
+				else if (WhileDo.this.conditionResult){
+					return WhileDo.this.bodyIterator.next();
+				} else
+					throw new NoSuchElementException();
+				
 			}
-
 			
 		};
 		
 	}
 	
+	private Iterator<Statement> bodyIterator;
+	
 	@Override
 	public void resetIterator(){
-		this.getBody().resetIterator();
+		this.conditionChecked = false;
 		this.bodyIterator = this.getBody().iterator();
+		this.getBody().resetIterator();
 	}
 	
 	private boolean conditionResult;
-	private Iterator<Statement> bodyIterator;
 	private boolean conditionChecked = false;
+	
 }

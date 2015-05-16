@@ -45,6 +45,42 @@ public class DoubleType extends Type{
 		return new DoubleType( this.getValue() + o.getValue() );
 	}
 	
+	public DoubleType subtract(DoubleType o){
+		return new DoubleType( this.getValue() - o.getValue() );
+	}
+	
+	public DoubleType multiply(DoubleType o){
+		return new DoubleType( this.getValue() * o.getValue() );
+	}
+	
+	public DoubleType divide(DoubleType o){
+		return new DoubleType( this.getValue() / o.getValue() );
+	}
+	
+	public DoubleType sqrt(){
+		return new DoubleType( Math.sqrt(this.getValue()) );
+	}
+	
+	public BooleanType lessThan(DoubleType o){
+		return new BooleanType( this.getValue() < o.getValue());
+	}
+	
+	public BooleanType lessThanOrEqualTo(DoubleType o){
+		return new BooleanType( this.getValue() <= o.getValue());
+	}
+	
+	public BooleanType greaterThan(DoubleType o){
+		return new BooleanType( this.getValue() > o.getValue());
+	}
+	
+	public BooleanType greaterThanOrEqualTo(DoubleType o){
+		return new BooleanType( this.getValue() >= o.getValue());
+	}
+	
+	public BooleanType notEquals(DoubleType o){
+		return new BooleanType( this.getValue() != o.getValue());
+	}
+	
 	public BooleanType equals(Type o){
 		if(! ( o instanceof DoubleType ) ){
 			return new BooleanType(false);

@@ -11,13 +11,7 @@ import org.hamcrest.SelfDescribing;
 
 import jumpingalien.model.GameObject;
 import jumpingalien.model.helper.Orientation;
-import jumpingalien.model.program.expressions.BinaryOperator;
-import jumpingalien.model.program.expressions.Checker;
-import jumpingalien.model.program.expressions.Expression;
-import jumpingalien.model.program.expressions.ReadVariable;
-import jumpingalien.model.program.expressions.Self;
-import jumpingalien.model.program.expressions.UnaryOperator;
-import jumpingalien.model.program.expressions.Variable;
+import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
 import jumpingalien.model.program.statements.IfThen;
@@ -42,23 +36,23 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<DoubleType> createDoubleConstant(double value,
 			SourceLocation sourceLocation) {
-		return new Variable<>(new DoubleType(value), sourceLocation);
+		return new Constant<>(new DoubleType(value), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createTrue(SourceLocation sourceLocation) {
-		return new Variable<>(new BooleanType(true), sourceLocation);
+		return new Constant<>(new BooleanType(true), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createFalse(SourceLocation sourceLocation) {
-		return new Variable<>(new BooleanType(false), sourceLocation);
+		return new Constant<>(new BooleanType(false), sourceLocation);
 
 	}
 
 	@Override
 	public Expression<GameObjectType> createNull(SourceLocation sourceLocation) {
-		return new Variable<>(new GameObjectType(null), sourceLocation);
+		return new Constant<>(new GameObjectType(null), sourceLocation);
 	}
 
 	@Override
@@ -70,7 +64,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	public Expression<DirectionType> createDirectionConstant(
 			jumpingalien.part3.programs.IProgramFactory.Direction value,
 			SourceLocation sourceLocation) {
-		return new Variable<>(new DirectionType(value), sourceLocation);
+		return new Constant<>(new DirectionType(value), sourceLocation);
 	}
 
 	@Override
@@ -78,89 +72,88 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 			SourceLocation sourceLocation) {
 		return new BinaryOperator<DoubleType, DoubleType>( Expression.cast(left), Expression.cast(right),
 					(l, r) ->  l.add(r), sourceLocation);
-		
 	}
 
 	@Override
-	public Expression createSubtraction(Expression left, Expression right,
+	public Expression<DoubleType> createSubtraction(Expression<?> left, Expression<?> right,
+			SourceLocation sourceLocation) {
+		return new BinaryOperator<DoubleType, DoubleType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.subtract(r), sourceLocation);
+	}
+
+	@Override
+	public Expression<DoubleType> createMultiplication(Expression<?> left, Expression<?> right,
+			SourceLocation sourceLocation) {
+		return new BinaryOperator<DoubleType, DoubleType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.multiply(r), sourceLocation);
+	}
+
+	@Override
+	public Expression<DoubleType> createDivision(Expression<?> left, Expression<?> right,
+			SourceLocation sourceLocation) {
+		return new BinaryOperator<DoubleType, DoubleType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.divide(r), sourceLocation);
+	}
+
+	@Override
+	public Expression<DoubleType> createSqrt(Expression<?> expr, SourceLocation sourceLocation) {
+		return new UnaryOperator<DoubleType, DoubleType>( Expression.cast(expr),
+				x ->  x.sqrt(), sourceLocation);
+	}
+
+	@Override
+	public Expression<DoubleType> createRandom(Expression<?> maxValue,
 			SourceLocation sourceLocation) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression createMultiplication(Expression left, Expression right,
+	public Expression<BooleanType> createAnd(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BinaryOperator<BooleanType, BooleanType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.conjunct(r), sourceLocation);
 	}
 
 	@Override
-	public Expression createDivision(Expression left, Expression right,
+	public Expression<BooleanType> createOr(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BinaryOperator<BooleanType, BooleanType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.disjunct(r), sourceLocation);
 	}
 
 	@Override
-	public Expression createSqrt(Expression expr, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<BooleanType> createNot(Expression<?> expr, SourceLocation sourceLocation) {
+		return new UnaryOperator<BooleanType, BooleanType>( Expression.cast(expr),
+				x ->  x.not(), sourceLocation);
 	}
 
 	@Override
-	public Expression createRandom(Expression maxValue,
+	public Expression<BooleanType> createLessThan(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BinaryOperator<DoubleType, BooleanType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.lessThan(r), sourceLocation);
 	}
 
 	@Override
-	public Expression createAnd(Expression left, Expression right,
+	public Expression<BooleanType> createLessThanOrEqualTo(Expression<?>left,
+			Expression<?> right, SourceLocation sourceLocation) {
+		return new BinaryOperator<DoubleType, BooleanType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.lessThanOrEqualTo(r), sourceLocation);
+	}
+
+	@Override
+	public Expression<BooleanType> createGreaterThan(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BinaryOperator<DoubleType, BooleanType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.greaterThan(r), sourceLocation);
 	}
 
 	@Override
-	public Expression createOr(Expression left, Expression right,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createNot(Expression expr, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createLessThan(Expression left, Expression right,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createLessThanOrEqualTo(Expression left,
-			Expression right, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createGreaterThan(Expression left, Expression right,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expression createGreaterThanOrEqualTo(Expression left,
-			Expression right, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression<BooleanType> createGreaterThanOrEqualTo(Expression<?> left,
+			Expression<?> right, SourceLocation sourceLocation) {
+		return new BinaryOperator<DoubleType, BooleanType>( Expression.cast(left), Expression.cast(right),
+				(l, r) ->  l.greaterThanOrEqualTo(r), sourceLocation);
 	}
 
 	@Override
@@ -360,7 +353,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	public Statement createStartRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
 		try{
-			return new Action( (x, program) -> x.startMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); // How to call 'self'?
+			return new Action( (x, program) -> x.startMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); 
 		}catch( ClassCastException exc){
 			throw new IllegalArgumentException();
 		}
@@ -405,7 +398,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Statement createSkip(SourceLocation sourceLocation) {
-		return new Wait(new Variable<DoubleType>(new DoubleType(0.001), sourceLocation), sourceLocation);
+		return new Wait(new Constant<DoubleType>(new DoubleType(0.001), sourceLocation), sourceLocation);
 	}
 
 	@Override
@@ -417,7 +410,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public DoubleType getDoubleType() {
-		return null;
+		return new DoubleType();
 	}
 
 	@Override
@@ -438,8 +431,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type> globalVariables) {
-		//System.out.println("ProgramFactory, createProgram: mainStatement"+mainStatement);
-		System.out.println(mainStatement);
+		System.out.println("ProgramFactory, createProgram with mainStatement: "+mainStatement);
 		return new Program(mainStatement, globalVariables);
 	}
 

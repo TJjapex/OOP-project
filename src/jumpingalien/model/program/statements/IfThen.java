@@ -45,21 +45,13 @@ public class IfThen extends Statement {
 	
 	@Override
 	public void execute(Program program){
-			
-		if( conditionResult && this.ifBodyIterator.hasNext() ){
-			System.out.println("IfThen, if body");
-			((Statement) this.ifBodyIterator.next()).execute(program);
-		} else if( !conditionResult && this.hasElseBody() && this.elseBodyIterator.hasNext()){
-			System.out.println("IfThen, else body");
-			((Statement) this.elseBodyIterator.next()).execute(program);
-		}
 		
 		if (!conditionChecked){
-			conditionResult = this.getCondition().execute(program).getValue();
-			conditionChecked = true;
-			System.out.println("IfThen, condition result: "+ this.conditionResult);
-		}
-		
+			this.conditionResult = this.getCondition().execute(program).getValue();
+			this.conditionChecked = true;
+			System.out.println("IfThen, checked condition: "+ this.conditionResult);
+		} 
+
 	}
 	
 	@Override
@@ -69,35 +61,50 @@ public class IfThen extends Statement {
 			
 			@Override
 			public boolean hasNext(){
-				return ifBodyIterator.hasNext();
+				
+				if (!IfThen.this.conditionChecked)
+					return true;
+				else if (IfThen.this.conditionResult)
+					return ifBodyIterator.hasNext();
+				else
+					return elseBodyIterator.hasNext();
+				
 			}
 			
 			@Override
 			public Statement next() throws NoSuchElementException{
-				if ( this.hasNext() ){
+				
+				if ( !IfThen.this.conditionChecked )
 					return IfThen.this;
-				} else {
-					throw new NoSuchElementException();		
-				}
+				else if (IfThen.this.conditionResult){
+					return IfThen.this.ifBodyIterator.next();
+				} else{
+					return IfThen.this.elseBodyIterator.next();
+				}		
+				
 			}
 			
 		};
 		
 	}
 	
+	private Iterator<Statement> ifBodyIterator;
+	private Iterator<Statement> elseBodyIterator;
+	
 	@Override
 	public void resetIterator(){
 		conditionChecked = false;
-		this.getIfBody().resetIterator();
-		this.ifBodyIterator = this.getIfBody().iterator();
-		if (this.hasElseBody()){
+		System.out.println(this.hasElseBody());
+		if (this.conditionResult){
+			this.ifBodyIterator = this.getIfBody().iterator();
+			this.getIfBody().resetIterator();
+		} else if (this.hasElseBody()){
 			this.elseBodyIterator = this.getElseBody().iterator();
 			this.getElseBody().resetIterator();
 		}
 	}
 	
 	private boolean conditionResult;
-	private Iterator<Statement> ifBodyIterator;
-	private Iterator<Statement> elseBodyIterator;
 	private boolean conditionChecked = false;
+	
 }

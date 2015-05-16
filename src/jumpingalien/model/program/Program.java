@@ -67,7 +67,6 @@ public class Program {
 	private final Statement mainStatement;
 	
 	public void executeNext(){
-		
 		if( mainStatementIterator.hasNext() ){
 			System.out.println("EXECUTING NEXT STATEMENT:");
 			((Statement) mainStatementIterator.next()).execute(this);

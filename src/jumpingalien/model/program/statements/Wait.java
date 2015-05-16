@@ -10,6 +10,7 @@ import jumpingalien.model.program.types.DoubleType;
 import jumpingalien.part3.programs.SourceLocation;
 
 public class Wait extends Statement{
+	
 	public Wait(Expression<DoubleType> amount, SourceLocation sourceLocation){
 		super(sourceLocation);
 		
@@ -19,9 +20,18 @@ public class Wait extends Statement{
 	
 	@Override
 	public void execute(Program program) {
+		if (!amountValueSet){
+			this.amountValue = this.getAmount().execute(program).getValue();
+			this.amountValueSet = true;
+		}
 		System.out.println("Statement, WAITING, cycles:"+this.cycles);
-		this.timePassed = ! ( Wait.this.getCycles() < Wait.this.getAmount().execute(program).getValue() * 1000);
+		
+		//this.timePassed = ! ( this.getCycles() < this.getAmount().execute(program).getValue() * 1000);
+		//System.out.println("Time passed: " + this.timePassed);
 	}
+	
+	private double amountValue;
+	private boolean amountValueSet;
 	
 	/* Iterator */
 	
@@ -61,7 +71,7 @@ public class Wait extends Statement{
 	}
 	
 	public boolean hasTimePassed(){
-		return this.timePassed;
+		return (this.amountValue*1000 == this.getCycles() && amountValueSet);
 	}
 	
 	// True if and only if the given time amount has passed

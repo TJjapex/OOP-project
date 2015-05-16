@@ -4,9 +4,9 @@ import jumpingalien.model.program.*;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class Variable<T extends Type> extends Expression<T>{	
+public class Constant<T extends Type> extends Expression<T>{	
 
-	public Variable(T value, SourceLocation sourceLocation) {
+	public Constant(T value, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.value = value;
 	}

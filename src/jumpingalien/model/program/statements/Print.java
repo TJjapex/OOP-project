@@ -19,7 +19,7 @@ public class Print extends Statement {
 	
 	@Override
 	public void execute(Program program){
-		System.out.println(this.getExpression().execute(program));
+		System.out.println("Print " + this.getExpression().execute(program));
 	}
 	
 }

@@ -13,8 +13,7 @@ import jumpingalien.model.program.Program;
 import jumpingalien.model.program.ProgramFactory;
 import jumpingalien.model.program.statements.Statement;
 import jumpingalien.model.program.types.*;
-import jumpingalien.model.program.expressions.Expression;
-import jumpingalien.model.program.expressions.Variable;
+import jumpingalien.model.program.expressions.*;
 import jumpingalien.part3.facade.Facade;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
@@ -54,30 +53,27 @@ public class TestProgramFactory {
 		
 		String testWhileExt = 
 		  "double a; "
-		//+ "double b; "
+		+ "double b; "
 		+ "while true do "
 		+ "if (5 == 5) then "
 		+ "a := 5;"
 		+ "a := 6; "
-		//+ "while true do "
-		//+ "b := 4; "
-		//+ "done "  -> een while loop vlak op het einde in de body van een andere while loop werkt nog niet correct,
-		//				de buitenste while loop wordt te vroeg gereset
+		+ "while (a != 8) do "
+		+ "b := 4;"
+		+ "a := a + 1; "
+		+ "done "
 		+ "fi "
 		+ "done ";
 		
-		
-		// Werkt nog niet, hij gaat niet voort na wait
 		String testWait =
 		"double a; "
 		+ "a := 5;"
 		+" wait 0.003;"
 		+ "print a;"
 		+ "a := 6;"
-		;
+		+ "skip;"
+		+ "a := 7;";
 							
-		
-		
 		// Selecteer programma
 		String testProgram = testWait;
 		
@@ -110,7 +106,9 @@ public class TestProgramFactory {
 		Plant plant = facade.createPlantWithProgram(80, 80, plantSprites, program);
 		facade.addPlant(world, plant);
 		
+		for (int i=0; i<3; i++){
+			facade.advanceTime(world, 0.2);
+		}
 		
-		facade.advanceTime(world, 0.2);
 	}
 }

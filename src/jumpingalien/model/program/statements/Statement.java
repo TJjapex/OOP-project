@@ -2,7 +2,6 @@ package jumpingalien.model.program.statements;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -24,21 +23,19 @@ public abstract class Statement {
 			
 			@Override
 			public boolean hasNext(){
-				return !statementUsed;
+				return !Statement.this.statementUsed;
 			}
 			
 			@Override
 			public Statement next() throws NoSuchElementException{
 				if ( this.hasNext() ){
-					System.out.println("single statement returned, this: "+this);
-					statementUsed = true;
+					Statement.this.statementUsed = true;
 					return Statement.this;
 				} else {
 					throw new NoSuchElementException();		
 				}
 			}
-
-			
+	
 		};
 		
 	}
@@ -50,4 +47,5 @@ public abstract class Statement {
 	public void resetIterator(){
 		this.statementUsed = false;
 	}
+	
 }
