@@ -1,12 +1,6 @@
 package jumpingalien.part3.facade;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.v4.runtime.misc.*;
-
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Buzam;
@@ -20,13 +14,11 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.ProgramFactory;
 import jumpingalien.model.program.statements.*;
 import jumpingalien.model.program.types.*;
 import jumpingalien.model.program.expressions.Expression;
-import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
 import jumpingalien.part3.programs.ProgramParser;

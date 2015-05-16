@@ -1,7 +1,6 @@
 package jumpingalien.part1.facade;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -46,7 +45,7 @@ public class Facade implements IFacade {
 	 * @return an array, consisting of 2 integers {x, y}, that represents the
 	 *         coordinates of the given alien's bottom left pixel in the world.
 	 */
-	public int[] getLocation(GameObject alien){
+	public int[] getLocation(Mazub alien){
 		return new int[] {alien.getRoundedPositionX(), alien.getRoundedPositionY()};
 	}
 
@@ -60,7 +59,7 @@ public class Facade implements IFacade {
 	 *         horizontal and vertical components of the given alien's current
 	 *         velocity, in units of m/s.
 	 */
-	public double[] getVelocity(GameObject alien){
+	public double[] getVelocity(Mazub alien){
 		return new double[] {alien.getVelocityX(), alien.getVelocityY()};	
 	}
 
@@ -74,7 +73,7 @@ public class Facade implements IFacade {
 	 *         horizontal and vertical components of the given alien's current
 	 *         acceleration, in units of m/s^2.
 	 */
-	public double[] getAcceleration(GameObject alien){
+	public double[] getAcceleration(Mazub alien){
 		return new double[] {alien.getAccelerationX(), alien.getAccelerationY()};
 	}
 
@@ -87,7 +86,7 @@ public class Facade implements IFacade {
 	 * @return An array, consisting of 2 integers {w, h}, that represents the
 	 *         current width and height of the given alien, in number of pixels.
 	 */
-	public int[] getSize(GameObject alien){
+	public int[] getSize(Mazub alien){
 		return new int[] {alien.getWidth(), alien.getHeight()};	
 	}
 
@@ -100,7 +99,7 @@ public class Facade implements IFacade {
 	 * @return The current sprite image for the given alien, determined by its
 	 *         state as defined in the assignment.
 	 */
-	public Sprite getCurrentSprite(GameObject alien){
+	public Sprite getCurrentSprite(Mazub alien){
 		return alien.getCurrentSprite();
 		
 	}
@@ -111,7 +110,7 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to start jumping.
 	 */
-	public void startJump(GameObject alien){
+	public void startJump(Mazub alien){
 		alien.startJump();
 	}
 
@@ -121,7 +120,7 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to stop jumping.
 	 */
-	public void endJump(GameObject alien){
+	public void endJump(Mazub alien){
 		try{
 			alien.endJump();
 		}catch( IllegalStateException exc ){
@@ -135,7 +134,7 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to start moving left.
 	 */
-	public void startMoveLeft(GameObject alien){
+	public void startMoveLeft(Mazub alien){
 		alien.startMove(Orientation.LEFT);
 	}
 
@@ -145,7 +144,7 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to stop moving left.
 	 */
-	public void endMoveLeft(GameObject alien){
+	public void endMoveLeft(Mazub alien){
 		alien.endMove(Orientation.LEFT);
 	}
 
@@ -155,7 +154,7 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to start moving right.
 	 */
-	public void startMoveRight(GameObject alien){
+	public void startMoveRight(Mazub alien){
 		alien.startMove(Orientation.RIGHT);
 	}
 
@@ -165,7 +164,7 @@ public class Facade implements IFacade {
 	 * @param alien
 	 *            The alien that has to stop moving right.
 	 */
-	public void endMoveRight(GameObject alien){
+	public void endMoveRight(Mazub alien){
 		alien.endMove(Orientation.RIGHT);
 	}
 
@@ -209,7 +208,7 @@ public class Facade implements IFacade {
 	 * 				The given dt is greater than 0.2 or smaller than 0
 	 * 				| dt < 0 || dt > 0.2
 	 */
-	public void advanceTime(GameObject alien, double dt) throws ModelException{
+	public void advanceTime(Mazub alien, double dt) throws ModelException{
 		try{
 			//alien.advanceTime(dt);
 		}catch(IllegalArgumentException exc){
