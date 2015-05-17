@@ -1,6 +1,8 @@
 package jumpingalien.model.program.statements;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import jumpingalien.model.program.Program;
@@ -16,6 +18,9 @@ public class IfThen extends Statement {
 		this.condition = condition;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;
+		this.getIfBody().setParentStatement(this);
+		if (this.hasElseBody())
+			this.getElseBody().setParentStatement(this);
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -112,4 +117,14 @@ public class IfThen extends Statement {
 			this.getElseBody().resetIterator();
 		}
 	}
+	
+	@Override
+	public List<Statement> getChildrenStatements(){
+		List<Statement> childrenStatements = new ArrayList<>();
+		childrenStatements.add(this.getIfBody());
+		if(this.hasElseBody())
+			childrenStatements.add(this.getElseBody());
+		return childrenStatements;
+	}
+	
 }

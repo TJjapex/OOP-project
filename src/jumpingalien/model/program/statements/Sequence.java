@@ -1,5 +1,6 @@
 package jumpingalien.model.program.statements;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -12,6 +13,9 @@ public class Sequence extends Statement{
 	public Sequence(List<Statement> statements, SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.statements = statements;
+		for (int i = 0; i < this.getStatements().size(); i++){
+			this.getStatementAt(i).setParentStatement(this);
+		}
 	}
 	
 	public List<Statement> getStatements(){
@@ -93,4 +97,15 @@ public class Sequence extends Statement{
 			throw new IllegalStateException("Statement executed while not having next useful statement!");
 		}
 	}
+	
+	@Override
+	public List<Statement> getChildrenStatements(){
+		List<Statement> childrenStatements = new ArrayList<>();
+		for (int i = 0; i < getStatements().size(); i++){
+			childrenStatements.add(this.getStatementAt(i));
+		}
+		
+		return childrenStatements;
+	}
+	
 }

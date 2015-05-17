@@ -1,6 +1,8 @@
 package jumpingalien.model.program.statements;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import jumpingalien.model.program.Program;
@@ -14,6 +16,7 @@ public class WhileDo extends Statement {
 		super(sourceLocation);
 		this.condition = Expression.cast(condition);
 		this.body = body;
+		this.getBody().setParentStatement(this);
 	}
 	
 	public Expression<BooleanType> getCondition(){
@@ -53,6 +56,9 @@ public class WhileDo extends Statement {
 			@Override
 			public boolean hasNext(){
 				
+				if (WhileDo.this.stop)
+					return false;
+				
 				if (!WhileDo.this.conditionChecked)
 					return true;
 				else if (WhileDo.this.conditionResult)
@@ -68,6 +74,9 @@ public class WhileDo extends Statement {
 			
 			@Override
 			public Statement next() throws NoSuchElementException{				
+				
+				if (WhileDo.this.stop)
+					throw new NoSuchElementException();
 				
 				if ( !WhileDo.this.conditionChecked )
 					return WhileDo.this;
@@ -89,9 +98,23 @@ public class WhileDo extends Statement {
 	public void resetIterator(){
 		this.conditionChecked = false;
 		this.getBody().resetIterator();
+		this.stop = false;
 	}
 	
 	private boolean conditionResult;
 	private boolean conditionChecked = false;
+	
+	@Override
+	public List<Statement> getChildrenStatements(){
+		List<Statement> childrenStatements = new ArrayList<>();
+		childrenStatements.add(this.getBody());
+		return childrenStatements;
+	}
+	
+	public void breakLoop(){
+		this.stop = true;
+	}
+	
+	private boolean stop;
 	
 }

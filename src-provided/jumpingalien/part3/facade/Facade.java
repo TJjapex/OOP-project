@@ -108,8 +108,7 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 
 	@Override
 	public boolean isWellFormed(Program program) {
-		// TODO Auto-generated method stub
-		return true;
+		return program.isWellFormed();
 	}
 
 	@Override

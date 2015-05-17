@@ -1,7 +1,6 @@
 package jumpingalien.model.program;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import jumpingalien.model.GameObject;
@@ -10,8 +9,6 @@ import jumpingalien.model.program.types.Type;
 
 public class Program {
 	
-	// OUDE VERSIE
-	
 	public Program(Statement mainStatement, Map<String, Type> globalVariables){
 		assert mainStatement != null;
 		assert globalVariables != null;
@@ -19,7 +16,7 @@ public class Program {
 		this.mainStatement = mainStatement;
 		this.initialGlobalVariables = globalVariables;
 		this.globalVariables = globalVariables;
-		
+		System.out.println("Program well formed: " + this.isWellFormed());
 	}
 	
 	private Map<String, Type> initialGlobalVariables = new HashMap<>();
@@ -67,7 +64,11 @@ public class Program {
 			this.restart();
 			this.executeNext();
 		}
-		
-	}	
+	}
+	
+	public boolean isWellFormed(){
+		return this.mainStatement.isWellFormed(false, false);
+	}
+	
 }
 

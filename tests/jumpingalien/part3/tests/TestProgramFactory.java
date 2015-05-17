@@ -29,16 +29,12 @@ public class TestProgramFactory {
 	@Test
 	public void testAddition() {
 		
-		// TODO hier wat debug programmas bijhouden :)
-		
-		// Werkt, test if en meerdere statements in if, er mag maar één statement per executeNext gedaan worden -> ok nu
 		String testSequence = 
 		"double a; "
 		+ "a := 5;"
 		+ "print a;"
 		+ "a := 6; "
 		+ "print a;";
-		
 
 		String testIf = 
 		"double a; "
@@ -46,6 +42,7 @@ public class TestProgramFactory {
 		+ "a := (5);"
 		+ "print a;"
 		+ "a := 6; "
+		//+ "break;"
 		+ "print a;"
 		+ "fi "
 		+ "if (6 == 5) then "
@@ -53,12 +50,12 @@ public class TestProgramFactory {
 		+ "print 7;"
 		+ "fi ";
 		
-		// Werkt nog niet correct -> conditie in aparte executeNext + blijft in ergens op een vreemde manier in z'n body hangen + conditie wordt iedere executeNext gecheckt (denk ik, nog niet goed bekeken)
 		String testWhile = 
 		"double a; "
 		+ "while true do "
 		+ "a := 5;"
 		+ "print a;"
+		+ "break;"
 		+ "a := 6; "
 		+ "print a;"
 		+ "done ";
@@ -72,6 +69,7 @@ public class TestProgramFactory {
 		+ "a := 6; "
 		+ "while (a != 8) do "
 		+ "b := 4;"
+		+ "break;"
 		+ "a := a + 1; "
 		+ "done "
 		+ "print b;"
@@ -88,9 +86,7 @@ public class TestProgramFactory {
 		+ "a := 7;";
 							
 		// Selecteer programma
-		String testProgram = testIf;
-		
-		
+		String testProgram = testWhileExt;
 		
 		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
 		

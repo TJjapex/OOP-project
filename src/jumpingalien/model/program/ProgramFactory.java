@@ -12,6 +12,7 @@ import jumpingalien.model.Slime;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
+import jumpingalien.model.program.statements.Break;
 import jumpingalien.model.program.statements.IfThen;
 import jumpingalien.model.program.statements.Print;
 import jumpingalien.model.program.statements.Sequence;
@@ -321,8 +322,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Statement createBreak(SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Break(sourceLocation);
 	}
 
 	@Override
