@@ -17,9 +17,12 @@ public class Program {
 		assert globalVariables != null;
 		
 		this.mainStatement = mainStatement;
+		this.initialGlobalVariables = globalVariables;
 		this.globalVariables = globalVariables;
+		
 	}
 	
+	private Map<String, Type> initialGlobalVariables = new HashMap<>();
 	private Map<String, Type> globalVariables = new HashMap<>();
 	
 	public Type getVariable(String name){
@@ -50,12 +53,19 @@ public class Program {
 
 	private final Statement mainStatement;
 	
+	private void restart(){
+		this.mainStatement.resetIterator();
+		this.globalVariables = this.initialGlobalVariables;
+	}
+	
 	public void executeNext(){
-		if( mainStatement.iterator().hasNext() ){
+		if( this.mainStatement.iterator().hasNext() ){
 			System.out.println("EXECUTING NEXT STATEMENT:");
-			mainStatement.execute(this);
+			this.mainStatement.execute(this);
 		}else{
-			System.out.println("no next statement in mainstatement -> execution finished");
+			System.out.println("no next statement in mainStatement -> restart mainStatement");
+			this.restart();
+			this.executeNext();
 		}
 		
 	}	

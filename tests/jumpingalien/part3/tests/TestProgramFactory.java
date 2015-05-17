@@ -43,7 +43,7 @@ public class TestProgramFactory {
 		String testIf = 
 		"double a; "
 		+ "if (5 == 5) then "
-		+ "a := 5;"
+		+ "a := (5);"
 		+ "print a;"
 		+ "a := 6; "
 		+ "print a;"
@@ -88,7 +88,7 @@ public class TestProgramFactory {
 		+ "a := 7;";
 							
 		// Selecteer programma
-		String testProgram = testWhileExt;
+		String testProgram = testIf;
 		
 		
 		

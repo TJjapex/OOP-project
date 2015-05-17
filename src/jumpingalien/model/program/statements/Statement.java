@@ -41,7 +41,7 @@ public abstract class Statement {
 		
 	}
 	
-	protected void resetIterator(){
+	public void resetIterator(){ // moet kunnen aangeroepen worden vanuit Program?
 		this.statementUsed = false;
 	}
 	
