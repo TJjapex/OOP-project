@@ -517,7 +517,7 @@ public class Slime extends GameObject {
 	protected void doMove(double dt){
 		
 		/* Periodic movement */
-		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
+		if (!hasProgram() && this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
 			this.periodicMovement();
 			
@@ -556,8 +556,11 @@ public class Slime extends GameObject {
 	 * @effect	| changeDirection()
 	 */
 	@Override
-	protected void processHorizontalCollision() {		
-		this.changeDirection();
+	protected void processHorizontalCollision() {	
+		if(!hasProgram()){
+			this.changeDirection();
+		}
+		
 	}
 	
 	/**

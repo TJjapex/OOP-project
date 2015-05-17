@@ -1473,8 +1473,8 @@ public abstract class GameObject {
 			
 			this.updateTimers(dt);
 			
-			if (this.program == null)
-				this.doMove(dt);
+			//if (this.program == null)
+			this.doMove(dt);
 			
 			this.getAnimation().updateSpriteIndex();
 		}	

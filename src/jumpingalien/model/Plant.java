@@ -255,7 +255,7 @@ public class Plant extends GameObject {
 	protected void doMove(double dt){		
 		
 		/* Periodic movement */
-		if (this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
+		if (!hasProgram() && this.getTimer().getSinceLastPeriod() >= PERIOD_TIME){ 
 			this.periodicMovement();
 			this.getTimer().setSinceLastPeriod(0);
 		}
@@ -284,7 +284,9 @@ public class Plant extends GameObject {
 	 */
 	@Override
 	protected void processHorizontalCollision() {		
-		this.changeDirection();
+		if(!hasProgram()){
+			this.changeDirection();
+		}
 	}
 	
 	/**
