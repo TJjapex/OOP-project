@@ -1,6 +1,7 @@
 package jumpingalien.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,7 +34,6 @@ import jumpingalien.util.Util;
  * @invar	| isValidTileLength(getTileLength())
  */
 public class World {
-	
 	/***************************************************** CONSTRUCTOR *************************************************/
 	
 	/**
@@ -616,21 +616,26 @@ public class World {
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		
-		for(Mazub alien: Mazub.getAllInWorld(this) ){
-			try{
-				alien.advanceTime(dt);	
-			}catch(IllegalStateException exc){
-				throw new ModelException("Mazub is not in a world anymore!");
-			}
+			
+		// TODO docs updaten
+		
+		// TODO die illegalstates hier catchen is heel ambetant omdat ge dan niet meer kunt zien vanwaar u exception eigenlijk kwam!
+		
+			//try{
+				getMazub().advanceTime(dt);	
+			//}catch(IllegalStateException exc){
+			//	// TODO modelExceptions mogen alleen maar in facade gethrowt worden?
+			//	throw new ModelException("Model exception:" + exc.getMessage());
+			//}
 								
-		}
+		//}
 
 		for(GameObject object: this.getAllEnemies()){
-			try{
+			//try{
 				object.advanceTime(dt);
-			}catch(IllegalStateException exc){
-				throw new ModelException("Game object is not in a world anymore!"+object);
-			}
+			//}catch(IllegalStateException exc){
+			//	throw new ModelException("Model exception:" + exc.getMessage());
+			//}
 		}
 		
 		updateDisplayPosition();
@@ -700,6 +705,12 @@ public class World {
 			return Terrain.AIR;
 		}
 		
+	}
+	
+	// TODO new method
+	
+	public Map<Vector<Integer>, Terrain> getAllGeologicalFeatures(){
+		return new HashMap<>(this.geologicalFeatures);
 	}
 	
 	/**
@@ -798,6 +809,7 @@ public class World {
 	 * 			| Mazub.getNbInWorld(this) != 1
 	 */
 	public Mazub getMazub() throws IllegalStateException{
+		//System.out.println("get mazub" + this.mazub);
 		return this.mazub;
 	}
 	
@@ -807,8 +819,19 @@ public class World {
 	 * @return
 	 * 		| this.getMazub() != null
 	 */
-	public boolean hasProperMazub(){
+	public boolean hasMazub(){
 		return this.getMazub() != null;
+	}	
+	
+	
+	/**
+	 * Check if this world has a controlled Mazub instance
+	 * 
+	 * @return
+	 * 		| this.getMazub() != null && this.getMazub().getWorld() == this
+	 */
+	public boolean hasProperMazub(){
+		return this.getMazub() != null && this.getMazub().getWorld() == this;
 	}	
 	
 	/**
@@ -827,6 +850,13 @@ public class World {
 		this.mazub = alien;
 	}
 	
+	// TODO comments + relaties beter uitwerken
+	
+	public void removeMazub(){
+		System.out.println("mazub removed from world");
+		this.mazub = null;
+	}
+	
 	private Mazub mazub;
 	
 	/**
@@ -835,7 +865,9 @@ public class World {
 	 * @return	A Hashset containing all Mazubs, Plants, Slimes and Sharks in this World.
 	 */
 	public Set<GameObject> getAllGameObjects(){
-		Set<GameObject> allGameObjects= new HashSet<GameObject>( Mazub.getAllInWorld(this) );
+		Set<GameObject> allGameObjects= new HashSet<GameObject>();
+		allGameObjects.add(Mazub.getInWorld(this));
+		allGameObjects.addAll( Buzam.getAllInWorld(this));
 		allGameObjects.addAll( Plant.getAllInWorld(this));
 		allGameObjects.addAll( Slime.getAllInWorld(this));
 		allGameObjects.addAll( Shark.getAllInWorld(this));
@@ -872,8 +904,8 @@ public class World {
 	 */
 	public int getNbSchools(){
 		Set<School> schools = new HashSet<School>();
-		for ( Slime slime: Slime.getAllInWorld(this) ){
-			schools.add(slime.getSchool());
+		for ( GameObject slime: Slime.getAllInWorld(this) ){
+			schools.add(((Slime) slime).getSchool());
 		}
 		return schools.size();
 	}
@@ -883,7 +915,9 @@ public class World {
 	/**
 	 * Set registering the Mazubs in this World.
 	 */
-	Set<Mazub> mazubs = new HashSet<Mazub>();
+	//Set<Mazub> mazubs = new HashSet<Mazub>();
+	Set<Buzam> buzams = new HashSet<Buzam>();
+
 	
 	/**
 	 * Set registering the Plants in this World.
@@ -952,5 +986,6 @@ public class World {
 	 * Variable registering whether or not the World is terminated.
 	 */
 	private boolean terminated = false;
+
 	
 }

@@ -572,7 +572,8 @@ public class Slime extends GameObject {
 	protected Set<GameObject> getAllImpassableGameObjects(){
 		assert hasProperWorld();
 		
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(Mazub.getAllInWorld(this.getWorld()));
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
+		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;

@@ -10,7 +10,7 @@ import jumpingalien.part3.programs.SourceLocation;
 
 public class Checker extends Operator<BooleanType>{
 	
-	public Checker(Expression<GameObjectType> expr, BiFunction<GameObject, Program, Boolean> operator, SourceLocation sourceLocation){
+	public Checker(Expression<ObjectType> expr, BiFunction<Object, Program, Boolean> operator, SourceLocation sourceLocation){
 		super( sourceLocation);
 
 		this.operand = expr;
@@ -18,18 +18,18 @@ public class Checker extends Operator<BooleanType>{
 	}
 
 	@Basic @Immutable
-	public Expression<GameObjectType> getOperand() {
+	public Expression<ObjectType> getOperand() {
 		return this.operand;
 	}
 
-	private final Expression<GameObjectType> operand;
+	private final Expression<ObjectType> operand;
 	
 	@Basic @Immutable
-	public BiFunction<GameObject, Program, Boolean> getOperator(){
+	public BiFunction<Object, Program, Boolean> getOperator(){
 		return this.operator;
 	}
 	
-	private final BiFunction<GameObject, Program, Boolean> operator;
+	private final BiFunction<Object, Program, Boolean> operator;
 	
 	@Override
 	public BooleanType execute(Program program) {

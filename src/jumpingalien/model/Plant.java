@@ -296,7 +296,8 @@ public class Plant extends GameObject {
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(Mazub.getAllInWorld(this.getWorld()));
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
+		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Plant.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;
 	}

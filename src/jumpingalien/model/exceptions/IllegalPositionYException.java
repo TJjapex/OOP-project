@@ -36,6 +36,7 @@ public class IllegalPositionYException extends RuntimeException {
 	/**
 	 * Returns the position related to this exception.
 	 */
+	@Override
 	public String getMessage(){
 		return "Invalid y position: " + Double.toString(this.getPosition());
 	}

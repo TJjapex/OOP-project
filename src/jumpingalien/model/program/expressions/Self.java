@@ -1,18 +1,18 @@
 package jumpingalien.model.program.expressions;
 
 import jumpingalien.model.program.Program;
-import jumpingalien.model.program.types.GameObjectType;
+import jumpingalien.model.program.types.ObjectType;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class Self<T> extends Expression<GameObjectType>{
+public class Self<T> extends Expression<ObjectType>{
 	
 	public Self(SourceLocation sourceLocation){
 		super(sourceLocation);
 	}
 
 	@Override
-	public GameObjectType execute(Program program) {
-		return new GameObjectType( program.getGameObject() );
+	public ObjectType execute(Program program) {
+		return new ObjectType( program.getGameObject() );
 	}	
 	
 }

@@ -56,6 +56,9 @@ public class Program {
 	}
 	
 	public void executeNext(){
+		
+		// TODO volgens mij zit hier een bug wanneer het main statement leeg is ofzo en dat die blijft loopen
+		// (kreeg in ieder geval een stackoverflow bij het testen)
 		if( this.mainStatement.iterator().hasNext() ){
 			System.out.println("EXECUTING NEXT STATEMENT:");
 			this.mainStatement.execute(this);

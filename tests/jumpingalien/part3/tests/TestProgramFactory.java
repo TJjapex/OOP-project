@@ -42,7 +42,7 @@ public class TestProgramFactory {
 		+ "a := (5);"
 		+ "print a;"
 		+ "a := 6; "
-		//+ "break;"
+		+ "break;"
 		+ "print a;"
 		+ "fi "
 		+ "if (6 == 5) then "
@@ -84,11 +84,22 @@ public class TestProgramFactory {
 		+ "a := 6;"
 		+ "skip;"
 		+ "a := 7;";
+		
+		String testForeach = 
+		"double x; "
+		+ "double a; "
+		+ " a := 4; "
+		+ "foreach(plant, x) do "
+		+ " print a; "
+		+ " print a; "
+		+ " print gethp x; "
+		+ " done "
+		+ "a := 5;";
 							
 		// Selecteer programma
-		String testProgram = testWhileExt;
+		String testProgram = testForeach;
 		
-		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
+		//IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
 		
 		Facade facade = new Facade();
 
@@ -114,8 +125,11 @@ public class TestProgramFactory {
 		Program program = (Program) parseOutcome.getResult();
 		Plant plant = facade.createPlantWithProgram(80, 80, plantSprites, program);
 		facade.addPlant(world, plant);
+		Plant plant2 = facade.createPlant(90, 180, plantSprites);
+		facade.addPlant(world, plant2);
 		
 		for (int i=0; i<7; i++){
+			System.out.println("world"+world);
 			facade.advanceTime(world, 0.2);
 		}
 		

@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 
 import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
 
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -52,7 +53,7 @@ public abstract class Statement {
 	
 	protected boolean statementUsed = false;
 	
-	public abstract void execute(Program program);	
+	public abstract void execute(Program program) throws ProgramRuntimeException;	
 	
 	public Statement getParentStatement(){
 		return this.parentStatement;

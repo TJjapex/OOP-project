@@ -1,5 +1,8 @@
 package jumpingalien.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -79,10 +82,37 @@ public class Buzam extends Mazub{
 		this(pixelLeftX, pixelBottomY, sprites, null);
 	}
 	
+
+	
+/******************************************************** WORLD ****************************************************/
 	
 	@Override
 	protected void addToWorld(){
-		this.getWorld().mazubs.add(this); // TODO: misschien beter aanpassen zodat er maar 1 echte Mazub kan zijn? en een set van
-										  // aliens dan misschien? ( 1 Mazub + mogelijk meerdere Buzams?)
+		this.getWorld().buzams.add(this);
 	}
+	
+	@Override
+	protected void removeFromWorld(World world){
+		assert this != null && !this.hasWorld();
+		assert world.hasAsGameObject(this);
+		
+		world.buzams.remove(this);
+	}
+	
+	@Override
+	protected boolean hasAsWorld(World world){
+		return Shark.getAllInWorld(world).contains(this);
+	}
+	
+	
+	public static int getNbInWorld(World world){
+		return Shark.getAllInWorld(world).size();
+	}
+	
+	
+	public static Set<Buzam> getAllInWorld(World world){
+		HashSet<Buzam> buzamsClone =  new HashSet<Buzam>(world.buzams);
+		return buzamsClone;
+	}
+	
 }

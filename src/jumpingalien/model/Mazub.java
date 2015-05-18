@@ -329,7 +329,7 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void addToWorld(){
-		this.getWorld().mazubs.add(this); // TODO: misschien beter aanpassen zodat er maar 1 echte Mazub kan zijn?
+		System.out.println("mazub added to world");
 		this.getWorld().setMazub(this);
 	}
 	
@@ -344,10 +344,13 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected void removeFromWorld(World world){
-		assert this != null && !this.hasWorld();
-		assert world.hasAsGameObject(this);
+		assert world != null && !this.hasWorld();
+	//	assert world.hasAsGameObject(this);
 		
-		world.mazubs.remove(this);
+		System.out.println("Mazub class, Mazub removed from world!");
+		
+		//world.removeMazub();
+		// TODO geeft problemen
 	}
 	
 	/**
@@ -357,9 +360,11 @@ public class Mazub extends GameObject{
 	 * 				The World to check.
 	 * @return	| result == ( Mazub.getAllInWorld(world).contains(this) )
 	 */
+	
+	// TODO docs
 	@Override
 	protected boolean hasAsWorld(World world){
-		return Mazub.getAllInWorld(world).contains(this);
+		return this.getWorld() == world;
 	}
 	
 	/**
@@ -370,19 +375,23 @@ public class Mazub extends GameObject{
 	 * @return	| result == ( Mazub.getAllInWorld(world).size() )
 	 */
 	public static int getNbInWorld(World world){
-		return Mazub.getAllInWorld(world).size();
+		if(world.hasProperMazub()){
+			return 1;
+		}
+		
+		return 0;
 	}
 	
 	/**
-	 * Return all Mazubs in the given World.
+	 * Return the mazub in the given World.
 	 * 
 	 * @param 	world
 	 * 				The World to check.
-	 * @return	A Hashset containing all Mazubs in the given World.
+	 * @return	
+	 * 			The mazub controlled by the player in the given world
 	 */
-	public static Set<Mazub> getAllInWorld(World world){
-		HashSet<Mazub> mazubsClone =  new HashSet<Mazub>(world.mazubs);
-		return mazubsClone;
+	public static Mazub getInWorld(World world){
+		return world.getMazub();
 	}
 	
 	/******************************************************* RUNNING ***************************************************/
@@ -830,7 +839,8 @@ public class Mazub extends GameObject{
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
-		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>(Mazub.getAllInWorld(this.getWorld()));
+		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
+		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Plant.getAllInWorld(this.getWorld()));

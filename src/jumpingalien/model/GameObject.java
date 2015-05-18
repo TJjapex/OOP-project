@@ -541,7 +541,7 @@ public abstract class GameObject {
 	 * be implemented in the subclasses of this class, according to their specifications.
 	 */
 	protected abstract boolean hasAsWorld(World world);
-	
+		
 	/**
 	 * Variable registering the World of a Game object.
 	 */
@@ -2100,6 +2100,7 @@ public abstract class GameObject {
 	 * Process the overlap of another Game object with this Game object.
 	 * 
 	 * @effect	Process overlaps of Mazubs with this Game object.
+	 *  TODO aanpassen
 	 * 			| for mazub in this.getWorld().getAllMazubs():
 	 * 			|	if ( this.doesOverlapWith(mazub) ) 
 	 * 			|		then this.processMazubOverlap(mazub)
@@ -2119,10 +2120,9 @@ public abstract class GameObject {
 	protected void processGameObjectOverlap(){
 		World world = this.getWorld();
 		
-		for(Mazub mazub:  Mazub.getAllInWorld(world)){
-			if(mazub != this && this.doesOverlapWith(mazub)){
-				this.processMazubOverlap(mazub);
-			}
+
+		if(Mazub.getInWorld(world) != this && this.doesOverlapWith(Mazub.getInWorld(world))){
+			this.processMazubOverlap(Mazub.getInWorld(world));
 		}
 		
 		for(Plant plant :  Plant.getAllInWorld(world)){
@@ -2200,6 +2200,7 @@ public abstract class GameObject {
 	 * 			| new.isTerminated == true
 	 */
 	protected void terminate(){
+		System.out.println("Game object terminated "+ this + " hitpoints "+  this.getNbHitPoints());
 		this.unsetWorld();
 		this.terminated = true;
 	}

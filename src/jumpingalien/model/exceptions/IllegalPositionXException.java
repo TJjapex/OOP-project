@@ -34,6 +34,7 @@ public class IllegalPositionXException extends RuntimeException {
 	/**
 	 * Returns the position related to this exception.
 	 */
+	@Override
 	public String getMessage(){
 		return "Invalid x position: " + Double.toString(this.getPosition());
 	}

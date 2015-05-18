@@ -5,12 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class WhileDo extends Statement {
+public class WhileDo extends Statement implements Loop{
 
 	public WhileDo(Expression<?> condition, Statement body, SourceLocation sourceLocation){
 		super(sourceLocation);
@@ -32,7 +33,7 @@ public class WhileDo extends Statement {
 	private final Statement body;
 	
 	@Override
-	public void execute(Program program) throws IllegalStateException{
+	public void execute(Program program) throws ProgramRuntimeException{
 		
 		if (!conditionChecked){
 			this.conditionResult = this.getCondition().execute(program).getValue();
@@ -42,7 +43,7 @@ public class WhileDo extends Statement {
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);
 			else
-				throw new IllegalStateException("Statement executed while not having next useful statement!");
+				throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 			
 		}
 		
@@ -113,6 +114,10 @@ public class WhileDo extends Statement {
 	
 	public void breakLoop(){
 		this.stop = true;
+	}
+	
+	public boolean isBroken(){
+		return this.stop;
 	}
 	
 	private boolean stop;
