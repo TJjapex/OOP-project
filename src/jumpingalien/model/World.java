@@ -707,7 +707,14 @@ public class World {
 		
 	}
 	
-	// TODO new method
+	//TODO: commentary
+	public Set<Tile> getAllTiles(){
+		HashSet<Tile> tiles =  new HashSet<Tile>();
+		for ( Map.Entry<Vector<Integer>, Terrain> feature : this.getAllGeologicalFeatures().entrySet() ){
+			tiles.add(new Tile(this.getTileLength(), feature.getKey().getX(), feature.getKey().getY(), feature.getValue()));
+		}
+		return tiles;
+	} 
 	
 	public Map<Vector<Integer>, Terrain> getAllGeologicalFeatures(){
 		return new HashMap<>(this.geologicalFeatures);

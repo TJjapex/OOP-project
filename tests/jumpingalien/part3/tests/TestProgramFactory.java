@@ -85,7 +85,7 @@ public class TestProgramFactory {
 		+ "skip;"
 		+ "a := 7;";
 		
-		String testForeach = 
+		String testForEach = 
 		"double x; "
 		+ "double a; "
 		+ " a := 4; "
@@ -95,9 +95,35 @@ public class TestProgramFactory {
 		+ " print gethp x; "
 		+ " done "
 		+ "a := 5;";
-							
+			
+		String testForEachWhere = 
+		"double x; "
+		+ "double a; "
+		+ " a := 4; "
+		+ "foreach(plant, x) "
+		+ "where (gety x == 180)"
+		+ " do "
+		+ " print a; "
+		+ " print a; "
+		+ " print gethp x; "
+		+ " done "
+		+ "a := 5;";
+		
+		String testForEachSort = 
+		"double x; "
+		+ "double a; "
+		+ " a := 4; "
+		+ "foreach(plant, x) "
+		+ "sort getx x descending"
+		+ " do "
+		+ " print a; "
+		+ " print a; "
+		+ " print gethp x; "
+		+ " done "
+		+ "a := 5;";
+		
 		// Selecteer programma
-		String testProgram = testForeach;
+		String testProgram = testForEachSort;
 		
 		//IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
 		
@@ -124,8 +150,10 @@ public class TestProgramFactory {
 		
 		Program program = (Program) parseOutcome.getResult();
 		Plant plant = facade.createPlantWithProgram(80, 80, plantSprites, program);
+		System.out.println(plant + " " + plant.getPositionX());
 		facade.addPlant(world, plant);
 		Plant plant2 = facade.createPlant(90, 180, plantSprites);
+		System.out.println(plant2 + " " + plant2.getPositionX());
 		facade.addPlant(world, plant2);
 		
 		for (int i=0; i<7; i++){

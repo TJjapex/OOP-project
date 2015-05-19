@@ -60,7 +60,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @version 1.0
  */
-public abstract class GameObject {
+public abstract class GameObject implements IKind{
 	
 	/****************************************************** CONSTANTS **************************************************/
 	

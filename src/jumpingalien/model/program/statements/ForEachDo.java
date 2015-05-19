@@ -1,5 +1,7 @@
 package jumpingalien.model.program.statements;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Collection;
 import java.util.Comparator;
@@ -10,6 +12,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.swing.event.ListSelectionEvent;
 
 import org.hamcrest.core.IsInstanceOf;
 
@@ -191,19 +195,33 @@ public class ForEachDo extends Statement implements ILoop {
 	public List<ObjectType> buildObjectList(Program program){
 		
 		Stream.Builder<ObjectType> builder = Stream.builder();
-		for (Object object: ObjectType.getObjects(kind, program)){ // TODO: implement Kind en method to get all instances of some kind (return Kind)
+		for (Object object: ObjectType.getObjects(kind, program)){
 			builder.accept(new ObjectType(object));
 		}
 		
 		Stream<ObjectType> stream = builder.build();
-		return stream.filter( 
+		List<ObjectType> listStream = stream.filter( 
 				o -> {
 					loadLoopObject(program, o);
 					return getWhereCondition() == null || getWhereCondition().execute(program).getValue();
 				}
-			).collect(Collectors.toList());
+			).sorted(
+				(o1, o2) -> { 
+							if (getSortCondition() == null)
+								return 0;
+							loadLoopObject(program, o1);
+							double r1 = ((DoubleType) getSortCondition().execute(program)).getValue();
+							loadLoopObject(program, o2);
+							double r2 = ((DoubleType) getSortCondition().execute(program)).getValue();
+							return Double.compare(r1, r2);
+			}).collect(Collectors.toList());
 		
-		// TODO sorting door .sort()
+		if (sortDirection == SortDirection.DESCENDING)
+			Collections.reverse(listStream);
+		
+		System.out.println("STREAM: " + Arrays.toString(listStream.toArray()));
+		return listStream;
+
 	}
 	
 	/* Loop control */

@@ -14,16 +14,11 @@ public class Break extends Statement {
 
 		while( this.wrapStatement.hasParentStatement() && !this.outerLoopFound){
 			this.wrapStatement = this.wrapStatement.getParentStatement();
-			if ( this.wrapStatement instanceof ILoop ){				// Hier kunnen we misschien van een "Loop" interface gebruik maken?
+			if ( this.wrapStatement instanceof ILoop ){
 				System.out.println("Break!");
 				((WhileDo) this.wrapStatement).breakLoop();
-				this.outerLoopFound = true; // kan ook met echte break maar is misschien niet echt een mooie oplossing
+				this.outerLoopFound = true;
 			}
-//			} else if ( this.wrapStatement instanceof ForEachDo ){
-//				System.out.println("Break!");
-//				//((ForEachDo) this.wrapStatement).breakLoop();
-//				this.outerLoopFound = true;
-//			}
 		}
 		
 		if (!this.outerLoopFound){

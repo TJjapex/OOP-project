@@ -9,6 +9,7 @@ import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
+import jumpingalien.model.Tile;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.IProgramFactory.Kind;
 
@@ -77,8 +78,18 @@ public class ObjectType extends Type {
 			return new HashSet<Object> (Plant.getAllInWorld(program.getGameObject().getWorld()));
 		case TERRAIN:
 			// TODO
-			throw new IllegalArgumentException();
+			//throw new IllegalArgumentException();
 			//for(Terrain terrain : program.getGameObject().getWorld().getAllGeologicalFeatures());....
+			return new HashSet<Object> (program.getGameObject().getWorld().getAllTiles());
+		case ANY:
+			HashSet<Object> anySet= new HashSet<Object>();
+			anySet.add(Mazub.getInWorld(program.getGameObject().getWorld()));
+			anySet.addAll(Buzam.getAllInWorld(program.getGameObject().getWorld()));
+			anySet.addAll(Slime.getAllInWorld(program.getGameObject().getWorld()));
+			anySet.addAll(Shark.getAllInWorld(program.getGameObject().getWorld()));
+			anySet.addAll(Plant.getAllInWorld(program.getGameObject().getWorld()));
+			anySet.addAll(program.getGameObject().getWorld().getAllTiles());
+			return anySet;
 		default:
 			throw new IllegalArgumentException();
 		}

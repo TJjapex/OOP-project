@@ -1,7 +1,6 @@
 package jumpingalien.model.program.expressions;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.model.program.Program;
@@ -44,15 +43,5 @@ public class BinaryOperator<I extends Type, T extends Type> extends Operator<T>{
 	public T execute(Program program) {
 		 return getOperator().apply(getLeftOperand().execute(program), getRightOperand().execute(program));
 	}
-//	
-//	@Override @Immutable @Basic
-//	public final int getNbOperands() {
-//		return 2;
-//	}
-//
-//	@Override @Immutable
-//	public final String getOperatorSymbol() {
-//		return "+"; // method abstract maken? ook toepassen voor subtraction, division en multiplication
-//					// denk niet dat deze methode mogelijk is voor alle gevallen? symbool kunt ge nie uit operator halen?
-//	}
+
 }

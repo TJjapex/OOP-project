@@ -1,11 +1,8 @@
 package jumpingalien.model.program.statements;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
 
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
