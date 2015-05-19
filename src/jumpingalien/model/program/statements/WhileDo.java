@@ -11,7 +11,7 @@ import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class WhileDo extends Statement implements Loop{
+public class WhileDo extends Statement implements ILoop{
 
 	public WhileDo(Expression<?> condition, Statement body, SourceLocation sourceLocation){
 		super(sourceLocation);

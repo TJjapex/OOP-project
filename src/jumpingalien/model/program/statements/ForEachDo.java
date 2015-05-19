@@ -31,7 +31,7 @@ import jumpingalien.part3.programs.IProgramFactory.Kind;
 import jumpingalien.part3.programs.IProgramFactory.SortDirection;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class ForEachDo extends Statement implements Loop {
+public class ForEachDo extends Statement implements ILoop {
 
 	public ForEachDo(Kind kind, String loopVariableName, Expression<BooleanType> whereCondition,
 		   	 Expression<BooleanType> sortCondition, SortDirection sortDirection, Statement body, SourceLocation sourceLocation){
