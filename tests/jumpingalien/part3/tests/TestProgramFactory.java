@@ -14,6 +14,7 @@ import jumpingalien.model.program.ProgramFactory;
 import jumpingalien.model.program.statements.Statement;
 import jumpingalien.model.program.types.*;
 import jumpingalien.model.program.expressions.*;
+import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part3.facade.Facade;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
@@ -110,20 +111,25 @@ public class TestProgramFactory {
 		+ "a := 5;";
 		
 		String testForEachSort = 
-		"double x; "
-		+ "double a; "
-		+ " a := 4; "
-		+ "foreach(plant, x) "
-		+ "sort getx x descending"
-		+ " do "
-		+ " print a; "
-		+ " print a; "
-		+ " print gethp x; "
-		+ " done "
-		+ "a := 5;";
+				"double x; "
+				+ "double a; "
+				+ " a := 4; "
+				+ "foreach(plant, x) "
+				+ "sort getx x descending"
+				+ " do "
+				+ " print getx x; "
+				+ " print a; "
+				+ " print gethp x; "
+				+ " done "
+				+ "a := 5;";
+		
+		String testSearchObject = 
+				"double x; "
+				+ "x := searchobj right;"
+				+" print getx x;";
 		
 		// Selecteer programma
-		String testProgram = testForEachSort;
+		String testProgram = testSearchObject;
 		
 		//IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
 		
@@ -133,11 +139,11 @@ public class TestProgramFactory {
 		Sprite[] sprites = spriteArrayForSize(3, 3);
 		Sprite[] plantSprites = spriteArrayForSize(3, 3, 2);
 		
-		Mazub alien = facade.createMazub(100, 50, sprites);
+		Mazub alien = facade.createMazub(250, 50, sprites);
 		World world = facade.createWorld(50, 60, 15, 200, 150, 4, 1);
 		
 		for(int i = 0; i < 60; i++){
-			facade.setGeologicalFeature(world, i, 0, 0); // create solid terrain
+			facade.setGeologicalFeature(world, i, 0, Terrain.SOLID.getId()); // create solid terrain
 		}
 		
 		facade.setMazub(world, alien);
@@ -149,10 +155,10 @@ public class TestProgramFactory {
 		}
 		
 		Program program = (Program) parseOutcome.getResult();
-		Plant plant = facade.createPlantWithProgram(80, 80, plantSprites, program);
+		Plant plant = facade.createPlantWithProgram(180, 50, plantSprites, program);
 		System.out.println(plant + " " + plant.getPositionX());
 		facade.addPlant(world, plant);
-		Plant plant2 = facade.createPlant(90, 180, plantSprites);
+		Plant plant2 = facade.createPlant(200, 50, plantSprites);
 		System.out.println(plant2 + " " + plant2.getPositionX());
 		facade.addPlant(world, plant2);
 		
@@ -160,6 +166,5 @@ public class TestProgramFactory {
 			System.out.println("world"+world);
 			facade.advanceTime(world, 0.2);
 		}
-		
 	}
 }

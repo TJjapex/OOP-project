@@ -155,6 +155,14 @@ public class Plant extends GameObject {
 		this(pixelLeftX, pixelBottomY, sprites, null);
 	}
 	
+	/**
+	 * Returns a string class name of the object, used for toString method in GameObject
+	 */
+	@Override
+	public String getClassName() {
+		return "Plant";
+	}
+	
 	/******************************************************* TERRAIN ***************************************************/
 	
 	/**

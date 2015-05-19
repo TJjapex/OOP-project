@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import be.kuleuven.cs.som.annotate.*;
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.types.DoubleType;
@@ -19,12 +20,12 @@ public class Wait extends Statement{
 	}
 	
 	@Override
-	public void execute(Program program) throws IllegalStateException{
+	public void execute(Program program) throws ProgramRuntimeException{
 		System.out.println("Statement, WAITING, cycle:"+this.cycles);
 		if(this.iterator().hasNext())
 			this.iterator().next();
 		else
-			throw new IllegalStateException("Statement executed while not having next useful statement!");
+			throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 
 		if(this.getCycles() >= this.getAmount().execute(program).getValue() * 1000 ){
 			this.setTimePassed(true);

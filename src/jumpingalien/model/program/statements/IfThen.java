@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
@@ -23,13 +24,37 @@ public class IfThen extends Statement {
 			this.getElseBody().setParentStatement(this);
 	}
 	
+	/* Condition */
+	
 	public Expression<BooleanType> getCondition(){
 		return this.condition;
 	}
-	
+
 	private final Expression<BooleanType> condition;
 	
+	
+	/* Condition result */
+	
+	public boolean isConditionTrue() {
+		return conditionResult;
+	}
+
+	private void setConditionResult(boolean conditionResult) {
+		this.conditionResult = conditionResult;
+	}
+	
 	private boolean conditionResult;
+
+	/* Condition checked */
+	
+	public boolean isConditionChecked() {
+		return conditionChecked;
+	}
+
+	private void setConditionChecked(boolean conditionChecked) {
+		this.conditionChecked = conditionChecked;
+	}
+	
 	private boolean conditionChecked = false;
 	
 	
@@ -58,15 +83,15 @@ public class IfThen extends Statement {
 	@Override
 	public void execute(Program program) throws IllegalStateException{
 		
-		if (!conditionChecked){
-			this.conditionResult = this.getCondition().execute(program).getValue();
-			this.conditionChecked = true;
+		if (!isConditionChecked()){
+			setConditionResult(getCondition().execute(program).getValue());
+			setConditionChecked(true);
 			System.out.println("IfThen, checked condition: "+ this.conditionResult);
 		}else{
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);
 			else 
-				throw new IllegalStateException("Statement executed while not having next useful statement!");
+				throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 		}
 
 	}
@@ -81,9 +106,9 @@ public class IfThen extends Statement {
 			@Override
 			public boolean hasNext(){
 				
-				if (!IfThen.this.conditionChecked)
+				if (!isConditionChecked())
 					return true;
-				else if (IfThen.this.conditionResult)
+				else if (isConditionTrue())
 					return getIfBody().iterator().hasNext();
 				else if(hasElseBody())
 					return getElseBody().iterator().hasNext();
@@ -94,13 +119,15 @@ public class IfThen extends Statement {
 			@Override
 			public Statement next() throws NoSuchElementException{
 				
-				if ( !IfThen.this.conditionChecked )
+				if ( !isConditionChecked())
 					return IfThen.this;
-				else if (IfThen.this.conditionResult){
+				else if (isConditionTrue()){
 					return IfThen.this.getIfBody();
-				} else{
+				}else if(hasElseBody()){
 					return IfThen.this.getElseBody();
-				}		
+				}else{
+					throw new NoSuchElementException();
+				}
 				
 			}
 			
@@ -110,13 +137,15 @@ public class IfThen extends Statement {
 	
 	@Override
 	public void resetIterator(){
-		conditionChecked = false;
-		if (this.conditionResult){
+		setConditionChecked(false);
+		if (isConditionTrue()){
 			this.getIfBody().resetIterator();
 		} else if (this.hasElseBody()){
 			this.getElseBody().resetIterator();
 		}
 	}
+	
+	/* Children statements */
 	
 	@Override
 	public List<Statement> getChildrenStatements(){

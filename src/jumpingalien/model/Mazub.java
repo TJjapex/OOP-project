@@ -219,6 +219,14 @@ public class Mazub extends GameObject{
 		this(pixelLeftX, pixelBottomY, 1.0, 8.0, 3.0, 0.9, sprites, 100, 500);
 	}
 	
+	/**
+	 * Returns a string class name of the object, used for toString method in GameObject
+	 */
+	@Override
+	public String getClassName() {
+		return "Mazub";
+	}
+	
 	/****************************************************** ANIMATION **************************************************/
 
 	/**

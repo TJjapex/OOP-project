@@ -617,25 +617,10 @@ public class World {
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		
 			
-		// TODO docs updaten
-		
-		// TODO die illegalstates hier catchen is heel ambetant omdat ge dan niet meer kunt zien vanwaar u exception eigenlijk kwam!
-		
-			//try{
-				getMazub().advanceTime(dt);	
-			//}catch(IllegalStateException exc){
-			//	// TODO modelExceptions mogen alleen maar in facade gethrowt worden?
-			//	throw new ModelException("Model exception:" + exc.getMessage());
-			//}
-								
-		//}
+		getMazub().advanceTime(dt);	
 
 		for(GameObject object: this.getAllEnemies()){
-			//try{
-				object.advanceTime(dt);
-			//}catch(IllegalStateException exc){
-			//	throw new ModelException("Model exception:" + exc.getMessage());
-			//}
+			object.advanceTime(dt);
 		}
 		
 		updateDisplayPosition();

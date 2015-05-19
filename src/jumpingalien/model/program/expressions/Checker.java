@@ -3,7 +3,6 @@ package jumpingalien.model.program.expressions;
 import java.util.function.BiFunction;
 
 import be.kuleuven.cs.som.annotate.*;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;

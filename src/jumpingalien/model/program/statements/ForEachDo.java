@@ -3,34 +3,18 @@ package jumpingalien.model.program.statements;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.swing.event.ListSelectionEvent;
-
-import org.hamcrest.core.IsInstanceOf;
-
-import jumpingalien.model.Buzam;
-import jumpingalien.model.GameObject;
-import jumpingalien.model.Mazub;
-import jumpingalien.model.Plant;
-import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
-import jumpingalien.model.World;
+import jumpingalien.model.IKind;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.model.program.types.DoubleType;
 import jumpingalien.model.program.types.ObjectType;
-import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part3.programs.IProgramFactory.Kind;
 import jumpingalien.part3.programs.IProgramFactory.SortDirection;
 import jumpingalien.part3.programs.SourceLocation;
@@ -90,7 +74,7 @@ public class ForEachDo extends Statement implements ILoop {
 	
 	/* Sort direction */
 	
-	public SortDirection sortDirection(){
+	public SortDirection getSortDirection(){
 		return this.sortDirection;
 	}
 	
@@ -170,7 +154,7 @@ public class ForEachDo extends Statement implements ILoop {
 	
 	@Override
 	public void resetIterator(){ // moet kunnen aangeroepen worden vanuit Program?
-		this.objectListIterator = null;
+		setObjectListIterator(null);
 		this.stop = false;
 		this.getBody().resetIterator();
 		
@@ -195,7 +179,7 @@ public class ForEachDo extends Statement implements ILoop {
 	public List<ObjectType> buildObjectList(Program program){
 		
 		Stream.Builder<ObjectType> builder = Stream.builder();
-		for (Object object: ObjectType.getObjects(kind, program)){
+		for (IKind object: ObjectType.getObjects(kind, program)){
 			builder.accept(new ObjectType(object));
 		}
 		
@@ -207,6 +191,8 @@ public class ForEachDo extends Statement implements ILoop {
 				}
 			).sorted(
 				(o1, o2) -> { 
+					
+						// TODO dit in een nieuwe methode zetten en daarnaar verwijzen? Is wat properder
 							if (getSortCondition() == null)
 								return 0;
 							loadLoopObject(program, o1);
@@ -214,9 +200,11 @@ public class ForEachDo extends Statement implements ILoop {
 							loadLoopObject(program, o2);
 							double r2 = ((DoubleType) getSortCondition().execute(program)).getValue();
 							return Double.compare(r1, r2);
+							
+							
 			}).collect(Collectors.toList());
 		
-		if (sortDirection == SortDirection.DESCENDING)
+		if (getSortDirection() == SortDirection.DESCENDING)
 			Collections.reverse(listStream);
 		
 		System.out.println("STREAM: " + Arrays.toString(listStream.toArray()));

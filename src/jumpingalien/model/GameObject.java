@@ -158,6 +158,7 @@ public abstract class GameObject implements IKind{
 			throw new IllegalPositionXException(pixelLeftX);
 		if(!canHaveAsPositionY(pixelBottomY))
 			throw new IllegalPositionYException(pixelBottomY);
+		
 		this.positionX = pixelLeftX;
 		this.positionY = pixelBottomY;
 
@@ -173,14 +174,14 @@ public abstract class GameObject implements IKind{
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
 		
-		
-		// TODO better relation asserts between this and program (not important, only when rest is finished)
+				
+		// Program
+		this.program = program;
 		if(program != null){
 			System.out.println("GameObject: got program in constructor");
 			program.setGameObject(this);
 		}
 	
-		this.program = program;
 	}
 
 	/****************************************************** ANIMATION **************************************************/
@@ -296,7 +297,7 @@ public abstract class GameObject implements IKind{
 	
 	/******************************************************* PROGRAM ***************************************************/
 	
-	protected Program getProgram(){
+	public Program getProgram(){
 		return this.program;
 	}
 	
@@ -1018,11 +1019,7 @@ public abstract class GameObject implements IKind{
 	 */
 	@Basic @Raw @Immutable
 	public double getAccelerationY() {
-		if(this.isOnGround()){
-			return 0;
-		}else{
-			return ACCELERATION_Y;
-		}
+		return (this.isOnGround()) ? 0 : ACCELERATION_Y;
 	}
 
 	/* Acceleration magnitude */ 
@@ -1098,11 +1095,7 @@ public abstract class GameObject implements IKind{
 	 */
 	public Orientation getRandomOrientation(){
 		Random random = new Random();
-		if (random.nextBoolean())
-			return Orientation.RIGHT;
-		else {
-			return Orientation.LEFT;
-		}
+		return (random.nextBoolean()) ? Orientation.RIGHT : Orientation.LEFT;
 	}
 
 	/**
@@ -2200,7 +2193,6 @@ public abstract class GameObject implements IKind{
 	 * 			| new.isTerminated == true
 	 */
 	protected void terminate(){
-		System.out.println("Game object terminated "+ this + " hitpoints "+  this.getNbHitPoints());
 		this.unsetWorld();
 		this.terminated = true;
 	}
@@ -2219,5 +2211,17 @@ public abstract class GameObject implements IKind{
 	 * Variable registering the terminated status of a Game object.
 	 */
 	protected boolean terminated = false;
+	
+	
+	
+	/**
+	 * Returns a string representation of the object
+	 */
+	@Override
+	public String toString(){
+		return getClassName()+" hp: " + getNbHitPoints() + " ";
+	}
+	
+	public abstract String getClassName();
 	
 }

@@ -2,6 +2,7 @@ package jumpingalien.model.program.statements;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.part3.programs.SourceLocation;
@@ -24,9 +25,9 @@ public class Print extends Statement {
 	public void execute(Program program) throws IllegalStateException{
 		if(this.iterator().hasNext()){
 			System.out.println("Print " + this.getExpression().execute(program));
-			this.statementUsed = true;
+			setStatementUsed(true);
 		}else{
-			throw new IllegalStateException("Statement executed while not having next useful statement!");
+			throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 		}
 		
 	}

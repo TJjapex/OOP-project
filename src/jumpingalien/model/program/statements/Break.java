@@ -25,8 +25,10 @@ public class Break extends Statement {
 			System.out.println("Break not in a loop!");
 			throw new IllegalStateException();
 		}	
-		
 	}
+	
+	// TODO waarvoor dienen deze variabelen eigenlijk, moeten die opgeslagen worden? Kunnen die niet altijd in execute terug gezet worden?
+	// + statementUsed gebruiken?
 	
 	private Statement wrapStatement = this;
 	private boolean outerLoopFound;

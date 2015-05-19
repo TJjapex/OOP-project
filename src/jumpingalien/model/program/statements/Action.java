@@ -33,8 +33,8 @@ public class Action extends Statement {
 	public void execute(Program program) throws IllegalStateException{
 		if(this.iterator().hasNext()){
 				System.out.println("Program, ACTION");
-			this.getOperator().accept( this.getGameObject().execute(program).getValue(), program);
-			this.statementUsed = true;
+			getOperator().accept( this.getGameObject().execute(program).getValue(), program);
+			setStatementUsed(true);
 		}else{
 			throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 		}

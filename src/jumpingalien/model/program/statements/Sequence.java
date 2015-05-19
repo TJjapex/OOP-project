@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
@@ -17,6 +18,8 @@ public class Sequence extends Statement{
 			this.getStatementAt(i).setParentStatement(this);
 		}
 	}
+	
+	/* Statements */
 	
 	public List<Statement> getStatements(){
 		return this.statements;
@@ -94,7 +97,7 @@ public class Sequence extends Statement{
 		if(this.iterator().hasNext()){
 			this.iterator().next().execute(program);
 		}else{
-			throw new IllegalStateException("Statement executed while not having next useful statement!");
+			throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 		}
 	}
 	

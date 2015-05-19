@@ -4,9 +4,9 @@ public interface IKind {
 
 	// TODO: overrides plaatsen in subclasses
 	
-	public double getPositionX();
+	public int getRoundedPositionX();
 	
-	public double getPositionY();
+	public int getRoundedPositionY();
 	
 	public int getWidth();
 	

@@ -208,6 +208,14 @@ public class Slime extends GameObject {
 		this(pixelLeftX, pixelBottomY, sprites, school, null);
 	}
 	
+	/**
+	 * Returns a string class name of the object, used for toString method in GameObject
+	 */
+	@Override
+	public String getClassName() {
+		return "Slime";
+	}
+	
 	/******************************************************** TIMER ****************************************************/
 	
 	/**

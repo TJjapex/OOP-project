@@ -5,6 +5,7 @@ import java.util.Set;
 
 import jumpingalien.model.Buzam;
 import jumpingalien.model.GameObject;
+import jumpingalien.model.IKind;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
@@ -14,25 +15,8 @@ import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.IProgramFactory.Kind;
 
 public class ObjectType extends Type {
-
-	// Geen idee of da wel lekker werkt met die Kind enzo want dan meot ge een GameObject omzetten naar zo'n kind ofzo? Heb het tijdelijk weggedaan
 	
-//	public ObjectType(Kind value){
-//		this.value = value;
-//	}
-//	
-//	public ObjectType(){
-//		this(null);
-//	}
-//	
-//	public Kind getValue() {
-//		return this.value;
-//	}
-//
-//	private final Kind value;
-	
-
-	public ObjectType(Object value){
+	public ObjectType(IKind value){
 		this.value = value;
 	}
 		
@@ -40,14 +24,17 @@ public class ObjectType extends Type {
 			this(null);
 	}
 	
-	public Object getValue() {
+	public IKind getValue() {
 			return this.value;
 	}
 	
-	private final Object value;
+	private final IKind value;
 	
 	@Override
 	public String toString() {
+		if(this.getValue() == null)
+			return "null";
+
 		return this.getValue().toString();
 	}
 	
@@ -62,27 +49,25 @@ public class ObjectType extends Type {
 	
 	
 	// TODO niet echt proper dat deze gewoon een set van objects returned ipv objecttype maar anders moet er zoveel verandert worden...
-	public static Set<Object> getObjects(Kind kind, Program program){
+	public static Set<IKind> getObjects(Kind kind, Program program){
 		switch (kind) {
 		case MAZUB:
-			HashSet<Object> mazubSet= new HashSet<Object>();
+			HashSet<IKind> mazubSet= new HashSet<IKind>();
 			mazubSet.add(Mazub.getInWorld(program.getGameObject().getWorld()));
 			return mazubSet;
 		case BUZAM:
-			return new HashSet<Object> (Buzam.getAllInWorld(program.getGameObject().getWorld()));
+			return new HashSet<IKind> (Buzam.getAllInWorld(program.getGameObject().getWorld()));
 		case SLIME:
-			return new HashSet<Object> (Slime.getAllInWorld(program.getGameObject().getWorld()));
+			return new HashSet<IKind> (Slime.getAllInWorld(program.getGameObject().getWorld()));
 		case SHARK:
-			return new HashSet<Object> (Shark.getAllInWorld(program.getGameObject().getWorld()));
+			return new HashSet<IKind> (Shark.getAllInWorld(program.getGameObject().getWorld()));
 		case PLANT:
-			return new HashSet<Object> (Plant.getAllInWorld(program.getGameObject().getWorld()));
+			return new HashSet<IKind> (Plant.getAllInWorld(program.getGameObject().getWorld()));
 		case TERRAIN:
-			// TODO
-			//throw new IllegalArgumentException();
-			//for(Terrain terrain : program.getGameObject().getWorld().getAllGeologicalFeatures());....
-			return new HashSet<Object> (program.getGameObject().getWorld().getAllTiles());
+			return new HashSet<IKind> (program.getGameObject().getWorld().getAllTiles());
 		case ANY:
-			HashSet<Object> anySet= new HashSet<Object>();
+			// TODO waarom hier niet World.getAllGameObjects gebruiken?
+			HashSet<IKind> anySet= new HashSet<IKind>();
 			anySet.add(Mazub.getInWorld(program.getGameObject().getWorld()));
 			anySet.addAll(Buzam.getAllInWorld(program.getGameObject().getWorld()));
 			anySet.addAll(Slime.getAllInWorld(program.getGameObject().getWorld()));

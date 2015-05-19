@@ -15,11 +15,15 @@ public class Assignment extends Statement {
 		this.value = value;
 	}
 	
+	/* Variable name */
+	
 	public String getVariableName(){
 		return this.variableName;
 	}
 	
 	private final String variableName;
+	
+	/* Type */
 	
 	public Type getType(){
 		return this.variableType;
@@ -27,17 +31,21 @@ public class Assignment extends Statement {
 		
 	private final Type variableType;
 	
+	/* Value */
+	
 	public Expression<? extends Type> getValue(){
 		return this.value;
 	}
 		
 	private final Expression<? extends Type> value;
 	
+	/* Execution */
+	
 	@Override
 	public void execute(Program program) throws IllegalStateException{
 		if(this.iterator().hasNext()){
-			program.setVariable(this.variableName, this.value.execute(program));
-			this.statementUsed = true;
+			program.setVariable(getVariableName(), getValue().execute(program));
+			setStatementUsed(true);
 		}else{
 			throw new IllegalStateException("Statement executed while not having next useful statement!");
 		}

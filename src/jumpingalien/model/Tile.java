@@ -21,14 +21,14 @@ public class Tile implements IKind {
 	private Terrain type;
 	
 	@Override
-	public double getPositionX() {
+	public int getRoundedPositionX() {
 		return this.positionX;
 	}
 	
 	private int positionX;
 
 	@Override
-	public double getPositionY() {
+	public int getRoundedPositionY() {
 		return this.positionY;
 	}
 	
@@ -52,6 +52,11 @@ public class Tile implements IKind {
 	
 	public boolean terrainTypeIs(Terrain type){
 		return this.getTerrainType() == type;
+	}
+	
+	@Override
+	public String toString(){
+		return "Tile x:"+getRoundedPositionX()+" y:"+getRoundedPositionY();
 	}
 	
 }

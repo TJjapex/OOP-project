@@ -19,6 +19,8 @@ public class WhileDo extends Statement implements ILoop{
 		this.body = body;
 		this.getBody().setParentStatement(this);
 	}
+		
+	/* Condition */
 	
 	public Expression<BooleanType> getCondition(){
 		return this.condition;
@@ -26,18 +28,46 @@ public class WhileDo extends Statement implements ILoop{
 	
 	private final Expression<BooleanType> condition;
 	
+	/* Condition result */
+	
+	public boolean isConditionTrue() {
+		return conditionResult;
+	}
+
+	private void setConditionResult(boolean conditionResult) {
+		this.conditionResult = conditionResult;
+	}
+	
+	private boolean conditionResult;
+	
+	/* Condition checked */
+	
+	public boolean isConditionChecked() {
+		return conditionChecked;
+	}
+
+	private void setConditionChecked(boolean conditionChecked) {
+		this.conditionChecked = conditionChecked;
+	}
+	
+	private boolean conditionChecked = false;
+	
+	/* Body */
+	
 	public Statement getBody(){
 		return this.body;
 	}
 	
 	private final Statement body;
 	
+	/* Execute */
+	
 	@Override
 	public void execute(Program program) throws ProgramRuntimeException{
 		
-		if (!conditionChecked){
-			this.conditionResult = this.getCondition().execute(program).getValue();
-			this.conditionChecked = true;
+		if (!isConditionChecked()){
+			setConditionResult(this.getCondition().execute(program).getValue());
+			setConditionChecked(true);
 			System.out.println("WhileDo, checked condition: "+ this.conditionResult);
 		}else{
 			if(this.iterator().hasNext())
@@ -49,6 +79,8 @@ public class WhileDo extends Statement implements ILoop{
 		
 	}
 	
+	/* Iterator */
+	
 	@Override
 	public Iterator<Statement> iterator() {
 		
@@ -57,12 +89,12 @@ public class WhileDo extends Statement implements ILoop{
 			@Override
 			public boolean hasNext(){
 				
-				if (WhileDo.this.stop)
+				if (isBroken())
 					return false;
 				
-				if (!WhileDo.this.conditionChecked)
+				if (!isConditionChecked())
 					return true;
-				else if (WhileDo.this.conditionResult)
+				else if (isConditionTrue())
 					if (getBody().iterator().hasNext())
 						return true;
 					else{
@@ -76,14 +108,14 @@ public class WhileDo extends Statement implements ILoop{
 			@Override
 			public Statement next() throws NoSuchElementException{				
 				
-				if (WhileDo.this.stop)
+				if (isBroken())
 					throw new NoSuchElementException();
 				
-				if ( !WhileDo.this.conditionChecked )
+				if ( !isConditionChecked() )
 					return WhileDo.this;
-				else if (WhileDo.this.conditionResult){
-					if(WhileDo.this.getBody().iterator().hasNext()){
-						return WhileDo.this.getBody();
+				else if ( isConditionTrue() ){
+					if(getBody().iterator().hasNext()){
+						return getBody();
 					}	
 				}
 					
@@ -97,13 +129,10 @@ public class WhileDo extends Statement implements ILoop{
 		
 	@Override
 	public void resetIterator(){
-		this.conditionChecked = false;
+		setConditionChecked(false);
 		this.getBody().resetIterator();
 		this.stop = false;
 	}
-	
-	private boolean conditionResult;
-	private boolean conditionChecked = false;
 	
 	@Override
 	public List<Statement> getChildrenStatements(){
@@ -111,6 +140,8 @@ public class WhileDo extends Statement implements ILoop{
 		childrenStatements.add(this.getBody());
 		return childrenStatements;
 	}
+	
+	/* Break */
 	
 	public void breakLoop(){
 		this.stop = true;
