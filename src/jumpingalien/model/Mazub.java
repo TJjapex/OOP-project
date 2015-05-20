@@ -38,7 +38,7 @@ import jumpingalien.model.terrain.TerrainProperties;
  *
  * @note Class invariants of the class GameObject also apply to this subclass.
  */
-public class Mazub extends GameObject{
+public class Mazub extends GameObject implements IDuckable, IJumpable{
 		
 	/****************************************************** CONSTANTS **************************************************/	
 	
@@ -615,6 +615,7 @@ public class Mazub extends GameObject{
 	 * @post	The ducking status of Mazub will be true.
 	 * 			| new.getDucking() == true
 	 */
+	@Override
 	public void startDuck(){	
 		this.setVelocityXMax(VELOCITY_X_MAX_DUCKING);
 		this.setDucking(true);
@@ -642,6 +643,7 @@ public class Mazub extends GameObject{
 	 * 				Mazub is not ducking.
 	 * 				| !this.isDucking()
 	 */
+	@Override
 	public void endDuck() throws IllegalStateException{
 		
 		if(!this.isDucking())

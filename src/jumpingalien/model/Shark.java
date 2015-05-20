@@ -25,7 +25,7 @@ import jumpingalien.util.Util;
  * 
  * @note Class invariants of the class GameObject also apply to this subclass.
  */
-public class Shark extends GameObject{
+public class Shark extends GameObject implements IJumpable{
 	
 	/****************************************************** CONSTANTS **************************************************/
 	
@@ -529,7 +529,7 @@ public class Shark extends GameObject{
 
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
-			
+			System.out.println("check");
 			this.periodicMovement();
 					
 			this.getTimer().setSinceLastPeriod(0);		
