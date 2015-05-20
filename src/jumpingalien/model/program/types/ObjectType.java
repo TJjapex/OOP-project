@@ -4,13 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jumpingalien.model.Buzam;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.IKind;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
-import jumpingalien.model.Tile;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.IProgramFactory.Kind;
 
@@ -21,11 +19,11 @@ public class ObjectType extends Type {
 	}
 		
 	public ObjectType(){
-			this(null);
+		this(null);
 	}
 	
 	public IKind getValue() {
-			return this.value;
+		return this.value;
 	}
 	
 	private final IKind value;
@@ -47,8 +45,6 @@ public class ObjectType extends Type {
 		return new BooleanType(((ObjectType) o).getValue() == this.getValue());
 	}
 	
-	
-	// TODO niet echt proper dat deze gewoon een set van objects returned ipv objecttype maar anders moet er zoveel verandert worden...
 	public static Set<IKind> getObjects(Kind kind, Program program){
 		switch (kind) {
 		case MAZUB:
@@ -66,19 +62,13 @@ public class ObjectType extends Type {
 		case TERRAIN:
 			return new HashSet<IKind> (program.getGameObject().getWorld().getAllTiles());
 		case ANY:
-			// TODO waarom hier niet World.getAllGameObjects gebruiken?
 			HashSet<IKind> anySet= new HashSet<IKind>();
-			anySet.add(Mazub.getInWorld(program.getGameObject().getWorld()));
-			anySet.addAll(Buzam.getAllInWorld(program.getGameObject().getWorld()));
-			anySet.addAll(Slime.getAllInWorld(program.getGameObject().getWorld()));
-			anySet.addAll(Shark.getAllInWorld(program.getGameObject().getWorld()));
-			anySet.addAll(Plant.getAllInWorld(program.getGameObject().getWorld()));
+			anySet.addAll(program.getGameObject().getWorld().getAllGameObjects());
 			anySet.addAll(program.getGameObject().getWorld().getAllTiles());
 			return anySet;
 		default:
 			throw new IllegalArgumentException();
 		}
 	}
-
 	
 }

@@ -2,6 +2,7 @@ package jumpingalien.part1.facade;
 import jumpingalien.util.ModelException;
 import jumpingalien.util.Sprite;
 import jumpingalien.model.Mazub;
+import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -123,7 +124,7 @@ public class Facade implements IFacade {
 	public void endJump(Mazub alien){
 		try{
 			alien.endJump();
-		}catch( IllegalStateException exc ){
+		}catch( IllegalEndJumpException exc ){
 		}
 		
 	}

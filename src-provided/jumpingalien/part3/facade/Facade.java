@@ -32,7 +32,6 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 		}catch(IllegalArgumentException exc){
 			throw new ModelException("Illegal argument exception: " + exc.getMessage());
 		}
-		// TODO: bedoelen ze dit?
 	}
 
 	@Override
@@ -147,4 +146,5 @@ public class Facade  extends jumpingalien.part2.facade.Facade implements IFacade
 	public int getNbHitPoints(Buzam alien) {
 		return alien.getNbHitPoints();
 	}
+	
 }

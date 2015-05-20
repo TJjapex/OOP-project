@@ -86,7 +86,7 @@ public class IfThen extends Statement {
 		if (!isConditionChecked()){
 			setConditionResult(getCondition().execute(program).getValue());
 			setConditionChecked(true);
-			System.out.println("IfThen, checked condition: "+ this.conditionResult);
+			//System.out.println("IfThen, checked condition: "+ this.conditionResult);
 		}else{
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);

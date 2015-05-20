@@ -92,11 +92,17 @@ public class ForEachDo extends Statement implements ILoop {
 	
 	public void execute(Program program) throws ProgramRuntimeException{
 		if(!hasObjectListIterator()){
-			System.out.println("Foreach, object list built");
+			//System.out.println("Foreach, object list built");
 			setObjectListIterator(buildObjectList(program).iterator());
 			
 			// Load in first looping variable
-			loadNextLoopObject(program);
+			if (this.getObjectListIterator().hasNext()){
+				loadNextLoopObject(program);
+			} else{
+				System.out.println("empty loop set");
+				this.breakLoop();
+			}
+				
 		}else{
 			if(getBody().iterator().hasNext()){
 				getBody().iterator().next().execute(program);
@@ -104,7 +110,7 @@ public class ForEachDo extends Statement implements ILoop {
 				
 				// If all statements in the foreach body were executed, load in a new loop variable and start again
 				if(this.iterator().hasNext()){
-					System.out.println("Foreach, new iterating element" );
+					//System.out.println("Foreach, new iterating element" );
 
 					loadNextLoopObject(program);
 					getBody().resetIterator();
@@ -131,16 +137,16 @@ public class ForEachDo extends Statement implements ILoop {
 				
 				if(!hasObjectListIterator())
 					return true;
-				if(getBody().iterator().hasNext()){
+				if(getBody().iterator().hasNext())
 					return true;
-				}
+				
 				return getObjectListIterator().hasNext();
 			}
 			
 			@Override
 			public Statement next() throws NoSuchElementException{				
 				if(this.hasNext()){
-					// TODO iets setten in zo'n iterator is niet echt proper...
+
 					if(!hasObjectListIterator())
 						return ForEachDo.this;
 					
@@ -153,7 +159,7 @@ public class ForEachDo extends Statement implements ILoop {
 	}
 	
 	@Override
-	public void resetIterator(){ // moet kunnen aangeroepen worden vanuit Program?
+	public void resetIterator(){
 		setObjectListIterator(null);
 		this.stop = false;
 		this.getBody().resetIterator();
@@ -190,26 +196,24 @@ public class ForEachDo extends Statement implements ILoop {
 					return getWhereCondition() == null || getWhereCondition().execute(program).getValue();
 				}
 			).sorted(
-				(o1, o2) -> { 
-					
-						// TODO dit in een nieuwe methode zetten en daarnaar verwijzen? Is wat properder
-							if (getSortCondition() == null)
-								return 0;
-							loadLoopObject(program, o1);
-							double r1 = ((DoubleType) getSortCondition().execute(program)).getValue();
-							loadLoopObject(program, o2);
-							double r2 = ((DoubleType) getSortCondition().execute(program)).getValue();
-							return Double.compare(r1, r2);
-							
-							
-			}).collect(Collectors.toList());
+				(o1, o2) -> this.compareOnSortCondition(program, o1, o2)).collect(Collectors.toList());
 		
 		if (getSortDirection() == SortDirection.DESCENDING)
 			Collections.reverse(listStream);
 		
-		System.out.println("STREAM: " + Arrays.toString(listStream.toArray()));
+		//System.out.println("STREAM: " + Arrays.toString(listStream.toArray()));
 		return listStream;
 
+	}
+	
+	public int compareOnSortCondition(Program program, ObjectType o1, ObjectType o2){
+		if (getSortCondition() == null)
+			return 0;
+		loadLoopObject(program, o1);
+		double r1 = ((DoubleType) getSortCondition().execute(program)).getValue();
+		loadLoopObject(program, o2);
+		double r2 = ((DoubleType) getSortCondition().execute(program)).getValue();
+		return Double.compare(r1, r2);
 	}
 	
 	/* Loop control */

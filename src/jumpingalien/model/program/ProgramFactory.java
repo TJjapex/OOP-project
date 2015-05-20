@@ -9,6 +9,7 @@ import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
+import jumpingalien.model.Tile;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
@@ -23,6 +24,7 @@ import jumpingalien.model.program.statements.WhileDo;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.SourceLocation;
 import jumpingalien.model.program.types.*;
+import jumpingalien.model.terrain.Terrain;
 
 
 public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, Statement, Type, Program>{
@@ -197,25 +199,20 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	}
 
 	@Override
-	public Expression<DoubleType> createGetTile(Expression<?> x, Expression<?> y,
+	public Expression<ObjectType> createGetTile(Expression<?> x, Expression<?> y,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		
-		// Tile object? uuhm?
-		return null;
+		return new GetTile(sourceLocation,x,y);
 	}
 
 	@Override
 	public Expression<ObjectType> createSearchObject(Expression<?> direction,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
 		return new SearchObject(Expression.cast(direction), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsMazub(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO dit geeft niet Buzam, zou dat moeten?
 		return new Checker( Expression.cast(expr), (x, program)-> (x instanceof Mazub && ! (x instanceof Buzam)), sourceLocation);
 	}
 
@@ -240,41 +237,36 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<BooleanType> createIsDead(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new Checker( Expression.cast(expr), (x, program)-> (((GameObject) x).isKilled()), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program) -> (((GameObject) x).isKilled()), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsTerrain(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Checker( Expression.cast(expr), (x, program) -> (x instanceof Tile), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsPassable(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Checker( Expression.cast(expr), (x, program) -> ((Tile) x).getTerrainType() != Terrain.SOLID, sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsWater(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Checker( Expression.cast(expr), (x, program) -> ((Tile) x).getTerrainType() == Terrain.WATER, sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsMagma(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Checker( Expression.cast(expr), (x, program) -> ((Tile) x).getTerrainType() == Terrain.MAGMA, sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsAir(Expression<?> expr, SourceLocation sourceLocation) {
-		// TODO
-		return null;
+		return new Checker( Expression.cast(expr), (x, program) -> ((Tile) x).getTerrainType() == Terrain.AIR, sourceLocation);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -317,7 +309,6 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 			Expression<?> sort,
 			jumpingalien.part3.programs.IProgramFactory.SortDirection sortDirection,
 			Statement body, SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
 		return new ForEachDo(variableKind, variableName, Expression.cast(where), Expression.cast(sort), sortDirection, body, sourceLocation);
 	}
 
@@ -417,7 +408,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type> globalVariables) {
-		System.out.println("ProgramFactory, createProgram with mainStatement: "+mainStatement);
+		//System.out.println("ProgramFactory, createProgram with mainStatement: "+mainStatement);
 		return new Program(mainStatement, globalVariables);
 	}
 

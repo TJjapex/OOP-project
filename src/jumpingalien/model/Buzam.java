@@ -101,20 +101,18 @@ public class Buzam extends Mazub{
 	protected void removeFromWorld(World world){
 		assert this != null && !this.hasWorld();
 		assert world.hasAsGameObject(this);
-		
+		System.out.println("Buzam removed from World!");
 		world.buzams.remove(this);
 	}
 	
 	@Override
 	protected boolean hasAsWorld(World world){
-		return Shark.getAllInWorld(world).contains(this);
+		return Buzam.getAllInWorld(world).contains(this);
 	}
-	
 	
 	public static int getNbInWorld(World world){
-		return Shark.getAllInWorld(world).size();
+		return Buzam.getAllInWorld(world).size();
 	}
-	
 	
 	public static Set<Buzam> getAllInWorld(World world){
 		HashSet<Buzam> buzamsClone =  new HashSet<Buzam>(world.buzams);

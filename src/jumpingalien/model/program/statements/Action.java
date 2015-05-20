@@ -3,6 +3,7 @@ package jumpingalien.model.program.statements;
 import java.util.function.BiConsumer;
 
 import jumpingalien.model.GameObject;
+import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.Expression;
@@ -32,8 +33,12 @@ public class Action extends Statement {
 	@Override
 	public void execute(Program program) throws IllegalStateException{
 		if(this.iterator().hasNext()){
-				System.out.println("Program, ACTION");
-			getOperator().accept( this.getGameObject().execute(program).getValue(), program);
+			//System.out.println("Program, ACTION");
+			try {
+				getOperator().accept( this.getGameObject().execute(program).getValue(), program);
+			} catch (IllegalEndJumpException exc) {
+				
+			}
 			setStatementUsed(true);
 		}else{
 			throw new ProgramRuntimeException("Statement executed while not having next useful statement!");

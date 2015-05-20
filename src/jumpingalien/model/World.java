@@ -1,7 +1,6 @@
 package jumpingalien.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,7 +14,6 @@ import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.helper.Vector;
-import jumpingalien.util.ModelException;
 import jumpingalien.util.Util;
 
 /**
@@ -34,6 +32,7 @@ import jumpingalien.util.Util;
  * @invar	| isValidTileLength(getTileLength())
  */
 public class World {
+	
 	/***************************************************** CONSTRUCTOR *************************************************/
 	
 	/**
@@ -617,13 +616,13 @@ public class World {
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		
 			
-		getMazub().advanceTime(dt);	
+		this.getMazub().advanceTime(dt);	
 
 		for(GameObject object: this.getAllEnemies()){
 			object.advanceTime(dt);
 		}
 		
-		updateDisplayPosition();
+		this.updateDisplayPosition();
 	}
 	
 	/************************************************* GEOLOGICAL FEATURES *********************************************/	
@@ -797,11 +796,8 @@ public class World {
 	 * 
 	 * @return	If there is only one Mazub in the World, return this Mazub. 
 	 * 			If there is no Mazub in this world, return null.
-	 * @throws	IllegalStateException
-	 * 			| Mazub.getNbInWorld(this) != 1
 	 */
-	public Mazub getMazub() throws IllegalStateException{
-		//System.out.println("get mazub" + this.mazub);
+	public Mazub getMazub(){
 		return this.mazub;
 	}
 	
@@ -875,6 +871,7 @@ public class World {
 		Set<GameObject> allEnemies = new HashSet<GameObject>( Plant.getAllInWorld(this) );
 		allEnemies.addAll( Slime.getAllInWorld(this));
 		allEnemies.addAll( Shark.getAllInWorld(this));
+		allEnemies.addAll( Buzam.getAllInWorld(this));
 		return allEnemies;
 	}	
 	
@@ -886,7 +883,8 @@ public class World {
 	 * @return	The number of Mazubs, Plants, Sharks and Slimes in this World added together.
 	 */
 	public int getNbGameObjects(){
-		return Mazub.getNbInWorld(this) + Plant.getNbInWorld(this) + Shark.getNbInWorld(this) + Slime.getNbInWorld(this);
+		return Mazub.getNbInWorld(this) + Plant.getNbInWorld(this) + Shark.getNbInWorld(this) +
+			   Slime.getNbInWorld(this) + Buzam.getNbInWorld(this);
 	}
 	
 	/**
@@ -905,11 +903,9 @@ public class World {
 	/* Variables */
 	
 	/**
-	 * Set registering the Mazubs in this World.
+	 * Set registering the Buzams in this World.
 	 */
-	//Set<Mazub> mazubs = new HashSet<Mazub>();
 	Set<Buzam> buzams = new HashSet<Buzam>();
-
 	
 	/**
 	 * Set registering the Plants in this World.
@@ -979,5 +975,4 @@ public class World {
 	 */
 	private boolean terminated = false;
 
-	
 }

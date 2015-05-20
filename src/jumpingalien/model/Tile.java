@@ -1,8 +1,5 @@
 package jumpingalien.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import jumpingalien.model.terrain.Terrain;
 
 public class Tile implements IKind {

@@ -68,7 +68,7 @@ public class WhileDo extends Statement implements ILoop{
 		if (!isConditionChecked()){
 			setConditionResult(this.getCondition().execute(program).getValue());
 			setConditionChecked(true);
-			System.out.println("WhileDo, checked condition: "+ this.conditionResult);
+			//System.out.println("WhileDo, checked condition: "+ this.conditionResult);
 		}else{
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);

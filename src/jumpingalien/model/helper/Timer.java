@@ -46,6 +46,7 @@ public class Timer {
 	 * @effect 	The initial time since the Game object took Terrain damage, is set to infinity for each Terrain.
 	 * 			| for ( terrain in Terrain.getAllTerrainTypes() )
 	 * 			| 	setSinceLastTerrainDamage(terrain, Double.POSITIVE_INFINITY)
+	 * TODO: commentary
 	 */
 	public Timer(){
 		
@@ -53,6 +54,7 @@ public class Timer {
 		this.setSinceLastSprite(0);
 		this.setSinceLastPeriod(Double.POSITIVE_INFINITY);
 		this.setSinceEnemyCollision(Double.POSITIVE_INFINITY);
+		this.setSinceLastProgram(0);
 		
 		for(Terrain terrain : Terrain.getAllTerrainTypes()){
 			this.setTerrainOverlapDuration(terrain, 0.0);
@@ -406,5 +408,24 @@ public class Timer {
 	/**
 	 * Map registering the elapsed time since a Game object has taken damage from each terrain for the last time.
 	 */
-	private Map<Terrain, Double> sinceLastTerrainDamage = new HashMap<Terrain, Double>();	
+	private Map<Terrain, Double> sinceLastTerrainDamage = new HashMap<Terrain, Double>();
+	
+	// TODO: commentary
+	
+	@Basic
+	public double getSinceLastProgram() {
+		return this.sinceLastProgram;
+	}
+	
+	@Basic
+	public void setSinceLastProgram(double dt) {
+		this.sinceLastProgram = dt;
+	}
+	
+	public void increaseSinceLastProgram(double dt){
+		this.setSinceLastProgram(this.getSinceLastProgram()+dt);
+	}
+	
+	private double sinceLastProgram;
+	
 }

@@ -1,3 +1,4 @@
+
 package jumpingalien.model;
 
 import java.util.HashSet;
@@ -353,11 +354,11 @@ public class Mazub extends GameObject{
 	@Override
 	protected void removeFromWorld(World world){
 		assert world != null && !this.hasWorld();
-	//	assert world.hasAsGameObject(this);
+		assert world.hasAsGameObject(this);
 		
 		System.out.println("Mazub class, Mazub removed from world!");
 		
-		//world.removeMazub();
+		world.removeMazub();
 		// TODO geeft problemen
 	}
 	
@@ -843,12 +844,13 @@ public class Mazub extends GameObject{
 	/**
 	 * Return all impassable Game objects for a Mazub.
 	 * 
-	 * @return	A Hashset that contains all Mazubs, Slimes, Sharks and Plants in the Mazub's world.
+	 * @return	A Hashset that contains the Mazub and all Buzams, Slimes, Sharks and Plants in the Mazub's world.
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
 		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Buzam.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Plant.getAllInWorld(this.getWorld()));
@@ -868,10 +870,8 @@ public class Mazub extends GameObject{
 		if(!alien.isKilled() && !this.isImmune()){
 			if(!this.doesOverlapWith(alien, Orientation.BOTTOM) || this.getRoundedPositionY() == alien.getRoundedPositionY()){
 				this.takeDamage(ALIEN_DAMAGE);
-				if(this instanceof Buzam){
-					System.out.println("buzam take damage");
-				}
-				
+				if (this instanceof Buzam)
+					System.out.println(this.getNbHitPoints());
 				this.setImmune(true);
 				this.getTimer().setSinceEnemyCollision(0);
 			}	

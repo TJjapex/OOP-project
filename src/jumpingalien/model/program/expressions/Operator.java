@@ -9,4 +9,6 @@ public abstract class Operator<T extends Type> extends Expression<T> {
 		super(sourceLocation);
 	}
 
+	// mag voorlopig weg
+	
 }

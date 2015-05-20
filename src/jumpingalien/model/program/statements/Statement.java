@@ -28,7 +28,7 @@ public abstract class Statement {
 			
 			@Override
 			public boolean hasNext(){
-				return !isStatemendUsed();
+				return !isStatementUsed();
 			}
 			
 			@Override
@@ -44,13 +44,13 @@ public abstract class Statement {
 		
 	}
 	
-	public void resetIterator(){ // moet kunnen aangeroepen worden vanuit Program?
+	public void resetIterator(){
 		setStatementUsed(false);
 	}
 	
 	/* Statement used */
 	
-	protected boolean isStatemendUsed(){
+	protected boolean isStatementUsed(){
 		return this.statementUsed;
 	}
 	
@@ -92,12 +92,7 @@ public abstract class Statement {
 	
 	/* Well formed */
 	
-	/**
-	 * Checks if this statement and its children are well formed
-	 * @param inWhile
-	 * @param inForEach
-	 * @return
-	 */
+	// Checks if this statement and its children are well formed.
 	public boolean isWellFormed(boolean inWhile, boolean inForEach){
 		
 		if (this instanceof ForEachDo)

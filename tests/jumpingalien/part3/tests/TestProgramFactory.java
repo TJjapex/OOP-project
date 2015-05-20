@@ -163,7 +163,6 @@ public class TestProgramFactory {
 		facade.addPlant(world, plant2);
 		
 		for (int i=0; i<7; i++){
-			System.out.println("world"+world);
 			facade.advanceTime(world, 0.2);
 		}
 	}

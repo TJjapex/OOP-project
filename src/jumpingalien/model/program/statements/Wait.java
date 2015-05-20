@@ -21,7 +21,7 @@ public class Wait extends Statement{
 	
 	@Override
 	public void execute(Program program) throws ProgramRuntimeException{
-		System.out.println("Statement, WAITING, cycle:"+this.cycles);
+		//System.out.println("Statement, WAITING, cycle:"+this.cycles);
 		if(this.iterator().hasNext())
 			this.iterator().next();
 		else

@@ -31,7 +31,8 @@ public class UnaryOperator<I extends Type, T extends Type> extends Operator<T>{
 	private final Function<I, T> operator;
 	
 	@Override
-	public T execute(Program program) {
+	public T execute(final Program program) {
 		 return getOperator().apply(getOperand().execute(program));
 	}
+	
 }

@@ -17,7 +17,7 @@ public class Program {
 		this.mainStatement = mainStatement;
 		this.initialGlobalVariables = globalVariables;
 		this.globalVariables = globalVariables;
-		System.out.println("Program well formed: " + this.isWellFormed());
+		//System.out.println("Program well formed: " + this.isWellFormed());
 	}
 	
 	/* Global variables */
@@ -35,7 +35,7 @@ public class Program {
 	public void setVariable(String name, Type value){
 		if(!globalVariables.containsKey(name))
 			throw new IllegalArgumentException();
-		System.out.println("Program, variable set "+name+ " to " + value);
+		//System.out.println("Program, variable set "+name+ " to " + value);
 		this.globalVariables.put(name, value);
 	}
 	
@@ -68,7 +68,7 @@ public class Program {
 		// (kreeg in ieder geval een stackoverflow bij het testen). Komt omdat die dan altijd restart en executeNext doet. 
 		// Logisch natuurlijk, laten we ervan uit gaan dat we gewoon nooit een lege body krijgen
 		if( this.mainStatement.iterator().hasNext() ){
-			System.out.println("EXECUTING NEXT STATEMENT:");
+			//System.out.println("EXECUTING NEXT STATEMENT:");
 			getMainStatement().execute(this);
 		}else{
 			System.out.println("no next statement in mainStatement -> restart mainStatement");

@@ -574,7 +574,7 @@ public class Slime extends GameObject {
 	/**
 	 * Return all impassable Game objects for a Slime.
 	 * 
-	 * @return	A Hashset that contains all Mazubs, Slimes and Sharks in the Slime's world.
+	 * @return	A Hashset that contains the Mazub and all Buzams, Slimes and Sharks in the Slime's world.
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
@@ -582,6 +582,7 @@ public class Slime extends GameObject {
 		
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
 		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Buzam.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;

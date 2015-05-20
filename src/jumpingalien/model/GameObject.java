@@ -6,11 +6,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.antlr.v4.parse.ANTLRParser.throwsSpec_return;
-
 import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.CollisionException;
+import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -20,7 +19,6 @@ import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.terrain.TerrainInteraction;
 import jumpingalien.model.terrain.TerrainProperties;
-import jumpingalien.part3.programs.internal.generated.JumpingAlienProgParser.StartDuckStatementContext;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import be.kuleuven.cs.som.annotate.*;
@@ -178,7 +176,7 @@ public abstract class GameObject implements IKind{
 		// Program
 		this.program = program;
 		if(program != null){
-			System.out.println("GameObject: got program in constructor");
+			//System.out.println("GameObject: got program in constructor");
 			program.setGameObject(this);
 		}
 	
@@ -279,6 +277,8 @@ public abstract class GameObject implements IKind{
 	 * 			| getTimer().increaseSinceLastTerrainDamage(dt)
 	 * @effect	Increase the time since the last period.
 	 * 			| getTimer().increaseSinceLastPeriod(dt)
+	 * @effect	Increase the time since the last program execution.
+	 * 			| getTimer().increaseSinceLastProgram(dt)
 	 * @effect	Reset the terrain overlap duration.
 	 * 			| resetTerrainOverlapDuration()
 	 */
@@ -291,6 +291,7 @@ public abstract class GameObject implements IKind{
 		this.getTimer().increaseSinceLastTerrainDamage(dt);
 		this.getTimer().increaseSinceEnemyCollision(dt);
 		this.getTimer().increaseSinceLastPeriod(dt);
+		this.getTimer().increaseSinceLastProgram(dt);
 		
 		this.resetTerrainOverlapDuration();
 	}
@@ -555,6 +556,7 @@ public abstract class GameObject implements IKind{
 	 * 
 	 * @return	An integer that represents the width of the Game object's active sprite.
 	 */
+	@Override
 	public int getWidth() {
 		return this.getCurrentSprite().getWidth();
 	}
@@ -576,6 +578,7 @@ public abstract class GameObject implements IKind{
 	 * 
 	 * @return	An integer that represents the height of the Game object's active sprite.
 	 */
+	@Override
 	public int getHeight() {
 		return this.getCurrentSprite().getHeight();
 	}
@@ -613,7 +616,7 @@ public abstract class GameObject implements IKind{
 	 * @return 	An integer that represents the x-coordinate of a Game object's
 	 * 			bottom left pixel in the world.
 	 */
-	@Raw
+	@Raw @Override
 	public int getRoundedPositionX() {
 		return (int) Math.floor(this.getPositionX());
 	}
@@ -713,7 +716,7 @@ public abstract class GameObject implements IKind{
 	 * @return 	An integer that represents the y-coordinate of a Game object's
 	 * 			bottom left pixel in the world.
 	 */
-	@Raw
+	@Raw @Override
 	public int getRoundedPositionY() {
 		return (int) Math.floor(this.getPositionY());
 	}
@@ -1354,13 +1357,13 @@ public abstract class GameObject implements IKind{
 	 * 
 	 * @effect	Set the vertical velocity of the Game object to 0.
 	 * 			| setVelocityY(0)
-	 * @throws 	IllegalStateException
+	 * @throws 	IllegalEndJumpException
 	 * 				The game object does not have a positive vertical velocity. (up to a certain epsilon)
 	 * 				| ! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )
 	 */
-	public void endJump() throws IllegalStateException {
+	public void endJump() throws IllegalEndJumpException {
 		if(! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 ))
-			throw new IllegalStateException("Game object does not have a positive vertical velocity!");
+			throw new IllegalEndJumpException();
 		
 		this.setVelocityY(0);
 	}
@@ -1377,8 +1380,9 @@ public abstract class GameObject implements IKind{
 	 *				| ! hasProperWorld()
 	 */
 	public boolean isOnGround() throws IllegalStateException{		
-		if(! this.hasProperWorld())
-			throw new IllegalStateException("GameObject not in proper world!");
+		if(! this.hasProperWorld()){
+			System.out.println(this);
+			throw new IllegalStateException("GameObject not in proper world!");}
 		
 		return doesInteractWithTerrain(TerrainInteraction.STAND_ON, Orientation.BOTTOM) || 
 			   doesInteractWithGameObjects(TerrainInteraction.STAND_ON, Orientation.BOTTOM);
@@ -1414,7 +1418,10 @@ public abstract class GameObject implements IKind{
 		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
-				
+		
+		if (this.hasProgram() && dt < 0.001)
+			this.getProgram().executeNext();
+		
 		double minDt;
 		
 		while(!Util.fuzzyGreaterThanOrEqualTo(0, dt)){
@@ -1442,11 +1449,10 @@ public abstract class GameObject implements IKind{
 	 */
 	@Model
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
+		
 		if(this.hasProgram()){
 			this.advanceProgram();
 		}
-		
-		
 		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
@@ -1466,7 +1472,6 @@ public abstract class GameObject implements IKind{
 			
 			this.updateTimers(dt);
 			
-			//if (this.program == null)
 			this.doMove(dt);
 			
 			this.getAnimation().updateSpriteIndex();
@@ -1476,7 +1481,13 @@ public abstract class GameObject implements IKind{
 	
 	protected void advanceProgram(){
 		// TODO moet nog met tijd enzo rekening gehouden worden, maar kzal al blij zijn als het gewoon iets doet nu
-		this.getProgram().executeNext();
+		//System.out.println(this.getTimer().getSinceLastProgram()/0.001);
+		for (int i = 0; i < this.getTimer().getSinceLastProgram()/0.001; i++){
+			this.getProgram().executeNext();
+		}
+		
+		this.getTimer().setSinceLastProgram( this.getTimer().getSinceLastProgram()%0.001 );
+				
 	}
 
 	/**
@@ -2114,8 +2125,14 @@ public abstract class GameObject implements IKind{
 		World world = this.getWorld();
 		
 
-		if(Mazub.getInWorld(world) != this && this.doesOverlapWith(Mazub.getInWorld(world))){
+		if( Mazub.getInWorld(world) != this && this.doesOverlapWith(Mazub.getInWorld(world))){
 			this.processMazubOverlap(Mazub.getInWorld(world));
+		}
+		
+		for(Buzam buzam : Buzam.getAllInWorld(world)){
+			if(buzam != this && this.doesOverlapWith(buzam)){
+				this.processMazubOverlap(buzam);
+			}
 		}
 		
 		for(Plant plant :  Plant.getAllInWorld(world)){

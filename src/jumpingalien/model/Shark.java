@@ -680,12 +680,13 @@ public class Shark extends GameObject{
 	/**
 	 * Return all impassable Game objects for a Shark.
 	 * 
-	 * @return	A Hashset that contains all Mazubs, Slimes and Sharks in the Shark's world.
+	 * @return	A Hashset that contains the Mazub and all Buzams, Slimes and Sharks in the Shark's world.
 	 */
 	@Override
 	protected Set<GameObject> getAllImpassableGameObjects(){
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
 		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
+		allImpassableGameObjects.addAll(Buzam.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Slime.getAllInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Shark.getAllInWorld(this.getWorld()));
 		return allImpassableGameObjects;

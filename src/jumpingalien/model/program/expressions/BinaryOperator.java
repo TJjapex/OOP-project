@@ -7,6 +7,14 @@ import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Binary Operators as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class BinaryOperator<I extends Type, T extends Type> extends Operator<T>{
 	
 	public BinaryOperator(Expression<I> left, Expression<I> right, BiFunction<I, I, T> operator, SourceLocation sourceLocation){
@@ -30,7 +38,6 @@ public class BinaryOperator<I extends Type, T extends Type> extends Operator<T>{
 	}
 	
 	private final Expression<I> rightOperand;
-	
 	
 	@Basic @Immutable
 	public BiFunction<I, I, T> getOperator(){

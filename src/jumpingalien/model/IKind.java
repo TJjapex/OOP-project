@@ -1,8 +1,6 @@
 package jumpingalien.model;
 
 public interface IKind {
-
-	// TODO: overrides plaatsen in subclasses
 	
 	public int getRoundedPositionX();
 	
