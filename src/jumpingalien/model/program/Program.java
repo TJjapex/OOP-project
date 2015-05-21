@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+
+
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.GameObject;
 import jumpingalien.model.program.statements.*;
 import jumpingalien.model.program.types.Type;
@@ -22,9 +26,9 @@ public class Program {
 	
 	/* Global variables */
 	
-	private Map<String, Type> initialGlobalVariables = new HashMap<>();
+	private final Map<String, Type> initialGlobalVariables;
 	private Map<String, Type> globalVariables = new HashMap<>();
-	
+
 	public Type getVariable(String name){
 		if(!this.globalVariables.containsKey(name))
 			return null;
@@ -35,16 +39,16 @@ public class Program {
 	public void setVariable(String name, Type value){
 		if(!globalVariables.containsKey(name))
 			throw new IllegalArgumentException();
-		//System.out.println("Program, variable set "+name+ " to " + value);
 		this.globalVariables.put(name, value);
 	}
 	
 	/* GameObject relation */
-	
+	@Basic
 	public GameObject getGameObject() {
 		return this.gameObject;
 	}
 	
+	@Basic
 	public void setGameObject(GameObject gameObject){
 		assert gameObject.getProgram() == this;
 		this.gameObject = gameObject;
@@ -54,6 +58,7 @@ public class Program {
 	
 	/* Main statement */
 	
+	@Basic @Immutable
 	public Statement getMainStatement() {
 		return mainStatement;
 	}
@@ -63,12 +68,7 @@ public class Program {
 	/* Execution */
 	
 	public void executeNext(){
-		
-		// TODO volgens mij zit hier een bug wanneer het main statement leeg is ofzo en dat die blijft loopen
-		// (kreeg in ieder geval een stackoverflow bij het testen). Komt omdat die dan altijd restart en executeNext doet. 
-		// Logisch natuurlijk, laten we ervan uit gaan dat we gewoon nooit een lege body krijgen
 		if( this.mainStatement.iterator().hasNext() ){
-			//System.out.println("EXECUTING NEXT STATEMENT:");
 			getMainStatement().execute(this);
 		}else{
 			System.out.println("no next statement in mainStatement -> restart mainStatement");

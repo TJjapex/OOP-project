@@ -1,5 +1,7 @@
 package jumpingalien.model.program.expressions;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.program.*;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
@@ -19,6 +21,7 @@ public class Constant<T extends Type> extends Expression<T>{
 		this.value = value;
 	}
 	
+	@Basic @Immutable
 	public T getValue(){
 		return this.value;
 	}
@@ -26,7 +29,7 @@ public class Constant<T extends Type> extends Expression<T>{
 	private final T value;
 
 	@Override
-	public T execute(Program program) {
+	public T execute(final Program program) {
 		return this.getValue();
 	}
 	

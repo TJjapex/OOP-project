@@ -15,7 +15,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * @version 1.0
  * 
  */
-public class Checker extends Operator<BooleanType>{
+public class Checker extends Expression<BooleanType>{
 	
 	public Checker(Expression<ObjectType> expr, BiFunction<Object, Program, Boolean> operator, SourceLocation sourceLocation){
 		super( sourceLocation);

@@ -1,5 +1,7 @@
 package jumpingalien.model.program.expressions;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.types.Type;
 import jumpingalien.part3.programs.SourceLocation;
@@ -18,10 +20,11 @@ public abstract class Expression<T extends Type> {
 		this.sourceLocation = sourceLocation;
 	}
 	
-	public abstract T execute(Program program);
+	public abstract T execute(final Program program);
 	
+	@Basic @Immutable
 	public SourceLocation getSourceLocation() {
-		return sourceLocation;
+		return this.sourceLocation;
 	}
 
 	private final SourceLocation sourceLocation;

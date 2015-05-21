@@ -18,7 +18,7 @@ public class GetTile extends Expression<ObjectType> {
 	private Expression<?> x;
 	private Expression<?> y;
 	
-	// is echt nog heel lelijk maar wou het gewoon ff werkend krijgen
+	// TODO is echt nog heel lelijk maar wou het gewoon ff werkend krijgen
 	@Override
 	public ObjectType execute(Program program) {
 		World world = program.getGameObject().getWorld();

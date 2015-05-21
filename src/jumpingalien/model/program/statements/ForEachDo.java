@@ -1,6 +1,5 @@
 package jumpingalien.model.program.statements;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
@@ -8,6 +7,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.IKind;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
@@ -33,15 +34,15 @@ public class ForEachDo extends Statement implements ILoop {
 	}
 	
 	/* Kind */
-	
-	private Kind kind;
-	
+	@Basic @Immutable
 	public Kind getKind(){
 		return this.kind;
 	}
 	
+	private Kind kind;
+
 	/* Loop variable */
-	
+	@Basic @Immutable
 	public String getLoopVariableName(){
 		return this.loopVariableName;
 	}
@@ -57,7 +58,7 @@ public class ForEachDo extends Statement implements ILoop {
 	}
 	
 	/* Where condition */
-	
+	@Basic @Immutable
 	public Expression<BooleanType> getWhereCondition(){
 		return this.whereCondition;
 	}
@@ -65,7 +66,7 @@ public class ForEachDo extends Statement implements ILoop {
 	private final Expression<BooleanType> whereCondition;
 	
 	/* Sort condition */
-	
+	@Basic @Immutable
 	public Expression<?> getSortCondition(){
 		return this.sortCondition;
 	}
@@ -73,7 +74,7 @@ public class ForEachDo extends Statement implements ILoop {
 	private final Expression<?> sortCondition;
 	
 	/* Sort direction */
-	
+	@Basic @Immutable
 	public SortDirection getSortDirection(){
 		return this.sortDirection;
 	}
@@ -81,7 +82,7 @@ public class ForEachDo extends Statement implements ILoop {
 	private final SortDirection sortDirection;
 	
 	/* Statement body */
-	
+	@Basic @Immutable @Override
 	public Statement getBody(){
 		return this.body;
 	}
@@ -90,9 +91,8 @@ public class ForEachDo extends Statement implements ILoop {
 	
 	/* Execution */
 	
-	public void execute(Program program) throws ProgramRuntimeException{
+	public void execute(final Program program) throws ProgramRuntimeException{
 		if(!hasObjectListIterator()){
-			//System.out.println("Foreach, object list built");
 			setObjectListIterator(buildObjectList(program).iterator());
 			
 			// Load in first looping variable
@@ -110,8 +110,6 @@ public class ForEachDo extends Statement implements ILoop {
 				
 				// If all statements in the foreach body were executed, load in a new loop variable and start again
 				if(this.iterator().hasNext()){
-					//System.out.println("Foreach, new iterating element" );
-
 					loadNextLoopObject(program);
 					getBody().resetIterator();
 					this.execute(program); // restart and go to body iteration
@@ -201,7 +199,6 @@ public class ForEachDo extends Statement implements ILoop {
 		if (getSortDirection() == SortDirection.DESCENDING)
 			Collections.reverse(listStream);
 		
-		//System.out.println("STREAM: " + Arrays.toString(listStream.toArray()));
 		return listStream;
 
 	}
@@ -217,11 +214,12 @@ public class ForEachDo extends Statement implements ILoop {
 	}
 	
 	/* Loop control */
-	
+	@Basic @Override
 	public void breakLoop(){
 		this.stop = true;
 	}
 	
+	@Basic @Override
 	public boolean isBroken(){
 		return this.stop;
 	}

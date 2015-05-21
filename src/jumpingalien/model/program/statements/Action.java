@@ -2,7 +2,8 @@ package jumpingalien.model.program.statements;
 
 import java.util.function.BiConsumer;
 
-import jumpingalien.model.GameObject;
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
@@ -18,12 +19,14 @@ public class Action extends Statement {
 		this.gameObject = gameObject;
 	}
 	
+	@Basic @Immutable
 	public BiConsumer<Object, Program> getOperator(){
 		return this.operator;
 	}
 	
 	private final BiConsumer<Object, Program> operator;
 	
+	@Basic @Immutable
 	public Expression<ObjectType> getGameObject(){
 		return this.gameObject;
 	}

@@ -5,13 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class IfThen extends Statement {
+public class IfThen extends Statement implements IConditionedStatement{
 
 	public IfThen(final Expression<BooleanType> condition, final Statement ifBody, final Statement elseBody, SourceLocation sourceLocation){
 		super(sourceLocation);
@@ -26,6 +28,7 @@ public class IfThen extends Statement {
 	
 	/* Condition */
 	
+	@Basic @Immutable @Override
 	public Expression<BooleanType> getCondition(){
 		return this.condition;
 	}
@@ -35,6 +38,7 @@ public class IfThen extends Statement {
 	
 	/* Condition result */
 	
+	@Basic @Override
 	public boolean isConditionTrue() {
 		return conditionResult;
 	}
@@ -47,10 +51,12 @@ public class IfThen extends Statement {
 
 	/* Condition checked */
 	
+	@Basic @Override
 	public boolean isConditionChecked() {
 		return conditionChecked;
 	}
 
+	@Basic
 	private void setConditionChecked(boolean conditionChecked) {
 		this.conditionChecked = conditionChecked;
 	}
@@ -59,7 +65,7 @@ public class IfThen extends Statement {
 	
 	
 	/* If body */
-	
+	@Basic @Immutable
 	public Statement getIfBody(){
 		return this.ifBody;
 	}
@@ -67,13 +73,13 @@ public class IfThen extends Statement {
 	private final Statement ifBody;
 	
 	/* Else body */
-	
+	@Basic @Immutable
 	public Statement getElseBody(){
 		return this.elseBody;
 	}
 	
 	public boolean hasElseBody(){
-		return this.elseBody != null;
+		return getElseBody() != null;
 	}
 	
 	private final Statement elseBody;
@@ -86,7 +92,6 @@ public class IfThen extends Statement {
 		if (!isConditionChecked()){
 			setConditionResult(getCondition().execute(program).getValue());
 			setConditionChecked(true);
-			//System.out.println("IfThen, checked condition: "+ this.conditionResult);
 		}else{
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);

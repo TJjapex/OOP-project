@@ -25,22 +25,6 @@ public class DoubleType extends Type{
 		return String.valueOf(this.getValue());
 	}
 	
-//	public boolean equals(Object o){
-//		if(! ( o instanceof DoubleType ) ){
-//			return false; // TODO eventueel comparen met de overeenkomstige echte types (dus BooleanType met Boolean enzo)
-//		}
-//		
-//		if(this.getValue() == ((DoubleType) o).getValue()){
-//			return true;
-//		}
-//		
-//		return false;
-//	}
-//	
-//	public BooleanType equalsAsBooleanType(Object o){
-//		return new BooleanType(this.equals(o));
-//	}
-	
 	public DoubleType add(DoubleType o){
 		return new DoubleType( this.getValue() + o.getValue() );
 	}
@@ -81,6 +65,7 @@ public class DoubleType extends Type{
 		return new BooleanType( this.getValue() != o.getValue());
 	}
 	
+	@Override
 	public BooleanType equals(Type o){
 		if(! ( o instanceof DoubleType ) ){
 			return new BooleanType(false);

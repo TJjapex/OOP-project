@@ -11,7 +11,7 @@ public class Self<T> extends Expression<ObjectType>{
 	}
 
 	@Override
-	public ObjectType execute(Program program) {
+	public ObjectType execute(final Program program) {
 		return new ObjectType( program.getGameObject() );
 	}	
 	

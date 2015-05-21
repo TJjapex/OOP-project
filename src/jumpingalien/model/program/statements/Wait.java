@@ -19,9 +19,49 @@ public class Wait extends Statement{
 		this.cycles = 0;
 	}
 	
+	/* Time passed */ 
+	@Basic
+	public void setTimePassed(boolean timePassed){
+		this.timePassed = timePassed;
+	}
+	
+	@Basic
+	public boolean hasTimePassed(){
+		return this.timePassed;
+	}
+	
+	// True if and only if the given time amount has passed
+	private boolean timePassed = false;
+
+	/* Amount */
+	
+	@Basic @Immutable
+	public Expression<DoubleType> getAmount() {
+		return this.amount;
+	}
+	
+	// The time amount to wait, given in milliseconds
+	private final Expression<DoubleType> amount;
+	
+	/* Cycles */
+	
+	@Basic
+	public int getCycles() {
+		return this.cycles;
+	}
+	
+	@Basic
+	public void increaseCycles() {
+		this.cycles++;
+	}
+	
+	// the number of waiting cycles that have passed
+	private int cycles;
+	
+	/* Execute */
+	
 	@Override
-	public void execute(Program program) throws ProgramRuntimeException{
-		//System.out.println("Statement, WAITING, cycle:"+this.cycles);
+	public void execute(final Program program) throws ProgramRuntimeException{
 		if(this.iterator().hasNext())
 			this.iterator().next();
 		else
@@ -59,46 +99,11 @@ public class Wait extends Statement{
 		
 	}
 	
+	@Override
 	public void resetIterator(){
 		this.cycles = 0;
 		this.timePassed = false;
 	}
 	
-	/* Time passed */ 
-
-	public void setTimePassed(boolean timePassed){
-		this.timePassed = timePassed;
-	}
 	
-	public boolean hasTimePassed(){
-		return this.timePassed;
-	}
-	
-	// True if and only if the given time amount has passed
-	private boolean timePassed = false;
-
-	/* Amount */
-	
-	@Basic @Immutable
-	public Expression<DoubleType> getAmount() {
-		return this.amount;
-	}
-	
-	// The time amount to wait, given in milliseconds
-	private final Expression<DoubleType> amount;
-	
-	/* Cycles */
-	
-	@Basic
-	public int getCycles() {
-		return this.cycles;
-	}
-	
-	@Basic
-	public void increaseCycles() {
-		this.cycles++;
-	}
-	
-	// the number of waiting cycles that have passed
-	private int cycles;
 }

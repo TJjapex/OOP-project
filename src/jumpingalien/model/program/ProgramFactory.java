@@ -8,7 +8,6 @@ import jumpingalien.model.GameObject;
 import jumpingalien.model.IDuckable;
 import jumpingalien.model.IJumpable;
 import jumpingalien.model.IMovable;
-import jumpingalien.model.IKind;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;

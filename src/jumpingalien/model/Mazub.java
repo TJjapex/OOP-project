@@ -252,8 +252,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 
 	 * @return	An animation that consists of consecutive sprites.
 	 */
-	@Basic
-	@Raw
+	@Override @Basic @Raw
 	public MazubAnimation getAnimation() {
 		return this.animation;
 	}
@@ -687,7 +686,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * @post	The ducking status of Mazub is equal to the given boolean value of ducking.
 	 * 			| new.isDucking() == ducking
 	 */
-	@Basic
+	@Override @Basic
 	public void setDucking(boolean ducking){
 		this.ducking = ducking;
 	}
@@ -733,11 +732,10 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * @return
 	 * 		result == !this.isOnground()
 	 * */
+	@Override
 	public boolean isJumping(){
 		return !this.isOnGround();
-	}
-	
-	
+	}	
 
 	/******************************************************* MOVEMENT **************************************************/
 	

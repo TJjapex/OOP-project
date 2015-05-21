@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
@@ -14,17 +16,18 @@ public class Sequence extends Statement{
 	public Sequence(List<Statement> statements, SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.statements = statements;
-		for (int i = 0; i < this.getStatements().size(); i++){
-			this.getStatementAt(i).setParentStatement(this);
+		for (Statement statement : getStatements()){
+			statement.setParentStatement(this);
 		}
 	}
 	
 	/* Statements */
-	
+	@Basic @Immutable
 	public List<Statement> getStatements(){
 		return this.statements;
 	}
 	
+	@Basic @Immutable
 	public Statement getStatementAt(int index){
 		return this.statements.get(index);
 	}
@@ -33,11 +36,12 @@ public class Sequence extends Statement{
 	
 	
 	/* Current index */
-	
+	@Basic
 	public int getCurrentIndex() {
 		return currentIndex;
 	}
 
+	@Basic
 	public void setCurrentIndex(int currentIndex) {
 		this.currentIndex = currentIndex;
 	}
@@ -83,6 +87,7 @@ public class Sequence extends Statement{
 		
 	}
 	
+	@Override
 	public void resetIterator(){
 		for (int i = 0; i < getStatements().size(); i++){
 			getStatementAt(i).resetIterator();

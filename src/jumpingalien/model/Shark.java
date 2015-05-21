@@ -341,7 +341,7 @@ public class Shark extends GameObject implements IJumpable{
 	 * 
 	 * @return	A double that represents the vertical acceleration of a Shark.
 	 */
-	@Basic @Raw @Immutable
+	@Override @Basic @Raw @Immutable
 	public double getAccelerationY() {
 		return this.accelerationY;
 	}
@@ -403,7 +403,7 @@ public class Shark extends GameObject implements IJumpable{
 	 * 
 	 * @return	result = ( this.jumping)
 	 */
-	@Basic
+	@Override @Basic
 	public boolean isJumping(){
 		return this.jumping;
 	}

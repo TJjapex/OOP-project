@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
@@ -14,6 +16,7 @@ public abstract class Statement {
 		this.sourceLocation = sourceLocation;
 	}
 	
+	@Basic @Immutable
 	public SourceLocation getSourceLocation(){
 		return this.sourceLocation;
 	}
@@ -49,11 +52,12 @@ public abstract class Statement {
 	}
 	
 	/* Statement used */
-	
+	@Basic
 	protected boolean isStatementUsed(){
 		return this.statementUsed;
 	}
 	
+	@Basic
 	protected void setStatementUsed(boolean statementUsed){
 		this.statementUsed = statementUsed;
 	}
@@ -65,11 +69,12 @@ public abstract class Statement {
 	public abstract void execute(Program program) throws ProgramRuntimeException;	
 	
 	/* Parent statement */
-	
+	@Basic
 	public Statement getParentStatement(){
 		return this.parentStatement;
 	}
 	
+	@Basic
 	protected void setParentStatement(Statement statement){
 		this.parentStatement = statement;
 	}

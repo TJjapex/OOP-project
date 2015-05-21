@@ -11,7 +11,7 @@ public class Break extends Statement {
 	
 	@Override
 	public void execute(Program program) throws IllegalStateException{
-
+		// This could be done more easily by throwing a BreakException and catching it in the foreach and while statements.
 		while( this.wrapStatement.hasParentStatement() && !this.outerLoopFound){
 			this.wrapStatement = this.wrapStatement.getParentStatement();
 			if ( this.wrapStatement instanceof ILoop ){
@@ -28,7 +28,7 @@ public class Break extends Statement {
 	}
 	
 	// TODO waarvoor dienen deze variabelen eigenlijk, moeten die opgeslagen worden? Kunnen die niet altijd in execute terug gezet worden?
-	// + statementUsed gebruiken?
+	// + statementUsed gebruiken? + getters/setters? :/
 	
 	private Statement wrapStatement = this;
 	private boolean outerLoopFound;

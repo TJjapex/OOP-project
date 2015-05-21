@@ -15,7 +15,7 @@ import jumpingalien.part3.programs.SourceLocation;
  * @version 1.0
  * 
  */
-public class BinaryOperator<I extends Type, T extends Type> extends Operator<T>{
+public class BinaryOperator<I extends Type, T extends Type> extends Expression<T>{
 	
 	public BinaryOperator(Expression<I> left, Expression<I> right, BiFunction<I, I, T> operator, SourceLocation sourceLocation){
 		super( sourceLocation);

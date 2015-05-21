@@ -5,13 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.part3.programs.SourceLocation;
 
-public class WhileDo extends Statement implements ILoop{
+public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 
 	public WhileDo(Expression<?> condition, Statement body, SourceLocation sourceLocation){
 		super(sourceLocation);
@@ -21,7 +23,7 @@ public class WhileDo extends Statement implements ILoop{
 	}
 		
 	/* Condition */
-	
+	@Basic @Override
 	public Expression<BooleanType> getCondition(){
 		return this.condition;
 	}
@@ -29,11 +31,12 @@ public class WhileDo extends Statement implements ILoop{
 	private final Expression<BooleanType> condition;
 	
 	/* Condition result */
-	
+	@Basic @Override
 	public boolean isConditionTrue() {
 		return conditionResult;
 	}
 
+	@Basic
 	private void setConditionResult(boolean conditionResult) {
 		this.conditionResult = conditionResult;
 	}
@@ -41,11 +44,12 @@ public class WhileDo extends Statement implements ILoop{
 	private boolean conditionResult;
 	
 	/* Condition checked */
-	
+	@Basic @Override
 	public boolean isConditionChecked() {
 		return conditionChecked;
 	}
 
+	@Basic
 	private void setConditionChecked(boolean conditionChecked) {
 		this.conditionChecked = conditionChecked;
 	}
@@ -53,7 +57,7 @@ public class WhileDo extends Statement implements ILoop{
 	private boolean conditionChecked = false;
 	
 	/* Body */
-	
+	@Basic @Immutable @Override
 	public Statement getBody(){
 		return this.body;
 	}
@@ -63,12 +67,11 @@ public class WhileDo extends Statement implements ILoop{
 	/* Execute */
 	
 	@Override
-	public void execute(Program program) throws ProgramRuntimeException{
+	public void execute(final Program program) throws ProgramRuntimeException{
 		
 		if (!isConditionChecked()){
 			setConditionResult(this.getCondition().execute(program).getValue());
 			setConditionChecked(true);
-			//System.out.println("WhileDo, checked condition: "+ this.conditionResult);
 		}else{
 			if(this.iterator().hasNext())
 				this.iterator().next().execute(program);
@@ -134,6 +137,7 @@ public class WhileDo extends Statement implements ILoop{
 		this.stop = false;
 	}
 	
+	/* Children statements */
 	@Override
 	public List<Statement> getChildrenStatements(){
 		List<Statement> childrenStatements = new ArrayList<>();
@@ -142,11 +146,12 @@ public class WhileDo extends Statement implements ILoop{
 	}
 	
 	/* Break */
-	
+	@Basic @Override
 	public void breakLoop(){
 		this.stop = true;
 	}
 	
+	@Basic @Override
 	public boolean isBroken(){
 		return this.stop;
 	}

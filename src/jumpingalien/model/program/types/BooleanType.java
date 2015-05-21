@@ -29,6 +29,7 @@ public class BooleanType extends Type{
 		return new BooleanType( this.getValue() || o.getValue());
 	}
 	
+	@Override
 	public BooleanType equals(Type o){
 		if(! ( o instanceof BooleanType ) ){
 			return new BooleanType(false);

@@ -1266,6 +1266,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			the sign of the given orientation.
 	 * 			| setAccelerationX( orientation.getSign() * accelerationXInit)
 	 */	
+	@Override
 	public void startMove(Orientation orientation){
 		assert isValidOrientation(orientation);
 		
@@ -1286,6 +1287,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @effect	The time since the last move was made is set to 0.
 	 *			| getTimer().setSinceLastMove(0)
 	 */
+	@Override
 	public void endMove(Orientation orientation){	
 		assert isValidOrientation(orientation);
 		
@@ -1300,6 +1302,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @return 	True if and only if the horizontal velocity is not equal to 0. (up to a certain epsilon)
 	 * 			| result == ( !Util.fuzzyEquals(this.getVelocityX(), 0) )
 	 */
+	@Override
 	@Raw
 	public boolean isMoving() {
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
@@ -1314,6 +1317,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @return 	True if and only if the horizontal velocity is not equal to 0 and the current direction is the given orientation.
 	 * 			| result == ( !Util.fuzzyEquals(this.getVelocityX(), 0) ) && this.getOrientation
 	 */
+	@Override
 	@Raw
 	public boolean isMoving(Orientation orientation) {
 		return isMoving() && this.getOrientation() == orientation;
@@ -1462,15 +1466,17 @@ public abstract class GameObject implements IKind, IMovable{
 	
 	}
 	
+	/**
+	 * Execute program until time depleted.
+	 * 
+	 * @Note no further documentation was needed for this method
+	 */
 	protected void advanceProgram(){
-		// TODO moet nog met tijd enzo rekening gehouden worden, maar kzal al blij zijn als het gewoon iets doet nu
-		//System.out.println(this.getTimer().getSinceLastProgram()/0.001);
 		for (int i = 0; i < this.getTimer().getSinceLastProgram()/0.001; i++){
 			this.getProgram().executeNext();
 		}
 		
-		this.getTimer().setSinceLastProgram( this.getTimer().getSinceLastProgram()%0.001 );
-				
+		this.getTimer().setSinceLastProgram( this.getTimer().getSinceLastProgram() % 0.001 );		
 	}
 
 	/**
