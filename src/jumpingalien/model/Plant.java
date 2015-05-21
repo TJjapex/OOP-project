@@ -21,7 +21,7 @@ import jumpingalien.util.Sprite;
  * 
  * @note Class invariants of the class GameObject also apply to this subclass.
  */
-public class Plant extends GameObject {
+public class Plant extends GameObject implements IProgrammable {
 	
 	/****************************************************** CONSTANTS **************************************************/
 	
@@ -270,6 +270,17 @@ public class Plant extends GameObject {
 		
 		/* Horizontal */
 		this.updatePositionX(dt);
+	}
+	
+	// TODO: commentary
+	public void doMoveProgram(double dt){
+		
+		/* Advance Program */
+		this.advanceProgram();
+		
+		/* Horizontal */
+		this.updatePositionX(dt);
+		
 	}
 	
 	/**

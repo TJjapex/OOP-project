@@ -3,15 +3,20 @@ package jumpingalien.model.program;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.GameObject;
 import jumpingalien.model.program.statements.*;
 import jumpingalien.model.program.types.Type;
 
+/**
+ * A class of Programs for game objects in the World of Mazub.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class Program {
 	
 	public Program(Statement mainStatement, Map<String, Type> globalVariables){
@@ -21,13 +26,10 @@ public class Program {
 		this.mainStatement = mainStatement;
 		this.initialGlobalVariables = globalVariables;
 		this.globalVariables = globalVariables;
-		//System.out.println("Program well formed: " + this.isWellFormed());
+
 	}
 	
 	/* Global variables */
-	
-	private final Map<String, Type> initialGlobalVariables;
-	private Map<String, Type> globalVariables = new HashMap<>();
 
 	public Type getVariable(String name){
 		if(!this.globalVariables.containsKey(name))
@@ -42,7 +44,11 @@ public class Program {
 		this.globalVariables.put(name, value);
 	}
 	
-	/* GameObject relation */
+	private final Map<String, Type> initialGlobalVariables;
+	private Map<String, Type> globalVariables = new HashMap<>();
+	
+	/* Game object relation */
+	
 	@Basic
 	public GameObject getGameObject() {
 		return this.gameObject;

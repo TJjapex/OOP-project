@@ -17,12 +17,16 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public class Checker extends Expression<BooleanType>{
 	
+	/* Constructor */
+	
 	public Checker(Expression<ObjectType> expr, BiFunction<Object, Program, Boolean> operator, SourceLocation sourceLocation){
 		super( sourceLocation);
 
 		this.operand = expr;
 		this.operator = operator;
 	}
+	
+	/* Operand */
 
 	@Basic @Immutable
 	public Expression<ObjectType> getOperand() {
@@ -31,12 +35,16 @@ public class Checker extends Expression<BooleanType>{
 
 	private final Expression<ObjectType> operand;
 	
+	/* Operator */
+	
 	@Basic @Immutable
 	public BiFunction<Object, Program, Boolean> getOperator(){
 		return this.operator;
 	}
 	
 	private final BiFunction<Object, Program, Boolean> operator;
+	
+	/* Execution */
 	
 	@Override
 	public BooleanType execute(Program program) {

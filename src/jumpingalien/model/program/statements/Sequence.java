@@ -11,17 +11,25 @@ import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Sequences of Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class Sequence extends Statement{	
+	
+	/* Constructor */
 	
 	public Sequence(List<Statement> statements, SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.statements = statements;
-		for (Statement statement : getStatements()){
-			statement.setParentStatement(this);
-		}
 	}
 	
 	/* Statements */
+	
 	@Basic @Immutable
 	public List<Statement> getStatements(){
 		return this.statements;
@@ -34,8 +42,8 @@ public class Sequence extends Statement{
 	
 	private final List<Statement> statements;
 	
-	
 	/* Current index */
+	
 	@Basic
 	public int getCurrentIndex() {
 		return currentIndex;
@@ -95,7 +103,7 @@ public class Sequence extends Statement{
 		setCurrentIndex(0);
 	}
 	
-	/* Execute */
+	/* Execution */
 
 	@Override
 	public void execute(Program program) throws IllegalStateException{
@@ -105,6 +113,8 @@ public class Sequence extends Statement{
 			throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 		}
 	}
+	
+	/* Children statements */
 	
 	@Override
 	public List<Statement> getChildrenStatements(){

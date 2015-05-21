@@ -1,6 +1,16 @@
 package jumpingalien.model.program.types;
 
+/**
+ * A class of Double Types as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class DoubleType extends Type{
+	
+	/* Constructor */
 	
 	public DoubleType(double value){
 		this.value = value;
@@ -14,16 +24,31 @@ public class DoubleType extends Type{
 		this(0.0);
 	}
 	
+	/* Value */
+	
 	public double getValue() {
 		return value;
 	}
 	
 	private final double value;
 	
+	/* Object method overrides */
+	
 	@Override
 	public String toString() {
 		return String.valueOf(this.getValue());
 	}
+	
+	@Override
+	public BooleanType equals(Type o){
+		if(! ( o instanceof DoubleType ) ){
+			return new BooleanType(false);
+		}
+		
+		return new BooleanType(((DoubleType) o).getValue() == this.getValue());
+	}	
+	
+	/* Operations */
 	
 	public DoubleType add(DoubleType o){
 		return new DoubleType( this.getValue() + o.getValue() );
@@ -64,14 +89,5 @@ public class DoubleType extends Type{
 	public BooleanType notEquals(DoubleType o){
 		return new BooleanType( this.getValue() != o.getValue());
 	}
-	
-	@Override
-	public BooleanType equals(Type o){
-		if(! ( o instanceof DoubleType ) ){
-			return new BooleanType(false);
-		}
-		
-		return new BooleanType(((DoubleType) o).getValue() == this.getValue());
-	}	
 	
 }

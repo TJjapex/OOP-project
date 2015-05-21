@@ -171,12 +171,9 @@ public abstract class GameObject implements IKind, IMovable{
 		
 		this.maxNbHitPoints = maxNbHitPoints;
 		this.setNbHitPoints(nbHitPoints);
-		
-				
-		// Program
+
 		this.program = program;
 		if(program != null){
-			//System.out.println("GameObject: got program in constructor");
 			program.setGameObject(this);
 		}
 	
@@ -1437,10 +1434,6 @@ public abstract class GameObject implements IKind, IMovable{
 	@Model
 	protected void advanceTimeOnce(double dt) throws IllegalArgumentException, IllegalStateException{
 		
-		if(this.hasProgram()){
-			this.advanceProgram();
-		}
-		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		if( !this.isTerminated() && !this.hasProperWorld())
@@ -1459,7 +1452,10 @@ public abstract class GameObject implements IKind, IMovable{
 			
 			this.updateTimers(dt);
 			
-			this.doMove(dt);
+			if (this.hasProgram() && this instanceof IProgrammable){
+				((IProgrammable) this).doMoveProgram(dt);
+			} else
+				this.doMove(dt);
 			
 			this.getAnimation().updateSpriteIndex();
 		}	
@@ -1467,11 +1463,12 @@ public abstract class GameObject implements IKind, IMovable{
 	}
 	
 	/**
-	 * Execute program until time depleted.
+	 * Execute Program until time depleted.
 	 * 
-	 * @Note no further documentation was needed for this method
+	 * @note no further documentation was needed for this method.
 	 */
 	protected void advanceProgram(){
+		
 		for (int i = 0; i < this.getTimer().getSinceLastProgram()/0.001; i++){
 			this.getProgram().executeNext();
 		}
@@ -1624,6 +1621,31 @@ public abstract class GameObject implements IKind, IMovable{
 		double newVy = this.getVelocityY() + this.getAccelerationY() * dt;
 		this.setVelocityY( newVy );
 	}
+	
+	// TODO: commentary
+	protected void update(double dt){
+		
+		/* Horizontal */
+		this.updatePositionX(dt);
+		this.updateVelocityX(dt);
+				
+		/* Vertical */
+		this.updatePositionY(dt);
+		this.updateVelocityY(dt);
+		
+	}
+	
+	// TODO: commentary
+	@Basic
+	public boolean isInitializedPeriodicMovement(){
+		return this.initializedPeriodicMovement;
+	}
+	
+	protected void setInitializedPeriodicMovement(boolean initialized){
+		this.initializedPeriodicMovement = initialized;
+	}
+	
+	protected boolean initializedPeriodicMovement;
 		
 	/****************************************************** COLLISION **************************************************/
 	

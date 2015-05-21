@@ -10,11 +10,23 @@ import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public abstract class Statement {
 
+	/* Constructor */
+	
 	public Statement(final SourceLocation sourceLocation ){
 		this.sourceLocation = sourceLocation;
 	}
+	
+	/* Source location */
 	
 	@Basic @Immutable
 	public SourceLocation getSourceLocation(){
@@ -52,6 +64,7 @@ public abstract class Statement {
 	}
 	
 	/* Statement used */
+	
 	@Basic
 	protected boolean isStatementUsed(){
 		return this.statementUsed;
@@ -68,24 +81,7 @@ public abstract class Statement {
 	
 	public abstract void execute(Program program) throws ProgramRuntimeException;	
 	
-	/* Parent statement */
-	@Basic
-	public Statement getParentStatement(){
-		return this.parentStatement;
-	}
-	
-	@Basic
-	protected void setParentStatement(Statement statement){
-		this.parentStatement = statement;
-	}
-	
-	protected boolean hasParentStatement(){
-		return this.getParentStatement() != null;
-	}
-	
-	protected Statement parentStatement = null;
-	
-	/* Children statement */
+	/* Children statements */
 	
 	public List<Statement> getChildrenStatements(){
 		return null;
@@ -97,7 +93,6 @@ public abstract class Statement {
 	
 	/* Well formed */
 	
-	// Checks if this statement and its children are well formed.
 	public boolean isWellFormed(boolean inWhile, boolean inForEach){
 		
 		if (this instanceof ForEachDo)

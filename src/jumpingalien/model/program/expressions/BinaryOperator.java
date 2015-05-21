@@ -17,6 +17,8 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public class BinaryOperator<I extends Type, T extends Type> extends Expression<T>{
 	
+	/* Constructor */
+	
 	public BinaryOperator(Expression<I> left, Expression<I> right, BiFunction<I, I, T> operator, SourceLocation sourceLocation){
 		super( sourceLocation);
 
@@ -25,6 +27,8 @@ public class BinaryOperator<I extends Type, T extends Type> extends Expression<T
 		this.operator = operator;
 	}
 
+	/* Operands */
+	
 	@Basic @Immutable
 	public Expression<I> getLeftOperand() {
 		return leftOperand;
@@ -39,12 +43,16 @@ public class BinaryOperator<I extends Type, T extends Type> extends Expression<T
 	
 	private final Expression<I> rightOperand;
 	
+	/* Operator */
+	
 	@Basic @Immutable
 	public BiFunction<I, I, T> getOperator(){
 		return this.operator;
 	}
 	
 	private final BiFunction<I, I, T> operator;
+	
+	/* Execution */
 	
 	@Override
 	public T execute(Program program) {

@@ -12,7 +12,17 @@ import jumpingalien.model.Slime;
 import jumpingalien.model.program.Program;
 import jumpingalien.part3.programs.IProgramFactory.Kind;
 
+/**
+ * A class of Object Types as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class ObjectType extends Type {
+	
+	/* Constructor */
 	
 	public ObjectType(IKind value){
 		this.value = value;
@@ -22,11 +32,15 @@ public class ObjectType extends Type {
 		this(null);
 	}
 	
+	/* Value */
+	
 	public IKind getValue() {
 		return this.value;
 	}
 	
 	private final IKind value;
+	
+	/* Object method overrides */
 	
 	@Override
 	public String toString() {
@@ -44,6 +58,8 @@ public class ObjectType extends Type {
 		
 		return new BooleanType(((ObjectType) o).getValue() == this.getValue());
 	}
+	
+	/* Get all objects of a Kind */
 	
 	public static Set<IKind> getObjects(Kind kind, Program program){
 		switch (kind) {

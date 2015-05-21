@@ -13,17 +13,24 @@ import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of If Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class IfThen extends Statement implements IConditionedStatement{
 
+	/* Constructor */
+	
 	public IfThen(final Expression<BooleanType> condition, final Statement ifBody, final Statement elseBody, SourceLocation sourceLocation){
 		super(sourceLocation);
 		
 		this.condition = condition;
 		this.ifBody = ifBody;
 		this.elseBody = elseBody;
-		this.getIfBody().setParentStatement(this);
-		if (this.hasElseBody())
-			this.getElseBody().setParentStatement(this);
 	}
 	
 	/* Condition */
@@ -63,8 +70,8 @@ public class IfThen extends Statement implements IConditionedStatement{
 	
 	private boolean conditionChecked = false;
 	
-	
 	/* If body */
+	
 	@Basic @Immutable
 	public Statement getIfBody(){
 		return this.ifBody;
@@ -73,6 +80,7 @@ public class IfThen extends Statement implements IConditionedStatement{
 	private final Statement ifBody;
 	
 	/* Else body */
+	
 	@Basic @Immutable
 	public Statement getElseBody(){
 		return this.elseBody;
@@ -84,7 +92,7 @@ public class IfThen extends Statement implements IConditionedStatement{
 	
 	private final Statement elseBody;
 	
-	/* Execute */
+	/* Execution */
 	
 	@Override
 	public void execute(Program program) throws IllegalStateException{

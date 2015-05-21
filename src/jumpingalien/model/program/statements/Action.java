@@ -11,20 +11,33 @@ import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.types.ObjectType;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Action Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class Action extends Statement {
 
+	/* Constructor */
+	
 	public Action(BiConsumer<Object, Program> operator, Expression<ObjectType> gameObject, SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.operator = operator;
 		this.gameObject = gameObject;
 	}
 	
+	/* Operator */
 	@Basic @Immutable
 	public BiConsumer<Object, Program> getOperator(){
 		return this.operator;
 	}
 	
 	private final BiConsumer<Object, Program> operator;
+	
+	/* Game object */
 	
 	@Basic @Immutable
 	public Expression<ObjectType> getGameObject(){
@@ -33,10 +46,11 @@ public class Action extends Statement {
 	
 	private final Expression<ObjectType> gameObject;
 	
+	/* Execution */
+	
 	@Override
 	public void execute(Program program) throws IllegalStateException{
 		if(this.iterator().hasNext()){
-			//System.out.println("Program, ACTION");
 			try {
 				getOperator().accept( this.getGameObject().execute(program).getValue(), program);
 			} catch (IllegalEndJumpException exc) {

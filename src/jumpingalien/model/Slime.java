@@ -23,7 +23,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @note Class invariants of the class GameObject also apply to this subclass.
  * @invar	| hasProperSchool()
  */
-public class Slime extends GameObject {
+public class Slime extends GameObject implements IProgrammable {
 
 	/****************************************************** CONSTANTS **************************************************/
 	
@@ -124,9 +124,6 @@ public class Slime extends GameObject {
 			  nbHitPoints, maxNbHitPoints, program);
 
 		this.setSchoolTo(school);
-		
-		this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
-		this.startMove(this.getRandomOrientation());
 		
 		this.configureTerrain();
 		
@@ -524,6 +521,13 @@ public class Slime extends GameObject {
 	@Override
 	protected void doMove(double dt){
 		
+		/* Initialize periodic movement */
+		if (!this.isInitializedPeriodicMovement()){
+			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
+			this.startMove(this.getRandomOrientation());
+			this.setInitializedPeriodicMovement(true);
+		}
+		
 		/* Periodic movement */
 		if (!hasProgram() && this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
 			
@@ -533,13 +537,19 @@ public class Slime extends GameObject {
 			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
 		}
 		
-		/* Horizontal */
-		this.updatePositionX(dt);
-		this.updateVelocityX(dt);
-
-		/* Vertical */
-		this.updatePositionY(dt);
-		this.updateVelocityY(dt);	
+		/* Update position and velocity */
+		this.update(dt);	
+		
+	}
+	
+	// TODO: commentary
+	public void doMoveProgram(double dt){
+		
+		/* Advance Program */
+		this.advanceProgram();
+		
+		/* Update position and velocity */
+		this.update(dt);
 		
 	}
 	
@@ -559,16 +569,16 @@ public class Slime extends GameObject {
 	/**
 	 * Process the horizontal collision of a Slime.
 	 * 
-	 * @note	As an optional implementation, a Slime changes his direction when he collides.
+	 * @note	As an optional implementation, a Slime without a Program changes his direction when he collides.
 	 * 
-	 * @effect	| changeDirection()
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			| 	changeDirection()
 	 */
 	@Override
 	protected void processHorizontalCollision() {	
-		if(!hasProgram()){
+		if(!this.hasProgram()){
 			this.changeDirection();
 		}
-		
 	}
 	
 	/**

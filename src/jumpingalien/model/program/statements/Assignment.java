@@ -7,8 +7,18 @@ import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.*;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Assignment Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class Assignment extends Statement {
 
+	/* Constructor */
+	
 	public Assignment(String variableName, Type variableType,
 			Expression<? extends Type> value, SourceLocation sourceLocation){
 		super(sourceLocation);
@@ -18,6 +28,7 @@ public class Assignment extends Statement {
 	}
 	
 	/* Variable name */
+	
 	@Basic @Immutable
 	public String getVariableName(){
 		return this.variableName;
@@ -25,7 +36,8 @@ public class Assignment extends Statement {
 	
 	private final String variableName;
 	
-	/* Type */
+	/* Variable type */
+	
 	@Basic @Immutable
 	public Type getType(){
 		return this.variableType;
@@ -34,6 +46,7 @@ public class Assignment extends Statement {
 	private final Type variableType;
 	
 	/* Value */
+	
 	@Basic @Immutable
 	public Expression<? extends Type> getValue(){
 		return this.value;
@@ -42,8 +55,10 @@ public class Assignment extends Statement {
 	private final Expression<? extends Type> value;
 	
 	/* Execution */
+	
 	@Override
 	public void execute(final Program program) throws IllegalStateException{
+		
 		if(this.iterator().hasNext()){
 			program.setVariable(getVariableName(), getValue().execute(program));
 			setStatementUsed(true);

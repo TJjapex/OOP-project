@@ -7,22 +7,33 @@ import java.util.NoSuchElementException;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import jumpingalien.model.exceptions.BreakLoopException;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.types.BooleanType;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of While Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 
+	/* Constructor */
+	
 	public WhileDo(Expression<?> condition, Statement body, SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.condition = Expression.cast(condition);
 		this.body = body;
-		this.getBody().setParentStatement(this);
 	}
 		
 	/* Condition */
+	
 	@Basic @Override
 	public Expression<BooleanType> getCondition(){
 		return this.condition;
@@ -31,6 +42,7 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 	private final Expression<BooleanType> condition;
 	
 	/* Condition result */
+	
 	@Basic @Override
 	public boolean isConditionTrue() {
 		return conditionResult;
@@ -44,6 +56,7 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 	private boolean conditionResult;
 	
 	/* Condition checked */
+	
 	@Basic @Override
 	public boolean isConditionChecked() {
 		return conditionChecked;
@@ -56,7 +69,8 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 	
 	private boolean conditionChecked = false;
 	
-	/* Body */
+	/* Loop body */
+	
 	@Basic @Immutable @Override
 	public Statement getBody(){
 		return this.body;
@@ -64,7 +78,7 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 	
 	private final Statement body;
 	
-	/* Execute */
+	/* Execution */
 	
 	@Override
 	public void execute(final Program program) throws ProgramRuntimeException{
@@ -73,8 +87,14 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 			setConditionResult(this.getCondition().execute(program).getValue());
 			setConditionChecked(true);
 		}else{
-			if(this.iterator().hasNext())
-				this.iterator().next().execute(program);
+			
+			if(this.iterator().hasNext()){
+				try{
+					this.iterator().next().execute(program);
+				} catch (BreakLoopException exc){
+					this.breakLoop();
+				}
+			}
 			else
 				throw new ProgramRuntimeException("Statement executed while not having next useful statement!");
 			
@@ -134,10 +154,11 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 	public void resetIterator(){
 		setConditionChecked(false);
 		this.getBody().resetIterator();
-		this.stop = false;
+		this.broken = false;
 	}
 	
 	/* Children statements */
+	
 	@Override
 	public List<Statement> getChildrenStatements(){
 		List<Statement> childrenStatements = new ArrayList<>();
@@ -145,17 +166,18 @@ public class WhileDo extends Statement implements ILoop, IConditionedStatement{
 		return childrenStatements;
 	}
 	
-	/* Break */
+	/* Loop control */
+	
 	@Basic @Override
 	public void breakLoop(){
-		this.stop = true;
+		this.broken = true;
 	}
 	
 	@Basic @Override
 	public boolean isBroken(){
-		return this.stop;
+		return this.broken;
 	}
 	
-	private boolean stop;
+	private boolean broken;
 	
 }

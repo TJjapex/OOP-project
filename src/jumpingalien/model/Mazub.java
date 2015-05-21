@@ -770,8 +770,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * @effect	If Mazub should end ducking, make Mazub end ducking.
 	 * 			| if ( this.shouldEndDucking() )
 	 * 			|	then this.endDuck()
-	 * @effect	Update Mazub's sprite according to his current status.
-	 * 			| getAnimation().updateSpriteIndex()
 	 * @post	If Mazub has a prolonged movement to the right and he doesn't overlap to the right,
 	 * 			the prolonged movement of Mazub to the right will be false.
 	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
@@ -805,9 +803,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 		if(this.shouldEndDucking()){
 			this.endDuck();
 		}
-			
-		/* Update sprite */
-		this.getAnimation().updateSpriteIndex();
+		
 	}
 	
 	/****************************************************** COLLISION **************************************************/

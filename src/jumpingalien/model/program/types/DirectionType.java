@@ -2,8 +2,18 @@ package jumpingalien.model.program.types;
 
 import jumpingalien.model.helper.Orientation;;
 
+/**
+ * A class of Direction Types as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class DirectionType extends Type {
 
+	/* Constructor */
+	
 	public DirectionType(Orientation value){
 		this.value = value;
 	}
@@ -31,11 +41,15 @@ public class DirectionType extends Type {
 		this(Orientation.RIGHT);
 	}
 	
+	/* Value */
+	
 	public Orientation getValue() {
 		return this.value;
 	}
 	
 	private final Orientation value;
+	
+	/* Object method overrides */
 	
 	@Override
 	public String toString() {
@@ -50,5 +64,5 @@ public class DirectionType extends Type {
 		
 		return new BooleanType(((DirectionType) o).getValue() == this.getValue());
 	}
-
+		
 }

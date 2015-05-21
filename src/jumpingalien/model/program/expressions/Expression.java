@@ -16,11 +16,13 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public abstract class Expression<T extends Type> {
 	
+	/* Constructor */
+	
 	protected Expression(SourceLocation sourceLocation){
 		this.sourceLocation = sourceLocation;
 	}
 	
-	public abstract T execute(final Program program);
+	/* Source location */
 	
 	@Basic @Immutable
 	public SourceLocation getSourceLocation() {
@@ -29,6 +31,8 @@ public abstract class Expression<T extends Type> {
 
 	private final SourceLocation sourceLocation;
 
+	/* Cast */
+	
     @SuppressWarnings("unchecked")
     public static <R> R cast(Object obj) throws IllegalArgumentException{
     	try{
@@ -37,5 +41,9 @@ public abstract class Expression<T extends Type> {
     		throw new IllegalArgumentException();
     	}
     }
+    
+    /* Execution */
+    
+    public abstract T execute(final Program program);
     
 }

@@ -7,12 +7,24 @@ import jumpingalien.model.program.Program;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Print Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class Print extends Statement {
 
+	/* Constructor */
+	
 	public Print(final Expression<?> expression, final SourceLocation sourceLocation){
 		super(sourceLocation);
 		this.expression = expression;
 	}
+	
+	/* Expression */
 	
 	@Basic @Immutable
 	public Expression<?> getExpression(){
@@ -20,6 +32,8 @@ public class Print extends Statement {
 	}
 	
 	private final Expression<?> expression;
+	
+	/* Execution */
 	
 	@Override
 	public void execute(Program program) throws IllegalStateException{

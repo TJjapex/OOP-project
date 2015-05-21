@@ -16,10 +16,14 @@ import jumpingalien.part3.programs.SourceLocation;
  */
 public class Constant<T extends Type> extends Expression<T>{	
 
+	/* Constructor */
+	
 	public Constant(T value, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.value = value;
 	}
+	
+	/* Value */
 	
 	@Basic @Immutable
 	public T getValue(){
@@ -28,6 +32,8 @@ public class Constant<T extends Type> extends Expression<T>{
 	
 	private final T value;
 
+	/* Execution */
+	
 	@Override
 	public T execute(final Program program) {
 		return this.getValue();

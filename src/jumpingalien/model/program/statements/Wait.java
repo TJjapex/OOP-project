@@ -10,7 +10,17 @@ import jumpingalien.model.program.expressions.Expression;
 import jumpingalien.model.program.types.DoubleType;
 import jumpingalien.part3.programs.SourceLocation;
 
+/**
+ * A class of Wait Statements as defined in a Program.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public class Wait extends Statement{
+	
+	/* Constructor */
 	
 	public Wait(Expression<DoubleType> amount, SourceLocation sourceLocation){
 		super(sourceLocation);
@@ -19,7 +29,8 @@ public class Wait extends Statement{
 		this.cycles = 0;
 	}
 	
-	/* Time passed */ 
+	/* Time passed */
+	
 	@Basic
 	public void setTimePassed(boolean timePassed){
 		this.timePassed = timePassed;
@@ -30,7 +41,6 @@ public class Wait extends Statement{
 		return this.timePassed;
 	}
 	
-	// True if and only if the given time amount has passed
 	private boolean timePassed = false;
 
 	/* Amount */
@@ -40,7 +50,6 @@ public class Wait extends Statement{
 		return this.amount;
 	}
 	
-	// The time amount to wait, given in milliseconds
 	private final Expression<DoubleType> amount;
 	
 	/* Cycles */
@@ -54,14 +63,14 @@ public class Wait extends Statement{
 	public void increaseCycles() {
 		this.cycles++;
 	}
-	
-	// the number of waiting cycles that have passed
+
 	private int cycles;
 	
-	/* Execute */
+	/* Execution */
 	
 	@Override
 	public void execute(final Program program) throws ProgramRuntimeException{
+		
 		if(this.iterator().hasNext())
 			this.iterator().next();
 		else
@@ -104,6 +113,5 @@ public class Wait extends Statement{
 		this.cycles = 0;
 		this.timePassed = false;
 	}
-	
 	
 }

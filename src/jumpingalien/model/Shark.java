@@ -25,7 +25,7 @@ import jumpingalien.util.Util;
  * 
  * @note Class invariants of the class GameObject also apply to this subclass.
  */
-public class Shark extends GameObject implements IJumpable{
+public class Shark extends GameObject implements IJumpable, IProgrammable{
 	
 	/****************************************************** CONSTANTS **************************************************/
 	
@@ -132,10 +132,6 @@ public class Shark extends GameObject implements IJumpable{
 		
 		this.setNbNonJumpingPeriods(0);
 		this.setJumping(false);
-		
-		this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
-		this.startMove(this.getRandomOrientation());
-		this.startDiveRise();
 	
 		this.configureTerrain();
 		
@@ -527,9 +523,16 @@ public class Shark extends GameObject implements IJumpable{
 	@Override
 	protected void doMove(double dt){
 
+		/* Initialize periodic movement */
+		if (!this.isInitializedPeriodicMovement()){
+			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
+			this.startMove(this.getRandomOrientation());
+			this.startDiveRise();
+			this.setInitializedPeriodicMovement(true);
+		}
+		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
-			System.out.println("check");
 			this.periodicMovement();
 					
 			this.getTimer().setSinceLastPeriod(0);		
@@ -539,13 +542,23 @@ public class Shark extends GameObject implements IJumpable{
 		/* Adjust gravitational acceleration */
 		this.adjustGravitationalAcceleration();
 		
-		/* Horizontal */
-		this.updatePositionX(dt);
-		this.updateVelocityX(dt);
-				
-		/* Vertical */
-		this.updatePositionY(dt);
-		this.updateVelocityY(dt);
+		/* Update position and velocity */
+		this.update(dt);
+		
+	}
+	
+	// TODO: commentary
+	public void doMoveProgram(double dt){
+		
+		/* Advance Program */
+		this.advanceProgram();
+		
+		/* Adjust gravitational acceleration */
+		this.adjustGravitationalAcceleration();
+		
+		/* Update position and velocity */
+		this.update(dt);
+		
 	}
 	
 	/**

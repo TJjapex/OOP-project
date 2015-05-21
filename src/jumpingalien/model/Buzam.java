@@ -18,7 +18,7 @@ import jumpingalien.util.Sprite;
  * @version 1.0
  * 
  */
-public class Buzam extends Mazub{
+public class Buzam extends Mazub implements IProgrammable{
 
 	/***************************************************** CONSTRUCTOR *************************************************/
 	
@@ -119,4 +119,17 @@ public class Buzam extends Mazub{
 		return buzamsClone;
 	}
 	
+	/******************************************************* MOVEMENT **************************************************/
+	
+	// TODO: commentary
+	public void doMoveProgram(double dt){
+		
+		/* Advance Program */
+		this.advanceProgram();
+		
+		/* Update position and velocity etc. */
+		this.doMove(dt);
+		
+	}
+
 }

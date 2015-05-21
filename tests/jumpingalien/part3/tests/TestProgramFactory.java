@@ -129,7 +129,7 @@ public class TestProgramFactory {
 				+" print getx x;";
 		
 		// Selecteer programma
-		String testProgram = testSearchObject;
+		String testProgram = testForEachWhere;
 		
 		//IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
 		
