@@ -1,5 +1,6 @@
 package jumpingalien.model.program.statements;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
@@ -232,6 +233,15 @@ public class ForEachDo extends Statement implements ILoop {
 		loadLoopObject(program, o2);
 		double r2 = ((DoubleType) getSortCondition().execute(program)).getValue();
 		return Double.compare(r1, r2);
+	}
+	
+	/* Children */
+	
+	@Override
+	public List<Statement> getChildrenStatements(){
+		List<Statement> childrenStatements = new ArrayList<>();
+		childrenStatements.add(this.getBody());
+		return childrenStatements;
 	}
 	
 	/* Loop control */

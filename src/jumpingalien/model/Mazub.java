@@ -337,7 +337,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 */
 	@Override
 	protected void addToWorld(){
-		System.out.println("mazub added to world");
 		this.getWorld().setMazub(this);
 	}
 	

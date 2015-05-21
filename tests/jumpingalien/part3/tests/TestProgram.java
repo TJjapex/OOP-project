@@ -1,3 +1,8 @@
+/**
+ * Test file containing tests of general methods for programs
+ */
+
+
 package jumpingalien.part3.tests;
 
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
@@ -167,14 +172,11 @@ public class TestProgram {
 	
 
 	
-	
-	// Dit gaat fout door inForeach bug in isWellFormed
-	@Test
+		@Test
 	public void testWellFormedFalse_ActionInForeach() {
 		testProgram =
-		"double a; double b;"
-		+ "a := 5; "
-		+ "foreach(mazub, x) where ( (getx x) > 30) do "
+		" double b;"
+		+ "foreach(mazub, x) do "
 		+ " start_run left;"
 		+ "done" ;
 
@@ -211,29 +213,89 @@ public class TestProgram {
 		assertTrue(program.isWellFormed());
 	}
 	
-	// TODO dit compiled gewoon niet, maar mss is dat wel een goed teken...
-//	@Test
-//	public void testWellFormedTrue_BreakoutsideLoop() {
-//		testProgram =
-//		"double a; double b;"
-//		+ "a := 5; "
-//		+ "while ( (a) < (5+ 3)) do "
-//		+ " start_run left;"
-//		+ " a := a + 2; "
-//		+ "done"
-//		+ " break;"
-//		;
-//
-//		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
-//		
-//		if(!parseOutcome.isSuccess()){
-//			throw new IllegalArgumentException("Program parsing failed");
-//		}
-//		
-//		Program program = (Program) parseOutcome.getResult();
-//		assertTrue(program.isWellFormed());
-//	}
-//	
+	@Test
+	public void testWellFormedFalse_BreakOutWhile() {
+		testProgram =
+		"double a; double b;"
+		+ "a := 5; "
+		+ "while ( (a) < (5+ 3)) do "
+		+ " start_run left;"
+		+ " a := a + 2; "
+		+ "done"
+		+ " break;"
+		;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertFalse(program.isWellFormed());
+	}
+	
+	@Test
+	public void testWellFormedTrue_Foreach() {
+		testProgram =
+		"double x;"
+		+ "foreach(plant, x) do "
+		+ "print gethp x;"
+		+ "break;"
+		+ "done "
+		
+		;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertTrue(program.isWellFormed());
+	}
+	
+	@Test
+	public void testWellFormedFalse_BreakOutForeach() {
+		testProgram =
+		"double x;"
+		+ "foreach(plant, x) do "
+		+ "print gethp x;"
+		+ "done "
+		+ "break;"
+		;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertFalse(program.isWellFormed());
+	}
+	
+	@Test
+	public void testWellFormedFalse_BreakInIf() {
+		testProgram =
+		"double a; a:=5;"
+		+ "if (a == 5) then "
+		+ "print a;"
+		+ "fi "
+		+ "break;"
+		;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertFalse(program.isWellFormed());
+	}
+	
 	
 	
 	/* Tests */	

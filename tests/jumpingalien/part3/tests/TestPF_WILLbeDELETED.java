@@ -25,7 +25,7 @@ import jumpingalien.util.Util;
 
 import org.junit.Test;
 
-public class TestProgramFactory {
+public class TestPF_WILLbeDELETED {
 
 	@Test
 	public void testAddition() {
