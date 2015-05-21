@@ -1,9 +1,17 @@
+/**
+ * Test file containing tests of directly executed expressions
+ */
+
 package jumpingalien.part3.tests;
 
+import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
 
+import jumpingalien.model.Mazub;
+import jumpingalien.model.Plant;
+import jumpingalien.model.World;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.program.ProgramFactory;
 import jumpingalien.model.program.expressions.BinaryOperator;
@@ -14,8 +22,13 @@ import jumpingalien.model.program.statements.Statement;
 import jumpingalien.model.program.statements.Wait;
 import jumpingalien.model.program.types.DoubleType;
 import jumpingalien.model.program.types.Type;
+import jumpingalien.model.terrain.Terrain;
+import jumpingalien.part3.facade.Facade;
+import jumpingalien.part3.programs.ParseOutcome;
+import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
+import org.antlr.v4.runtime.atn.EpsilonTransition;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,11 +50,13 @@ public class TestExpressions {
 	
 	ProgramFactory<Expression<Type>, Statement, Type, Program> programFactory;
 	Program program;
+	Facade facade;
 	
 	@Before
 	public void setUp() throws Exception {
 		programFactory = new ProgramFactory<>();
 		program = programFactory.createProgram(new Wait(new Constant<DoubleType>(new DoubleType(1), null), null), new HashMap<String, Type>());
+		facade = new Facade();
 
 	}
 
@@ -50,7 +65,7 @@ public class TestExpressions {
 		
 	}
 	
-	/* Tests */
+	/* General Tests */
 	
 	@Test 
 	public void testBinaryExpression(){
@@ -64,6 +79,8 @@ public class TestExpressions {
 		
 		assertEquals(8.5, exprResult.getValue(), Util.DEFAULT_EPSILON);
 	}
+	
+	
 	
 	@Test 
 	public void testUnaryExpression(){

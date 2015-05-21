@@ -49,7 +49,6 @@ public abstract class Statement {
 			@Override
 			public Statement next() throws NoSuchElementException{
 				if ( this.hasNext() ){
-					Statement.this.statementUsed = true;
 					return Statement.this;
 				} else {
 					throw new NoSuchElementException();		
@@ -94,19 +93,25 @@ public abstract class Statement {
 	/* Well formed */
 	
 	public boolean isWellFormed(boolean inWhile, boolean inForEach){
-		
-		if (this instanceof ForEachDo)
+		System.out.println("this class " + this.getClass());
+		System.out.println("isaction " + (this instanceof Action) + ", inForEach "+(inForEach));
+		if (this instanceof ForEachDo){
+			System.out.println("in foreach");
 			inForEach = true;
-		else if (this instanceof WhileDo)
+		}else if (this instanceof WhileDo)
 			inWhile = true;
+		
 		if (!(inWhile || inForEach) && this instanceof Break)
 			return false;
-		else if (inForEach && this instanceof Action)
+		else if (inForEach && this instanceof Action){
+			System.out.println("wellformed false");
 			return false;
-		
+		}
+			
+		System.out.println("test 1 inforeach" + inForEach);
 		if (this.hasChildren()){
 			for (Statement childStatement : this.getChildrenStatements()){
-				
+				System.out.println("test 2 inforeach" + inForEach);
 				if (!childStatement.isWellFormed(inWhile, inForEach))
 					return false;
 			}

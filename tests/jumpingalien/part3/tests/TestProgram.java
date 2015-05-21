@@ -4,9 +4,11 @@ import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
@@ -24,6 +26,7 @@ import jumpingalien.model.program.types.Type;
 import jumpingalien.part3.facade.Facade;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
+import jumpingalien.part3.programs.ProgramParser;
 import jumpingalien.part3.programs.SourceLocation;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
@@ -34,7 +37,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ExtTestProgramFactory {
+public class TestProgram {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -44,21 +47,6 @@ public class ExtTestProgramFactory {
 	public static void tearDownAfterClass() throws Exception {
 	}
 	
-	/* Variables to catch print content */
-	
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private PrintStream oldOutContent;
-	@Before
-	public void setUpStreams() {
-		oldOutContent = System.out;
-	    System.setOut(new PrintStream(outContent));
-	}
-
-	@After
-	public void cleanUpStreams() {
-	    System.setOut(oldOutContent);
-	}
-//	
 	/* Program setup */
 
 	Facade facade;
@@ -95,13 +83,165 @@ public class ExtTestProgramFactory {
 	public void tearDown() throws Exception {
 	}
 	
+	/* Well formed */
+	
+	@Test
+	public void testWellFormed() {
+		testProgram =
+		"double a; double b;"
+		+ "a := 5; "
+		+ "while ( (a) < (5+ 3)) do "
+		+ "foreach(mazub, x) where ( (getx x) > 30) do "
+		+ " a:= (-1 + gethp x); "
+		+ " b:= a + getx x;"
+		+ " done "
+		+ "stop_run right;"
+		+ "done" ;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertTrue(program.isWellFormed());
+	}
+	
+	@Test
+	public void testWellFormed2() throws IOException {
+		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
+		ProgramParser<Expression<?>, Statement, Type, Program> parser = new ProgramParser<>(factory);
+		Optional<Program> parseResult = parser.parseFile("resources\\programs\\program_example_1.txt");
+		if (parseResult.isPresent()){	
+		} else {
+			throw new IllegalStateException();
+		}
+		ParseOutcome<?> parseOutcome = ParseOutcome.success(parseResult.get());
+		Program program = (Program) parseOutcome.getResult();
+		assertTrue(program.isWellFormed());
+	
+	}
+	
+	
+// Program_example_2.txt and buzam.txt throws errors, probably because it is created on a different OS, which uses another return character sequence (\r)
+//
+//	@Test
+//	public void testWellFormed3() throws IOException {
+//		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
+//		ProgramParser<Expression<?>, Statement, Type, Program> parser = new ProgramParser<>(factory);
+//		Optional<Program> parseResult = parser.parseFile("resources\\programs\\program_example_2.txt");
+//		if (parseResult.isPresent()){	
+//		} else {
+//			throw new IllegalStateException();
+//		}
+//		ParseOutcome<?> parseOutcome = ParseOutcome.success(parseResult.get());
+//		Program program = (Program) parseOutcome.getResult();
+//		assertTrue(program.isWellFormed());
+//	}
+	
+//	@Test
+//	public void testWellFormed4() throws IOException {
+//		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
+//		ProgramParser<Expression<?>, Statement, Type, Program> parser = new ProgramParser<>(factory);
+//		Optional<Program> parseResult = parser.parseFile("resources\\programs\\buzam.txt");
+//		if (parseResult.isPresent()){	
+//		} else {
+//			throw new IllegalStateException();
+//		}
+//	}
+//	
+//	@Test
+//	public void testWellFormed5() throws IOException {
+//		IProgramFactory<Expression<?>, Statement, Type, Program> factory = new ProgramFactory<>();
+//		ProgramParser<Expression<?>, Statement, Type, Program> parser = new ProgramParser<>(factory);
+//		Optional<Program> parseResult = parser.parseFile("resources\\programs\\shark.txt");
+//		if (parseResult.isPresent()){	
+//		} else {
+//			throw new IllegalStateException();
+//		}
+//		ParseOutcome<?> parseOutcome = ParseOutcome.success(parseResult.get());
+//		Program program = (Program) parseOutcome.getResult();
+//		assertTrue(program.isWellFormed());
+//	}
+	
+
+	
+	
+	// Dit gaat fout door inForeach bug in isWellFormed
+	@Test
+	public void testWellFormedFalse_ActionInForeach() {
+		testProgram =
+		"double a; double b;"
+		+ "a := 5; "
+		+ "foreach(mazub, x) where ( (getx x) > 30) do "
+		+ " start_run left;"
+		+ "done" ;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertFalse(program.isWellFormed());
+	}
+	
+	
+	@Test
+	public void testWellFormedTrue_BreakInsideLoop() {
+		testProgram =
+		"double a; double b;"
+		+ "a := 5; "
+		+ "while ( (a) < (5+ 3)) do "
+		+ " start_run left;"
+		+ " a := a + 2; "
+		+ " break;"
+		+ "done"
+		;
+
+		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		assertTrue(program.isWellFormed());
+	}
+	
+	// TODO dit compiled gewoon niet, maar mss is dat wel een goed teken...
+//	@Test
+//	public void testWellFormedTrue_BreakoutsideLoop() {
+//		testProgram =
+//		"double a; double b;"
+//		+ "a := 5; "
+//		+ "while ( (a) < (5+ 3)) do "
+//		+ " start_run left;"
+//		+ " a := a + 2; "
+//		+ "done"
+//		+ " break;"
+//		;
+//
+//		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
+//		
+//		if(!parseOutcome.isSuccess()){
+//			throw new IllegalArgumentException("Program parsing failed");
+//		}
+//		
+//		Program program = (Program) parseOutcome.getResult();
+//		assertTrue(program.isWellFormed());
+//	}
+//	
+	
 	
 	/* Tests */	
 
 	@Test
-	public void testSequenceRun() {
+	public void testSequenceAndRun() {
 		testProgram =
-		"double a; "
+		""
 		+ "start_run right;"
 		+ "wait 0.002;"
 		+ "stop_run right;";
@@ -126,49 +266,6 @@ public class ExtTestProgramFactory {
 		assertTrue(plant.isMoving());
 		facade.advanceTime(world, 0.001);
 		assertFalse(plant.isMoving());
-	}
-	
-	@Test
-	public void testIf() {
-		testProgram =
-		" double a; "
-		+ "a := 3; "
-		+ "print a;"
-		+ "if a == 3 then "
-		+ "a := 4;"
-		+ "fi "
-		+ "print a;"
-		;
-
-		ParseOutcome<?> parseOutcome = facade.parse(testProgram);
-		
-		if(!parseOutcome.isSuccess()){
-			throw new IllegalArgumentException("Program parsing failed");
-		}
-		
-		Program program = (Program) parseOutcome.getResult();
-		Plant plant = facade.createPlantWithProgram(80, 80, plantSprites, program);
-		facade.addPlant(world, plant);
-		
-		facade.advanceTime(world, 0.001); // Assign 3 to var a		
-		
-		
-		facade.advanceTime(world, 0.001); // Print var a
-		assertEquals("3", outContent.toString());
-		
-		
-		// TODO dit werkt alleen maar als alle andere prints uit staan...
-		
-//		facade.advanceTime(world, 0.001); // Assign var
-//			assertFalse(plant.isMoving());
-//		}
-//		
-//		facade.advanceTime(world, 0.001); // Test if
-//		assertFalse(plant.isMoving());
-//		
-//		facade.advanceTime(world, 0.001); // Start_run right
-//		assertFalse(plant.isMoving());
-//		assertEquals(Orientation.RIGHT, plant.getOrientation());	
 	}
 	
 	@Test
@@ -206,7 +303,7 @@ public class ExtTestProgramFactory {
 	}
 	
 	@Test
-	public void testElse() {
+	public void testElseAndRun() {
 		testProgram =
 		"double a; "
 		+ "a := 5; "
@@ -240,7 +337,7 @@ public class ExtTestProgramFactory {
 	}
 
 	@Test
-	public void testWhile() {
+	public void testWhileAndRun() {
 		testProgram =
 		" double a; "
 		+ "a := 0; "

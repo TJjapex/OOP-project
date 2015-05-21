@@ -1,3 +1,7 @@
+/**
+ * Test file containing given tests
+ */
+
 package jumpingalien.part3.tests;
 
 import static org.junit.Assert.*;
