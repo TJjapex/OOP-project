@@ -58,7 +58,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @version 1.0
  */
-public abstract class GameObject implements IKind{
+public abstract class GameObject implements IKind, IMovable{
 	
 	/****************************************************** CONSTANTS **************************************************/
 	
@@ -66,7 +66,7 @@ public abstract class GameObject implements IKind{
 	 * Constant reflecting the duration that an object should be immune after losing hit points due to contact
 	 * with some other Game object.
 	 * 
-	 * @return	the duration that an object should be immune after losing hit points due to contact with some other
+0	 * @return	the duration that an object should be immune after losing hit points due to contact with some other
 	 *  		Game object is equal to 0.6s.
 	 * 			| result == 0.6
 	 */
@@ -1106,23 +1106,6 @@ public abstract class GameObject implements IKind{
 	 */
 	protected Orientation orientation;
 	
-	/**
-	 * Check if the GameObject is ducking. 
-	 * @return
-	 * 		result == false
-	 */
-	public boolean isDucking(){
-		return false;
-	}
-	
-	public void startDuck() throws IllegalStateException{
-		throw new IllegalStateException("This object cannot duck!");
-	}
-	
-	public void endDuck() throws IllegalStateException{
-		throw new IllegalStateException("This object cannot duck!");
-	}
-
 	/****************************************************** HIT POINTS *************************************************/
 	
 	/**
@@ -1333,7 +1316,7 @@ public abstract class GameObject implements IKind{
 	 */
 	@Raw
 	public boolean isMoving(Orientation orientation) {
-		return this.getOrientation() == orientation;
+		return isMoving() && this.getOrientation() == orientation;
 	}
 	
 	

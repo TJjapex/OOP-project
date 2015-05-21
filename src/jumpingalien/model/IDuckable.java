@@ -8,8 +8,5 @@ public interface IDuckable {
 	
 	public boolean isDucking();
 	
-	public void setDucking(boolean ducking);
-	
-	// variabele this.ducking etc. hier ook in zetten?
-	
+	public void setDucking(boolean ducking);	
 }

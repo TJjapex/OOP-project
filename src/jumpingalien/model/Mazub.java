@@ -724,6 +724,20 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * Variable registering whether or not Mazub should end ducking.
 	 */
 	private boolean shouldEndDucking;
+	
+	/******************************************************* JUMPING **********************************************************/
+	
+	/** 
+	 * Check if Mazub is jumping 
+	 * 
+	 * @return
+	 * 		result == !this.isOnground()
+	 * */
+	public boolean isJumping(){
+		return !this.isOnGround();
+	}
+	
+	
 
 	/******************************************************* MOVEMENT **************************************************/
 	

@@ -5,6 +5,10 @@ import java.util.Map;
 
 import jumpingalien.model.Buzam;
 import jumpingalien.model.GameObject;
+import jumpingalien.model.IDuckable;
+import jumpingalien.model.IJumpable;
+import jumpingalien.model.IMovable;
+import jumpingalien.model.IKind;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
@@ -172,24 +176,24 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 
 	@Override
 	public Expression<DoubleType> createGetX(Expression<?> expr, SourceLocation sourceLocation) {
-		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(((GameObject) x.getValue()).getRoundedPositionX())), sourceLocation);
+		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getRoundedPositionX())), sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createGetY(Expression<?> expr, SourceLocation sourceLocation) {
-		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(((GameObject) x.getValue()).getRoundedPositionY())), sourceLocation);
+		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getRoundedPositionY())), sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createGetWidth(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(((GameObject) x.getValue()).getWidth())), sourceLocation);
+		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getWidth())), sourceLocation);
 	}
 
 	@Override
 	public Expression<DoubleType> createGetHeight(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(((GameObject) x.getValue()).getHeight())), sourceLocation);
+		return new UnaryOperator<ObjectType, DoubleType>(Expression.cast(expr), (x -> new DoubleType(x.getValue().getHeight())), sourceLocation);
 	}
 
 	@Override
@@ -269,23 +273,22 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		return new Checker( Expression.cast(expr), (x, program) -> ((Tile) x).getTerrainType() == Terrain.AIR, sourceLocation);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Expression<BooleanType> createIsMoving(Expression<?> expr, Expression<?> direction,
 			SourceLocation sourceLocation) {		
-		return new Checker( Expression.cast(expr), (x, program)-> (((GameObject) x).isMoving(((Expression<DirectionType>) direction).execute(program).getValue())), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program)-> (((IMovable) x).isMoving(((Expression<DirectionType>) direction).execute(program).getValue())), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsDucking(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new Checker( Expression.cast(expr), (x, program)->((GameObject) x).isDucking(), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program)->((IDuckable) x).isDucking(), sourceLocation);
 	}
 
 	@Override
 	public Expression<BooleanType> createIsJumping(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new Checker( Expression.cast(expr), (x, program)->!((GameObject) x).isOnGround(), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program)->((IJumpable) x).isJumping(), sourceLocation);
 	}
 
 	@Override
@@ -328,44 +331,42 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		return new Print(value, sourceLocation);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Statement createStartRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
 		try{
-			return new Action( (x, program) -> ((GameObject) x).startMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); 
+			return new Action( (x, program) -> ((IMovable) x).startMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); 
 		}catch( ClassCastException exc){
 			throw new IllegalArgumentException();
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Statement createStopRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
-		return new Action( (x, program) -> ((GameObject) x).endMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); 
+		return new Action( (x, program) -> ((IMovable) x).endMove( ((Expression<DirectionType>) direction).execute(program).getValue() ), createSelf(sourceLocation), sourceLocation); 
 	}
 
 	@Override
 	public Statement createStartJump(SourceLocation sourceLocation) {
-		return new Action( (x, program) -> ((GameObject) x).startJump(), createSelf(sourceLocation), sourceLocation); 
+		return new Action( (x, program) -> ((IJumpable) x).startJump(), createSelf(sourceLocation), sourceLocation); 
 	}
 
 	@Override
 	public Statement createStopJump(SourceLocation sourceLocation) {
-		return new Action( (x, program) -> ((GameObject) x).endJump(), createSelf(sourceLocation), sourceLocation); 
+		return new Action( (x, program) -> ((IJumpable) x).endJump(), createSelf(sourceLocation), sourceLocation); 
 
 	}
 
 	@Override
 	public Statement createStartDuck(SourceLocation sourceLocation) {
-		return new Action( (x, program) -> ((GameObject) x).startDuck(), createSelf(sourceLocation), sourceLocation); 
+		return new Action( (x, program) -> ((IDuckable) x).startDuck(), createSelf(sourceLocation), sourceLocation); 
 
 	}
 
 	@Override
 	public Statement createStopDuck(SourceLocation sourceLocation) {
-		return new Action( (x, program) -> ((GameObject) x).endDuck(), createSelf(sourceLocation), sourceLocation); 
+		return new Action( (x, program) -> ((IDuckable) x).endDuck(), createSelf(sourceLocation), sourceLocation); 
 	}
 
 	@Override
@@ -408,7 +409,6 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Program createProgram(Statement mainStatement,
 			Map<String, Type> globalVariables) {
-		//System.out.println("ProgramFactory, createProgram with mainStatement: "+mainStatement);
 		return new Program(mainStatement, globalVariables);
 	}
 

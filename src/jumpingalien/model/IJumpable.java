@@ -4,7 +4,7 @@ public interface IJumpable {
 	
 	// overrides plaatsen! jump methodes uit game object weghalen
 
-	//public boolean isJumping(); // staat nog niet in Mazub maar is wel makkelijk af te leiden
+	public boolean isJumping();	
 	
 	//private void setJumping(boolean jumping); // private gaat blijkbaar niet in interfaces? 
 	
