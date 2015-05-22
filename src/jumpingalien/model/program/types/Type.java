@@ -10,9 +10,11 @@ package jumpingalien.model.program.types;
  */
 public abstract class Type {
 	
-	/* Object method override */
+	
 	
 	public abstract BooleanType typeEquals(Type o);
+	
+	/* Object method override */
 	
 	@Override
 	public abstract String toString();

@@ -1,5 +1,7 @@
 package jumpingalien.model.program.types;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Value;
 
 /**
@@ -24,7 +26,7 @@ public class BooleanType extends Type{
 	}
 	
 	/* Value */
-	
+	@Basic @Immutable
 	public Boolean getValue() {
 		return value;
 	}
@@ -33,7 +35,7 @@ public class BooleanType extends Type{
 
 	/* Object method overrides */
 	
-	@Override
+	@Immutable @Override
 	public String toString() {
 		return String.valueOf(this.getValue());
 	}
@@ -65,7 +67,7 @@ public class BooleanType extends Type{
 	}
 
 	
-	@Override
+	@Immutable @Override
 	public int hashCode() {
 		return getValue().hashCode();
 	}

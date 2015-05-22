@@ -18,7 +18,7 @@ public enum Orientation {
 		 * @return	Negative X direction.
 		 * 			| -1
 		 */
-		@Basic @Immutable
+		@Override @Basic @Immutable
 		public int getSign(){
 			return -1;
 		}
@@ -30,7 +30,7 @@ public enum Orientation {
 		 * @return	Positive X direction.
 		 * 			| 1
 		 */
-		@Basic @Immutable
+		@Override @Basic @Immutable
 		public int getSign(){
 			return 1;
 		}
@@ -42,7 +42,7 @@ public enum Orientation {
 		 * @return	Positive Y direction.
 		 * 			| 1
 		 */
-		@Basic @Immutable
+		@Override @Basic @Immutable
 		public int getSign(){
 			return 1;
 		}
@@ -54,7 +54,7 @@ public enum Orientation {
 		 * @return	Negative Y direction.
 		 * 			| -1
 		 */
-		@Basic @Immutable
+		@Override @Basic @Immutable
 		public int getSign(){
 			return -1;
 		}
@@ -66,7 +66,7 @@ public enum Orientation {
 		 * @return	All directions.
 		 * 			| 1
 		 */
-		@Basic @Immutable
+		@Override @Basic @Immutable
 		public int getSign(){
 			return 1;
 		}

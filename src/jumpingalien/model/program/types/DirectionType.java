@@ -1,5 +1,7 @@
 package jumpingalien.model.program.types;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Value;
 import jumpingalien.model.helper.Orientation;;
 
@@ -47,7 +49,7 @@ public class DirectionType extends Type {
 	
 	
 	/* Value */
-	
+	@Basic @Immutable
 	public Orientation getValue() {
 		return this.value;
 	}
@@ -77,14 +79,14 @@ public class DirectionType extends Type {
 		return new BooleanType(((DirectionType) o).getValue() == this.getValue());
 	}	
 	
-	@Override
+	@Immutable @Override
 	public String toString() {
 		return String.valueOf(this.getValue());
 	}
 	
-	@Override
+	@Immutable @Override
 	public int hashCode() {
-		return value.hashCode();
+		return getValue().hashCode();
 	}
 		
 }

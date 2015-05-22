@@ -3,6 +3,8 @@ package jumpingalien.model.program.types;
 import java.util.HashSet;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Value;
 import jumpingalien.model.Buzam;
 import jumpingalien.model.IKind;
@@ -35,7 +37,7 @@ public class ObjectType extends Type {
 	}
 	
 	/* Value */
-	
+	@Basic @Immutable
 	public IKind getValue() {
 		return this.value;
 	}
@@ -44,7 +46,7 @@ public class ObjectType extends Type {
 	
 	/* Object method overrides */
 	
-	@Override
+	@Immutable @Override
 	public String toString() {
 		if(this.getValue() == null)
 			return "null";
