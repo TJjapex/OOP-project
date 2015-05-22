@@ -1,7 +1,5 @@
 package jumpingalien.model.program.statements;
 
-import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
-
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.program.Program;

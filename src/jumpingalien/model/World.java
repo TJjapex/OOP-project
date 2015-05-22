@@ -554,6 +554,12 @@ public class World {
 		return (int) Math.floor( positionX / this.getTileLength());
 	}
 	
+	//TODO:commentary
+	@Raw
+	public int getPositionXTileX(int positionX){
+		return this.getPositionXOfTile(this.getTileX(positionX));
+	}
+	
 	/**
 	 * Return the vertical tile position for a given vertical pixel position.
 	 *
@@ -564,6 +570,12 @@ public class World {
 	@Raw
 	public int getTileY(int positionY){
 		return (int) Math.floor( positionY / this.getTileLength());
+	}
+	
+	//TODO:commentary
+	@Raw
+	public int getPositionYTileY(int positionY){
+		return this.getPositionYOfTile(this.getTileY(positionY));
 	}
 	
 	/**
@@ -597,6 +609,13 @@ public class World {
 		}
 
 		return  positions.toArray(new int[positions.size()][2]);
+	}
+	
+	// TODO: commentary
+	
+	public Tile getTile(int positionX, int positionY){
+		return new Tile(this.getTileLength(), this.getPositionXTileX(positionX), this.getPositionYTileY(positionY),
+						this.getGeologicalFeature(this.getPositionXTileX(positionX),this.getPositionYTileY(positionY)));
 	}
 	
 	/**************************************************** ADVANCE TIME *************************************************/

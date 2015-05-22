@@ -100,15 +100,15 @@ public class TestPF_WILLbeDELETED {
 		String testForEachWhere = 
 		"double x; "
 		+ "double a; "
-		+ " a := 4; "
+		//+ " a := 4; "
 		+ "foreach(plant, x) "
 		+ "where (gety x == 180)"
 		+ " do "
 		+ " print a; "
 		+ " print a; "
 		+ " print gethp x; "
-		+ " done "
-		+ "a := 5;";
+		+ " done ";
+		//+ "a := 5;";
 		
 		String testForEachSort = 
 				"double x; "
@@ -127,6 +127,12 @@ public class TestPF_WILLbeDELETED {
 				"double x; "
 				+ "x := searchobj right;"
 				+" print getx x;";
+		
+		String testEmptyProgram =
+				"double x := 4; "
+				+ "if (5 == 5) then "
+				+ "fi"
+				+" print x;";
 		
 		// Selecteer programma
 		String testProgram = testForEachWhere;
@@ -156,10 +162,8 @@ public class TestPF_WILLbeDELETED {
 		
 		Program program = (Program) parseOutcome.getResult();
 		Plant plant = facade.createPlantWithProgram(180, 50, plantSprites, program);
-		System.out.println(plant + " " + plant.getPositionX());
 		facade.addPlant(world, plant);
 		Plant plant2 = facade.createPlant(200, 50, plantSprites);
-		System.out.println(plant2 + " " + plant2.getPositionX());
 		facade.addPlant(world, plant2);
 		
 		for (int i=0; i<7; i++){

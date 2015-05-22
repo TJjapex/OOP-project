@@ -25,6 +25,7 @@ public class Action extends Statement {
 	
 	public Action(BiConsumer<Object, Program> operator, Expression<ObjectType> gameObject, SourceLocation sourceLocation){
 		super(sourceLocation);
+		
 		this.operator = operator;
 		this.gameObject = gameObject;
 	}

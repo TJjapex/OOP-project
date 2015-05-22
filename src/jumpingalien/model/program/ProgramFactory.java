@@ -1,6 +1,5 @@
 package jumpingalien.model.program;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +13,7 @@ import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
 import jumpingalien.model.Tile;
+import jumpingalien.model.World;
 import jumpingalien.model.program.expressions.*;
 import jumpingalien.model.program.statements.Action;
 import jumpingalien.model.program.statements.Assignment;
@@ -204,7 +204,10 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<ObjectType> createGetTile(Expression<?> x, Expression<?> y,
 			SourceLocation sourceLocation) {
-		return new GetTile(sourceLocation,x,y);
+		return new CoordinatesOperator<ObjectType>(Expression.cast(x), Expression.cast(y),
+													 (xCoord, yCoord) -> ( program -> { World world = program.getGameObject().getWorld();
+																			 			return new ObjectType(world.getTile(xCoord.intValue(),yCoord.intValue()));}),
+												   sourceLocation);
 	}
 
 	@Override
@@ -272,6 +275,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		return new Checker( Expression.cast(expr), (x, program) -> ((Tile) x).getTerrainType() == Terrain.AIR, sourceLocation);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Expression<BooleanType> createIsMoving(Expression<?> expr, Expression<?> direction,
 			SourceLocation sourceLocation) {		
@@ -330,6 +334,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		return new Print(value, sourceLocation);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Statement createStartRun(Expression<?> direction,
 			SourceLocation sourceLocation) {
@@ -340,6 +345,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Statement createStopRun(Expression<?> direction,
 			SourceLocation sourceLocation) {

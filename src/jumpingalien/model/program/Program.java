@@ -19,6 +19,8 @@ import jumpingalien.model.program.types.Type;
  */
 public class Program {
 	
+	/* Constructor */
+	
 	public Program(Statement mainStatement, Map<String, Type> globalVariables){
 		assert mainStatement != null;
 		assert globalVariables != null;
@@ -77,7 +79,6 @@ public class Program {
 		if( this.mainStatement.iterator().hasNext() ){
 			getMainStatement().execute(this);
 		}else{
-			System.out.println("no next statement in mainStatement -> restart mainStatement");
 			this.restart();
 			this.executeNext();
 		}

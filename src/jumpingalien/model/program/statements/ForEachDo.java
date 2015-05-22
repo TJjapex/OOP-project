@@ -113,12 +113,11 @@ public class ForEachDo extends Statement implements ILoop {
 	public void execute(final Program program) throws ProgramRuntimeException{
 		if(!hasObjectListIterator()){
 			setObjectListIterator(buildObjectList(program).iterator());
-			
+
 			// Load in first looping variable
 			if (this.getObjectListIterator().hasNext()){
 				loadNextLoopObject(program);
 			} else{
-				System.out.println("empty loop set");
 				this.breakLoop();
 			}
 				
@@ -235,7 +234,7 @@ public class ForEachDo extends Statement implements ILoop {
 		return Double.compare(r1, r2);
 	}
 	
-	/* Children */
+	/* Children statements */
 	
 	@Override
 	public List<Statement> getChildrenStatements(){

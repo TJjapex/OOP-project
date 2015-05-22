@@ -25,7 +25,8 @@ public class IfThen extends Statement implements IConditionedStatement{
 
 	/* Constructor */
 	
-	public IfThen(final Expression<BooleanType> condition, final Statement ifBody, final Statement elseBody, SourceLocation sourceLocation){
+	public IfThen(final Expression<BooleanType> condition, final Statement ifBody, final Statement elseBody,
+				  SourceLocation sourceLocation){
 		super(sourceLocation);
 		
 		this.condition = condition;
