@@ -9,6 +9,7 @@ import be.kuleuven.cs.som.annotate.*;
  * @note	See the class Mazub for further information about our project.
  * @version 2.0
  */
+@Value
 public class Vector<T extends Number> {
 	
 	/***************************************************** CONSTRUCTOR *************************************************/
