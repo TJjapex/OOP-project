@@ -1,5 +1,7 @@
 package jumpingalien.model.program.types;
 
+import be.kuleuven.cs.som.annotate.Value;
+
 /**
  * A class of Boolean Types as defined in a Program.
  * 
@@ -8,6 +10,7 @@ package jumpingalien.model.program.types;
  * @version 1.0
  * 
  */
+@Value
 public class BooleanType extends Type{
 	
 	/* Constructor */
@@ -36,12 +39,35 @@ public class BooleanType extends Type{
 	}
 	
 	@Override
-	public BooleanType equals(Type o){
+	public BooleanType typeEquals(Type o){
 		if(! ( o instanceof BooleanType ) ){
 			return new BooleanType(false);
 		}
 		
-		return new BooleanType(((BooleanType) o).getValue() == this.getValue());
+		return new BooleanType(((BooleanType) o).getValue().equals(this.getValue()));
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BooleanType other = (BooleanType) obj;
+		if (getValue() == null) {
+			if (other.getValue() != null)
+				return false;
+		} else if (!getValue().equals(other.getValue()))
+			return false;
+		return true;
+	}
+
+	
+	@Override
+	public int hashCode() {
+		return getValue().hashCode();
 	}
 	
 	/* Operations */
@@ -57,5 +83,4 @@ public class BooleanType extends Type{
 	public BooleanType disjunct(BooleanType o){
 		return new BooleanType( this.getValue() || o.getValue());
 	}
-		
 }

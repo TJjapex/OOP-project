@@ -1,5 +1,6 @@
 package jumpingalien.model.program.types;
 
+import be.kuleuven.cs.som.annotate.Value;
 import jumpingalien.model.helper.Orientation;;
 
 /**
@@ -10,6 +11,7 @@ import jumpingalien.model.helper.Orientation;;
  * @version 1.0
  * 
  */
+@Value
 public class DirectionType extends Type {
 
 	/* Constructor */
@@ -19,27 +21,30 @@ public class DirectionType extends Type {
 	}
 	
 	public DirectionType(jumpingalien.part3.programs.IProgramFactory.Direction value) throws IllegalArgumentException{
-		switch(value){
-		case LEFT:
-			this.value = Orientation.LEFT;
-		break;
-		case RIGHT:
-			this.value = Orientation.RIGHT;
-		break;
-		case UP:
-			this.value = Orientation.TOP;
-		break;
-		case DOWN:
-			this.value = Orientation.BOTTOM;
-		break;
-		default:
-			throw new IllegalArgumentException();
-		}
+		this(DirectionType.directionToOrientation(value));
 	}
 	
 	public DirectionType(){
 		this(Orientation.RIGHT);
 	}
+	
+	/* Convert Direction to Orientation */
+	
+	public static Orientation directionToOrientation(jumpingalien.part3.programs.IProgramFactory.Direction direction) throws IllegalArgumentException{
+		switch(direction){
+		case LEFT:
+			return Orientation.LEFT;
+		case RIGHT:
+			return Orientation.RIGHT;
+		case UP:
+			return Orientation.TOP;
+		case DOWN:
+			return Orientation.BOTTOM;
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	
 	/* Value */
 	
@@ -52,17 +57,34 @@ public class DirectionType extends Type {
 	/* Object method overrides */
 	
 	@Override
-	public String toString() {
-		return String.valueOf(this.getValue());
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DirectionType other = (DirectionType) obj;
+		return this.typeEquals(other).getValue();
 	}
-	
+
 	@Override
-	public BooleanType equals(Type o){
+	public BooleanType typeEquals(Type o){
 		if(! ( o instanceof DirectionType ) ){
 			return new BooleanType(false);
 		}
 		
 		return new BooleanType(((DirectionType) o).getValue() == this.getValue());
+	}	
+	
+	@Override
+	public String toString() {
+		return String.valueOf(this.getValue());
+	}
+	
+	@Override
+	public int hashCode() {
+		return value.hashCode();
 	}
 		
 }

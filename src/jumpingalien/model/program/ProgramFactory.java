@@ -164,13 +164,13 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<BooleanType> createEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		return new BinaryOperator<Type, BooleanType>( Expression.cast(left), Expression.cast(right), (l,  r) -> l.equals(r), sourceLocation);	
+		return new BinaryOperator<Type, BooleanType>( Expression.cast(left), Expression.cast(right), (l,  r) -> l.typeEquals(r), sourceLocation);	
 	}
 
 	@Override
 	public Expression<BooleanType> createNotEquals(Expression<?> left, Expression<?> right,
 			SourceLocation sourceLocation) {
-		return new BinaryOperator<Type, BooleanType>( Expression.cast(left), Expression.cast(right), (l,  r) ->  (l.equals(r)).not(), sourceLocation);	
+		return new BinaryOperator<Type, BooleanType>( Expression.cast(left), Expression.cast(right), (l,  r) ->  (l.typeEquals(r)).not(), sourceLocation);	
 	}
 
 	@Override

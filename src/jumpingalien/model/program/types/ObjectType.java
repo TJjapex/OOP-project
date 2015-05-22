@@ -3,6 +3,7 @@ package jumpingalien.model.program.types;
 import java.util.HashSet;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.Value;
 import jumpingalien.model.Buzam;
 import jumpingalien.model.IKind;
 import jumpingalien.model.Mazub;
@@ -20,6 +21,7 @@ import jumpingalien.part3.programs.IProgramFactory.Kind;
  * @version 1.0
  * 
  */
+@Value
 public class ObjectType extends Type {
 	
 	/* Constructor */
@@ -51,13 +53,38 @@ public class ObjectType extends Type {
 	}
 	
 	@Override
-	public BooleanType equals(Type o){
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ObjectType other = (ObjectType) obj;
+		if (getValue() == null) {
+			if (other.getValue() != null)
+				return false;
+		} else if (!getValue().equals(other.getValue()))
+			return false;
+		return true;
+	}
+
+	@Override
+	public BooleanType typeEquals(Type o){
 		if(! ( o instanceof ObjectType ) ){
 			return new BooleanType(false);
 		}
 		
 		return new BooleanType(((ObjectType) o).getValue() == this.getValue());
 	}
+	
+	@Override
+	public int hashCode(){
+		if(this.getValue() == null)
+			return 0;
+		return this.getValue().hashCode();
+	}
+	
 	
 	/* Get all objects of a Kind */
 	

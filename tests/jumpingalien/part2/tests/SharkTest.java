@@ -8,6 +8,7 @@ import jumpingalien.model.World;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
+import jumpingalien.part3.facade.IFacadePart3;
 import jumpingalien.util.Sprite;
 
 import org.junit.After;
@@ -94,12 +95,13 @@ public class SharkTest {
 	 */
 	@Test
 	public void deathOutOfGameWorld(){
-		IFacadePart2 facade = new Facade();
+		Facade facade = new Facade();
 		facade.startGame(world);
 		
-		/* calculations -12 = -10/2 * t**2 -> t = 0.155 */
-		facade.advanceTime(world,0.17);
-		assertTrue(shark.getRoundedPositionY() == 0);
+		/* Initial y position is 12, so wait until y-position lower than 0 */
+		/* calculations: -12 = -10/2 * t**2 -> t = 0.155 */
+		facade.advanceTime(world, 0.17);
+		assertEquals(0, shark.getRoundedPositionY());
 		
 		for (int i=0; i<3; i ++){
 			assertTrue(shark.isKilled());

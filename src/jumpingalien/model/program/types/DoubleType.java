@@ -1,5 +1,7 @@
 package jumpingalien.model.program.types;
 
+import be.kuleuven.cs.som.annotate.Value;
+
 /**
  * A class of Double Types as defined in a Program.
  * 
@@ -8,6 +10,7 @@ package jumpingalien.model.program.types;
  * @version 1.0
  * 
  */
+@Value
 public class DoubleType extends Type{
 	
 	/* Constructor */
@@ -33,20 +36,38 @@ public class DoubleType extends Type{
 	private final double value;
 	
 	/* Object method overrides */
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(this.getValue());
 	}
 	
+	
 	@Override
-	public BooleanType equals(Type o){
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DoubleType other = (DoubleType) obj;
+		return this.typeEquals(other).getValue();
+	}
+	
+	@Override
+	public BooleanType typeEquals(Type o){
 		if(! ( o instanceof DoubleType ) ){
 			return new BooleanType(false);
 		}
 		
 		return new BooleanType(((DoubleType) o).getValue() == this.getValue());
 	}	
+	
+	@Override
+	public int hashCode() {
+		return (int) getValue();
+	}
 	
 	/* Operations */
 	
