@@ -9,7 +9,6 @@ import java.util.Set;
 import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.CollisionException;
-import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -56,7 +55,8 @@ import be.kuleuven.cs.som.annotate.*;
  * @invar	This game object is not in a world, or the world is valid
  * 			|	!hasWorld() || hasProperWorld()
  * 
- * @version 1.0
+ * @version 2.0
+ * 
  */
 public abstract class GameObject implements IKind, IMovable{
 	
@@ -66,7 +66,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * Constant reflecting the duration that an object should be immune after losing hit points due to contact
 	 * with some other Game object.
 	 * 
-0	 * @return	the duration that an object should be immune after losing hit points due to contact with some other
+	 * @return	The duration that an object should be immune after losing hit points due to contact with some other
 	 *  		Game object is equal to 0.6s.
 	 * 			| result == 0.6
 	 */
@@ -103,6 +103,8 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 				The number of hit points of a Game object.
 	 * @param 	maxNbHitPoints
 	 * 				The maximal number of hit points of a Game object.
+	 * @param	program
+	 * 				The Program the Game Object should execute.
 	 * @pre		The length of the given array sprites should not be null and should be greater or equal to 2.
 	 * 			| (Array.getLength(sprites) >= 2) && sprites != null
 	 * @effect	Set a new Timer for a Game object.
@@ -127,7 +129,11 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			| new.maxNbHitPoints == maxNbHitPoints
 	 * @effect	Set the initial number of hit points to nbHitPoints.
 	 * 			| setNbHitPoints(nbHitPoints)
-	 * TODO: program documentation
+	 * @post	Set the Program to program.
+	 * 			| new.getProgram() == program
+	 * @effect	If the Game object has a valid Program, set the relation on the side of the Program.
+	 * 			| if ( this.hasProgram() )
+	 * 			|	then program.setGameObject(this)
 	 * @throws	IllegalPositionXException
 	 * 				The Game object can't have positionX as his horizontal position.
 	 * 				| ! canHaveAsPositionX(positionX)
@@ -173,10 +179,11 @@ public abstract class GameObject implements IKind, IMovable{
 		this.setNbHitPoints(nbHitPoints);
 
 		this.program = program;
-		if(program != null){
+		
+		if(this.hasProgram()){
 			program.setGameObject(this);
 		}
-	
+		
 	}
 
 	/****************************************************** ANIMATION **************************************************/
@@ -274,7 +281,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			| getTimer().increaseSinceLastTerrainDamage(dt)
 	 * @effect	Increase the time since the last period.
 	 * 			| getTimer().increaseSinceLastPeriod(dt)
-	 * @effect	Increase the time since the last program execution.
+	 * @effect	Increase the time since the last Program execution.
 	 * 			| getTimer().increaseSinceLastProgram(dt)
 	 * @effect	Reset the terrain overlap duration.
 	 * 			| resetTerrainOverlapDuration()
@@ -295,22 +302,30 @@ public abstract class GameObject implements IKind, IMovable{
 	
 	/******************************************************* PROGRAM ***************************************************/
 	
+	/**
+	 * Return the Program of the Game object.
+	 * 
+	 * @return	The Program of the Game object.
+	 */
 	public Program getProgram(){
 		return this.program;
 	}
 	
+	/**
+	 * Check whether or not the Game object has a Program, i.e. it is not null.
+	 * 
+	 * @return	| result == ( this.getProgram() != null )
+	 */
 	public boolean hasProgram(){
 		return this.getProgram() != null;
 	}
 	
+	/**
+	 * Variable registering the Program of this Game object.
+	 */
 	protected final Program program; 
 	
 	/******************************************************* TERRAIN ***************************************************/
-	
-	/**
-	 * A map containing the properties for the different types of terrain. 
-	 */
-	private Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
 	
 	/**
 	 * Return the map of terrain properties for the different types of terrain.
@@ -362,6 +377,11 @@ public abstract class GameObject implements IKind, IMovable{
 	public boolean hasTerrainPropertiesOf(Terrain terrain){
 		return this.allTerrainProperties.containsKey(terrain);
 	}
+	
+	/**
+	 * A map containing the properties for the different types of terrain. 
+	 */
+	private Map<Terrain, TerrainProperties> allTerrainProperties = new HashMap<Terrain, TerrainProperties>();
 	
 	/**
 	 * Set the terrain properties for each terrain type. As this is an abstract method, this must
@@ -499,7 +519,6 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			|	this.getWorld().hasAsGameObject(this) == false
 	 * @post	The new world of this Game object is null
 	 * 			|	new.getWorld() == null
-	 * 
 	 */
 	@Model
 	protected void unsetWorld() {
@@ -1186,8 +1205,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 
 	 * @return	An integer that represents the maximal number of hit points for this Game object.
 	 */
-	@Basic
-	@Immutable
+	@Basic @Immutable
 	public int getMaxNbHitPoints(){
 		return this.maxNbHitPoints;
 	}
@@ -1227,7 +1245,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @param 	immune
 	 * 				A boolean that represents the desired immunity status of this Game object.
 	 * @post	The immunity status of this Game object is equal to immune.
-	 * 			| new.isImmun() == immune
+	 * 			| new.isImmune() == immune
 	 */
 	@Basic
 	protected void setImmune( boolean immune ){
@@ -1299,8 +1317,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @return 	True if and only if the horizontal velocity is not equal to 0. (up to a certain epsilon)
 	 * 			| result == ( !Util.fuzzyEquals(this.getVelocityX(), 0) )
 	 */
-	@Override
-	@Raw
+	@Raw @Override
 	public boolean isMoving() {
 		return !Util.fuzzyEquals(this.getVelocityX(), 0);
 	}
@@ -1308,49 +1325,18 @@ public abstract class GameObject implements IKind, IMovable{
 	/**
 	 * Check whether the Game object is moving in the given direction.
 	 * 
-	 * @param orientation
-	 * 			The direction to check for
-	 * 
-	 * @return 	True if and only if the horizontal velocity is not equal to 0 and the current direction is the given orientation.
+	 * @param 	orientation
+	 * 				The direction to check for.
+	 * @return 	True if and only if the horizontal velocity is not equal to 0 and the current direction is the
+	 *  		given orientation.
 	 * 			| result == ( !Util.fuzzyEquals(this.getVelocityX(), 0) ) && this.getOrientation
 	 */
-	@Override
-	@Raw
+	@Raw @Override
 	public boolean isMoving(Orientation orientation) {
 		return isMoving() && this.getOrientation() == orientation;
 	}
 	
-	
-	/************************************************* JUMPING AND FALLING *********************************************/
-
-	/**
-	 * Make a Game object start jumping.
-	 * 
-	 * @effect	If the Game object is on the ground, set the vertical velocity to the initial vertical velocity.
-	 * 			| setVelocityY( this.getVelocityYInit() )
-	 */
-
-	public void startJump() {
-		if(this.isOnGround()){
-			this.setVelocityY( this.getVelocityYInit() );
-		}		
-	}
-
-	/**
-	 * Make a Game object end jumping.
-	 * 
-	 * @effect	Set the vertical velocity of the Game object to 0.
-	 * 			| setVelocityY(0)
-	 * @throws 	IllegalEndJumpException
-	 * 				The game object does not have a positive vertical velocity. (up to a certain epsilon)
-	 * 				| ! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )
-	 */
-	public void endJump() throws IllegalEndJumpException {
-		if(! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 ))
-			throw new IllegalEndJumpException();
-		
-		this.setVelocityY(0);
-	}
+	/******************************************************* FALLING ***************************************************/
 
 	/**
 	 * Check whether the Game object is jumping.
@@ -1365,7 +1351,6 @@ public abstract class GameObject implements IKind, IMovable{
 	 */
 	public boolean isOnGround() throws IllegalStateException{		
 		if(! this.hasProperWorld()){
-			System.out.println(this);
 			throw new IllegalStateException("GameObject not in proper world!");}
 		
 		return doesInteractWithTerrain(TerrainInteraction.STAND_ON, Orientation.BOTTOM) || 
@@ -1465,7 +1450,7 @@ public abstract class GameObject implements IKind, IMovable{
 	/**
 	 * Execute Program until time depleted.
 	 * 
-	 * @note no further documentation was needed for this method.
+	 * @note	No further documentation was required for this method.
 	 */
 	protected void advanceProgram(){
 		
@@ -1622,7 +1607,20 @@ public abstract class GameObject implements IKind, IMovable{
 		this.setVelocityY( newVy );
 	}
 	
-	// TODO: commentary
+	/**
+	 * Update the Game object's horizontal and vertical position and velocity according to the given dt.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed time.
+	 * @effect	The horizontal position is updated according to the given dt.
+	 * 			| updatePositionX(dt)
+	 * @effect	The horizontal velocity is updated according to the given dt.
+	 * 			| updateVelocityX(dt)
+	 * @effect	The vertical position is updated according to the given dt.
+	 * 			| updatePositionY(dt)
+	 * @effect	The vertical velocity is updated according to the given dt.
+	 * 			| updateVelocityY(dt)
+	 */
 	protected void update(double dt){
 		
 		/* Horizontal */
@@ -1635,16 +1633,33 @@ public abstract class GameObject implements IKind, IMovable{
 		
 	}
 	
-	// TODO: commentary
+	/**
+	 * Check whether or not the periodic movement of a Game object without a Program is already initialized.
+	 * 
+	 * @return	True if and only if the periodic movement of the Game object is already initialized.
+	 * 			| result == ( this.initializedPeriodicMovement )
+	 */
 	@Basic
 	public boolean isInitializedPeriodicMovement(){
 		return this.initializedPeriodicMovement;
 	}
 	
+	/**
+	 * Set whether or not the periodic movement of a Game object without a Program is already initialized.
+	 * 
+	 * @param 	initialized
+	 * 				A boolean that represents the desired periodic movement initialization status of this Game object.
+	 * @post	The initialized periodic movement status is equal to initialized.
+	 * 			| new.isInitializedPeriodicMovement() == intialized
+	 */
+	@Basic
 	protected void setInitializedPeriodicMovement(boolean initialized){
 		this.initializedPeriodicMovement = initialized;
 	}
 	
+	/**
+	 * Variable registering the current periodic movement initialization status of this Game object.
+	 */
 	protected boolean initializedPeriodicMovement;
 		
 	/****************************************************** COLLISION **************************************************/
@@ -1818,7 +1833,7 @@ public abstract class GameObject implements IKind, IMovable{
 	/** 
 	 * Return a set containing the overlapping Terrain types.
 	 *  
-	 * @return	A set containing the overlapping terrain types.
+	 * @return	A set containing the overlapping Terrain types.
 	 */
 	public Set<Terrain> getOverlappingTerrainTypes(){
 		World world = this.getWorld();
@@ -2114,28 +2129,32 @@ public abstract class GameObject implements IKind, IMovable{
 	/**
 	 * Process the overlap of another Game object with this Game object.
 	 * 
-	 * @effect	Process overlaps of Mazubs with this Game object.
-	 *  TODO aanpassen
+	 * @effect	Process overlaps of the Mazub with this Game object.
 	 * 			| for mazub in this.getWorld().getAllMazubs():
-	 * 			|	if ( this.doesOverlapWith(mazub) ) 
+	 * 			|	if ( Mazub.getInWorld( this.getWorld() ) != this &&
+	 * 					 this.doesOverlapWith(Mazub.getInWorld( this.getWorld() ))) 
+	 * 			|		then this.processMazubOverlap( Mazub.getInWorld( this.getWorld() ) )
+	 * @effect	Process overlaps of Buzams with this Game object.
+	 * 			| for buzam in Buzam.getAllInWorld( this.getWorld() )):
+	 * 			|	if ( buzam != this && this.doesOverlapWith(buzam) ) 
 	 * 			|		then this.processMazubOverlap(mazub)
 	 * @effect	Process overlaps of Plants with this Game object.
-	 * 			| for plant in this.getWorld().getAllPlants():
-	 * 			|	if ( this.doesOverlapWith(plant) ) 
+	 * 			| for plant in Plant.getAllInWorld( this.getWorld() ):
+	 * 			|	if ( plant != this && this.doesOverlapWith(plant) ) 
 	 * 			|		then this.processPlantOverlap(plant)
 	 * @effect	Process overlaps of Sharks with this Game object.
-	 * 			| for shark in this.getWorld().getAllSharks():
-	 * 			|	if ( this.doesOverlapWith(shark) ) 
+	 * 			| for shark in Shark.getAllInWorld( this.getWorld() ):
+	 * 			|	if ( shark != this && this.doesOverlapWith(shark) ) 
 	 * 			|		then this.processSharkOverlap(shark)
 	 * @effect	Process overlaps of Slimes with this Game object.
-	 * 			| for slime in this.getWorld().getAllSlimes():
-	 * 			|	if ( this.doesOverlapWith(slime) ) 
+	 * 			| for slime in Slime.getAllInWorld( this.getWorld() ):
+	 * 			|	if ( slime != this && this.doesOverlapWith(slime) ) 
 	 * 			|		then this.processSlimeOverlap(slime) 	
 	 */
 	protected void processGameObjectOverlap(){
+		
 		World world = this.getWorld();
 		
-
 		if( Mazub.getInWorld(world) != this && this.doesOverlapWith(Mazub.getInWorld(world))){
 			this.processMazubOverlap(Mazub.getInWorld(world));
 		}
@@ -2146,7 +2165,7 @@ public abstract class GameObject implements IKind, IMovable{
 			}
 		}
 		
-		for(Plant plant :  Plant.getAllInWorld(world)){
+		for(Plant plant : Plant.getAllInWorld(world)){
 			if(plant != this && this.doesOverlapWith(plant)){
 				this.processPlantOverlap(plant);
 			}
@@ -2239,17 +2258,23 @@ public abstract class GameObject implements IKind, IMovable{
 	 * Variable registering the terminated status of a Game object.
 	 */
 	protected boolean terminated = false;
-	
-	
+
+	/******************************************************** STRING ***************************************************/
 	
 	/**
-	 * Returns a string representation of the object
+	 * Return a String representation of the Game object.
+	 * 
+	 * @return	A String including the name of the Class of the Game object and its current number of hit points.
 	 */
 	@Override
 	public String toString(){
 		return getClassName()+" hp: " + getNbHitPoints() + " ";
 	}
 	
+	/**
+	 * Return the name of the Class as a String. As this is an abstract method, this must
+	 * be implemented in the subclasses of this class, according to their specifications.
+	 */
 	public abstract String getClassName();
 	
 }

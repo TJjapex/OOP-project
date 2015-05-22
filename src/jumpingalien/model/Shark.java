@@ -21,9 +21,8 @@ import jumpingalien.util.Util;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
- * 
- * @note Class invariants of the class GameObject also apply to this subclass.
+ * @version 2.0
+ *
  */
 public class Shark extends GameObject implements IJumpable, IProgrammable{
 	
@@ -101,16 +100,15 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 				The number of hit points of a Shark.
 	 * @param	maxNbHitPoints
 	 * 				The maximal number of hit points of a Shark.
+	 * @param	program
+	 * 				The Program a Shark should execute.
 	 * @pre		| Array.getLength(sprites) == 2	 * 
 	 * @post	| new.getNbNonJumpingPeriods == 0
 	 * @post	| new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @post	| new.isJumping == false
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
-	 * 					sprites,nbHitPoints, maxNbHitPoints)
-	 * @effect	| startMove( this.getRandomOrientation() )
-	 * @effect	| startDiveRise()
+	 * 					sprites,nbHitPoints, maxNbHitPoints, program)
 	 * @effect 	| configureTerrain()
-	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -138,21 +136,38 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	}
 	
 	/**
-	 * TODO: documentation
+	 * Initialize a Shark without a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param velocityXInit
-	 * @param velocityYInit
-	 * @param velocityXMax
-	 * @param accelerationXInit
-	 * @param sprites
-	 * @param nbHitPoints
-	 * @param maxNbHitPoints
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Shark's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Shark's bottom left pixel.
+	 * @param 	velocityXInit
+	 * 				The initial horizontal velocity of a Shark.
+	 * @param 	velocityYInit
+	 * 				The initial vertical velocity of a Shark.
+	 * @param 	velocityXMax
+	 * 				The maximal horizontal velocity of a Shark.
+	 * @param 	accelerationXInit
+	 * 				The initial horizontal acceleration of a Shark.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Shark.
+	 * @param 	nbHitPoints
+	 * 				The number of hit points of a Shark.
+	 * @param	maxNbHitPoints
+	 * 				The maximal number of hit points of a Shark.
+	 * @effect	| this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit,
+	 * 			|	   sprites, nbHitPoints, maxNbHitPoints, null)
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Shark(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 		  	double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
@@ -174,8 +189,10 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 				The y-location of a Shark's bottom left pixel.
 	 * @param 	sprites
 	 * 				The array of sprite images for a Shark.
+	 * @param	program
+	 * 				The Program a Shark should execute.
 	 * @pre		| Array.getLength(sprites) == 2
-	 * TODO: documentation program
+	 * @effect	| this(pixelLeftX, pixelBottomY, 0.0, 0.0, 4.0, 1.5, sprites, 100, 100, program)
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -193,29 +210,32 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	}
 	
 	/**
-	 * TODO: documentation
+	 * Initialize a Shark with default initial horizontal velocity, initial vertical velocity, maximal horizontal
+	 * velocity, initial horizontal acceleration, number of hit points and maximal number of hit points but 
+	 * without a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param sprites
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Shark's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Shark's bottom left pixel.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Shark.
+	 * @effect	| this(pixelLeftX, pixelBottomY, sprites, null)
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Shark(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{		
 		this(pixelLeftX, pixelBottomY, sprites, null);
 	}
-	
-	/**
-	 * Returns a string class name of the object, used for toString method in GameObject
-	 */
-	@Override
-	public String getClassName() {
-		return "Shark";
-	}
-	
 	
 	/******************************************************** TIMER ****************************************************/
 	
@@ -392,14 +412,14 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 */
 	private double randomAcceleration;
 	
-	/************************************************* JUMPING AND FALLING *********************************************/
+	/******************************************************* FALLING ***************************************************/
 
 	/**
 	 * Return whether or not a Shark is jumping at the moment.
 	 * 
-	 * @return	result = ( this.jumping)
+	 * @return	| result = ( this.jumping)
 	 */
-	@Override @Basic
+	@Basic @Override
 	public boolean isJumping(){
 		return this.jumping;
 	}
@@ -411,8 +431,8 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 				The new jumping status of a Shark.
 	 * @post	| new.isJumping() == jumping
 	 */
-	@Basic
-	private void setJumping(boolean jumping){
+	@Basic @Override
+	public void setJumping(boolean jumping){
 		this.jumping = jumping;
 	}
 	
@@ -503,22 +523,28 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
-	 * Initiate a new periodic movement, if needed, and update the Shark's horizontal and vertical position and velocity
-	 * for the given time interval along with his gravitational acceleration.
+	 * Initialize the first periodic movement, if needed. Initiate a new periodic movement, if needed, and update the
+	 * Shark's horizontal and vertical position and velocity for the given time interval along with his gravitational
+	 * acceleration.
 	 * 
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
-	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			|	then this.startMove(this.getRandomOrientation())
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			|	then this.startDiveRise()
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			| 	then this.setInitializedPeriodicMovement(true)
+	 * @effect	| if ( this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.periodicMovement();
-	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * @effect	| if ( this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.getTimer().setSinceLastPeriod(0)
-	 * @post 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
+	 * @post 	| if ( this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| adjustGravitationalAcceleration()
-	 * @effect	| updatePositionX(dt)
-	 * @effect	| updateVelocityX(dt)
-	 * @effect	| updatePositionY(dt)
-	 * @effect	| updateVelocityY(dt)
+	 * @effect	| update(dt)
 	 */
 	@Override
 	protected void doMove(double dt){
@@ -547,7 +573,17 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 		
 	}
 	
-	// TODO: commentary
+	/**
+	 * Advance the Shark's Program and update the Shark's horizontal and vertical position and velocity
+	 * for the given time interval along with his gravitational acceleration.
+	 * 
+	 * @param	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	| advanceProgram()
+	 * @effect	| adjustGravitationalAcceleration()
+	 * @effect	| update(dt)	
+	 */
+	@Override
 	public void doMoveProgram(double dt){
 		
 		/* Advance Program */
@@ -681,13 +717,16 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	/**
 	 * Process the horizontal collision of a Shark.
 	 * 
-	 * @note	As an optional implementation, a Shark changes his direction when he collides.
+	 * @note	As an optional implementation, a Shark without a Program changes his direction when he collides.
 	 * 
-	 * @effect	| changeDirection()
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			| 	then this.changeDirection()
 	 */
 	@Override
 	public void processHorizontalCollision() {
-		this.changeDirection();
+		if(!this.hasProgram()){
+			this.changeDirection();
+		}
 	}
 	
 	/**
@@ -781,6 +820,18 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	@Override
 	public void processPlantOverlap(Plant plant) {
 
+	}
+	
+	/******************************************************** STRING ***************************************************/
+	
+	/**
+	 * Return the name of the Class as a String, used for the toString method in GameObject.
+	 *
+	 * @return	The name of the Class as a String.	
+	 */
+	@Override
+	public String getClassName() {
+		return "Shark";
 	}
 	
 }

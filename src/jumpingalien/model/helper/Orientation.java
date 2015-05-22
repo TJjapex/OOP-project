@@ -6,7 +6,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 2.0
+ * @version 3.0
  */
 @Value
 public enum Orientation {

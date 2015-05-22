@@ -6,7 +6,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 3.0
  */
 public class IllegalPositionXException extends RuntimeException {
 	

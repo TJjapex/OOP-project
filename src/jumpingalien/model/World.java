@@ -21,7 +21,7 @@ import jumpingalien.util.Util;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  * 
  * @invar 	| getNbGameObjects() <= 101
  * @invar	| getNbSchools() <= 10
@@ -222,7 +222,7 @@ public class World {
 		updateDisplayPositionY();
 	}
 	
-	// X
+	/* X position */
 	
 	/**
 	 * Return the horizontal position of the visible game window.
@@ -299,7 +299,7 @@ public class World {
 	 */
 	private int displayPositionX;
 
-	// Y
+	/* Y position */
 	
 	/**
 	 * Return the vertical position of the visible game window.
@@ -554,7 +554,13 @@ public class World {
 		return (int) Math.floor( positionX / this.getTileLength());
 	}
 	
-	//TODO:commentary
+	/**
+	 * Return the horizontal pixel position of the tile for a given horizontal pixel position.
+	 *
+	 * @param 	positionX
+	 * 				The pixel's horizontal position.
+	 * @return	| result == ( this.getPositionXOfTile(this.getTileX(positionX)) )
+	 */
 	@Raw
 	public int getPositionXTileX(int positionX){
 		return this.getPositionXOfTile(this.getTileX(positionX));
@@ -572,7 +578,13 @@ public class World {
 		return (int) Math.floor( positionY / this.getTileLength());
 	}
 	
-	//TODO:commentary
+	/**
+	 * Return the vertical pixel position of the tile for a given vertical pixel position.
+	 *
+	 * @param 	positionY
+	 * 				The pixel's vertical position.
+	 * @return	| result == ( this.getPositionYOfTile(this.getTileY(positionY)) )
+	 */
 	@Raw
 	public int getPositionYTileY(int positionY){
 		return this.getPositionYOfTile(this.getTileY(positionY));
@@ -611,8 +623,18 @@ public class World {
 		return  positions.toArray(new int[positions.size()][2]);
 	}
 	
-	// TODO: commentary
-	
+	/**
+	 * Return a Tile instance of the tile with the given horizontal and vertical position.
+	 * 
+	 * @param 	positionX
+	 * 				The horizontal pixel position of a tile.
+	 * @param 	positionY
+	 * 				The vertical pixel position of a tile.
+	 * @return	| result == ( new Tile(this.getTileLength(), this.getPositionXTileX(positionX),
+	 * 			|					   this.getPositionYTileY(positionY),
+	 *			|					   this.getGeologicalFeature( this.getPositionXTileX(positionX),
+	 *			|												  this.getPositionYTileY(positionY) ) )
+	 */
 	public Tile getTile(int positionX, int positionY){
 		return new Tile(this.getTileLength(), this.getPositionXTileX(positionX), this.getPositionYTileY(positionY),
 						this.getGeologicalFeature(this.getPositionXTileX(positionX),this.getPositionYTileY(positionY)));
@@ -654,11 +676,7 @@ public class World {
 	 * @param 	tileY
 	 *            	The y-position y_T of the tile for which the type needs to be modified.
 	 * @param 	terrainType
-	 *            	The new type for the given tile, where:
-	 *            		- the value 0 is returned for an air tile.
-	 *         			- the value 1 is returned for a solid ground tile.
-	 *         			- the value 2 is returned for a water tile.
-	 *         			- the value 3 is returned for a magma tile.
+	 *            	The new Terrain type for the given tile.
 	 * @post	| new.getGeologicalFeature( this.getPositionXofTile(tileX), this.getPositionYofTile(tileY) ) == terrainType
 	 * @throws 	IllegalStateException
 	 * 				| this.hasStarted()
@@ -690,11 +708,7 @@ public class World {
 	 *           	The y-position of the pixel at the bottom left of the tile for
 	 *            	which the geological feature should be returned.
 	 * @note 	This method must return its result in constant time.
-	 * @return 	The type of the tile with the given bottom left pixel position, where:
-	 *         		- the value 0 is returned for an air tile.
-	 *         		- the value 1 is returned for a solid ground tile.
-	 *         		- the value 2 is returned for a water tile.
-	 *         		- the value 3 is returned for a magma tile.
+	 * @return 	The Terrain type of the tile with the given bottom left pixel position.
 	 * @throw 	IllegalArgumentException
 	 * 				| (pixelX % getTileLength() != 0 || pixelY % getTileLength() != 0)
 	 */
@@ -710,7 +724,11 @@ public class World {
 		
 	}
 	
-	//TODO: commentary
+	/**
+	 * Return all Tile instances of the tiles in the World.
+	 * 
+	 * @return	A hashmap containing all Tile instances of the tiles in the World.
+	 */
 	public Set<Tile> getAllTiles(){
 		HashSet<Tile> tiles =  new HashSet<Tile>();
 		for ( Map.Entry<Vector<Integer>, Terrain> feature : this.getAllGeologicalFeatures().entrySet() ){
@@ -719,6 +737,11 @@ public class World {
 		return tiles;
 	} 
 	
+	/**
+	 * Return all geological features in the World.
+	 * 
+	 * @return	| result == ( new HashMap<>(this.geologicalFeatures) )
+	 */
 	public Map<Vector<Integer>, Terrain> getAllGeologicalFeatures(){
 		return new HashMap<>(this.geologicalFeatures);
 	}
@@ -730,6 +753,8 @@ public class World {
 	
 	/**************************************************** GAME OBJECTS *************************************************/
 	
+	/* Game object */
+
 	/**
 	 * Check whether or not this World is in the right state to add a Game object. The world may not be started 
 	 * or terminated.
@@ -784,7 +809,6 @@ public class World {
 		return gameObject.hasAsWorld(this);
 	}
 	
-	
 	/**
 	 * Add the given Game object to the World.
 	 * 
@@ -795,10 +819,9 @@ public class World {
 	void addAsGameObject(GameObject gameObject){
 		gameObject.addToWorld();
 	}
-
 	
 	/**
-	 * Remove the given Game object from the World
+	 * Remove the given Game object from the World.
 	 * 
 	 * @param 	gameObject
 	 * 				The Game object to remove from the World.
@@ -808,23 +831,22 @@ public class World {
 		gameObject.removeFromWorld(this);
 	}
 	
-	/* Getters */
+	/* Mazub */
 	
 	/**
 	 * Return the player's Mazub in the World.
 	 * 
-	 * @return	If there is only one Mazub in the World, return this Mazub. 
-	 * 			If there is no Mazub in this world, return null.
+	 * @return	If there is a Mazub in the World, return this Mazub. Otherwise, return null.
 	 */
+	@Basic
 	public Mazub getMazub(){
 		return this.mazub;
 	}
 	
 	/**
-	 * Check if this world has a controlled Mazub instance
+	 * Check if this world has a controlled Mazub instance.
 	 * 
-	 * @return
-	 * 		| this.getMazub() != null
+	 * @return | result == ( this.getMazub() != null )
 	 */
 	public boolean hasMazub(){
 		return this.getMazub() != null;
@@ -832,44 +854,51 @@ public class World {
 	
 	
 	/**
-	 * Check if this world has a controlled Mazub instance
+	 * Check if this world has a proper Mazub instance.
 	 * 
-	 * @return
-	 * 		| this.getMazub() != null && this.getMazub().getWorld() == this
+	 * @return	| result == ( this.hasMazub() && this.getMazub().getWorld() == this )
 	 */
 	public boolean hasProperMazub(){
-		return this.getMazub() != null && this.getMazub().getWorld() == this;
+		return this.hasMazub() && this.getMazub().getWorld() == this;
 	}	
 	
 	/**
-	 * Sets the given alien as the Mazub instance controlled by the player
+	 * Set the given alien as the Mazub instance controlled by the player.
 	 * 
-	 * @param alien
-	 * 			The alien to be controlled
-	 * @throws IllegalStateException
+	 * @param 	alien
+	 * 				The Mazub to be controlled.
+	 * @throws 	IllegalStateException
 	 * 				| hasProperWorld() || alien.getWorld() != this
 	 */
+	@Basic
 	public void setMazub(Mazub alien) throws IllegalStateException{
 		if(hasProperMazub())
 			throw new IllegalStateException("Already a Mazub in this world!");
 		if(alien.getWorld() != this)
-			throw new IllegalStateException("Alien not in world yet!");
+			throw new IllegalStateException("Mazub not in world yet!");
 		this.mazub = alien;
 	}
 	
-	// TODO comments + relaties beter uitwerken
-	
+	/**
+	 * Remove the Mazub from the World.
+	 * 
+	 * @effect	| this.getMazub().removeFromWorld(this)
+	 */
 	public void removeMazub(){
-		System.out.println("mazub removed from world");
-		this.mazub = null;
+		this.getMazub().removeFromWorld(this);
 	}
 	
+	/**
+	 * Variable registering the player controlled Mazub in this World.
+	 */
 	private Mazub mazub;
+	
+	/* Getters */
 	
 	/**
 	 * Return all the Game objects in the World.
 	 * 
-	 * @return	A Hashset containing all Mazubs, Plants, Slimes and Sharks in this World.
+	 * @return	A Hashset containing the Mazub and all Buzams, Plants, Slimes and Sharks in this World.
 	 */
 	public Set<GameObject> getAllGameObjects(){
 		Set<GameObject> allGameObjects= new HashSet<GameObject>();
@@ -884,13 +913,13 @@ public class World {
 	/**
 	 * Return all the enemies of the player's Mazub in the World.
 	 * 
-	 * @return	A Hashset containing all Plants, Slimes and Sharks in this World.
+	 * @return	A Hashset containing all Buzams, Slimes, Sharks and Plants in this World.
 	 */
 	public Set<GameObject> getAllEnemies(){
-		Set<GameObject> allEnemies = new HashSet<GameObject>( Plant.getAllInWorld(this) );
+		Set<GameObject> allEnemies = new HashSet<GameObject>( Buzam.getAllInWorld(this) );
 		allEnemies.addAll( Slime.getAllInWorld(this));
 		allEnemies.addAll( Shark.getAllInWorld(this));
-		allEnemies.addAll( Buzam.getAllInWorld(this));
+		allEnemies.addAll( Plant.getAllInWorld(this));
 		return allEnemies;
 	}	
 	
@@ -964,7 +993,7 @@ public class World {
 	/***************************************************** TERMINATION *************************************************/
 	
 	/**
-	 * Terminate this world.
+	 * Terminate this World.
 	 * 
 	 * @effect	| for GameObject gameObject in this.getAllGameObjects():
 	 * 			|	gameObject.unsetWorld()
@@ -980,7 +1009,7 @@ public class World {
 	}
 	
 	/**
-	 * Check if this world is terminated.
+	 * Check if this World is terminated.
 	 * 
 	 * @return	| result == ( this.terminated )
 	 */

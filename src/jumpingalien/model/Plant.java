@@ -17,9 +17,8 @@ import jumpingalien.util.Sprite;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  * 
- * @note Class invariants of the class GameObject also apply to this subclass.
  */
 public class Plant extends GameObject implements IProgrammable {
 	
@@ -55,9 +54,11 @@ public class Plant extends GameObject implements IProgrammable {
 	 * 				The number of hit points of a Plant.
 	 * @param 	maxNbHitPoints
 	 * 				The maximal number of hit points of a Plant.
+	 * @param	program
+	 * 				The Program a Plant should execute.
 	 * @pre		| Array.getLength(sprites) == 2
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit,
-	 * 			|	 	sprites, nbHitPoints, maxNbHitPoints)
+	 * 			|	 	sprites, nbHitPoints, maxNbHitPoints, program)
 	 * @effect	| configureTerrain()
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
@@ -76,7 +77,7 @@ public class Plant extends GameObject implements IProgrammable {
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		
 		super(pixelLeftX, pixelBottomY, velocityXInit,velocityYInit, velocityXMax, accelerationXInit, sprites, 
-			  nbHitPoints, 1, program);
+			  nbHitPoints, maxNbHitPoints, program);
 
 		assert sprites.length == 2;
 		
@@ -85,21 +86,38 @@ public class Plant extends GameObject implements IProgrammable {
 	}	
 	
 	/**
-	 * TODO: documentation
+	 * Initialize a Plant without a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param velocityXInit
-	 * @param velocityYInit
-	 * @param velocityXMax
-	 * @param accelerationXInit
-	 * @param sprites
-	 * @param nbHitPoints
-	 * @param maxNbHitPoints
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Plant's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Plant's bottom left pixel.
+	 * @param 	velocityXInit
+	 * 				The initial horizontal velocity of a Plant.
+	 * @param 	velocityYInit
+	 * 				The initial vertical velocity of a Plant.
+	 * @param 	velocityXMax
+	 * 				The maximal horizontal velocity of a Plant.
+	 * @param 	accelerationXInit
+	 * 				The initial horizontal acceleration of a Plant.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Plant.
+	 * @param 	nbHitPoints
+	 * 				The number of hit points of a Plant.
+	 * @param 	maxNbHitPoints
+	 * 				The maximal number of hit points of a Plant.
+	 * @effect	| this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit,
+	 *  		|	   sprites, nbHitPoints, maxNbHitPoints, null)
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Plant(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 		  	 double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints, int maxNbHitPoints)
@@ -120,9 +138,10 @@ public class Plant extends GameObject implements IProgrammable {
 	 * 				The y-location of a Plant's bottom left pixel.
 	 * @param 	sprites
 	 * 				The array of sprite images for a Plant.
+	 * @param	program
+	 * 				The Program a Plant should execute.
 	 * @pre		| Array.getLength(sprites) == 2
-	 * @effect	| this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1)
-	 * TODO: documentation program
+	 * @effect	| this(pixelLeftX, pixelBottomY, 0.5, 0, 0.5, 0, sprites, 1, 1, program)
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -140,27 +159,31 @@ public class Plant extends GameObject implements IProgrammable {
 	}
 	
 	/**
-	 * TODO: documentation
+	 * Initialize a Plant with default initial horizontal velocity, initial vertical velocity, maximal horizontal
+	 * velocity, initial horizontal acceleration, number of hit points and maximal number of hit points but
+	 * without a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param sprites
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Plant's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Plant's bottom left pixel.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Plant.
+	 * @effect	| this(pixelLeftX, pixelBottomY, sprites, null)
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Plant(int pixelLeftX, int pixelBottomY, Sprite[] sprites) 
 			throws IllegalPositionXException, IllegalPositionYException,IllegalWidthException, IllegalHeightException{
 		this(pixelLeftX, pixelBottomY, sprites, null);
-	}
-	
-	/**
-	 * Returns a string class name of the object, used for toString method in GameObject
-	 */
-	@Override
-	public String getClassName() {
-		return "Plant";
 	}
 	
 	/******************************************************* TERRAIN ***************************************************/
@@ -184,7 +207,7 @@ public class Plant extends GameObject implements IProgrammable {
 	/******************************************************** WORLD ****************************************************/
 	
 	/**
-	 * Add the Plant to his World.
+	 * Add the Plant to its World.
 	 * 
 	 * @post	| new.getWorld().hasAsGameObject(this) == true
 	 */
@@ -272,7 +295,15 @@ public class Plant extends GameObject implements IProgrammable {
 		this.updatePositionX(dt);
 	}
 	
-	// TODO: commentary
+	/**
+	 * Advance the Plant's Program and update his horizontal position for the given time interval.
+	 * 
+	 * @param	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	| advanceProgram()
+	 * @effect	| updatePositionX(dt)	
+	 */
+	@Override
 	public void doMoveProgram(double dt){
 		
 		/* Advance Program */
@@ -297,13 +328,14 @@ public class Plant extends GameObject implements IProgrammable {
 	/**
 	 * Process the horizontal collision of a Plant.
 	 * 
-	 * @note	As an optional implementation, a Plant changes his direction when he collides.
+	 * @note	As an optional implementation, a Plant without a Program changes his direction when he collides.
 	 * 
-	 * @effect	changeDirection()
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			| 	then this.changeDirection()
 	 */
 	@Override
 	protected void processHorizontalCollision() {		
-		if(!hasProgram()){
+		if(!this.hasProgram()){
 			this.changeDirection();
 		}
 	}
@@ -350,7 +382,7 @@ public class Plant extends GameObject implements IProgrammable {
 	 * Process an overlap of a Plant with a Shark.
 	 * 
 	 * @param	shark
-	 * 				The shark with which this Plant overlaps.
+	 * 				The Shark with which this Plant overlaps.
 	 */
 	@Override
 	protected void processSharkOverlap(Shark shark) {
@@ -361,11 +393,23 @@ public class Plant extends GameObject implements IProgrammable {
 	 * Process an overlap of a Plant with a Slime.
 	 * 
 	 * @param	slime
-	 * 				The slime with which this Plant overlaps.
+	 * 				The Slime with which this Plant overlaps.
 	 */
 	@Override
 	protected void processSlimeOverlap(Slime slime) {
 
+	}
+	
+	/******************************************************** STRING ***************************************************/
+	
+	/**
+	 * Return the name of the Class as a String, used for the toString method in GameObject.
+	 *
+	 * @return	The name of the Class as a String.	
+	 */
+	@Override
+	public String getClassName() {
+		return "Plant";
 	}
 		
 }

@@ -5,7 +5,7 @@ package jumpingalien.model.exceptions;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  */
 public class CollisionException extends RuntimeException {
 

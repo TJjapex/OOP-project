@@ -18,9 +18,8 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  * 
- * @note Class invariants of the class GameObject also apply to this subclass.
  * @invar	| hasProperSchool()
  */
 public class Slime extends GameObject implements IProgrammable {
@@ -95,14 +94,15 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 				The number of hit points of a Slime.
 	 * @param	maxNbHitPoints
 	 * 				The maximal number of hit points of a Slime.
+	 * @param	program
+	 * 				The Program a Slime should execute.
 	 * @pre		| Array.getLength(sprites) == 2
 	 * @post	| new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
-	 * 					sprites,nbHitPoints, maxNbHitPoints)
+	 * 					sprites,nbHitPoints, maxNbHitPoints, program)
 	 * @effect	| setSchoolTo(school)
 	 * @effect	| startMove( this.getRandomOrientation() )
 	 * @effect 	| configureTerrain()
-	 * TODO: documentation program
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -130,22 +130,40 @@ public class Slime extends GameObject implements IProgrammable {
 	}
 	
 	/**
-	 * TODO: documentation
+	 * Initialize a Slime without a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param velocityXInit
-	 * @param velocityYInit
-	 * @param velocityXMax
-	 * @param accelerationXInit
-	 * @param sprites
-	 * @param school
-	 * @param nbHitPoints
-	 * @param maxNbHitPoints
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Slime's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Slime's bottom left pixel.
+	 * @param 	velocityXInit
+	 * 				The initial horizontal velocity of a Slime.
+	 * @param 	velocityYInit
+	 * 				The initial vertical velocity of a Slime.
+	 * @param 	velocityXMax
+	 * 				The maximal horizontal velocity of a Slime.
+	 * @param 	accelerationXInit
+	 * 				The initial horizontal acceleration of a Slime.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Slime.
+	 * @param 	school
+	 * 				The school to which the Slime belongs upon initialization.
+	 * @param 	nbHitPoints
+	 * 				The number of hit points of a Slime.
+	 * @param	maxNbHitPoints
+	 * 				The maximal number of hit points of a Slime.
+	 * @effect	| this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, sprites,
+			 	|	   school, nbHitPoints, maxNbHitPoints, null)
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Slime(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 	  		 double velocityXMax, double accelerationXInit, Sprite[] sprites, School school,
@@ -169,8 +187,10 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 				The array of sprite images for a Slime.
 	 * @param 	school
 	 * 				The school to which the Slime belongs upon initialization.
+	 * @param	program
+	 * 				The Program a Slime should execute.
 	 * @pre		| Array.getLength(sprites) == 2
-	 * TODO: documentation program
+	 * @effect	| this(pixelLeftX, pixelBottomY, 1.0, 0.0, 2.5, 0.7, sprites, school, 100, 100, program)
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
 	 * @throws 	IllegalPositionYException
@@ -189,28 +209,33 @@ public class Slime extends GameObject implements IProgrammable {
 	}
 	
 	/**
-	 * TODO: documentation
+	 * Initialize a Slime with default initial horizontal velocity, initial vertical velocity, maximal horizontal
+	 * velocity, initial horizontal acceleration, number of hit points and maximal number of hit points but without
+	 * a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param sprites
-	 * @param school
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of a Slime's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of a Slime's bottom left pixel.
+	 * @param 	sprites
+	 * 				The array of sprite images for a Slime.
+	 * @param 	school
+	 * 				The school to which the Slime belongs upon initialization.
+	 * @effect	| this(pixelLeftX, pixelBottomY, sprites, school, null)
+	 * @throws 	IllegalPositionXException
+	 * 				| ! canHaveAsXPosition(pixelLeftX)
+	 * @throws 	IllegalPositionYException
+	 * 				| ! canHaveAsYPosition(pixelBottomY)
+	 * @throws 	IllegalWidthException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws 	IllegalHeightException
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
 	 */
 	public Slime(int pixelLeftX, int pixelBottomY, Sprite[] sprites, School school)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{	
 		this(pixelLeftX, pixelBottomY, sprites, school, null);
-	}
-	
-	/**
-	 * Returns a string class name of the object, used for toString method in GameObject
-	 */
-	@Override
-	public String getClassName() {
-		return "Slime";
 	}
 	
 	/******************************************************** TIMER ****************************************************/
@@ -381,7 +406,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * @effect	| school.addAsSlime(this)
 	 */
 	@Model
-	private void setSchoolTo(School school) throws IllegalArgumentException{ // In ownable voorbeeld public ?	
+	private void setSchoolTo(School school) throws IllegalArgumentException{
 		
 		if(!canHaveAsSchool(school))
 			throw new IllegalArgumentException("Cannot have given school as school!");
@@ -390,6 +415,7 @@ public class Slime extends GameObject implements IProgrammable {
 		
 		this.setSchool(school);
 		school.addAsSlime(this);
+		
 	}
 	
 	/**
@@ -475,7 +501,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 
 	 * @param	damageAmount
 	 * 				The amount of damage that a Slime needs to take.
-	 * @effect	| modifyNbHitPoints( - damageAmount)
+	 * @effect	| modifyNbHitPoints( - damageAmount )
 	 * @effect	| if ( this.getSchool() != null)
 	 * 			|	then this.mutualDamage()
 	 */
@@ -502,21 +528,24 @@ public class Slime extends GameObject implements IProgrammable {
 	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
-	 * Initiate a new periodic movement, if needed, and update the Slime's horizontal and vertical position and velocity
-	 * for the given time interval.
+	 * Initialize the first periodic movement, if needed. Initiate a new periodic movement, if needed, and update
+	 * the Slime's horizontal and vertical position and velocity for the given time interval.
 	 * 
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			|	then this.startMove(this.getRandomOrientation())
+	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
+	 * 			| 	then this.setInitializedPeriodicMovement(true)
 	 * @post 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.periodicMovement();
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.getTimer().setSinceLastPeriod(0)
-	 * @effect	| updatePositionX(dt)
-	 * @effect	| updateVelocityX(dt)
-	 * @effect	| updatePositionY(dt)
-	 * @effect	| updateVelocityY(dt)
+	 * @effect	| update(dt)
 	 */
 	@Override
 	protected void doMove(double dt){
@@ -542,7 +571,16 @@ public class Slime extends GameObject implements IProgrammable {
 		
 	}
 	
-	// TODO: commentary
+	/**
+	 * Advance the Slime's Program and update the Slime's horizontal and vertical position and velocity
+	 * for the given time interval.
+	 * 
+	 * @param	dt
+	 * 				A double that represents the elapsed in-game time.
+	 * @effect	| advanceProgram()
+	 * @effect	| update(dt)	
+	 */
+	@Override
 	public void doMoveProgram(double dt){
 		
 		/* Advance Program */
@@ -572,7 +610,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * @note	As an optional implementation, a Slime without a Program changes his direction when he collides.
 	 * 
 	 * @effect	| if ( ! this.hasProgram() )
-	 * 			| 	changeDirection()
+	 * 			| 	then this.changeDirection()
 	 */
 	@Override
 	protected void processHorizontalCollision() {	
@@ -709,6 +747,18 @@ public class Slime extends GameObject implements IProgrammable {
 		this.unsetSchool();
 		
 		this.terminated = true;
+	}
+	
+	/******************************************************** STRING ***************************************************/
+	
+	/**
+	 * Return the name of the Class as a String, used for the toString method in GameObject.
+	 *
+	 * @return	The name of the Class as a String.	
+	 */
+	@Override
+	public String getClassName() {
+		return "Slime";
 	}
 	
 }

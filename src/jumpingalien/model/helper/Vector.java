@@ -7,21 +7,21 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  */
 public class Vector<T extends Number> {
 	
 	/***************************************************** CONSTRUCTOR *************************************************/
 	
 	/**
-	 * Constructor for the class VectorInt.
+	 * Constructor for the class Vector.
 	 * 
 	 * @param 	x
 	 * 				The x coordinate of the vector.
 	 * @param 	y
 	 * 				The y coordinate of the vector.
-	 * @effect	| setX(x)
-	 * @effect	| setY(y)
+	 * @post	| new.getX() == x
+	 * @post	| new.getY() == y
 	 */
 	public Vector(final T x,final T y){
 		this.x = x;
@@ -33,9 +33,9 @@ public class Vector<T extends Number> {
 	/* X component */
 	
 	/**
-	 * Return the x coordinate of the vector.
+	 * Return the x coordinate of the Vector.
 	 * 
-	 * @return	An integer representing the x coordinate of the vector.
+	 * @return	An integer representing the x coordinate of the Vector.
 	 */
 	@Basic @Immutable
 	public T getX() {
@@ -43,16 +43,16 @@ public class Vector<T extends Number> {
 	}
 	
 	/**
-	 * Variable registering the x coordinate of the vector.
+	 * Variable registering the x coordinate of the Vector.
 	 */
 	private final T x;
 	
 	/* Y component */
 	
 	/**
-	 * Return the y coordinate of the vector.
+	 * Return the y coordinate of the Vector.
 	 * 
-	 * @return	An integer representing the y coordinate of the vector.
+	 * @return	An integer representing the y coordinate of the Vector.
 	 */
 	@Basic @Immutable
 	public T getY() {
@@ -60,16 +60,15 @@ public class Vector<T extends Number> {
 	}
 	
 	/**
-	 * Variable registering the y coordinate of the vector.
+	 * Variable registering the y coordinate of the Vector.
 	 */
 	private final T y;
 	
 	/**
-	 * Convert the x and y coordinate of this vector to an array with as first element the x coordinate and
+	 * Convert the x and y coordinate of this Vector to an array with as first element the x coordinate and
 	 * second element the y coordinate.
 	 * 
-	 * @return 	An array with as first element the x coordinate and
-	 * 			second element the y coordinate.
+	 * @return 	An array with as first element the x coordinate and second element the y coordinate.
 	 */
 	@SuppressWarnings("unchecked")
 	@Immutable
@@ -78,7 +77,7 @@ public class Vector<T extends Number> {
 	}
 	
 	/**
-	 * Return a hash code for this vector.
+	 * Return a hash code for this Vector.
 	 * 
 	 * @return	An integer that could serve as a hash code.
 	 */
@@ -88,11 +87,11 @@ public class Vector<T extends Number> {
 	}
 
 	/**
-	 * Check whether this vector is equal to another given vector.
+	 * Check whether this Vector is equal to another given Vector.
 	 * 
 	 * @param 	other
-	 * 				A vector of the class VectorInt to compare with this vector.
-	 * @return	| result == ( this.getX() == ((VectorInt) other).getX() && this.getY() == ((VectorInt) other).getY() )
+	 * 				An other Vector to compare with this Vector.
+	 * @return	| result == ( this.getX() == ((Vector) other).getX() && this.getY() == ((Vector) other).getY() )
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

@@ -10,7 +10,7 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  * 
  * @invar	| hasProperSlimes()
  */
@@ -32,7 +32,7 @@ public class School {
 	 * Checks whether or not a School can have slime as its member.
 	 * 
 	 * @param 	slime
-	 * 				The slime to check.
+	 * 				The Slime to check.
 	 * @return	| result == ( ( slime != null) && ( ! this.hasAsSlime(slime) ) && ( ! this.isTerminated() ) )
 	 */
 	public boolean canHaveAsSlime(Slime slime){
@@ -40,7 +40,7 @@ public class School {
 	}
 	
 	/**
-	 * Checks whether or not a School has proper slimes as its members.
+	 * Checks whether or not a School has proper Slimes as its members.
 	 * 
 	 * @return	| result == ( ! ( for some slime in this.getAllSlimes()
 	 * 								slime.getSchool != this				) )
@@ -58,12 +58,12 @@ public class School {
 	 * Check whether or not the School has slime as its member.
 	 * 
 	 * @param 	slime
-	 * 				The slime to check.
+	 * 				The Slime to check.
 	 * @return	| result == ( this.getAllSlimes().contains(slime) )
 	 */
 	@Basic @Raw
 	public boolean hasAsSlime(Slime slime){
-		return this.slimes.contains(slime);
+		return this.getAllSlimes().contains(slime);
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class School {
 	/**
 	 * Return all Slimes that are member of this School.
 	 * 
-	 * @return	A Hashset of all slimes that are member of this School.
+	 * @return	A Hashset of all Slimes that are member of this School.
 	 */
 	public Set<Slime> getAllSlimes(){
 		HashSet<Slime> slimesClone =  new HashSet<Slime>(this.slimes);

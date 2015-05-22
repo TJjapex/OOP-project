@@ -2,6 +2,14 @@ package jumpingalien.model;
 
 import jumpingalien.model.helper.Orientation;
 
+/**
+ * An interface for movable Game objects.
+ * 
+ * @author 	Thomas Verelst, Hans Cauwenbergh
+ * @note	See the class Mazub for further information about our project.
+ * @version 1.0
+ * 
+ */
 public interface IMovable {
 	
 	public void startMove(Orientation orientation);

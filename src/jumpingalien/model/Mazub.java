@@ -9,6 +9,7 @@ import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
+import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalHeightException;
@@ -34,9 +35,8 @@ import jumpingalien.model.terrain.TerrainProperties;
  * 			The link (which is not accessible for unauthorized users) of the repository is:
  * 				https://bitbucket.org/thmz/oop-project/
  * 
- * @version 2.0
+ * @version 3.0
  *
- * @note Class invariants of the class GameObject also apply to this subclass.
  */
 public class Mazub extends GameObject implements IDuckable, IJumpable{
 		
@@ -73,8 +73,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			| result == 50
 	 */
 	private static final int ALIEN_DAMAGE = 50;
-
-
+	
 	/**
 	 * Constant reflecting the maximal horizontal velocity for a Mazub when ducking.
 	 * 
@@ -82,7 +81,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			| result == 1.0
 	 */
 	public static final double VELOCITY_X_MAX_DUCKING = 1.0;
-	
 	
 	/**
 	 * Constant reflecting the maximal horizontal velocity for a Mazub when running.
@@ -102,15 +100,23 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 				The y-location of Mazub's bottom left pixel.
 	 * @param	velocityXInit
 	 * 				The initial horizontal velocity of Mazub.
+	 * @param	velocityYInit
+	 * 				The initial vertical velocity of Mazub.
 	 * @param	velocityXMaxRunning
 	 * 				The maximal horizontal velocity of Mazub when he's running.
+	 * @param	accelerationXInit
+	 * 				The initial horizontal acceleration of Mazub.
 	 * @param 	sprites
 	 * 				The array of sprite images for Mazub.
 	 * @param	nbHitPoints
-	 * 				The number of Mazub's hit points.
+	 * 				The initial number of Mazub's hit points.
+	 * @param	maxNbHitPoints
+	 * 				The maximal number of Mazub's hit points.
+	 * @param	program
+	 * 				The Program Mazub should execute.
 	 * @effect	The Mazub is initiated with the constructor of his superclass GameObject.
-	 * 			| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
-	 * 					sprites,nbHitPoints, maxNbHitPoints) 
+	 * 			| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMaxRunning, accelerationXInit, 
+	 * 			|		sprites,nbHitPoints, maxNbHitPoints, program) 
 	 * @pre		The length of the given array sprites should be greater or equal to 10 and an even number.
 	 * 			| (Array.getLength(sprites) >= 10) && (Array.getLength(sprites) % 2 == 0)
 	 * @post	The constant VELOCITY_X_MAX_RUNNING is equal to velocityXMaxRunning.
@@ -121,7 +127,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			| new.getAnimation() != null
 	 * @effect 	The terrain is configured for a Mazub.
 	 * 			| configureTerrain()
-	 * TODO: program documentation
 	 * @throws	IllegalPositionXException
 	 * 				The X position of Mazub is not a valid X position.
 	 * 				| ! isValidPositionX(positionX)
@@ -157,23 +162,44 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 			
 	}
 	
-	
 	/**
-	 * TODO: documentation
+	 * Initialize a Mazub without a Program.
 	 * 
-	 * @param pixelLeftX
-	 * @param pixelBottomY
-	 * @param velocityXInit
-	 * @param velocityYInit
-	 * @param velocityXMaxRunning
-	 * @param accelerationXInit
-	 * @param sprites
-	 * @param nbHitPoints
-	 * @param maxNbHitPoints
-	 * @throws IllegalPositionXException
-	 * @throws IllegalPositionYException
-	 * @throws IllegalWidthException
-	 * @throws IllegalHeightException
+	 * @param 	pixelLeftX
+	 * 				The x-location of Mazub's bottom left pixel.
+	 * @param 	pixelBottomY
+	 * 				The y-location of Mazub's bottom left pixel.
+	 * @param	velocityXInit
+	 * 				The initial horizontal velocity of Mazub.
+	 * @param	velocityYInit
+	 * 				The initial vertical velocity of Mazub.
+	 * @param	velocityXMaxRunning
+	 * 				The maximal horizontal velocity of Mazub when he's running.
+	 * @param	accelerationXInit
+	 * 				The initial horizontal acceleration of Mazub.
+	 * @param 	sprites
+	 * 				The array of sprite images for Mazub.
+	 * @param	nbHitPoints
+	 * 				The initial number of Mazub's hit points.
+	 * @param	maxNbHitPoints
+	 * 				The maximal number of Mazub's hit points.
+	 * @effect	Construct a Mazub without a Program.
+	 * 			| this(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMaxRunning, accelerationXInit,
+	 *  		| 	   sprites, nbHitPoints, maxNbHitPoints, null)
+	 * @throws	IllegalPositionXException
+	 * 				The X position of Mazub is not a valid X position.
+	 * 				| ! isValidPositionX(positionX)
+	 * @throws	IllegalPositionYException
+	 * 				The Y position of Mazub is not a valid Y position.
+	 * 				| ! isValidPositionY(positionY)
+	 * @throws	IllegalWidthException
+	 * 				The width of at least one sprite in the given array sprites is not a valid width.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidWidth(sprite.getWidth())
+	 * @throws	IllegalHeightException
+	 * 				The height of at least one sprite in the given array sprites is not a valid height.
+	 * 				| for some sprite in sprites:
+	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
 	public Mazub(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 			 double velocityXMaxRunning, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
@@ -187,7 +213,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	
 	/**
 	 * Initialize a Mazub with default initial horizontal velocity, initial vertical velocity, maximal horizontal
-	 * velocity, initial horizontal acceleration, number of hit points and maximal number of hit points.
+	 * velocity, initial horizontal acceleration, initial number of hit points and maximal number of hit points.
 	 * 
 	 * @param 	pixelLeftX
 	 * 				The x-location of Mazub's bottom left pixel.
@@ -218,14 +244,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	public Mazub(int pixelLeftX, int pixelBottomY, Sprite[] sprites)
 			throws IllegalPositionXException, IllegalPositionYException, IllegalWidthException, IllegalHeightException{
 		this(pixelLeftX, pixelBottomY, 1.0, 8.0, 3.0, 0.9, sprites, 100, 500);
-	}
-	
-	/**
-	 * Returns a string class name of the object, used for toString method in GameObject
-	 */
-	@Override
-	public String getClassName() {
-		return "Mazub";
 	}
 	
 	/****************************************************** ANIMATION **************************************************/
@@ -333,7 +351,8 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	/**
 	 * Add the Mazub to his World.
 	 * 
-	 * @post	| new.getWorld().hasAsGameObject(this) == true
+	 * @post	The Mazub's World has the Mazub as one of its Game objects.
+	 * 			| new.getWorld().hasAsGameObject(this) == true
 	 */
 	@Override
 	protected void addToWorld(){
@@ -345,19 +364,19 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 
 	 * @param	world
 	 * 				The World to remove the Mazub from.
-	 * @pre		| this != null && !this.hasWorld()
-	 * @pre		| world.hasAsGameObject(this)
-	 * @post	| world.hasAsGameObject(this) == false
+	 * @pre		The Mazub cannot be null or have no World.
+	 * 			| this != null && !this.hasWorld()
+	 * @pre		The World must have the Mazub as one of its Game objects.
+	 * 			| world.hasAsGameObject(this)
+	 * @post	The given World does not have a Mazub anymore.
+	 * 			| world.getMazub() == null
 	 */
 	@Override
 	protected void removeFromWorld(World world){
 		assert world != null && !this.hasWorld();
 		assert world.hasAsGameObject(this);
 		
-		System.out.println("Mazub class, Mazub removed from world!");
-		
-		world.removeMazub();
-		// TODO geeft problemen
+		world.setMazub(null);
 	}
 	
 	/**
@@ -365,10 +384,9 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 
 	 * @param	world
 	 * 				The World to check.
-	 * @return	| result == ( Mazub.getAllInWorld(world).contains(this) )
+	 * @return	True if and only if the Mazub has the given World as its World.
+	 * 			| result == ( this.getWorld == world )
 	 */
-	
-	// TODO docs
 	@Override
 	protected boolean hasAsWorld(World world){
 		return this.getWorld() == world;
@@ -379,7 +397,8 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 
 	 * @param 	world
 	 * 				The World to check the number of Mazubs for.
-	 * @return	| result == ( Mazub.getAllInWorld(world).size() )
+	 * @return	If the given World has a proper Mazub, there's just 1 Mazub in the World,
+	 * 			otherwise there's none.
 	 */
 	public static int getNbInWorld(World world){
 		if(world.hasProperMazub()){
@@ -390,12 +409,11 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	}
 	
 	/**
-	 * Return the mazub in the given World.
+	 * Return the Mazub in the given World.
 	 * 
 	 * @param 	world
 	 * 				The World to check.
-	 * @return	
-	 * 			The mazub controlled by the player in the given world
+	 * @return	The Mazub controlled by the player in the given World.
 	 */
 	public static Mazub getInWorld(World world){
 		return world.getMazub();
@@ -723,18 +741,72 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 */
 	private boolean shouldEndDucking;
 	
-	/******************************************************* JUMPING **********************************************************/
-	
+	/******************************************************* JUMPING ***************************************************/
+
 	/** 
-	 * Check if Mazub is jumping 
+	 * Check if Mazub is jumping. 
 	 * 
-	 * @return
-	 * 		result == !this.isOnground()
+	 * @return	True if and only if the current jumping status of Mazub is true.
+	 * 			| result == ( this.jumping )
 	 * */
-	@Override
+	@Basic @Override
 	public boolean isJumping(){
-		return !this.isOnGround();
-	}	
+		return this.jumping;
+	}
+	
+	/**
+	 * Set the jumping status of Mazub.
+	 * 
+	 * @param 	jumping
+	 * 				The new jumping status of Mazub.
+	 * @post	The jumping status of Mazub is equal to jumping.
+	 * 			| new.isJumping() == jumping
+	 */
+	@Basic @Override
+	public void setJumping(boolean jumping){
+		this.jumping = jumping;
+	}
+	
+	/**
+	 * Variable registering the jumping status of Mazub.
+	 */
+	private boolean jumping;
+	
+	/**
+	 * Make Mazub start jumping.
+	 * 
+	 * @effect	If the Mazub is on the ground, set the vertical velocity to the initial vertical velocity.
+	 * 			| setVelocityY( this.getVelocityYInit() )
+	 * @effect	Set the jumping status of Mazub to true.
+	 * 			| setJumping(true)
+	 */
+	@Override
+	public void startJump() {
+		if(this.isOnGround()){
+			this.setVelocityY( this.getVelocityYInit() );
+		}
+		this.setJumping(true);
+	}
+	
+	/**
+	 * Make Mazub end jumping.
+	 * 
+	 * @effect	Set the vertical velocity of the Mazub to 0.
+	 * 			| setVelocityY(0)
+	 * @effect	Set the jumping status of Mazub to false.
+	 * 			| setJumping(false)
+	 * @throws 	IllegalEndJumpException
+	 * 				The game object does not have a positive vertical velocity. (up to a certain epsilon)
+	 * 				| ! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )
+	 */
+	@Override
+	public void endJump() throws IllegalEndJumpException {
+		if(! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 ))
+			throw new IllegalEndJumpException();
+		
+		this.setVelocityY(0);
+		this.setJumping(false);
+	}
 
 	/******************************************************* MOVEMENT **************************************************/
 	
@@ -755,7 +827,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			make Mazub start moving to the right.
 	 * 			| if ( this.getProlongedMoveRight() && !this.doesOverlap(Orientation.RIGHT) )
 	 * 			|	then this.startMove(Orientation.RIGHT)
-
 	 * @effect	If Mazub has a prolonged movement to the left and he doesn't overlap to the left,
 	 * 			make Mazub start moving to the left.
 	 * 			| if ( this.getProlongedMoveLeft() && !this.doesOverlap(Orientation.LEFT) )
@@ -877,7 +948,8 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	@Override
 	protected void processMazubOverlap(Mazub alien){
 		if(!alien.isKilled() && !this.isImmune()){
-			if(!this.doesOverlapWith(alien, Orientation.BOTTOM) || this.getRoundedPositionY() == alien.getRoundedPositionY()){
+			if(!this.doesOverlapWith(alien, Orientation.BOTTOM) ||
+			   this.getRoundedPositionY() == alien.getRoundedPositionY()){
 				this.takeDamage(ALIEN_DAMAGE);
 				this.setImmune(true);
 				this.getTimer().setSinceEnemyCollision(0);
@@ -990,6 +1062,18 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 		
 		return false;
 		
+	}
+	
+	/******************************************************** STRING ***************************************************/
+	
+	/**
+	 * Return the name of the Class as a String, used for the toString method in GameObject.
+	 *
+	 * @return	The name of the Class as a String.	
+	 */
+	@Override
+	public String getClassName() {
+		return "Mazub";
 	}
 	
 }

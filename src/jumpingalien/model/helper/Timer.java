@@ -12,18 +12,18 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 2.0
+ * @version 3.0
  * 
- * @invar	| this.getSinceLastMove() >= 0
- * @invar 	| this.getSinceLastLastSprite() >= 0
- * @invar 	| this.getSinceKilled() >= 0
- * @invar	|	 this.getSinceEnemyCollision() >= 0
- * @invar 	| this.getSinceLastPeriod() >= 0
+ * @invar	| getSinceLastMove() >= 0
+ * @invar 	| getSinceLastLastSprite() >= 0
+ * @invar 	| getSinceKilled() >= 0
+ * @invar	| getSinceEnemyCollision() >= 0
+ * @invar 	| getSinceLastPeriod() >= 0
+ * @invar	| getSinceLastProgram() >= 0
  * @invar	| for each Terrain.getAllTerrainTypes() as terrain: 
- * 			|		this.getTerrainOverlapDuration(terrain) >= 0
+ * 			|	this.getTerrainOverlapDuration(terrain) >= 0
  * @invar	| for each Terrain.getAllTerrainTypes() as terrain: 
- * 			|		this.getSinceLastTerrainDamage(terrain) >= 0
- * 
+ * 			|	this.getSinceLastTerrainDamage(terrain) >= 0
  */
 public class Timer {
 	
@@ -40,13 +40,14 @@ public class Timer {
 	 * 			| setSinceLastPeriod(Double.POSITIVE_INFINITY)
 	 * @effect 	The initial time since the collision with an enemy of a Game object, is set to infinity.
 	 * 			| setSinceLastPeriod(Double.POSITIVE_INFINITY)
+	 * @effect	The initial time since the last Program execution of a Game object, is set to 0.
+	 * 			| setSinceLastProgram(0)
 	 * @effect 	Set the terrain overlap duration for each Terrain to 0.
 	 * 			| for ( terrain in Terrain.getAllTerrainTypes() )
 	 * 			| 	setTerrainOverlapDuration(terrain, 0.0)
 	 * @effect 	The initial time since the Game object took Terrain damage, is set to infinity for each Terrain.
 	 * 			| for ( terrain in Terrain.getAllTerrainTypes() )
 	 * 			| 	setSinceLastTerrainDamage(terrain, Double.POSITIVE_INFINITY)
-	 * TODO: commentary
 	 */
 	public Timer(){
 		
@@ -194,7 +195,7 @@ public class Timer {
 	 */
 	private double sinceKilled;
 	
-	/* Enemy Collision	*/
+	/* Enemy collision	*/
 	
 	/**
 	 * Return the elapsed time since the Game object collided with an enemy.
@@ -410,22 +411,47 @@ public class Timer {
 	 */
 	private Map<Terrain, Double> sinceLastTerrainDamage = new HashMap<Terrain, Double>();
 	
-	// TODO: commentary
+	/* Program execution */
 	
+	/**
+	 * Return the elapsed time since the last program execution of a Game object.
+	 * 
+	 * @return	A double that represents the elapsed time since the last program execution of a Game object.
+	 */
 	@Basic
 	public double getSinceLastProgram() {
 		return this.sinceLastProgram;
 	}
 	
+	/**
+	 * Set the elapsed time since the last program execution of a Game object.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the desired elapsed time since the last program execution of a Game object.
+	 * @post	The time since the last program execution of a Game object, is equal to dt.
+	 * 			| new.getSinceLastProgram() == dt
+	 */
 	@Basic
 	public void setSinceLastProgram(double dt) {
 		this.sinceLastProgram = dt;
 	}
 	
+	/**
+	 * Increase the elapsed time since the last program execution of a Game object.
+	 * 
+	 * @param 	dt
+	 * 				A double that represents the elapsed time that should be added.
+	 * @effect	The time since the last program execution of a Game object, is increased with the amount of dt or
+	 * 			decreased with the amount of dt if dt is a negative value.
+	 * 			| setSinceLastProgram(this.getSinceLastProgram() + dt)
+	 */
 	public void increaseSinceLastProgram(double dt){
 		this.setSinceLastProgram(this.getSinceLastProgram()+dt);
 	}
 	
+	/**
+	 * Variable registering the time since the last program execution of a Game object.
+	 */
 	private double sinceLastProgram;
 	
 }

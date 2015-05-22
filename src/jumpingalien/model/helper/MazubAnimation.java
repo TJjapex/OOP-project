@@ -12,7 +12,7 @@ import jumpingalien.model.exceptions.IllegalHeightException;
  * 
  * @author 	Thomas Verelst, Hans Cauwenbergh
  * @note	See the class Mazub for further information about our project.
- * @version 1.0
+ * @version 2.0
  * 
  * @note	For an Animation instance, the sprites can only be set once in the constructor. 
  * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
