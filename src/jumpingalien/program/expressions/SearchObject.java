@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.GameObject;
+import jumpingalien.model.helper.Collision;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.interfaces.IKind;
 import jumpingalien.part3.programs.SourceLocation;
@@ -67,10 +68,10 @@ public class SearchObject extends Expression<ObjectType>{
 		switch(direction){
 		case LEFT:
 		case RIGHT:
-			return GameObject.doPixelsOverlap(object.getRoundedPositionY(), object.getHeight(), searcher.getRoundedPositionY(), searcher.getHeight());
+			return Collision.doPixelsOverlap(object.getRoundedPositionY(), object.getHeight(), searcher.getRoundedPositionY(), searcher.getHeight());
 		case TOP:
 		case BOTTOM:
-			return GameObject.doPixelsOverlap(object.getRoundedPositionX(), object.getWidth(), searcher.getRoundedPositionX(), searcher.getWidth());
+			return Collision.doPixelsOverlap(object.getRoundedPositionX(), object.getWidth(), searcher.getRoundedPositionX(), searcher.getWidth());
 		default:
 			throw new IllegalArgumentException();
 		}

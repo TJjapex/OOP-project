@@ -347,7 +347,7 @@ public class Plant extends GameObject implements IProgrammable {
 	 * @return	A Hashset that contains the Mazub and all Buzams and Plants in the Plant's world.
 	 */
 	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
+	public Set<GameObject> getAllImpassableGameObjects(){
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
 		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Buzam.getAllInWorld(this.getWorld()));
