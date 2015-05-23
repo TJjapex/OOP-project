@@ -7,7 +7,8 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
-import jumpingalien.model.program.Program;
+import jumpingalien.model.interfaces.IProgrammable;
+import jumpingalien.program.Program;
 import jumpingalien.util.Sprite;
 
 /**

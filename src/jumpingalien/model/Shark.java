@@ -3,7 +3,6 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
@@ -12,7 +11,10 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
 import jumpingalien.model.exceptions.IllegalWidthException;
+import jumpingalien.model.interfaces.IJumpable;
+import jumpingalien.model.interfaces.IProgrammable;
 import jumpingalien.model.terrain.TerrainProperties;
+import jumpingalien.program.Program;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 

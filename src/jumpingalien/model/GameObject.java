@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.CollisionException;
 import jumpingalien.model.exceptions.IllegalHeightException;
@@ -16,8 +15,12 @@ import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.Animation;
 import jumpingalien.model.helper.Timer;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.interfaces.IKind;
+import jumpingalien.model.interfaces.IMovable;
+import jumpingalien.model.interfaces.IProgrammable;
 import jumpingalien.model.terrain.TerrainInteraction;
 import jumpingalien.model.terrain.TerrainProperties;
+import jumpingalien.program.Program;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 import be.kuleuven.cs.som.annotate.*;
@@ -1383,7 +1386,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 				The Game object is already terminated or it has no proper World when advanceTimeOnce is invoked.
 	 * 				| !this.isTerminated() && !this.hasProperWorld()
 	 */
-	void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
+	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
 		
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	

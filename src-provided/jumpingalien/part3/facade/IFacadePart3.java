@@ -7,11 +7,11 @@ import jumpingalien.model.School;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;
 import jumpingalien.model.World;
-import jumpingalien.model.program.Program;
 import jumpingalien.part1.facade.IFacade;
 import jumpingalien.part2.facade.IFacadePart2;
 import jumpingalien.part3.programs.ParseOutcome;
 import jumpingalien.part3.programs.ProgramParser;
+import jumpingalien.program.Program;
 import jumpingalien.util.Sprite;
 
 /**

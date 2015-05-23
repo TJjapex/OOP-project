@@ -1,6 +1,7 @@
 package jumpingalien.model;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import jumpingalien.model.interfaces.IKind;
 import jumpingalien.model.terrain.Terrain;
 
 /**

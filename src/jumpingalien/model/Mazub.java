@@ -4,7 +4,6 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import jumpingalien.model.program.Program;
 import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
@@ -16,7 +15,10 @@ import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalWidthException;
 import jumpingalien.model.helper.MazubAnimation;
 import jumpingalien.model.helper.Orientation;
+import jumpingalien.model.interfaces.IDuckable;
+import jumpingalien.model.interfaces.IJumpable;
 import jumpingalien.model.terrain.TerrainProperties;
+import jumpingalien.program.Program;
 
 /**
  * A class of Mazubs, characters for a 2D platform game with several properties. This class has been worked out
