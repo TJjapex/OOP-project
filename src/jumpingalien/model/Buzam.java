@@ -222,12 +222,4 @@ public class Buzam extends Mazub implements IProgrammable{
 	public String getClassName() {
 		return "Buzam";
 	}
-	
-	@Override
-	public int getNbHitPoints(){
-		//System.out.println(super.getNbHitPoints());
-		return super.getNbHitPoints();
-		
-	}
-	
 }
