@@ -55,7 +55,7 @@ public class Action extends Statement {
 		if(this.iterator().hasNext()){
 			try {
 				getOperator().accept( this.getGameObject().execute(program).getValue(), program);
-			} catch (IllegalEndJumpException exc, IllegalEndDuckException exc) {
+			} catch (IllegalEndJumpException | IllegalEndDuckException exc) {
 				
 			}
 			setStatementUsed(true);
