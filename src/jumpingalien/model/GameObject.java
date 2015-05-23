@@ -499,7 +499,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @effect	The world of the Game object is set to the given world.
 	 * 			| setWorld(world)
 	 * @effect  The Game object is added to the given World.
-	 * 			| world.addAsGameObject(this)
+	 * 			| addToWorld();
 	 * @throws	IllegalArgumentException
 	 * 				| ( ! canHaveAsWorld(world) ) || ( ! world.canHaveAsGameObject(this) )
 	 */
@@ -511,7 +511,7 @@ public abstract class GameObject implements IKind, IMovable{
 			throw new IllegalArgumentException("Given world cannot have this Game object as Game object!");
 		
 		this.setWorld(world);
-		world.addAsGameObject(this);
+		this.addToWorld();
 		
 	}
 	

@@ -810,17 +810,6 @@ public class World {
 	}
 	
 	/**
-	 * Add the given Game object to the World.
-	 * 
-	 * @param 	gameObject
-	 * 				The Game object to add to the World.
-	 * @effect	| gameObject.addToWorld()
-	 */
-	void addAsGameObject(GameObject gameObject){
-		gameObject.addToWorld();
-	}
-	
-	/**
 	 * Remove the given Game object from the World.
 	 * 
 	 * @param 	gameObject
