@@ -91,6 +91,9 @@ public class Program {
 	
 	/* Well formed */
 	
+	/**
+	 * @note must be worked out totally
+	 */
 	public boolean isWellFormed(){
 		return getMainStatement().isWellFormed(false, false);
 	}

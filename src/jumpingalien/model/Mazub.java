@@ -8,6 +8,7 @@ import jumpingalien.model.terrain.Terrain;
 import be.kuleuven.cs.som.annotate.*;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
+import jumpingalien.model.exceptions.IllegalEndDuckException;
 import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
 import jumpingalien.model.exceptions.IllegalPositionYException;
@@ -281,17 +282,6 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * Variable registering the animation of this Mazub.
 	 */
 	private MazubAnimation animation;
-	
-	/**
-	 * Return the correct sprite of Mazub, depending on his current status.
-	 * 
-	 * @return	A sprite that fits the current status of Mazub.
-	 * @note	No formal documentation was required for this method.
-	 */
-	@Override
-	public Sprite getCurrentSprite() {
-		return this.getAnimation().getCurrentSprite();	
-	}	
 	
 	/******************************************************** TIMER ****************************************************/
 	
@@ -632,6 +622,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			| setVelocityXMax(VELOCITY_X_MAX_DUCKING)
 	 * @post	The ducking status of Mazub will be true.
 	 * 			| new.getDucking() == true
+	 * @note must be worked out defensively
 	 */
 	@Override
 	public void startDuck(){	
@@ -657,15 +648,16 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			| new.getDucking() == false
 	 * @post	Mazub should not end his duck anymore after this method is invoked.
 	 * 			| new.getShouldEndDucking() == false
-	 * @throws	IllegalStateException
+	 * @throws	IllegalEndDuckException
 	 * 				Mazub is not ducking.
 	 * 				| !this.isDucking()
+	 * @note must be worked out defensively
 	 */
 	@Override
-	public void endDuck() throws IllegalStateException{
+	public void endDuck() throws IllegalEndDuckException{
 		
 		if(!this.isDucking())
-			throw new IllegalStateException("Mazub not ducking!");		
+			throw new IllegalEndDuckException();		
 		
 		this.setVelocityXMax(VELOCITY_X_MAX_RUNNING);
 		
@@ -781,6 +773,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			| setVelocityY( this.getVelocityYInit() )
 	 * @effect	Set the jumping status of Mazub to true.
 	 * 			| setJumping(true)
+	 * @note must be worked out defensively
 	 */
 	@Override
 	public void startJump() {
@@ -800,6 +793,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * @throws 	IllegalEndJumpException
 	 * 				The game object does not have a positive vertical velocity. (up to a certain epsilon)
 	 * 				| ! Util.fuzzyGreaterThanOrEqualTo(this.getVelocityY(), 0 )
+	 * @note must be worked out defensively
 	 */
 	@Override
 	public void endJump() throws IllegalEndJumpException {

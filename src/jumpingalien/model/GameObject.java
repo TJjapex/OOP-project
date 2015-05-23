@@ -228,6 +228,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 
 	 * @return	A sprite that fits the current status of the Game object.
 	 * @note	No formal documentation was required for this method.
+	 * @note 	must be worked out nominally
 	 */
 	public Sprite getCurrentSprite(){
 		return this.getAnimation().getCurrentSprite();
@@ -691,6 +692,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @throws	CollisionException
 	 * 				The game object does collide after changing his horizontal position.
 	 * 				| doesCollide()
+	 * @note should be worked out defensively
 	 */
 	protected void setPositionX(double positionX) 
 					throws IllegalStateException, IllegalPositionXException, CollisionException {
@@ -791,6 +793,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @throws	CollisionException
 	 * 				The game object does collide after changing his vertical position.
 	 * 				| doesCollide()
+	 * @note should be worked out defensively
 	 */
 	protected void setPositionY(double positionY) 
 			throws IllegalPositionYException, IllegalStateException, CollisionException {
@@ -1018,6 +1021,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			| 	then new.getAccelerationX() == 0
 	 * 			| else
 	 * 			| 	new.getAccelerationX() == accelerationX
+	 * @note	must be worked out using total programming
 	 */
 	@Basic @Model
 	protected void setAccelerationX(double accelerationX) {
@@ -1038,6 +1042,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * Return the vertical acceleration of a Game object.
 	 * 
 	 * @return	If the Game object is on the ground, return 0. Else return ACCELERATION_Y.
+	 * @note must be worked out using total programming
 	 */
 	@Basic @Raw @Immutable
 	public double getAccelerationY() {
@@ -1153,6 +1158,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			|	then new.getNbHitPoints() == this.getMaxNbHitPoints
 	 * 			| else
 	 * 			| 	new.getNbHitPoints() == nbHitPoints
+	 * @note 	must be worked out totally
 	 */
 	@Model
 	protected void setNbHitPoints(int nbHitPoints) {
@@ -1283,6 +1289,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @effect	The horizontal acceleration of a Game object is set to the initial horizontal acceleration provided with
 	 * 			the sign of the given orientation.
 	 * 			| setAccelerationX( orientation.getSign() * accelerationXInit)
+	 * @note 	must be worked out nominally
 	 */	
 	@Override
 	public void startMove(Orientation orientation){
@@ -1304,6 +1311,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			| setAccelerationX(0)
 	 * @effect	The time since the last move was made is set to 0.
 	 *			| getTimer().setSinceLastMove(0)
+	 *@note 	must be worked out nominally
 	 */
 	@Override
 	public void endMove(Orientation orientation){	
@@ -1385,6 +1393,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @throws 	IllegalStateException
 	 * 				The Game object is already terminated or it has no proper World when advanceTimeOnce is invoked.
 	 * 				| !this.isTerminated() && !this.hasProperWorld()
+	 * @note must be worked out defensively
 	 */
 	public void advanceTime(double dt) throws IllegalArgumentException, IllegalStateException{
 		

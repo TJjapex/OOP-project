@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import jumpingalien.model.exceptions.IllegalEndDuckException;
 import jumpingalien.model.exceptions.IllegalEndJumpException;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.part3.programs.SourceLocation;
@@ -54,7 +55,7 @@ public class Action extends Statement {
 		if(this.iterator().hasNext()){
 			try {
 				getOperator().accept( this.getGameObject().execute(program).getValue(), program);
-			} catch (IllegalEndJumpException exc) {
+			} catch (IllegalEndJumpException exc, IllegalEndDuckException exc) {
 				
 			}
 			setStatementUsed(true);

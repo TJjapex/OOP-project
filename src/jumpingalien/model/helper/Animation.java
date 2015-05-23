@@ -85,6 +85,7 @@ public class Animation {
 	 * Return the current sprite of the Animation.
 	 * 
 	 * @return	The current sprite of the Animation.
+	 * @note 	must be worked out nominally
 	 */
 	public Sprite getCurrentSprite(){
 		return this.getSpriteAt(this.getSpriteIndex());
@@ -113,7 +114,7 @@ public class Animation {
 			this.setSpriteIndex(0);
 		}	
 		
-		if( this.getGameObject().doesCollide()){
+		if( this.getGameObject().doesCollide()){ // if new sprite causes collision because of a greater width or height
 			this.setSpriteIndex(currentIndex); // undo changes
 		}
 	}
