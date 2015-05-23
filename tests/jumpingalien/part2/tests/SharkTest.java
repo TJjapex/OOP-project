@@ -3,7 +3,9 @@ package jumpingalien.part2.tests;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 import jumpingalien.model.Mazub;
+import jumpingalien.model.School;
 import jumpingalien.model.Shark;
+import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
@@ -26,6 +28,7 @@ public class SharkTest {
 	
 	private Sprite[] sprites;
 	private Shark shark;
+	private Slime slime;
 
 	private Mazub alien;
 	private World world;
@@ -100,8 +103,11 @@ public class SharkTest {
 		
 		/* Initial y position is 12, so wait until y-position lower than 0 */
 		/* calculations: -12 = -10/2 * t**2 -> t = 0.155 */
-		facade.advanceTime(world, 0.17);
-		assertEquals(0, shark.getRoundedPositionY());
+		facade.advanceTime(world, 0.16);
+		System.out.println(shark.getRoundedPositionY());
+		System.out.println(shark.getAccelerationY());
+		System.out.println(shark.getVelocityY());
+		//assertEquals(0, shark.getRoundedPositionY());
 		
 		for (int i=0; i<3; i ++){
 			assertTrue(shark.isKilled());

@@ -1437,11 +1437,12 @@ public abstract class GameObject implements IKind, IMovable{
 			throw new IllegalStateException("This object is not in a proper world!");
 		
 		if(this.isKilled() && !this.isTerminated()){
+			System.out.println("process killed");
 			this.processKilled(dt);
 		}
-				
+		System.out.println("hp: " + this.getNbHitPoints());
 		if(!this.isKilled()){
-			
+			System.out.println("alive");
 			// Check last enemy collision and reset immunity status if needed
 			if (this.isImmune() && this.getTimer().getSinceEnemyCollision() > IMMUNE_TIME ){
 				this.setImmune(false);
@@ -1599,6 +1600,7 @@ public abstract class GameObject implements IKind, IMovable{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
 			this.setPositionY( this.getPositionY() + 100 * sy );
 		}catch( IllegalPositionYException exc){
+			System.out.println("killed!");
 			this.kill();
 		}catch( CollisionException exc){
 			processVerticalCollision();

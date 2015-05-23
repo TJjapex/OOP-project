@@ -131,8 +131,12 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 			  nbHitPoints, maxNbHitPoints, program);
 		
 		this.setNbNonJumpingPeriods(0);
-		this.setJumping(false);
-	
+		this.setJumping(false);	
+		
+		this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
+		this.startMove(this.getRandomOrientation());
+		this.startDiveRise();
+		
 		this.configureTerrain();
 		
 	}
@@ -552,12 +556,12 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	protected void doMove(double dt){
 
 		/* Initialize periodic movement */
-		if (!this.isInitializedPeriodicMovement()){
-			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
-			this.startMove(this.getRandomOrientation());
-			this.startDiveRise();
-			this.setInitializedPeriodicMovement(true);
-		}
+//		if (!this.isInitializedPeriodicMovement()){
+//			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
+//			this.startMove(this.getRandomOrientation());
+//			this.startDiveRise();
+//			this.setInitializedPeriodicMovement(true);
+//		}
 		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
@@ -571,7 +575,11 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 		this.adjustGravitationalAcceleration();
 		
 		/* Update position and velocity */
-		this.update(dt);
+		//this.update(dt);
+		this.updatePositionX(dt);
+		this.updateVelocityX(dt);
+		this.updatePositionY(dt);
+		this.updateVelocityY(dt);
 		
 	}
 	
@@ -595,8 +603,11 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 		this.adjustGravitationalAcceleration();
 		
 		/* Update position and velocity */
-		this.update(dt);
-		
+		//this.update(dt);
+		this.updatePositionX(dt);
+		this.updateVelocityX(dt);
+		this.updatePositionY(dt);
+		this.updateVelocityY(dt);
 	}
 	
 	/**
@@ -671,19 +682,20 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 
 	 * @effect	| if ( ! this.isSubmergedIn(Terrain.WATER) )
 	 * 			|	then this.setAccelerationY(ACCELERATION_Y)
-	 * @effect	| if ( ! this.isSubmergedIn(Terrain.WATER) )
+	 * @effect	| if ( ! this.isSubmergedIn(Terrain.WATER) && ! this.hasProgram() )
 	 * 			|	then this.setHasBeenOutWater(true)
-	 * @effect	| if ( this.isSubmergedIn(Terrain.WATER) && this.getHasBeenOutWater() )
+	 * @effect	| if ( this.isSubmergedIn(Terrain.WATER) && ! this.hasProgram() && this.getHasBeenOutWater() )
 	 * 			|	then this.endDiveRise()
-	 * @effect	| if ( this.isSubmergedIn(Terrain.WATER) && this.getHasBeenOutWater() )
+	 * @effect	| if ( this.isSubmergedIn(Terrain.WATER) && ! this.hasProgram() && this.getHasBeenOutWater() )
 	 * 			|	then this.setHasBeenOutWater(false)
 	 */
 	public void adjustGravitationalAcceleration(){
 		
 		if (!this.isSubmergedIn(Terrain.WATER)){
 			this.setAccelerationY(ACCELERATION_Y);
-			this.setHasBeenOutWater(true);
-		} else if ( this.getHasBeenOutWater() ){
+			if (!this.hasProgram())
+				this.setHasBeenOutWater(true);
+		} else if ( !this.hasProgram() && this.getHasBeenOutWater() ){
 			this.endDiveRise();
 			this.setHasBeenOutWater(false);
 		}
@@ -703,10 +715,10 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 */
 	@Override
 	public void updatePositionY(double dt){
-		
+
 		double oldPositionY = this.getPositionY();
 		super.updatePositionY(dt);
-		
+
 		if (!this.isSubmergedIn(Terrain.WATER) && !this.isJumping() && !this.getHasBeenOutWater()){
 			this.setPositionY(oldPositionY);
 			this.endDiveRise();
