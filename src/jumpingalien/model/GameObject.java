@@ -1437,12 +1437,10 @@ public abstract class GameObject implements IKind, IMovable{
 			throw new IllegalStateException("This object is not in a proper world!");
 		
 		if(this.isKilled() && !this.isTerminated()){
-			System.out.println("process killed");
 			this.processKilled(dt);
 		}
-		System.out.println("hp: " + this.getNbHitPoints());
+
 		if(!this.isKilled()){
-			System.out.println("alive");
 			// Check last enemy collision and reset immunity status if needed
 			if (this.isImmune() && this.getTimer().getSinceEnemyCollision() > IMMUNE_TIME ){
 				this.setImmune(false);
@@ -1600,7 +1598,6 @@ public abstract class GameObject implements IKind, IMovable{
 			double sy = this.getVelocityY() * dt + 0.5 * this.getAccelerationY() * Math.pow( dt , 2 );
 			this.setPositionY( this.getPositionY() + 100 * sy );
 		}catch( IllegalPositionYException exc){
-			System.out.println("killed!");
 			this.kill();
 		}catch( CollisionException exc){
 			processVerticalCollision();
@@ -1646,35 +1643,6 @@ public abstract class GameObject implements IKind, IMovable{
 		this.updateVelocityY(dt);
 		
 	}
-	
-	/**
-	 * Check whether or not the periodic movement of a Game object without a Program is already initialized.
-	 * 
-	 * @return	True if and only if the periodic movement of the Game object is already initialized.
-	 * 			| result == ( this.initializedPeriodicMovement )
-	 */
-	@Basic
-	public boolean isInitializedPeriodicMovement(){
-		return this.initializedPeriodicMovement;
-	}
-	
-	/**
-	 * Set whether or not the periodic movement of a Game object without a Program is already initialized.
-	 * 
-	 * @param 	initialized
-	 * 				A boolean that represents the desired periodic movement initialization status of this Game object.
-	 * @post	The initialized periodic movement status is equal to initialized.
-	 * 			| new.isInitializedPeriodicMovement() == intialized
-	 */
-	@Basic
-	protected void setInitializedPeriodicMovement(boolean initialized){
-		this.initializedPeriodicMovement = initialized;
-	}
-	
-	/**
-	 * Variable registering the current periodic movement initialization status of this Game object.
-	 */
-	protected boolean initializedPeriodicMovement;
 		
 	/****************************************************** COLLISION **************************************************/
 	

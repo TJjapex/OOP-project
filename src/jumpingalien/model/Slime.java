@@ -103,6 +103,10 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 					sprites,nbHitPoints, maxNbHitPoints, program)
 	 * @effect	| setSchoolTo(school)
 	 * @effect	| startMove( this.getRandomOrientation() )
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			|	then this.startMove(this.getRandomOrientation())
 	 * @effect 	| configureTerrain()
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
@@ -125,6 +129,11 @@ public class Slime extends GameObject implements IProgrammable {
 			  nbHitPoints, maxNbHitPoints, program);
 
 		this.setSchoolTo(school);
+		
+		if ( ! this.hasProgram() ){
+			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
+			this.startMove(this.getRandomOrientation());
+		}
 		
 		this.configureTerrain();
 		
@@ -529,17 +538,11 @@ public class Slime extends GameObject implements IProgrammable {
 	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
-	 * Initialize the first periodic movement, if needed. Initiate a new periodic movement, if needed, and update
+	 * Initiate a new periodic movement, if needed, and update
 	 * the Slime's horizontal and vertical position and velocity for the given time interval.
 	 * 
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			|	then this.startMove(this.getRandomOrientation())
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			| 	then this.setInitializedPeriodicMovement(true)
 	 * @post 	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then new.getCurrentPeriodTime() == timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME)
 	 * @effect	| if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
@@ -550,13 +553,6 @@ public class Slime extends GameObject implements IProgrammable {
 	 */
 	@Override
 	protected void doMove(double dt){
-		
-		/* Initialize periodic movement */
-		if (!this.isInitializedPeriodicMovement()){
-			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
-			this.startMove(this.getRandomOrientation());
-			this.setInitializedPeriodicMovement(true);
-		}
 		
 		/* Periodic movement */
 		if (!hasProgram() && this.getTimer().getSinceLastPeriod() >= currentPeriodTime){

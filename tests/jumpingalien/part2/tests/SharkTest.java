@@ -3,14 +3,11 @@ package jumpingalien.part2.tests;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 import jumpingalien.model.Mazub;
-import jumpingalien.model.School;
 import jumpingalien.model.Shark;
-import jumpingalien.model.Slime;
 import jumpingalien.model.World;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.part2.facade.Facade;
 import jumpingalien.part2.facade.IFacadePart2;
-import jumpingalien.part3.facade.IFacadePart3;
 import jumpingalien.util.Sprite;
 
 import org.junit.After;
@@ -28,7 +25,6 @@ public class SharkTest {
 	
 	private Sprite[] sprites;
 	private Shark shark;
-	private Slime slime;
 
 	private Mazub alien;
 	private World world;
@@ -51,7 +47,7 @@ public class SharkTest {
 		world = facade.createWorld(50, 20, 15, 200, 150, 4, 1);
 		
 		Sprite[] alienSprites = spriteArrayForSize(20, 20);
-		alien = facade.createMazub(100,100, alienSprites); // At least one alien in world
+		alien = facade.createMazub(100,500, alienSprites); // At least one alien in world
 		
 		facade.setMazub(world, alien);
 		facade.addShark(world, shark);
@@ -103,18 +99,16 @@ public class SharkTest {
 		
 		/* Initial y position is 12, so wait until y-position lower than 0 */
 		/* calculations: -12 = -10/2 * t**2 -> t = 0.155 */
-		facade.advanceTime(world, 0.16);
-		System.out.println(shark.getRoundedPositionY());
-		System.out.println(shark.getAccelerationY());
-		System.out.println(shark.getVelocityY());
-		//assertEquals(0, shark.getRoundedPositionY());
-		
+		facade.advanceTime(world, 0.17);
+		assertEquals(0, shark.getRoundedPositionY());
+
 		for (int i=0; i<3; i ++){
 			assertTrue(shark.isKilled());
 			assertFalse(shark.isTerminated());
 			assertEquals(world, shark.getWorld());
 			facade.advanceTime(world,0.2);
 		}
+		
 		assertTrue(shark.isTerminated());
 		assertFalse(shark.hasWorld());		
 

@@ -110,6 +110,12 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * @post	| new.isJumping == false
 	 * @effect	| super(pixelLeftX, pixelBottomY, velocityXInit, velocityYInit, velocityXMax, accelerationXInit, 
 	 * 					sprites,nbHitPoints, maxNbHitPoints, program)
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			|	then this.startMove(this.getRandomOrientation())
+	 * @effect	| if ( ! this.hasProgram() )
+	 * 			|	then this.startDiveRise()
 	 * @effect 	| configureTerrain()
 	 * @throws 	IllegalPositionXException
 	 * 				| ! canHaveAsXPosition(pixelLeftX)
@@ -133,9 +139,11 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 		this.setNbNonJumpingPeriods(0);
 		this.setJumping(false);	
 		
-		this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
-		this.startMove(this.getRandomOrientation());
-		this.startDiveRise();
+		if ( ! this.hasProgram()){
+			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
+			this.startMove(this.getRandomOrientation());
+			this.startDiveRise();
+		}
 		
 		this.configureTerrain();
 		
@@ -529,20 +537,11 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	/******************************************************* MOVEMENT **************************************************/
 	
 	/**
-	 * Initialize the first periodic movement, if needed. Initiate a new periodic movement, if needed, and update the
-	 * Shark's horizontal and vertical position and velocity for the given time interval along with his gravitational
-	 * acceleration.
+	 * Initiate a new periodic movement, if needed, and update the Shark's horizontal and vertical position and
+	 * velocity for the given time interval along with his gravitational acceleration.
 	 * 
 	 * @param	dt
 	 * 				A double that represents the elapsed in-game time.
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			|	then this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) )
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			|	then this.startMove(this.getRandomOrientation())
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			|	then this.startDiveRise()
-	 * @effect	| if ( ! this.isInitializedPeriodicMovement() )
-	 * 			| 	then this.setInitializedPeriodicMovement(true)
 	 * @effect	| if ( this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
 	 * 			|	then this.periodicMovement();
 	 * @effect	| if ( this.getTimer().getSinceLastPeriod() >= currentPeriodTime)
@@ -554,14 +553,6 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 */
 	@Override
 	protected void doMove(double dt){
-
-		/* Initialize periodic movement */
-//		if (!this.isInitializedPeriodicMovement()){
-//			this.setCurrentPeriodTime( timer.getRandomPeriodTime(MIN_PERIOD_TIME, MAX_PERIOD_TIME) );
-//			this.startMove(this.getRandomOrientation());
-//			this.startDiveRise();
-//			this.setInitializedPeriodicMovement(true);
-//		}
 		
 		/* Periodic movement */
 		if (this.getTimer().getSinceLastPeriod() >= currentPeriodTime){
@@ -575,11 +566,7 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 		this.adjustGravitationalAcceleration();
 		
 		/* Update position and velocity */
-		//this.update(dt);
-		this.updatePositionX(dt);
-		this.updateVelocityX(dt);
-		this.updatePositionY(dt);
-		this.updateVelocityY(dt);
+		this.update(dt);
 		
 	}
 	
@@ -603,11 +590,8 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 		this.adjustGravitationalAcceleration();
 		
 		/* Update position and velocity */
-		//this.update(dt);
-		this.updatePositionX(dt);
-		this.updateVelocityX(dt);
-		this.updatePositionY(dt);
-		this.updateVelocityY(dt);
+		this.update(dt);
+
 	}
 	
 	/**
