@@ -29,7 +29,6 @@ import jumpingalien.program.types.Type;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
-import org.antlr.v4.runtime.atn.EpsilonTransition;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,10 +46,8 @@ public class TestProgramExpressions {
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 	}
-
 	
 	ProgramFactory<Expression<Type>, Statement, Type, Program> programFactory;
-	Program program;
 	Facade facade;
 	Sprite[] sprites;
 	Sprite[] plantSprites;
@@ -509,6 +506,9 @@ public class TestProgramExpressions {
 	
 	@Test 
 	public void testBinaryExpression(){
+		
+		Program program = programFactory.createProgram(new Wait(new Constant<DoubleType>(new DoubleType(1), null), null), new HashMap<String, Type>());
+		
 		Expression<DoubleType> left = new Constant<DoubleType>(new DoubleType(5.0), null);
 		assertEquals(5.0, left.execute(program).getValue(), Util.DEFAULT_EPSILON);
 		Expression<DoubleType> right = new Constant<DoubleType>(new DoubleType(3.5), null);
@@ -524,6 +524,9 @@ public class TestProgramExpressions {
 	
 	@Test 
 	public void testUnaryExpression(){
+		
+		Program program = programFactory.createProgram(new Wait(new Constant<DoubleType>(new DoubleType(1), null), null), new HashMap<String, Type>());
+		
 		Expression<DoubleType> val = new Constant<DoubleType>(new DoubleType(9.0), null);
 		assertEquals(9.0, val.execute(program).getValue(), Util.DEFAULT_EPSILON);
 		
