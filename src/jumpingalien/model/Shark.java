@@ -733,7 +733,7 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * @return	A Hashset that contains the Mazub and all Buzams, Slimes and Sharks in the Shark's world.
 	 */
 	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
+	public Set<GameObject> getAllImpassableGameObjects(){
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
 		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Buzam.getAllInWorld(this.getWorld()));

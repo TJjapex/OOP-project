@@ -923,7 +923,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * @return	A Hashset that contains the Mazub and all Buzams, Slimes, Sharks and Plants in the Mazub's world.
 	 */
 	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
+	public Set<GameObject> getAllImpassableGameObjects(){
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();
 		allImpassableGameObjects.add(Mazub.getInWorld(this.getWorld()));
 		allImpassableGameObjects.addAll(Buzam.getAllInWorld(this.getWorld()));

@@ -622,7 +622,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * @return	A Hashset that contains the Mazub and all Buzams, Slimes and Sharks in the Slime's world.
 	 */
 	@Override
-	protected Set<GameObject> getAllImpassableGameObjects(){
+	public Set<GameObject> getAllImpassableGameObjects(){
 		assert hasProperWorld();
 		
 		Set<GameObject> allImpassableGameObjects= new HashSet<GameObject>();

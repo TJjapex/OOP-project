@@ -222,5 +222,4 @@ public class Buzam extends Mazub implements IProgrammable{
 	public String getClassName() {
 		return "Buzam";
 	}
-	
 }
