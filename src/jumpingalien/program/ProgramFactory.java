@@ -219,7 +219,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<BooleanType> createIsMazub(Expression<?> expr,
 			SourceLocation sourceLocation) {
-		return new Checker( Expression.cast(expr), (x, program)-> (x instanceof Mazub && ! (x instanceof Buzam)), sourceLocation);
+		return new Checker( Expression.cast(expr), (x, program)-> ( x.getClass().getName() == "jumpingalien.model.Mazub" ), sourceLocation);
 	}
 
 	@Override

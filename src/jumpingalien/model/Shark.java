@@ -763,7 +763,7 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	public void processMazubOverlap(Mazub mazub) {
+	public void processMazubOverlap(@Raw Mazub mazub) {
 		if(!mazub.isKilled() && !this.isImmune()){
 			this.takeDamage(MAZUB_DAMAGE);
 			this.setImmune(true);
@@ -790,7 +790,7 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	public void processSlimeOverlap(Slime slime){
+	public void processSlimeOverlap(@Raw Slime slime){
 		if(!slime.isKilled()  && !this.isImmune()){
 			this.takeDamage(SLIME_DAMAGE);
 			this.setImmune(true);
@@ -805,7 +805,7 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 				The other Shark with which this Shark overlaps.
 	 */
 	@Override
-	public void processSharkOverlap(Shark shark){
+	public void processSharkOverlap(@Raw Shark shark){
 		
 	}
 	
@@ -816,7 +816,7 @@ public class Shark extends GameObject implements IJumpable, IProgrammable{
 	 * 				The Plant with which this Shark overlaps.
 	 */
 	@Override
-	public void processPlantOverlap(Plant plant) {
+	public void processPlantOverlap(@Raw Plant plant) {
 
 	}
 	

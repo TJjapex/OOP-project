@@ -654,7 +654,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	protected void processMazubOverlap(Mazub mazub){
+	protected void processMazubOverlap(@Raw Mazub mazub){
 		if(!mazub.isKilled() && !this.isImmune()){
 			this.takeDamage(MAZUB_DAMAGE);
 			this.setImmune(true);
@@ -679,7 +679,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 			|	then slime.switchSchool( this.getSchool() )
 	 */
 	@Override
-	protected void processSlimeOverlap(Slime slime){
+	protected void processSlimeOverlap(@Raw Slime slime){
 		if(slime != this){
 			if ( slime.getSchool().getNbSlimes() > this.getSchool().getNbSlimes() ){
 				this.switchSchool( slime.getSchool() );
@@ -708,7 +708,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	protected void processSharkOverlap(Shark shark){
+	protected void processSharkOverlap(@Raw Shark shark){
 		if(!shark.isKilled() && !this.isImmune()){
 			this.takeDamage(SHARK_DAMAGE);
 			this.setImmune(true);
@@ -723,7 +723,7 @@ public class Slime extends GameObject implements IProgrammable {
 	 * 				The Plant with which this Slime overlaps.
 	 */
 	@Override
-	protected void processPlantOverlap(Plant plant) {
+	protected void processPlantOverlap(@Raw Plant plant) {
 		
 	}
 

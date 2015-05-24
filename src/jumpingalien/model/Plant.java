@@ -3,6 +3,7 @@ package jumpingalien.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.Raw;
 import jumpingalien.model.terrain.Terrain;
 import jumpingalien.model.exceptions.IllegalHeightException;
 import jumpingalien.model.exceptions.IllegalPositionXException;
@@ -364,7 +365,7 @@ public class Plant extends GameObject implements IProgrammable {
 	 * 				The Mazub with whom this Plant overlaps.
 	 */
 	@Override
-	protected void processMazubOverlap(Mazub mazub) {
+	protected void processMazubOverlap(@Raw Mazub mazub) {
 		
 	}
 
@@ -375,7 +376,7 @@ public class Plant extends GameObject implements IProgrammable {
 	 * 				The other Plant with which this Plant overlaps.
 	 */
 	@Override
-	protected void processPlantOverlap(Plant plant) {
+	protected void processPlantOverlap(@Raw Plant plant) {
 
 	}
 
@@ -386,7 +387,7 @@ public class Plant extends GameObject implements IProgrammable {
 	 * 				The Shark with which this Plant overlaps.
 	 */
 	@Override
-	protected void processSharkOverlap(Shark shark) {
+	protected void processSharkOverlap(@Raw Shark shark) {
 
 	}
 
@@ -397,7 +398,7 @@ public class Plant extends GameObject implements IProgrammable {
 	 * 				The Slime with which this Plant overlaps.
 	 */
 	@Override
-	protected void processSlimeOverlap(Slime slime) {
+	protected void processSlimeOverlap(@Raw Slime slime) {
 
 	}
 	

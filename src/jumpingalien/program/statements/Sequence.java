@@ -36,7 +36,7 @@ public class Sequence extends Statement{
 	}
 	
 	@Basic @Immutable
-	public Statement getStatementAt(int index){
+	public Statement getStatementAt(int index) throws IndexOutOfBoundsException{
 		return this.statements.get(index);
 	}
 	
@@ -106,7 +106,7 @@ public class Sequence extends Statement{
 	/* Execution */
 
 	@Override
-	public void execute(Program program) throws IllegalStateException{
+	public void execute(Program program) throws ProgramRuntimeException{
 		if(this.iterator().hasNext()){
 			this.iterator().next().execute(program);
 		}else{

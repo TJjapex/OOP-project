@@ -942,7 +942,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 				The other Mazub with whom this Mazub overlaps.
 	 */
 	@Override
-	protected void processMazubOverlap(Mazub alien){
+	protected void processMazubOverlap(@Raw Mazub alien){
 		if(!alien.isKilled() && !this.isImmune()){
 			if(!this.doesOverlapWith(alien, Orientation.BOTTOM) ||
 			   this.getRoundedPositionY() == alien.getRoundedPositionY()){
@@ -972,7 +972,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	protected void processSharkOverlap(Shark shark){
+	protected void processSharkOverlap(@Raw Shark shark){
 		if(!shark.isKilled() && !this.isImmune()){
 			if(!this.doesOverlapWith(shark, Orientation.BOTTOM)){
 				this.takeDamage(SHARK_DAMAGE);
@@ -1001,7 +1001,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			|	then this.getTimer().setSinceEnemyCollision(0)
 	 */
 	@Override
-	protected void processSlimeOverlap(Slime slime){
+	protected void processSlimeOverlap(@Raw Slime slime){
 		if(!slime.isKilled() && !this.isImmune()){
 			if(!this.doesOverlapWith(slime, Orientation.BOTTOM)){
 				this.takeDamage(SLIME_DAMAGE);
@@ -1025,7 +1025,7 @@ public class Mazub extends GameObject implements IDuckable, IJumpable{
 	 * 			|	then plant.kill()
 	 */
 	@Override
-	protected void processPlantOverlap(Plant plant){
+	protected void processPlantOverlap(@Raw Plant plant){
 		if(!plant.isKilled() && !this.isFullHitPoints()){
 			this.modifyNbHitPoints(PLANT_HP_INCREASE);
 			plant.kill();

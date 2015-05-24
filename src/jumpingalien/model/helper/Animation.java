@@ -16,8 +16,8 @@ import jumpingalien.model.exceptions.IllegalHeightException;
  * @note	For an Animation instance, the sprites can only be set once in the constructor. 
  * 			If new sprites are required, the instance should be destroyed and a new instance should be created.
  *
- * @invar	The sprites array of this animation has a length greater than or equal to 0
- * 			|	this.getNbSprites() >= 0
+ * @invar	The sprites array of this animation has a length greater than or equal to 2.
+ * 			|	this.getNbSprites() >= 2
  * @invar	Sprite index is always positive
  * 			| 	this.getSpriteIndex() >= 0
  */
@@ -135,10 +135,11 @@ public class Animation {
 	 * @param 	index
 	 * 				The index of the sprite.
 	 * @return	The sprite of this Animation, with the given index.
+	 * @throws	IndexOutOfBoundsException
 	 */
-	@Immutable
-	public Sprite getSpriteAt(int index){
-		return this.getSprites()[index];
+	@Basic @Immutable
+	public Sprite getSpriteAt(int index) throws IndexOutOfBoundsException{
+		return this.sprites[index];
 	}
 	
 	/**
@@ -146,9 +147,9 @@ public class Animation {
 	 * 
 	 * @return	The number of elements in the sprites array of the related Game object.		
 	 */
-	@Immutable
+	@Basic @Immutable
 	public int getNbSprites(){
-		return this.getSprites().length;
+		return this.sprites.length;
 	}
 	
 	/**

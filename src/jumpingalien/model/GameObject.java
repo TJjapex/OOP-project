@@ -153,6 +153,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 				| for some sprite in sprites:
 	 * 				|	! isValidHeight(sprite.getHeight())
 	 */
+	@Raw
 	public GameObject(int pixelLeftX, int pixelBottomY, double velocityXInit, double velocityYInit,
 					  double velocityXMax, double accelerationXInit, Sprite[] sprites, int nbHitPoints,
 					  int maxNbHitPoints, Program program)
@@ -274,6 +275,8 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 
 	 * @param 	dt
 	 * 				A double that represents the elapsed in-game time.
+	 * @pre		The given dt should be between 0 and 0.2 s.
+	 * 			| Util.fuzzyGreaterThanOrEqualTo(dt, 0) && Util.fuzzyLessThanOrEqualTo(dt, 0.2)
 	 * @effect	If the Game object isn't moving, increase the time since his last move.
 	 * 			| getTimer().increaseSinceLastMove(dt)
 	 * @effect	Increase the time since the last sprite.
@@ -292,6 +295,8 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			| resetTerrainOverlapDuration()
 	 */
 	protected void updateTimers(double dt){
+		assert Util.fuzzyGreaterThanOrEqualTo(dt, 0) && Util.fuzzyLessThanOrEqualTo(dt, 0.2);
+
 		if(!this.isMoving())
 			this.getTimer().increaseSinceLastMove(dt);
 		
@@ -543,6 +548,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			is not terminated and has no World yet.
 	 * 			| result == ( world != null && !this.isTerminated() && !this.hasWorld() )
 	 */
+	@Raw
 	public boolean canHaveAsWorld(World world){
 		return ( world != null && !this.isTerminated() && !this.hasWorld() );
 	}
@@ -1201,6 +1207,7 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			number of hit points for this Game object.
 	 * 			| result == (0 <= nbHitPoints && nbHitPoints <= this.getMaxNbHitPoints())
 	 */
+	@Raw
 	public boolean canHaveAsNbHitPoints(int nbHitPoints) {
 		return (0 <= nbHitPoints && nbHitPoints <= this.getMaxNbHitPoints());
 	}

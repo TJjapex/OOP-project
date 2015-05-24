@@ -863,14 +863,19 @@ public class World {
 	 * @param 	alien
 	 * 				The Mazub to be controlled.
 	 * @throws 	IllegalStateException
-	 * 				| hasProperWorld() || alien.getWorld() != this
+	 * 				| hasProperWorld() || alien.getWorld() != this ||
+	 * 				| alien.getClass().getName() != "jumpingalien.model.Mazub"
 	 */
 	@Basic
 	public void setMazub(Mazub alien) throws IllegalStateException{
+		
 		if(hasProperMazub())
 			throw new IllegalStateException("Already a Mazub in this world!");
 		if(alien.getWorld() != this)
 			throw new IllegalStateException("Mazub not in world yet!");
+		if(alien.getClass().getName() != "jumpingalien.model.Mazub")
+			throw new IllegalStateException("Can't set an instance of a subclass of Mazub as the Mazub!");
+		
 		this.mazub = alien;
 	}
 	
@@ -937,8 +942,8 @@ public class World {
 	 */
 	public Set<School> getAllSchools(){
 		Set<School> schools = new HashSet<School>();
-		for ( GameObject slime: Slime.getAllInWorld(this) ){
-			schools.add(((Slime) slime).getSchool());
+		for ( Slime slime: Slime.getAllInWorld(this) ){
+			schools.add( slime.getSchool());
 		}
 		return schools;
 	}

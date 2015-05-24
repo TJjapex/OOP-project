@@ -96,7 +96,7 @@ public class Program {
 	
 	@Basic
 	private void restart(){
-		this.mainStatement.resetIterator();
+		this.getMainStatement().resetIterator();
 		this.globalVariables = this.initialGlobalVariables;
 	}
 	
