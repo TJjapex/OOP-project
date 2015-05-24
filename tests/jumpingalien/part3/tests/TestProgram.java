@@ -299,7 +299,51 @@ public class TestProgram {
 	
 	
 	/* Tests */	
-
+	@Test 
+	public void testTimeAdvancement(){
+		String test = 
+				" double a; a:= 0;"
+				+ "while a < 3 do "
+				+ " a := a + 1 ;"
+				+ " done "
+				+ " a := 85;";
+		
+		ParseOutcome<?> parseOutcome = facade.parse(test);
+		
+		if(!parseOutcome.isSuccess()){
+			throw new IllegalArgumentException("Program parsing failed");
+		}
+		
+		Program program = (Program) parseOutcome.getResult();
+		Plant plant = facade.createPlantWithProgram(180, 50, plantSprites, program);
+		facade.addPlant(world, plant);
+		Plant plant2 = facade.createPlant(200, 50, plantSprites);
+		facade.addPlant(world, plant2);
+		
+		world.advanceTime(0.0005); // Initial a assignment
+		assertEquals(0, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0013); // Evaluate while
+		assertEquals(0, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0009); // Assignment of a
+		assertEquals(1, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.001); // Evaluate while
+		assertEquals(1, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0015); // Assignment of a
+		assertEquals(2, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0007); // Evaluate while
+		assertEquals(2, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0011); // Assignment of a
+		assertEquals(3, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0002); // Evaluate while (false now)
+		assertEquals(3, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0006); // Assignment of a := 85
+		assertEquals(85, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		world.advanceTime(0.0018); // Restart program
+		assertEquals(0, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
+		
+	}	
+	
+	
 	@Test
 	public void testSequenceAndRun() {
 		testProgram =
@@ -355,7 +399,7 @@ public class TestProgram {
 		assertFalse(plant.isMoving());
 		facade.advanceTime(world, 0.001); // Assign var
 		assertFalse(plant.isMoving());
-		facade.advanceTime(world, 0.001); // Evaluate if
+		facade.advanceTime(world, 0.0005); // Evaluate if  (time advancement smaller than 0.0001!)
 		assertFalse(plant.isMoving());
 		facade.advanceTime(world, 0.001); // Start_run right
 		assertTrue(plant.isMoving());
