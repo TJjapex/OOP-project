@@ -3,9 +3,7 @@ package jumpingalien.program;
 import java.util.List;
 import java.util.Map;
 
-import jumpingalien.model.Buzam;
 import jumpingalien.model.GameObject;
-import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.Shark;
 import jumpingalien.model.Slime;

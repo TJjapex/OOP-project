@@ -6,15 +6,10 @@ package jumpingalien.part3.tests;
 
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.helper.Orientation;
-import jumpingalien.part3.facade.Facade;
-import jumpingalien.part3.facade.IFacadePart3;
 import jumpingalien.part3.programs.IProgramFactory.Direction;
-import jumpingalien.part3.programs.ParseOutcome;
-import jumpingalien.program.Program;
 import jumpingalien.program.types.BooleanType;
 import jumpingalien.program.types.DirectionType;
 import jumpingalien.program.types.DoubleType;
@@ -169,9 +164,7 @@ public class TestValueClasses {
 	@Test
 	public void testObjectEqualsStringFalse() {
 		Mazub alien = new Mazub(0, 0, spriteArrayForSize(5, 4));
-		Plant plant = new Plant(0, 0, spriteArrayForSize(4, 3, 2));
 		ObjectType object = new ObjectType(alien);
-		ObjectType object2 = new ObjectType(plant);
 		assertFalse(object.equals("test"));
 	}
 }

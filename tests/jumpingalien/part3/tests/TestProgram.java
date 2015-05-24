@@ -2,17 +2,12 @@
  * Test file containing tests of general methods for programs
  */
 
-
 package jumpingalien.part3.tests;
 
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import jumpingalien.model.Mazub;
@@ -23,14 +18,10 @@ import jumpingalien.part3.facade.Facade;
 import jumpingalien.part3.programs.IProgramFactory;
 import jumpingalien.part3.programs.ParseOutcome;
 import jumpingalien.part3.programs.ProgramParser;
-import jumpingalien.part3.programs.SourceLocation;
 import jumpingalien.program.Program;
 import jumpingalien.program.ProgramFactory;
-import jumpingalien.program.expressions.BinaryOperator;
-import jumpingalien.program.expressions.Constant;
 import jumpingalien.program.expressions.Expression;
 import jumpingalien.program.statements.Statement;
-import jumpingalien.program.statements.Wait;
 import jumpingalien.program.types.DoubleType;
 import jumpingalien.program.types.Type;
 import jumpingalien.util.Sprite;

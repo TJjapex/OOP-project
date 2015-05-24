@@ -2,7 +2,6 @@ package jumpingalien.part2.tests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.helper.Collision;
 import jumpingalien.model.helper.Orientation;
 

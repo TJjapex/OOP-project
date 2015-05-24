@@ -1,7 +1,5 @@
 package jumpingalien.model.helper;
 
-import jumpingalien.model.GameObject;
-
 public class Collision {
 	public Collision(){
 		

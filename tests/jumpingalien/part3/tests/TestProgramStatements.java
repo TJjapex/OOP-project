@@ -7,8 +7,6 @@ package jumpingalien.part3.tests;
 import static jumpingalien.tests.util.TestUtils.spriteArrayForSize;
 import static org.junit.Assert.*;
 
-import java.util.HashMap;
-
 import jumpingalien.model.Mazub;
 import jumpingalien.model.Plant;
 import jumpingalien.model.World;
@@ -17,19 +15,13 @@ import jumpingalien.part3.facade.Facade;
 import jumpingalien.part3.programs.ParseOutcome;
 import jumpingalien.program.Program;
 import jumpingalien.program.ProgramFactory;
-import jumpingalien.program.expressions.BinaryOperator;
-import jumpingalien.program.expressions.Constant;
 import jumpingalien.program.expressions.Expression;
-import jumpingalien.program.expressions.UnaryOperator;
 import jumpingalien.program.statements.Statement;
-import jumpingalien.program.statements.Wait;
-import jumpingalien.program.types.BooleanType;
 import jumpingalien.program.types.DoubleType;
 import jumpingalien.program.types.Type;
 import jumpingalien.util.Sprite;
 import jumpingalien.util.Util;
 
-import org.antlr.v4.runtime.atn.EpsilonTransition;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

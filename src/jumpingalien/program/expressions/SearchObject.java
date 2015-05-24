@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
-import jumpingalien.model.GameObject;
 import jumpingalien.model.helper.Collision;
 import jumpingalien.model.helper.Orientation;
 import jumpingalien.model.interfaces.IKind;
