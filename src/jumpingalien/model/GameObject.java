@@ -1401,8 +1401,10 @@ public abstract class GameObject implements IKind, IMovable{
 		if( !Util.fuzzyGreaterThanOrEqualTo(dt, 0) || !Util.fuzzyLessThanOrEqualTo(dt, 0.2))
 			throw new IllegalArgumentException("Illegal time step amount given: "+ dt + " s");	
 		
-		if (this.hasProgram() && dt < 0.001)
+		if (this.hasProgram() && dt < 0.001){
 			this.getProgram().executeNext();
+			this.getTimer().increaseSinceLastProgram(-dt);
+		}	
 		
 		double minDt;
 		
@@ -1465,8 +1467,8 @@ public abstract class GameObject implements IKind, IMovable{
 	 * @note	No further documentation was required for this method.
 	 */
 	protected void advanceProgram(){
-		
-		for (int i = 0; i < this.getTimer().getSinceLastProgram()/0.001; i++){
+
+		for (int i = 0; i < Math.floor(this.getTimer().getSinceLastProgram()/0.001); i++){
 			this.getProgram().executeNext();
 		}
 		

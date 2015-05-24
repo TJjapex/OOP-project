@@ -319,7 +319,7 @@ public class TestProgram {
 		facade.addPlant(world, plant);
 		Plant plant2 = facade.createPlant(200, 50, plantSprites);
 		facade.addPlant(world, plant2);
-		
+
 		world.advanceTime(0.0005); // Initial a assignment
 		assertEquals(0, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
 		world.advanceTime(0.0013); // Evaluate while
