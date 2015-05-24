@@ -6,6 +6,7 @@ import java.util.Map;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import jumpingalien.model.GameObject;
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.program.statements.*;
 import jumpingalien.program.types.Type;
 
@@ -78,12 +79,19 @@ public class Program {
 	/* Execution */
 	
 	public void executeNext(){
-		if( this.mainStatement.iterator().hasNext() ){
-			getMainStatement().execute(this);
-		}else{
-			this.restart();
-			this.executeNext();
-		}
+		if(!hasError()){
+			if( getMainStatement().iterator().hasNext() ){
+				try {
+					getMainStatement().execute(this);
+				} catch (ProgramRuntimeException | ClassCastException e) {
+					setHasError(true);
+					System.err.println("Error in program!");
+				}
+			}else{
+				this.restart();
+				this.executeNext();
+			}
+		}		
 	}
 	
 	@Basic
@@ -91,6 +99,16 @@ public class Program {
 		this.mainStatement.resetIterator();
 		this.globalVariables = this.initialGlobalVariables;
 	}
+	
+	public boolean hasError() {
+		return this.hasError;
+	}
+
+	public void setHasError(boolean hasError) {
+		this.hasError = hasError;
+	}
+
+	private boolean hasError = false;
 	
 	/* Well formed */
 	

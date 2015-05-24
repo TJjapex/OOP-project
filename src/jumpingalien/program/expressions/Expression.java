@@ -2,6 +2,7 @@ package jumpingalien.program.expressions;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.part3.programs.SourceLocation;
 import jumpingalien.program.Program;
 import jumpingalien.program.types.Type;
@@ -38,7 +39,7 @@ public abstract class Expression<T extends Type> {
     	try{
     		return (R) obj;
     	}catch(ClassCastException exc){
-    		throw new IllegalArgumentException();
+    		throw new ProgramRuntimeException("Class cast exception!");
     	}
     }
     
