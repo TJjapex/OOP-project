@@ -100,10 +100,14 @@ public class Program {
 		this.globalVariables = this.initialGlobalVariables;
 	}
 	
+	/* Error */
+	
+	@Basic
 	public boolean hasError() {
 		return this.hasError;
 	}
 
+	@Basic
 	public void setHasError(boolean hasError) {
 		this.hasError = hasError;
 	}

@@ -771,10 +771,16 @@ public class World {
 	 * 
 	 * @param 	gameObject
 	 * 				The Game object that needs to be checked.
-	 * @return	| result == ( this.canAddGameObject() && gameObject != null )
+	 * @return	If the Game object is a Slime with a School that isn't in the World yet and the World
+	 * 			has already 10 Schools, return false. Otherwise check if the World can add a Game object
+	 * 			and that the Game object isn't null.
 	 */
 	@Raw
 	public boolean canHaveAsGameObject(GameObject gameObject){
+		if ( (gameObject instanceof Slime ) && ( this.getNbSchools() == 10 ) &&
+			 ( ! this.getAllSchools().contains(((Slime) gameObject).getSchool())) )
+			return false;
+			
 		return this.canAddGameObject() && gameObject != null;
 	}
 	
@@ -925,16 +931,25 @@ public class World {
 	}
 	
 	/**
+	 * Return all the Schools of Slimes in this World.
+	 * 
+	 * @return	A set of all the Schools in this World.
+	 */
+	public Set<School> getAllSchools(){
+		Set<School> schools = new HashSet<School>();
+		for ( GameObject slime: Slime.getAllInWorld(this) ){
+			schools.add(((Slime) slime).getSchool());
+		}
+		return schools;
+	}
+	
+	/**
 	 * Return the number of Schools in this World.
 	 * 
 	 * @return	The number of Schools in this World.
 	 */
 	public int getNbSchools(){
-		Set<School> schools = new HashSet<School>();
-		for ( GameObject slime: Slime.getAllInWorld(this) ){
-			schools.add(((Slime) slime).getSchool());
-		}
-		return schools.size();
+		return this.getAllSchools().size();
 	}
 	
 	/* Variables */
