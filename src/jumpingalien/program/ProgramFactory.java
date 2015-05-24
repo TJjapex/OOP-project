@@ -35,7 +35,7 @@ public class ProgramFactory<E,S,T,P> implements IProgramFactory<Expression<?>, S
 	@Override
 	public Expression<Type> createReadVariable(String variableName,
 			Type variableType, SourceLocation sourceLocation) {
-		return new ReadVariable<>( variableName , variableType, sourceLocation);
+		return new ReadVariable<>( variableName , sourceLocation);
 	}
 
 	@Override

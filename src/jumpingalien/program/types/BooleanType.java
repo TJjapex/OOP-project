@@ -81,4 +81,5 @@ public class BooleanType extends Type{
 	public BooleanType disjunct(BooleanType o){
 		return new BooleanType( this.getValue() || o.getValue());
 	}
+	
 }

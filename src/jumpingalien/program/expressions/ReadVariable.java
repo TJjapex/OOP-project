@@ -18,7 +18,7 @@ public class ReadVariable<T extends Type> extends Expression<Type>{
 
 	/* Constructor */
 	
-	public ReadVariable(String variableName, Type variableType, SourceLocation sourceLocation) {
+	public ReadVariable(String variableName, SourceLocation sourceLocation) {
 		super(sourceLocation);
 		this.variableName = variableName;
 	}

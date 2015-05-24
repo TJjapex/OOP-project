@@ -61,7 +61,7 @@ public class School {
 	 * 				The Slime to check.
 	 * @return	| result == ( this.getAllSlimes().contains(slime) )
 	 */
-	@Basic @Raw
+	@Raw
 	public boolean hasAsSlime(Slime slime){
 		return this.getAllSlimes().contains(slime);
 	}
@@ -105,6 +105,7 @@ public class School {
 	 * 
 	 * @return	A Hashset of all Slimes that are member of this School.
 	 */
+	@Basic
 	public Set<Slime> getAllSlimes(){
 		HashSet<Slime> slimesClone =  new HashSet<Slime>(this.slimes);
 		return slimesClone;

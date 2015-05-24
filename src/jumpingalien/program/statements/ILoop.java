@@ -1,5 +1,7 @@
 package jumpingalien.program.statements;
 
+import be.kuleuven.cs.som.annotate.Basic;
+
 /**
  * An interface for loop Statements as defined in a Program.
  * 
@@ -12,12 +14,15 @@ public interface ILoop {
 	
 	/* Loop control */
 	
+	@Basic
 	public void breakLoop();
 	
+	@Basic
 	public boolean isBroken();
 	
 	/* Loop body */
 	
+	@Basic
 	public Statement getBody();
 	
 }

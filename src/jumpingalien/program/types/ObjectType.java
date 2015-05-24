@@ -33,6 +33,7 @@ public class ObjectType extends Type {
 	}
 	
 	/* Value */
+	
 	@Basic @Immutable
 	public IKind getValue() {
 		return this.value;

@@ -33,6 +33,7 @@ public class Program {
 	
 	/* Global variables */
 
+	@Basic
 	public Type getVariable(String name){
 		if(!this.globalVariables.containsKey(name))
 			return null;
@@ -40,6 +41,7 @@ public class Program {
 		
 	}
 	
+	@Basic
 	public void setVariable(String name, Type value){
 		if(!globalVariables.containsKey(name))
 			throw new IllegalArgumentException();
@@ -84,6 +86,7 @@ public class Program {
 		}
 	}
 	
+	@Basic
 	private void restart(){
 		this.mainStatement.resetIterator();
 		this.globalVariables = this.initialGlobalVariables;

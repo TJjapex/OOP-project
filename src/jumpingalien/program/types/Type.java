@@ -10,8 +10,6 @@ package jumpingalien.program.types;
  */
 public abstract class Type {
 	
-	
-	
 	public abstract BooleanType typeEquals(Type o);
 	
 	/* Object method override */
@@ -24,4 +22,5 @@ public abstract class Type {
 	
 	@Override
 	public abstract boolean equals(Object o);
+	
 }
