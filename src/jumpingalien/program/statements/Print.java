@@ -36,7 +36,7 @@ public class Print extends Statement {
 	/* Execution */
 	
 	@Override
-	public void execute(Program program) throws IllegalStateException{
+	public void execute(Program program) throws ProgramRuntimeException{
 		if(this.iterator().hasNext()){
 			System.out.println(this.getExpression().execute(program));
 			setStatementUsed(true);

@@ -96,7 +96,7 @@ public class IfThen extends Statement implements IConditionedStatement{
 	/* Execution */
 	
 	@Override
-	public void execute(Program program) throws IllegalStateException{
+	public void execute(Program program) throws ProgramRuntimeException{
 		
 		if (!isConditionChecked()){
 			setConditionResult(getCondition().execute(program).getValue());

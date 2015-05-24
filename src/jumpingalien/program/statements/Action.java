@@ -51,7 +51,7 @@ public class Action extends Statement {
 	/* Execution */
 	
 	@Override
-	public void execute(Program program) throws IllegalStateException{
+	public void execute(Program program) throws ProgramRuntimeException{
 		if(this.iterator().hasNext()){
 			try {
 				getOperator().accept( this.getGameObject().execute(program).getValue(), program);

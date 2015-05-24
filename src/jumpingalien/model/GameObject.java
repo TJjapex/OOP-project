@@ -2132,8 +2132,9 @@ public abstract class GameObject implements IKind, IMovable{
 	 * 			| unsetWorld()
 	 * @post	The terminated status of the Game object is equal to true.
 	 * 			| new.isTerminated == true
+	 * @throws	IllegalStateException
 	 */
-	protected void terminate(){
+	protected void terminate() throws IllegalStateException{
 		this.unsetWorld();
 		this.terminated = true;
 	}

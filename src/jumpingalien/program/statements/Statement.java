@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import jumpingalien.model.exceptions.BreakLoopException;
 import jumpingalien.model.exceptions.ProgramRuntimeException;
 import jumpingalien.part3.programs.SourceLocation;
 import jumpingalien.program.Program;
@@ -78,7 +79,7 @@ public abstract class Statement {
 	
 	/* Execution */
 	
-	public abstract void execute(Program program) throws ProgramRuntimeException;	
+	public abstract void execute(Program program) throws ProgramRuntimeException, BreakLoopException;	
 	
 	/* Children statements */
 	

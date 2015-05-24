@@ -737,9 +737,14 @@ public class Slime extends GameObject implements IProgrammable {
 	 * @effect	Break the relation of the Slime with his School.
 	 * 			| this.unsetSchool()
 	 * @post	| new.isTerminated == true
+	 * @throws	IllegalStateException
+	 * 			| ! hasSchool()
 	 */
 	@Override
-	protected void terminate(){
+	protected void terminate() throws IllegalStateException{
+		if (!this.hasSchool())
+			throw new IllegalStateException("Slime without a School can't be terminated");
+		
 		this.unsetWorld();
 		this.unsetSchool();
 		
