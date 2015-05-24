@@ -505,6 +505,32 @@ public class TestProgramExpressions {
 		facade.addPlant(world, plant);
 		world.advanceTime(0.001);
 		assertEquals(1.0, ((DoubleType) program.getVariable("a")).getValue(), Util.DEFAULT_EPSILON);
-	}		
+	}	
+	
+	@Test 
+	public void testBinaryExpression(){
+		Expression<DoubleType> left = new Constant<DoubleType>(new DoubleType(5.0), null);
+		assertEquals(5.0, left.execute(program).getValue(), Util.DEFAULT_EPSILON);
+		Expression<DoubleType> right = new Constant<DoubleType>(new DoubleType(3.5), null);
+		assertEquals(3.5, right.execute(program).getValue(), Util.DEFAULT_EPSILON);
+		
+		BinaryOperator<DoubleType, DoubleType> expr = new BinaryOperator<DoubleType, DoubleType>(left, right, (l, r) -> l.add(r), null);
+		DoubleType exprResult = expr.execute(program);
+		
+		assertEquals(8.5, exprResult.getValue(), Util.DEFAULT_EPSILON);
+	}
+	
+	
+	
+	@Test 
+	public void testUnaryExpression(){
+		Expression<DoubleType> val = new Constant<DoubleType>(new DoubleType(9.0), null);
+		assertEquals(9.0, val.execute(program).getValue(), Util.DEFAULT_EPSILON);
+		
+		UnaryOperator<DoubleType, DoubleType> expr = new UnaryOperator<DoubleType, DoubleType>(val, x ->  x.sqrt(), null);
+		DoubleType exprResult = expr.execute(program);
+		
+		assertEquals(3.0, exprResult.getValue(), Util.DEFAULT_EPSILON);
+	}
 	
 }
